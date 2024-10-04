@@ -513,19 +513,6 @@ class Penawaran extends Admin_Controller
 
         $this->db->trans_begin();
 
-        // $get_customer = $this->db->get_where('customers', ['id_customer' => $post['customer']])->row();
-        // $get_members = $this->db->get_where('members', ['id' => $post['marketing']])->row();
-
-        // $this->db->select('a.*, b.nm_paket');
-        // $this->db->from('kons_master_konsultasi_header a');
-        // $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
-        // $this->db->where('a.id_konsultasi_h', $post['consultation_package']);
-        // $get_package = $this->db->get()->row();
-
-        // $nm_customer = (!empty($get_customer)) ? $get_customer->name : '';
-        // $nm_marketing = (!empty($get_members)) ? $get_members->nama : '';
-        // $nm_package = (!empty($get_package)) ? $get_package->nm_paket : '';
-
         $config['upload_path'] = './uploads/proposal_penawaran/';
         $config['allowed_types'] = '*';
         $config['remove_spaces'] = TRUE;
@@ -550,33 +537,25 @@ class Penawaran extends Admin_Controller
 
         $grand_total = $post['grand_total'];
 
-        // if (isset($post['dt_act'])) {
-        //     foreach ($post['dt_act'] as $item_act) {
-        //         $harga = str_replace(',', '', $item_act['harga_aktifitas']);
-
-        //         $grand_total += $harga;
-        //     }
-        // }
-
-        // if (isset($post['dt_ako'])) {
-        //     foreach ($post['dt_ako'] as $item_ako) {
-        //         $total_akomodasi = str_replace(',', '', $item_ako['total_akomodasi']);
-
-        //         $grand_total += $total_akomodasi;
-        //     }
-        // }
-
-        // if (isset($post['dt_oth'])) {
-        //     foreach ($post['dt_oth'] as $item_oth) {
-        //         $total_others = str_replace(',', '', $item_oth['total_others']);
-
-        //         $grand_total += $total_others;
-        //     }
-        // }
-
         $ppn = 0;
         if (isset($post['include_ppn'])) {
             $ppn = 1;
+        }
+
+        $tipe_info_awal = '';
+        $detail_info_awal = '';
+
+        if (isset($post['check_info_awal_sales'])) {
+            $tipe_info_awal = 'Sales';
+            $detail_info_awal = $post['informasi_awal_sales'];
+        }
+        if (isset($post['check_info_awal_medsos'])) {
+            $tipe_info_awal = 'Medsos';
+            $detail_info_awal = $post['informasi_awal_medsos'];
+        }
+        if (isset($post['check_info_awal_others'])) {
+            $tipe_info_awal = 'Others';
+            $detail_info_awal = $post['informasi_awal_others'];
         }
 
         $id_penawaran = generateNoPenawaran();
@@ -596,6 +575,8 @@ class Penawaran extends Admin_Controller
             'ppn' => $ppn,
             'persen_disc' => str_replace(',', '', $post['persen_disc']),
             'nilai_disc' => str_replace(',', '', $post['nilai_disc']),
+            'tipe_informasi_awal' => $tipe_info_awal,
+            'detail_informasi_awal' => $detail_info_awal,
             'input_by' => $this->auth->user_id(),
             'input_date' => date('Y-m-d H:i:s')
         ];
@@ -758,7 +739,21 @@ class Penawaran extends Admin_Controller
 
         $id_penawaran = $post['id_penawaran'];
 
+        $tipe_info_awal = '';
+        $detail_info_awal = '';
 
+        if (isset($post['check_info_awal_sales'])) {
+            $tipe_info_awal = 'Sales';
+            $detail_info_awal = $post['informasi_awal_sales'];
+        }
+        if (isset($post['check_info_awal_medsos'])) {
+            $tipe_info_awal = 'Medsos';
+            $detail_info_awal = $post['informasi_awal_medsos'];
+        }
+        if (isset($post['check_info_awal_others'])) {
+            $tipe_info_awal = 'Others';
+            $detail_info_awal = $post['informasi_awal_others'];
+        }
 
         if ($filenames == '') {
             $arr_insert = [
@@ -772,6 +767,8 @@ class Penawaran extends Admin_Controller
                 'ppn' => $ppn,
                 'persen_disc' => str_replace(',', '', $post['persen_disc']),
                 'nilai_disc' => str_replace(',', '', $post['nilai_disc']),
+                'tipe_informasi_awal' => $tipe_info_awal,
+                'detail_informasi_awal' => $detail_info_awal,
                 'updated_by' => $this->auth->user_id(),
                 'updated_date' => date('Y-m-d H:i:s')
             ];
@@ -788,6 +785,8 @@ class Penawaran extends Admin_Controller
                 'ppn' => $ppn,
                 'persen_disc' => str_replace(',', '', $post['persen_disc']),
                 'nilai_disc' => str_replace(',', '', $post['nilai_disc']),
+                'tipe_informasi_awal' => $tipe_info_awal,
+                'detail_informasi_awal' => $detail_info_awal,
                 'updated_by' => $this->auth->user_id(),
                 'updated_date' => date('Y-m-d H:i:s')
             ];

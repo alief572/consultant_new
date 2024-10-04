@@ -31,18 +31,18 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         <div class="box-body">
             <table border='0' style="width: 100%;">
                 <tr>
-                    <td class="pd-5 semi-bold">Number</td>
-                    <td class="pd-5" width="390">
+                    <td class="pd-5 semi-bold" valign="top">Number</td>
+                    <td class="pd-5" width="390" valign="top">
                         <input type="text" name="" id="" class="form-control form-control-sm" readonly>
                     </td>
-                    <td class="pd-5 semi-bold">Date</td>
-                    <td class="pd-5" width="390">
+                    <td class="pd-5 semi-bold" valign="top">Date</td>
+                    <td class="pd-5" width="390" valign="top">
                         <input type="date" name="tgl_quotation" id="" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold">Customer</td>
-                    <td class="pd-5" width="390">
+                    <td class="pd-5 semi-bold" valign="top">Customer</td>
+                    <td class="pd-5" width="390" valign="top">
                         <select name="customer" id="" class="form-control form-control-sm change_customer select_customer" required>
                             <option value="">- Select Customer -</option>
                             <?php
@@ -52,8 +52,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold">Marketing</td>
-                    <td class="pd-5" width="390">
+                    <td class="pd-5 semi-bold" valign="top">Marketing</td>
+                    <td class="pd-5" width="390" valign="top">
                         <select name="marketing" id="" class="form-control form-control-sm select_marketing">
                             <option value="">- Select Marketing -</option>
                             <?php
@@ -65,18 +65,74 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold">PIC</td>
-                    <td class="pd-5" width="390">
+                    <td class="pd-5 semi-bold" valign="top">PIC</td>
+                    <td class="pd-5" width="390" valign="top">
                         <input type="text" name="pic" id="" class="form-control form-control-sm pic" readonly>
                     </td>
-                    <td class="pd-5 semi-bold">Address</td>
-                    <td class="pd-5" width="390">
+                    <td class="pd-5 semi-bold" valign="top">Address</td>
+                    <td class="pd-5" width="390" valign="top">
                         <input type="text" name="address" id="" class="form-control form-control-sm address">
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold">Consultation Package</td>
-                    <td class="pd-5" width="390">
+                    <td class="pd-5 semi-bold" valign="top">Informasi Awal</td>
+                    <td class="pd-5" width="390" valign="top">
+                        <table style="width: 100%;" border="0">
+                            <tr>
+                                <td style="padding: 0.2rem;">
+                                    <input type="checkbox" name="check_info_awal_sales" id="" class="check_info_awal_sales"> Sales
+                                </td>
+                                <td style="padding: 0.2rem;">
+                                    <select name="informasi_awal_sales" id="" class="informasi_awal_sales">
+                                        <option value="">- Select Sales -</option>
+                                        <?php
+                                        foreach ($list_marketing as $item) {
+                                            echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.2rem;">
+                                    <input type="checkbox" name="check_info_awal_medsos" id="" class="check_info_awal_medsos"> Medsos
+                                </td>
+                                <td style="padding: 0.2rem;">
+                                    <select name="informasi_awal_medsos" id="" class="informasi_awal_medsos">
+                                        <option value="">- Select Medsos -</option>
+                                        <option value="Youtube">Youtube</option>
+                                        <option value="Instagram">Instagram</option>
+                                        <option value="Linkedin">Linkedin</option>
+                                        <option value="Website">Website</option>
+                                        <option value="Facebook">Facebook</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.2rem;">
+                                    <input type="checkbox" name="check_info_awal_others" id="" class="check_info_awal_others"> Others
+                                </td>
+                                <td style="padding: 0.2rem;">
+                                    <select name="informasi_awal_others" id="" class="informasi_awal_others">
+                                        <option value="">- Select Employee -</option>
+                                        <?php
+                                        foreach ($list_marketing as $item) {
+                                            echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="pd-5 semi-bold" valign="top">Upload Proposal</td>
+                    <td class="pd-5" width="390" valign="top">
+                        <input type="file" name="upload_proposal" id="" class="form-control form-control-sm">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pd-5 semi-bold" valign="top">Consultation Package</td>
+                    <td class="pd-5" width="390" valign="top">
                         <select name="consultation_package" class="form-control form-control-sm change_package select_package" required>
                             <option value="">- Select Consultation Package -</option>
                             <?php
@@ -86,10 +142,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold">Upload Proposal</td>
-                    <td class="pd-5" width="390">
-                        <input type="file" name="upload_proposal" id="" class="form-control form-control-sm">
-                    </td>
+                    <td colspan="3"></td>
                 </tr>
             </table>
         </div>
@@ -306,7 +359,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <div style="float: right; margin-top: 1rem;">
                 <a href="<?= base_url('penawaran') ?>" class="btn btn-sm btn-danger">
                     <i class="fa fa-arrow-left"></i> Back
-                        </a>
+                </a>
                 <button type="submit" class="btn btn-sm btn-success">
                     <i class="fa fa-save"></i> Save
                 </button>
@@ -331,6 +384,15 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     $('.select_customer').chosen();
     $('.select_marketing').chosen();
     $('.select_package').chosen();
+    $('.informasi_awal_sales').chosen({
+        width: "100%"
+    });
+    $('.informasi_awal_medsos').chosen({
+        width: "100%"
+    });
+    $('.informasi_awal_others').chosen({
+        width: "100%"
+    });
 
     // initialize with defaults
     $("#input-id").checkboxX({
@@ -340,6 +402,39 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
     $(document).ready(function() {
         auto_num();
+    });
+
+    $(document).on('click', '.check_info_awal_sales', function() {
+        if ($(this).is(':checked')) {
+            $('.informasi_awal_sales').attr('disabled', false);
+        } else {
+            $('.informasi_awal_sales').attr('disabled', true);
+        }
+
+        $('.check_info_awal_medsos').attr('checked', false);
+        $('.check_info_awal_others').attr('checked', false);
+    });
+
+    $(document).on('click', '.check_info_awal_medsos', function() {
+        if ($(this).is(':checked')) {
+            $('.informasi_awal_medsos').attr('disabled', false);
+        } else {
+            $('.informasi_awal_medsos').attr('disabled', true);
+        }
+
+        $('.check_info_awal_sales').attr('checked', false);
+        $('.check_info_awal_others').attr('checked', false);
+    });
+
+    $(document).on('click', '.check_info_awal_others', function() {
+        if ($(this).is(':checked')) {
+            $('.informasi_awal_others').attr('disabled', false);
+        } else {
+            $('.informasi_awal_others').attr('disabled', true);
+        }
+
+        $('.check_info_awal_sales').attr('checked', false);
+        $('.check_info_awal_medsos').attr('checked', false);
     });
 
     $(document).on('click', '.add_activity', function() {

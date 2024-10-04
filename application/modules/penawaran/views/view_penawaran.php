@@ -87,17 +87,68 @@ if (count($list_penawaran_others) > 0) {
                 </td>
             </tr>
             <tr>
-                <td class="pd-5 semi-bold">Consultation Package</td>
-                <td class="pd-5" width="390">
-                    <select name="consultation_package" class="form-control form-control-sm change_package select_package" required>
-                        <?php
-                        foreach ($list_package as $item) {
-                            if ($item->id_konsultasi_h == $list_penawaran->id_paket) {
-                                echo '<option value="' . $item->id_konsultasi_h . '">' . $item->nm_paket . '</option>';
-                            }
-                        }
-                        ?>
-                    </select>
+                <td class="pd-5 semi-bold" valign="top">Informasi Awal</td>
+                <td class="pd-5" width="390" valign="top">
+                    <table style="width: 100%;" border="0">
+                        <tr>
+                            <td style="padding: 0.2rem;">
+                                <input type="checkbox" name="check_info_awal_sales" id="" class="check_info_awal_sales" <?= ($list_penawaran->tipe_informasi_awal == 'Sales') ? 'checked' : '' ?> disabled> Sales
+                            </td>
+                            <td style="padding: 0.2rem;">
+                                <select name="informasi_awal_sales" id="" class="informasi_awal_sales" disabled>
+                                    <?php
+                                    foreach ($list_marketing as $item) {
+                                        if ($list_penawaran->tipe_informasi_awal == 'Sales' && $item->id == $list_penawaran->detail_informasi_awal) {
+                                            echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.2rem;">
+                                <input type="checkbox" name="check_info_awal_medsos" id="" class="check_info_awal_medsos" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos') ? 'checked' : '' ?> disabled> Medsos
+                            </td>
+                            <td style="padding: 0.2rem;">
+                                <select name="informasi_awal_medsos" id="" class="informasi_awal_medsos" disabled>
+                                    <?php
+                                    if ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Youtube') {
+                                        echo '<option value="Youtube">Youtube</option>';
+                                    }
+                                    if ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Instagram') {
+                                        echo '<option value="Instagram">Instagram</option>';
+                                    }
+                                    if ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Linkedin') {
+                                        echo '<option value="Linkedin">Linkedin</option>';
+                                    }
+                                    if ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Website') {
+                                        echo '<option value="Website">Website</option>';
+                                    }
+                                    if ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Facebook') {
+                                        echo '<option value="Facebook">Facebook</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.2rem;">
+                                <input type="checkbox" name="check_info_awal_others" id="" class="check_info_awal_others" disabled> Others
+                            </td>
+                            <td style="padding: 0.2rem;">
+                                <select name="informasi_awal_others" id="" class="informasi_awal_others" disabled>
+                                    <?php
+                                    foreach ($list_marketing as $item) {
+                                        if ($list_penawaran->tipe_informasi_awal == 'Others' && $item->id == $list_penawaran->detail_informasi_awal) {
+                                            echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
                 </td>
                 <td class="pd-5 semi-bold">Upload Proposal</td>
                 <td class="pd-5" width="390">
@@ -114,6 +165,21 @@ if (count($list_penawaran_others) > 0) {
                     }
                     ?>
                 </td>
+            </tr>
+            <tr>
+                <td class="pd-5 semi-bold">Consultation Package</td>
+                <td class="pd-5" width="390">
+                    <select name="consultation_package" class="form-control form-control-sm change_package select_package" required>
+                        <?php
+                        foreach ($list_package as $item) {
+                            if ($item->id_konsultasi_h == $list_penawaran->id_paket) {
+                                echo '<option value="' . $item->id_konsultasi_h . '">' . $item->nm_paket . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                </td>
+                <td colspan="3"></td>
             </tr>
         </table>
     </div>
@@ -258,7 +324,7 @@ if (count($list_penawaran_others) > 0) {
         </h4>
     </div>
     <div class="box-body box_others <?= ($open_others == '') ? '' : 'd-none' ?>">
-        
+
 
         <br>
 
@@ -355,11 +421,11 @@ if (count($list_penawaran_others) > 0) {
                     <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc), 2) ?></td>
                 </tr>
                 <tr>
-                    <?php 
-                        $nilai_ppn = 0;
-                        if($list_penawaran->ppn == 1) {
-                            $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc) * 11 / 100);
-                        }
+                    <?php
+                    $nilai_ppn = 0;
+                    if ($list_penawaran->ppn == 1) {
+                        $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc) * 11 / 100);
+                    }
                     ?>
                     <td class="text-left">PPN</td>
                     <td class="text-right summary_ppn"><?= number_format($nilai_ppn, 2) ?></td>
@@ -399,6 +465,16 @@ if (count($list_penawaran_others) > 0) {
     $('.select_customer').chosen();
     $('.select_marketing').chosen();
     $('.select_package').chosen();
+
+    $('.informasi_awal_sales').chosen({
+        width: "100%"
+    });
+    $('.informasi_awal_medsos').chosen({
+        width: "100%"
+    });
+    $('.informasi_awal_others').chosen({
+        width: "100%"
+    });
 
     // initialize with defaults
     $("#input-id").checkboxX({

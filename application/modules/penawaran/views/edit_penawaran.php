@@ -93,20 +93,63 @@ if (count($list_penawaran_others) > 0) {
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold">Consultation Package</td>
-                    <td class="pd-5" width="390">
-                        <select name="consultation_package" class="form-control form-control-sm change_package select_package" required>
-                            <option value="">- Select Consultation Package -</option>
-                            <?php
-                            foreach ($list_package as $item) {
-                                $selected = '';
-                                if ($item->id_konsultasi_h == $list_penawaran->id_paket) {
-                                    $selected = 'selected';
-                                }
-                                echo '<option value="' . $item->id_konsultasi_h . '" ' . $selected . '>' . $item->nm_paket . '</option>';
-                            }
-                            ?>
-                        </select>
+                    <td class="pd-5 semi-bold" valign="top">Informasi Awal</td>
+                    <td class="pd-5" width="390" valign="top">
+                        <table style="width: 100%;" border="0">
+                            <tr>
+                                <td style="padding: 0.2rem;">
+                                    <input type="checkbox" name="check_info_awal_sales" id="" class="check_info_awal_sales" <?= ($list_penawaran->tipe_informasi_awal == 'Sales') ? 'checked' : '' ?>> Sales
+                                </td>
+                                <td style="padding: 0.2rem;">
+                                    <select name="informasi_awal_sales" id="" class="informasi_awal_sales" <?= ($list_penawaran->tipe_informasi_awal == 'Sales') ? 'checked' : '' ?>>
+                                        <option value="">- Select Sales -</option>
+                                        <?php
+                                        foreach ($list_marketing as $item) {
+                                            $selected = '';
+                                            if ($list_penawaran->tipe_informasi_awal == 'Sales' && $list_penawaran->detail_informasi_awal == $item->id) {
+                                                $selected = 'selected';
+                                            }
+                                            echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.2rem;">
+                                    <input type="checkbox" name="check_info_awal_medsos" id="" class="check_info_awal_medsos" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos') ? 'checked' : '' ?>> Medsos
+                                </td>
+                                <td style="padding: 0.2rem;">
+                                    <select name="informasi_awal_medsos" id="" class="informasi_awal_medsos">
+                                        <option value="">- Select Medsos -</option>
+                                        <option value="Youtube" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Youtube') ? 'checked' : '' ?>>Youtube</option>
+                                        <option value="Instagram" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Instagram') ? 'checked' : '' ?>>Instagram</option>
+                                        <option value="Linkedin" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Linkedin') ? 'checked' : '' ?>>Linkedin</option>
+                                        <option value="Website" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Website') ? 'checked' : '' ?>>Website</option>
+                                        <option value="Facebook" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Facebook') ? 'checked' : '' ?>>Facebook</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.2rem;">
+                                    <input type="checkbox" name="check_info_awal_others" id="" class="check_info_awal_others" <?= ($list_penawaran->tipe_informasi_awal == 'Others') ? 'checked' : '' ?>> Others
+                                </td>
+                                <td style="padding: 0.2rem;">
+                                    <select name="informasi_awal_others" id="" class="informasi_awal_others">
+                                        <option value="">- Select Employee -</option>
+                                        <?php
+                                        foreach ($list_marketing as $item) {
+                                            $selected = '';
+                                            if ($list_penawaran->tipe_informasi_awal == 'Others' && $item->detail_informasi_awal == $item->id) {
+                                                $selected = 'selected';
+                                            }
+                                            echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                     <td class="pd-5 semi-bold">Upload Proposal</td>
                     <td class="pd-5" width="390">
@@ -123,6 +166,24 @@ if (count($list_penawaran_others) > 0) {
                         }
                         ?>
                     </td>
+                </tr>
+                <tr>
+                    <td class="pd-5 semi-bold">Consultation Package</td>
+                    <td class="pd-5" width="390">
+                        <select name="consultation_package" class="form-control form-control-sm change_package select_package" required>
+                            <option value="">- Select Consultation Package -</option>
+                            <?php
+                            foreach ($list_package as $item) {
+                                $selected = '';
+                                if ($item->id_konsultasi_h == $list_penawaran->id_paket) {
+                                    $selected = 'selected';
+                                }
+                                echo '<option value="' . $item->id_konsultasi_h . '" ' . $selected . '>' . $item->nm_paket . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </td>
+                    <td colspan="3"></td>
                 </tr>
             </table>
         </div>
@@ -172,24 +233,24 @@ if (count($list_penawaran_others) > 0) {
 
                         foreach ($list_aktifitas as $item) {
                             $selected = '';
-                            if($item->id_aktifitas == $item_aktifitas->id_aktifitas) {
+                            if ($item->id_aktifitas == $item_aktifitas->id_aktifitas) {
                                 $selected = 'selected';
                             }
-                            echo '<option value="' . $item->id_aktifitas . '" '.$selected.'>' . str_replace("'", "", $item->nm_aktifitas) . '</option>';
+                            echo '<option value="' . $item->id_aktifitas . '" ' . $selected . '>' . str_replace("'", "", $item->nm_aktifitas) . '</option>';
                         }
                         echo '</select>';
                         echo '</td>';
 
                         echo '<td class="text-center">';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_bobot_' . $no_activity . '" name="dt_act[' . $no_activity . '][bobot]" value="'.$item_aktifitas->bobot.'" onchange="hitung_total_activity()">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_bobot_' . $no_activity . '" name="dt_act[' . $no_activity . '][bobot]" value="' . $item_aktifitas->bobot . '" onchange="hitung_total_activity()">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' . $no_activity . '" name="dt_act[' . $no_activity . '][mandays]" value="'.$item_aktifitas->mandays.'" onchange="hitung_total_activity()">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' . $no_activity . '" name="dt_act[' . $no_activity . '][mandays]" value="' . $item_aktifitas->mandays . '" onchange="hitung_total_activity()">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' . $no_activity . '" name="dt_act[' . $no_activity . '][harga_aktifitas]" value="'.$item_aktifitas->harga_aktifitas.'" onchange="hitung_total_activity()">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' . $no_activity . '" name="dt_act[' . $no_activity . '][harga_aktifitas]" value="' . $item_aktifitas->harga_aktifitas . '" onchange="hitung_total_activity()">';
                         echo '</td>';
 
                         echo '<td class="text-center td_check_point_' . $no_activity . '">';
@@ -269,23 +330,23 @@ if (count($list_penawaran_others) > 0) {
                         echo '<tr class="tr_akomodasi_' . $no_akomodasi . '">';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_akomodasi . '][nm_akomodasi]" value="'.$item_akomodasi->nm_item.'">';
+                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_akomodasi . '][nm_akomodasi]" value="' . $item_akomodasi->nm_item . '">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_akomodasi . '][qty_akomodasi]" value="'.$item_akomodasi->qty.'" onchange="hitung_item_akomodasi(' . $no_akomodasi . ')">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_akomodasi . '][qty_akomodasi]" value="' . $item_akomodasi->qty . '" onchange="hitung_item_akomodasi(' . $no_akomodasi . ')">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_akomodasi . '][harga_akomodasi]" value="'.$item_akomodasi->price_unit.'" onchange="hitung_item_akomodasi(' . $no_akomodasi . ')">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_akomodasi . '][harga_akomodasi]" value="' . $item_akomodasi->price_unit . '" onchange="hitung_item_akomodasi(' . $no_akomodasi . ')">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_akomodasi . '][total_akomodasi]" value="'.$item_akomodasi->total.'" readonly>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_akomodasi . '][total_akomodasi]" value="' . $item_akomodasi->total . '" readonly>';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_akomodasi . '][keterangan_akomodasi]" value="'.$item_akomodasi->keterangan.'">';
+                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_akomodasi . '][keterangan_akomodasi]" value="' . $item_akomodasi->keterangan . '">';
                         echo '</td>';
 
                         echo '<td>';
@@ -357,23 +418,23 @@ if (count($list_penawaran_others) > 0) {
                         echo '<tr class="tr_others_' . $no_others . '">';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_others . '][nm_others]" value="'.$item_others->nm_item.'">';
+                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_others . '][nm_others]" value="' . $item_others->nm_item . '">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_others . '][qty_others]" value="'.$item_others->qty.'" onchange="hitung_item_others(' . $no_others . ')">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_others . '][qty_others]" value="' . $item_others->qty . '" onchange="hitung_item_others(' . $no_others . ')">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_others . '][harga_others]" value="'.$item_others->price_unit.'" onchange="hitung_item_others(' . $no_others . ')">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_others . '][harga_others]" value="' . $item_others->price_unit . '" onchange="hitung_item_others(' . $no_others . ')">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_others . '][total_others]" value="'.$item_others->total.'" readonly>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_others . '][total_others]" value="' . $item_others->total . '" readonly>';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_others . '][keterangan_others]" value="'.$item_others->keterangan.'">';
+                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_others . '][keterangan_others]" value="' . $item_others->keterangan . '">';
                         echo '</td>';
 
                         echo '<td>';
@@ -415,61 +476,61 @@ if (count($list_penawaran_others) > 0) {
             </h4>
         </div>
         <div class="box-body">
-        <table class="table custom-table-no">
-            <thead>
-                <tr>
-                    <th class="text-left">Item</th>
-                    <th class="text-right">Amount (Rp)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="text-left">Konsultasi</td>
-                    <td class="text-right summary_konsultasi"><?= number_format($ttl_price, 2) ?></td>
-                </tr>
-                <tr>
-                    <td class="text-left">Akomodasi</td>
-                    <td class="text-right summary_akomodasi"><?= number_format($ttl_akomodasi, 2) ?></td>
-                </tr>
-                <tr>
-                    <td class="text-left">Others</td>
-                    <td class="text-right summary_others"><?= number_format($ttl_others, 2) ?></td>
-                </tr>
-                <tr>
-                    <td class="text-left"><b>Subtotal</b></td>
-                    <td class="text-right summary_subtotal"><?= number_format(($ttl_price + $ttl_akomodasi + $ttl_others), 2) ?></td>
-                </tr>
-                <tr>
-                    <td class="text-left"><b>Discount</b></td>
-                    <td class="text-right">
-                        <div class="form-inline">
-                            <input type="text" name="persen_disc" id="" class="form-control form-control-sm text-right input_diskon_persen" placeholder="Discount (%)" style="max-width: 30%;" value="<?= $list_penawaran->persen_disc ?>">
-                            <input type="text" name="nilai_disc" id="" class="form-control form-control-sm text-right auto_num input_diskon_value" placeholder="Discount (Rp)" style="max-width: 30%;" value="<?= $list_penawaran->nilai_disc ?>">
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-left"><b>Price after discount</b></td>
-                    <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc), 2) ?></td>
-                </tr>
-                <tr>
-                    <?php 
+            <table class="table custom-table-no">
+                <thead>
+                    <tr>
+                        <th class="text-left">Item</th>
+                        <th class="text-right">Amount (Rp)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-left">Konsultasi</td>
+                        <td class="text-right summary_konsultasi"><?= number_format($ttl_price, 2) ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Akomodasi</td>
+                        <td class="text-right summary_akomodasi"><?= number_format($ttl_akomodasi, 2) ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Others</td>
+                        <td class="text-right summary_others"><?= number_format($ttl_others, 2) ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"><b>Subtotal</b></td>
+                        <td class="text-right summary_subtotal"><?= number_format(($ttl_price + $ttl_akomodasi + $ttl_others), 2) ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"><b>Discount</b></td>
+                        <td class="text-right">
+                            <div class="form-inline">
+                                <input type="text" name="persen_disc" id="" class="form-control form-control-sm text-right input_diskon_persen" placeholder="Discount (%)" style="max-width: 30%;" value="<?= $list_penawaran->persen_disc ?>">
+                                <input type="text" name="nilai_disc" id="" class="form-control form-control-sm text-right auto_num input_diskon_value" placeholder="Discount (Rp)" style="max-width: 30%;" value="<?= $list_penawaran->nilai_disc ?>">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"><b>Price after discount</b></td>
+                        <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc), 2) ?></td>
+                    </tr>
+                    <tr>
+                        <?php
                         $nilai_ppn = 0;
-                        if($list_penawaran->ppn == 1) {
+                        if ($list_penawaran->ppn == 1) {
                             $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc) * 11 / 100);
                         }
-                    ?>
-                    <td class="text-left">PPN</td>
-                    <td class="text-right summary_ppn"><?= number_format($nilai_ppn, 2) ?></td>
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td class="text-left"><b>Grand Total</b></td>
-                    <td class="text-right summary_grand_total"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc) + $nilai_ppn, 2) ?></td>
-                </tr>
-            </tfoot>
-        </table>
+                        ?>
+                        <td class="text-left">PPN</td>
+                        <td class="text-right summary_ppn"><?= number_format($nilai_ppn, 2) ?></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="text-left"><b>Grand Total</b></td>
+                        <td class="text-right summary_grand_total"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc) + $nilai_ppn, 2) ?></td>
+                    </tr>
+                </tfoot>
+            </table>
 
             <input type="hidden" class="grand_total" name="grand_total" value="<?= $list_penawaran->grand_total ?>">
 
@@ -501,6 +562,49 @@ if (count($list_penawaran_others) > 0) {
     $('.select_customer').chosen();
     $('.select_marketing').chosen();
     $('.select_package').chosen();
+
+    $('.informasi_awal_sales').chosen({
+        width: "100%"
+    });
+    $('.informasi_awal_medsos').chosen({
+        width: "100%"
+    });
+    $('.informasi_awal_others').chosen({
+        width: "100%"
+    });
+
+    $(document).on('click', '.check_info_awal_sales', function() {
+        if ($(this).is(':checked')) {
+            $('.informasi_awal_sales').attr('disabled', false);
+        } else {
+            $('.informasi_awal_sales').attr('disabled', true);
+        }
+
+        $('.check_info_awal_medsos').attr('checked', false);
+        $('.check_info_awal_others').attr('checked', false);
+    });
+
+    $(document).on('click', '.check_info_awal_medsos', function() {
+        if ($(this).is(':checked')) {
+            $('.informasi_awal_medsos').attr('disabled', false);
+        } else {
+            $('.informasi_awal_medsos').attr('disabled', true);
+        }
+
+        $('.check_info_awal_sales').attr('checked', false);
+        $('.check_info_awal_others').attr('checked', false);
+    });
+
+    $(document).on('click', '.check_info_awal_others', function() {
+        if ($(this).is(':checked')) {
+            $('.informasi_awal_others').attr('disabled', false);
+        } else {
+            $('.informasi_awal_others').attr('disabled', true);
+        }
+
+        $('.check_info_awal_sales').attr('checked', false);
+        $('.check_info_awal_medsos').attr('checked', false);
+    });
 
     // initialize with defaults
     $("#input-id").checkboxX({
