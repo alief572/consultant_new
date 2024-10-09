@@ -39,7 +39,7 @@
   <link rel="stylesheet" href="<?= base_url('assets/plugins/datetimepicker/bootstrap-datetimepicker.css'); ?>">
   <link rel="stylesheet" href="<?= base_url('assets/css/custom_ddr.css'); ?>">
 
-  <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.7/css/fixedHeader.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,6 +81,8 @@
   <script src="<?= base_url('assets/plugins/jqueryform/jquery.form.js'); ?>"></script>
   <script src="<?= base_url('assets/plugins/slimScroll/jquery.slimscroll.min.js'); ?>"></script>
   <script src="<?= base_url('assets/js/scripts.js'); ?>" type="text/javascript"></script>
+
+  <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-checkbox-x@1.5.7/js/checkbox-x.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
