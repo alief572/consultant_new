@@ -389,88 +389,77 @@ class Master_aktifitas extends Admin_Controller
                 if ($total > 0) {
                     $this->load->library('form_validation');
                     $no = 0;
-                    foreach ($_POST['nm_aktifitas'] as $i) {
-                        $chk_aktif = $this->db->select('id_chk_point')->where('id_aktifitas', $_POST['aktifitas_num'][$no])->limit(1)->get('kons_master_check_point');
-                        $callback  = '|callback_Check_aktifitas[nm_aktifitas[' . $no . ']]';
-                        if ($chk_aktif->num_rows() > 0) {
-                            $callback  = '';
-                        }
+                    // foreach ($_POST['nm_aktifitas'] as $i) {
+                    //     $chk_aktif = $this->db->select('id_chk_point')->where('id_aktifitas', $_POST['aktifitas_num'][$no])->limit(1)->get('kons_master_check_point');
+                    //     $callback  = '|callback_Check_aktifitas[nm_aktifitas[' . $no . ']]';
+                    //     if ($chk_aktif->num_rows() > 0) {
+                    //         $callback  = '';
+                    //     }
 
-                        $this->form_validation->set_rules('nm_aktifitas[' . $no . ']', 'Aktifitas #' . ($no + 1), 'trim|required' . $callback);
-                        $this->form_validation->set_rules('hrg_aktifitas[' . $no . ']', 'Harga #' . ($no + 1), 'trim|required|greater_than[0]|max_length[1000000]');
-                        $this->form_validation->set_rules('bobot[' . $no . ']', 'Bobot #' . ($no + 1), 'trim|required');
-                        $this->form_validation->set_rules('mandays[' . $no . ']', 'Mandays #' . ($no + 1), 'trim|required');
-                        $no++;
-                    }
-                    $this->form_validation->set_message('required', '%s harus diisi.');
-                    $this->form_validation->set_message('greater_than', '%s harus lebih besar dari nol.');
-                    $this->form_validation->set_message('Check_aktifitas', '%s Nama Aktifitas Sudah ada !');
-                    if ($this->form_validation->run() == TRUE) {
-                        $terinput  = 0;
-                        $tahapan   = 1;
-                        foreach ($_POST['aktifitas_num'] as $key => $value) {
-                            $id_aktifitas     = $value;
-                            $nm_aktifitas     = $_POST['nm_aktifitas'][$key];
-                            $harga_aktifitas  = $_POST['hrg_aktifitas'][$key];
-                            $bobot            = $_POST['bobot'][$key];
-                            $mandays          = $_POST['mandays'][$key];
-                            $unik_id          = $_POST['aktifitas_unique_id'][$key];
+                    //     $this->form_validation->set_rules('nm_aktifitas[' . $no . ']', 'Aktifitas #' . ($no + 1), 'trim|required' . $callback);
+                    //     $this->form_validation->set_rules('hrg_aktifitas[' . $no . ']', 'Harga #' . ($no + 1), 'trim|required|greater_than[0]|max_length[1000000]');
+                    //     $this->form_validation->set_rules('bobot[' . $no . ']', 'Bobot #' . ($no + 1), 'trim|required');
+                    //     $this->form_validation->set_rules('mandays[' . $no . ']', 'Mandays #' . ($no + 1), 'trim|required');
+                    //     $no++;
+                    // }
+                    // $this->form_validation->set_message('required', '%s harus diisi.');
+                    // $this->form_validation->set_message('greater_than', '%s harus lebih besar dari nol.');
+                    // $this->form_validation->set_message('Check_aktifitas', '%s Nama Aktifitas Sudah ada !');
+                    $terinput  = 0;
+                    $tahapan   = 1;
+                    foreach ($_POST['aktifitas_num'] as $key => $value) {
+                        $id_aktifitas     = $value;
+                        $nm_aktifitas     = $_POST['nm_aktifitas'][$key];
+                        $harga_aktifitas  = $_POST['hrg_aktifitas'][$key];
+                        $bobot            = $_POST['bobot'][$key];
+                        $mandays          = $_POST['mandays'][$key];
+                        $unik_id          = $_POST['aktifitas_unique_id'][$key];
 
-                            if (! empty($value)) {
-                                $cek_id = $this->db->select('id_aktifitas')->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas');
-                                if (! empty($unik_id) or ($cek_id->num_rows() > 0)) {
-                                    ## I. UPDATE AKTIFITAS
-                                    $aktifitas = array(
-                                        'nm_aktifitas'    => $nm_aktifitas,
-                                        'harga_aktifitas' => $harga_aktifitas,
-                                        'bobot'           => $bobot,
-                                        'mandays'         => $mandays,
-                                        'update_date'     => date('Y-m-d H:i:s'),
-                                        'update_by'       => $this->session->userdata('usr_username')
-                                    );
-                                    $update_db = $this->db
-                                        ->where('unique_id', $unik_id)
-                                        ->where('id_aktifitas', $id_aktifitas)
-                                        ->update('kons_master_aktifitas', $aktifitas);
-                                    if ($update_db) {
-                                        $terinput++;
-                                    }
+                        if (! empty($value)) {
+                            $cek_id = $this->db->select('id_aktifitas')->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas');
+                            if (! empty($unik_id) or ($cek_id->num_rows() > 0)) {
+                                ## I. UPDATE AKTIFITAS
+                                $aktifitas = array(
+                                    'nm_aktifitas'    => $nm_aktifitas,
+                                    'harga_aktifitas' => $harga_aktifitas,
+                                    'bobot'           => $bobot,
+                                    'mandays'         => $mandays,
+                                    'update_date'     => date('Y-m-d H:i:s'),
+                                    'update_by'       => $this->session->userdata('usr_username')
+                                );
+                                $update_db = $this->db
+                                    ->where('unique_id', $unik_id)
+                                    ->where('id_aktifitas', $id_aktifitas)
+                                    ->update('kons_master_aktifitas', $aktifitas);
+                                if ($update_db) {
+                                    $terinput++;
                                 }
                             }
                         }
-                        // if ($terinput > 0) {
-                        //     $pesan  = "Data Successfully Updated";
-                        //     $params['redirect_page']     = "YES";
-                        //     $params['redirect_page_URL'] = site_url('master-aktifitas');
-                        //     echo $this->query_success($pesan, $params);
-                        // } else {
-                        //     echo $this->query_error('Terjadi kesalahan, coba lagi');
-                        // }
+                    }
+                    // if ($terinput > 0) {
+                    //     $pesan  = "Data Successfully Updated";
+                    //     $params['redirect_page']     = "YES";
+                    //     $params['redirect_page_URL'] = site_url('master-aktifitas');
+                    //     echo $this->query_success($pesan, $params);
+                    // } else {
+                    //     echo $this->query_error('Terjadi kesalahan, coba lagi');
+                    // }
 
-                        if ($this->db->trans_status() === false) {
-                            $this->db->trans_rollback();
-                            $valid = 0;
-                            $pesan = 'Terjadi kesalahan, coba lagi';
-                        } else {
-                            $this->db->trans_commit();
-                            $valid = 1;
-                            $pesan = 'Data Successfully Updated';
-                        }
-
-                        echo json_encode([
-                            'status' => $valid,
-                            'pesan' => $pesan
-                        ]);
-                    } else {
+                    if ($this->db->trans_status() === false) {
                         $this->db->trans_rollback();
                         $valid = 0;
                         $pesan = 'Terjadi kesalahan, coba lagi';
-
-                        echo json_encode([
-                            'status' => $valid,
-                            'pesan' => $pesan
-                        ]);
+                    } else {
+                        $this->db->trans_commit();
+                        $valid = 1;
+                        $pesan = 'Data Successfully Updated';
                     }
+
+                    echo json_encode([
+                        'status' => $valid,
+                        'pesan' => $pesan
+                    ]);
                 }
             } else {
                 $this->db->trans_rollback();

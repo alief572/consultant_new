@@ -172,7 +172,9 @@
                 dataType: 'json',
                 success: function(data) {
                     if (data.status == 0) {
-                        ModalOpen("modal-sm", "Oops !", data.pesan, "html", "Close");
+                        AjaxNotif(data.pesan);
+                        $('#AnimateLoad').show();
+                        $('#MyModal').modal('hide');
                     }
                     if (data.status == 1) {
                         AjaxNotif(data.pesan);
