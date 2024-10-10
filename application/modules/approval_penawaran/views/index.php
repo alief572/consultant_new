@@ -21,13 +21,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 <div class="box">
     <div class="box-header">
-        <?php if ($ENABLE_ADD) : ?>
-            <div class="dropdown text-right">
-                <a class="btn btn-sm btn-success" href="<?= base_url('penawaran/add_penawaran') ?>">
-                    New Quotation
-                </a>
-            </div>
-        <?php endif; ?>
+        
     </div>
     <!-- /.box-header -->
     <div class="box-body">

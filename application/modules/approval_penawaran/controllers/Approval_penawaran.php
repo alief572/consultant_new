@@ -32,7 +32,7 @@ class Approval_penawaran extends Admin_Controller
     {
         $this->auth->restrict($this->viewPermission);
 
-        $this->template->title('Quotation List');
+        $this->template->title('Approval Quotation');
         $this->template->render('index');
     }
 
@@ -88,6 +88,58 @@ class Approval_penawaran extends Admin_Controller
         $this->template->render('view_penawaran');
     }
 
+    public function approval($id_penawaran)
+    {
+
+        $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $id_penawaran])->row();
+
+        $this->db->select('a.*, b.nm_aktifitas as nama_aktifitas, COUNT(c.id_chk_point) AS jml_check_point');
+        $this->db->from('kons_tr_penawaran_aktifitas a');
+        $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
+        $this->db->join('kons_master_check_point c', 'c.id_aktifitas = a.id_aktifitas', 'left');
+        $this->db->where('a.id_penawaran', $id_penawaran);
+        $this->db->group_by('a.id_aktifitas');
+        $get_penawaran_aktifitas = $this->db->get()->result();
+
+        $get_penawaran_akomodasi = $this->db->get_where('kons_tr_penawaran_akomodasi', ['id_penawaran' => $id_penawaran])->result();
+        $get_penawaran_others = $this->db->get_where('kons_tr_penawaran_others', ['id_penawaran' => $id_penawaran])->result();
+
+        $this->db->select('a.*');
+        $this->db->from('customers a');
+        $this->db->where('a.name <>', '');
+        $this->db->group_by('a.name');
+        $get_customer = $this->db->get()->result();
+
+        $this->db->select('a.*');
+        $this->db->from('members a');
+        $this->db->where('a.nama <>', '');
+        $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.*, b.nm_paket');
+        $this->db->from('kons_master_konsultasi_header a');
+        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
+        $get_package = $this->db->get()->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_master_aktifitas a');
+        $get_aktifitas = $this->db->get()->result();
+
+        $data = [
+            'list_penawaran' => $get_penawaran,
+            'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
+            'list_penawaran_akomodasi' => $get_penawaran_akomodasi,
+            'list_penawaran_others' => $get_penawaran_others,
+            'list_customers' => $get_customer,
+            'list_marketing' => $get_marketing,
+            'list_package' => $get_package,
+            'list_aktifitas' => $get_aktifitas
+        ];
+
+        $this->template->title('Approval Quotation');
+        $this->template->set($data);
+        $this->template->render('approval_penawaran');
+    }
+
     public function get_data_penawaran()
     {
         $draw = $this->input->post('draw');
@@ -99,7 +151,7 @@ class Approval_penawaran extends Admin_Controller
         $this->db->from('kons_tr_penawaran a');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
-        $this->db->where('a.sts_quot', 1);
+        $this->db->where_in('a.sts_quot', [0, 1]);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.tgl_quotation', $search['value'], 'both');
@@ -185,7 +237,7 @@ class Approval_penawaran extends Admin_Controller
             if ($this->managePermission) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-success" style="color: #000000">
+                        <a href="' . base_url('approval_penawaran/approval/' . $item->id_quotation) . '" class="btn btn-sm btn-success" style="color: #000000" >
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-edit"></i>
@@ -197,20 +249,6 @@ class Approval_penawaran extends Admin_Controller
                 ';
             }
 
-            if ($this->deletePermission) {
-                $option .= '
-                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="#" class="btn btn-sm btn-danger del_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-trash"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Reject </span>
-                    </div>
-                ';
-            }
             $option .= '</div>';
 
 
@@ -249,6 +287,55 @@ class Approval_penawaran extends Admin_Controller
             'recordsTotal' => $get_data->num_rows(),
             'recordsFiltered' => $get_data->num_rows(),
             'data' => $hasil
+        ]);
+    }
+
+    public function approve_penawaran()
+    {
+        $id_penawaran = $this->input->post('id_penawaran');
+
+        $this->db->trans_begin();
+
+        $update_sts_penawaran = $this->db->update('kons_tr_penawaran', ['sts_quot' => 1], ['id_quotation' => $id_penawaran]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $valid = 0;
+            $pesan = "Please try again later !";
+        } else {
+            $this->db->trans_commit();
+            $valid = 1;
+            $pesan = "Data has been approved !";
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
+    }
+
+    public function reject_penawaran()
+    {
+        $id_penawaran = $this->input->post('id_penawaran');
+        $reject_reason = $this->input->post('reject_reason');
+
+        $this->db->trans_begin();
+
+        $update_sts_penawaran = $this->db->update('kons_tr_penawaran', ['sts_quot' => 0, 'reject_reason' => $reject_reason], ['id_quotation' => $id_penawaran]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $valid = 0;
+            $pesan = "Please try again later !";
+        } else {
+            $this->db->trans_commit();
+            $valid = 1;
+            $pesan = "Data has been rejected !";
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
         ]);
     }
 }

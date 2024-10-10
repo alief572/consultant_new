@@ -42,7 +42,7 @@ if (count($list_penawaran_others) > 0) {
             <tr>
                 <td class="pd-5 semi-bold">Number</td>
                 <td class="pd-5" width="390">
-                    <input type="text" name="" id="" class="form-control form-control-sm" value="<?= $list_penawaran->id_quotation ?>" readonly>
+                    <input type="text" name="id_quotation" id="" class="form-control form-control-sm id_quotation" value="<?= $list_penawaran->id_quotation ?>" readonly>
                 </td>
                 <td class="pd-5 semi-bold">Date</td>
                 <td class="pd-5" width="390">
@@ -440,10 +440,30 @@ if (count($list_penawaran_others) > 0) {
 
         <input type="hidden" class="grand_total" name="grand_total">
 
-        <div style="float: right; margin-top: 1rem;">
-            <a href="<?= base_url('approval_penawaran') ?>" class="btn btn-sm btn-danger">
-                <i class="fa fa-arrow-left"></i> Back
-            </a>
+        <br>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="">Reject Reason</label>
+                <textarea name="reject_reason" id="" class="form-control form-control-sm reject_reason"><?= $list_penawaran->reject_reason ?></textarea>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div style="float: right; margin-top: 1rem; margin-left: 0.5rem;">
+                <a href="javascript:void(0);" class="btn btn-sm btn-success approve_penawaran">
+                    <i class="fa fa-check"></i> Approve
+                </a>
+            </div>
+            <div style="float: right; margin-top: 1rem; margin-left: 0.5rem;">
+                <a href="javascript:void(0);" class="btn btn-sm btn-danger reject_penawaran">
+                    <i class="fa fa-close"></i> Reject
+                </a>
+            </div>
+            <div style="float: right; margin-top: 1rem; margin-left: 0.5rem;">
+                <a href="<?= base_url('approval_penawaran') ?>" class="btn btn-sm btn-danger">
+                    <i class="fa fa-arrow-left"></i> Back
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -1012,6 +1032,102 @@ if (count($list_penawaran_others) > 0) {
                             type: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.approve_penawaran', function() {
+        var id_penawaran = $('.id_quotation').val();
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'You will approve this quotation !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: "POST",
+                    url: siteurl + active_controller + 'approve_penawaran',
+                    data: {
+                        'id_penawaran': id_penawaran
+                    },
+                    cache: false,
+                    dataType: "JSON",
+                    success: function(result) {
+                        if (result.status == 1) {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan,
+                            }, function(after) {
+                                window.location.href = siteurl + active_controller;
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: result.pesan,
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !',
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.reject_penawaran', function() {
+        var id_penawaran = $('.id_quotation').val();
+        var reject_reason = $('.reject_reason').val();
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'You will reject this quotation !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: "POST",
+                    url: siteurl + active_controller + 'reject_penawaran',
+                    data: {
+                        'id_penawaran': id_penawaran,
+                        'reject_reason': reject_reason
+                    },
+                    cache: false,
+                    dataType: "JSON",
+                    success: function(result) {
+                        if (result.status == 1) {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan,
+                            }, function(after) {
+                                window.location.href = siteurl + active_controller;
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: result.pesan,
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !',
                         });
                     }
                 });
