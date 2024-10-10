@@ -360,11 +360,11 @@ class Master_aktifitas extends Admin_Controller
             // $this->form_validation->set_message('Check_aktifitas', '%s Nama Aktifitas Sudah ada !');
             // if($this->form_validation->run() == TRUE)
             // {
-            //     $data['nm_aktifitas']   = $this->clean_tag_input($aktifitas);
-            //     $data['harga_aktifitas']= $this->clean_tag_input($this->input->post('hrg_aktifitas'));
-            //     $data['bobot']          = $this->clean_tag_input($this->input->post('bobot'));
-            //     $data['mandays']        = $this->clean_tag_input($this->input->post('mandays'));
-            //     $data['update_date']    = date('Y-m-d H:i:s');
+            //     $data['nm_aktifitas']   = $aktifitas;
+            //     $data['harga_aktifitas']= $this->input->post('hrg_aktifitas');
+            //     $data['bobot']          = $this->input->post('bobot');
+            //     $data['mandays']        = $this->input->post('mandays');
+            //     $data['update_date']    = date('Y-m-d H:i:s';
             //     $data['update_by']      = $this->session->userdata('usr_username');
             //     $updated = $this->db->where('id_aktifitas', $id_aktifitas)->update('kons_master_aktifitas', $data);
             //     if($updated)
