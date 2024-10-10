@@ -11,7 +11,7 @@
  * Last Update : Monday, 23 June 2018
  *
  */
-
+// awd
 class Master_aktifitas extends Admin_Controller
 {
     /*
@@ -360,11 +360,11 @@ class Master_aktifitas extends Admin_Controller
             // $this->form_validation->set_message('Check_aktifitas', '%s Nama Aktifitas Sudah ada !');
             // if($this->form_validation->run() == TRUE)
             // {
-            //     $data['nm_aktifitas']   = $this->clean_tag_input($aktifitas);
-            //     $data['harga_aktifitas']= $this->clean_tag_input($this->input->post('hrg_aktifitas'));
-            //     $data['bobot']          = $this->clean_tag_input($this->input->post('bobot'));
-            //     $data['mandays']        = $this->clean_tag_input($this->input->post('mandays'));
-            //     $data['update_date']    = date('Y-m-d H:i:s');
+            //     $data['nm_aktifitas']   = $aktifitas;
+            //     $data['harga_aktifitas']= $this->input->post('hrg_aktifitas');
+            //     $data['bobot']          = $this->input->post('bobot');
+            //     $data['mandays']        = $this->input->post('mandays');
+            //     $data['update_date']    = date('Y-m-d H:i:s';
             //     $data['update_by']      = $this->session->userdata('usr_username');
             //     $updated = $this->db->where('id_aktifitas', $id_aktifitas)->update('kons_master_aktifitas', $data);
             //     if($updated)
@@ -443,20 +443,49 @@ class Master_aktifitas extends Admin_Controller
                                 }
                             }
                         }
-                        if ($terinput > 0) {
-                            $pesan  = "Data Successfully Updated";
-                            $params['redirect_page']     = "YES";
-                            $params['redirect_page_URL'] = site_url('master-aktifitas');
-                            echo $this->query_success($pesan, $params);
+                        // if ($terinput > 0) {
+                        //     $pesan  = "Data Successfully Updated";
+                        //     $params['redirect_page']     = "YES";
+                        //     $params['redirect_page_URL'] = site_url('master-aktifitas');
+                        //     echo $this->query_success($pesan, $params);
+                        // } else {
+                        //     echo $this->query_error('Terjadi kesalahan, coba lagi');
+                        // }
+
+                        if ($this->db->trans_status() === false) {
+                            $this->db->trans_rollback();
+                            $valid = 0;
+                            $pesan = 'Terjadi kesalahan, coba lagi';
                         } else {
-                            echo $this->query_error('Terjadi kesalahan, coba lagi');
+                            $this->db->trans_commit();
+                            $valid = 1;
+                            $pesan = 'Data Successfully Updated';
                         }
+
+                        echo json_encode([
+                            'status' => $valid,
+                            'pesan' => $pesan
+                        ]);
                     } else {
-                        echo $this->input_error();
+                        $this->db->trans_rollback();
+                        $valid = 0;
+                        $pesan = 'Terjadi kesalahan, coba lagi';
+
+                        echo json_encode([
+                            'status' => $valid,
+                            'pesan' => $pesan
+                        ]);
                     }
                 }
             } else {
-                echo $this->query_error("Mohon tambahkan aktifitas baru.");
+                $this->db->trans_rollback();
+                $valid = 0;
+                $pesan = 'Mohon tambahkan aktifitas baru.';
+
+                echo json_encode([
+                    'status' => $valid,
+                    'pesan' => $pesan
+                ]);
             }
         } else {
             $dt['id_aktifitas'] = $id_aktifitas;
