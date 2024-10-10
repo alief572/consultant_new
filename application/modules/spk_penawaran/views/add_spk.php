@@ -114,7 +114,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Project Leader</td>
                     <td class="pd-5" width="390" valign="top">
-                        <select name="project_leader" id="" class="form-control form-control-sm select_project_leader">
+                        <select name="project_leader" id="" class="form-control form-control-sm select_project_leader" required>
                             <option value="">- Select Project Leader -</option>
                             <?php
                             foreach ($list_all_marketing as $item) {
