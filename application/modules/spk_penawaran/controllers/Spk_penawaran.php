@@ -222,6 +222,7 @@ class SPK_penawaran extends Admin_Controller
             $this->db->or_like('b.grand_total', $search['value'], 'both');
             $this->db->group_end();
         }
+        $this->db->order_by('a.input_date', 'desc');
 
         $get_data = $this->db->get();
 
@@ -236,14 +237,14 @@ class SPK_penawaran extends Admin_Controller
             $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $item->id_penawaran])->row();
             if ($get_penawaran->sts_cust == 0) {
                 $status = '
-                    <span class="btn btn-sm btn-success" style="width: 100% !important;">
-                        <b>NEW</b>
+                    <span class="btn btn-sm btn-warning" style="width: 100% !important;">
+                        <b>New</b>
                     </span>
                 ';
             } else {
                 $status = '
-                    <span class="btn btn-sm btn-primary" style="width: 100% !important;">
-                        <b>REPEAT</b>
+                    <span class="btn btn-sm btn-info" style="width: 100% !important;">
+                        <b>Repeat</b>
                     </span>
                 ';
             }

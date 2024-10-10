@@ -161,6 +161,7 @@ class Approval_penawaran extends Admin_Controller
             $this->db->or_like('a.grand_total', $search['value'], 'both');
             $this->db->group_end();
         }
+        $this->db->order_by('a.input_date', 'desc');
 
         $get_data = $this->db->get();
 
@@ -171,14 +172,14 @@ class Approval_penawaran extends Admin_Controller
 
             if ($item->sts_cust == 0) {
                 $status_cust = '
-                    <span class="btn btn-sm btn-success" style="width: 100% !important;">
-                        <b>NEW</b>
+                    <span class="btn btn-sm btn-warning" style="width: 100% !important;">
+                        <b>New</b>
                     </span>
                 ';
             } else {
                 $status_cust = '
-                    <span class="btn btn-sm btn-primary" style="width: 100% !important;">
-                        <b>REPEAT</b>
+                    <span class="btn btn-sm btn-info" style="width: 100% !important;">
+                        <b>Repeat</b>
                     </span>
                 ';
             }
