@@ -122,6 +122,11 @@ class Approval_spk_penawaran extends Admin_Controller
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
+        $this->db->group_start();
+        $this->db->where('a.sts_spk', null);
+        $this->db->or_where('a.sts_spk', '');
+        $this->db->or_where('a.sts_spk', 0);
+        $this->db->group_end();
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->or_like('a.nm_sales', $search['value'], 'both');
@@ -156,10 +161,10 @@ class Approval_spk_penawaran extends Admin_Controller
                 ';
             }
 
-            if($item->sts_spk == '1') {
+            if ($item->sts_spk == '1') {
                 $status_spk = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
-            if($item->sts_spk == '0') {
+            if ($item->sts_spk == '0') {
                 $status_spk = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
             }
 
@@ -237,7 +242,8 @@ class Approval_spk_penawaran extends Admin_Controller
         ]);
     }
 
-    public function approval_spk($id_spk_penawaran) {
+    public function approval_spk($id_spk_penawaran)
+    {
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
         $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
@@ -308,5 +314,55 @@ class Approval_spk_penawaran extends Admin_Controller
         $this->template->title('Approval SPK');
         $this->template->set($data);
         $this->template->render('approval_spk');
+    }
+
+    public function reject_spk()
+    {
+        $post = $this->input->post();
+
+        $id_spk_penawaran = $post['id_spk_penawaran'];
+        $reject_reason = $post['reject_reason'];
+
+        $this->db->trans_begin();
+
+        $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', ['sts_spk' => 0, 'reject_reason' => $reject_reason], ['id_spk_penawaran' => $id_spk_penawaran]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $valid = 0;
+            $pesan = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+            $valid = 1;
+            $pesan = 'Data has been rejected !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
+    }
+
+    public function approve_spk() {
+        $post = $this->input->post();
+
+        $id_spk_penawaran = $post['id_spk_penawaran'];
+
+        $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', ['sts_spk' => 1], ['id_spk_penawaran' => $id_spk_penawaran]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $valid = 0;
+            $pesan = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+            $valid = 1;
+            $pesan = 'Data has been Approved !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
     }
 }
