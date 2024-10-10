@@ -3,10 +3,6 @@ $ENABLE_ADD     = has_permission('SPK.Add');
 $ENABLE_MANAGE  = has_permission('SPK.Manage');
 $ENABLE_VIEW    = has_permission('SPK.View');
 $ENABLE_DELETE  = has_permission('SPK.Delete');
-
-$ttl_persen_komisi = ($list_spk_penawaran->persentase_pemberi_informasi_komisi + $list_spk_penawaran->persentase_sales_komisi + $list_spk_penawaran->persentase_others_komisi);
-
-$ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $list_spk_penawaran->nominal_sales_komisi + $list_spk_penawaran->nominal_others_komisi);
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -38,28 +34,28 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Number</td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="text" name="id_spk_penawaran" id="" class="form-control form-control-sm text-center" value="<?= $list_spk_penawaran->id_spk_penawaran ?>" readonly>
+                        <input type="text" name="id_quotation" id="" class="form-control form-control-sm text-center" value="<?= $list_penawaran->id_quotation ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Address</td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="text" name="address" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->address ?>" readonly>
+                        <input type="text" name="address" id="" class="form-control form-control-sm" value="<?= $list_penawaran->address ?>" readonly>
                     </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Customer</td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="text" name="customer" id="" class="form-control form-control-sm text-center" value="<?= $list_spk_penawaran->nm_customer ?>" readonly>
+                        <input type="text" name="customer" id="" class="form-control form-control-sm text-center" value="<?= $list_customer->name ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Waktu</td>
                     <td class="pd-5" width="390" valign="top">
                         <table style="width: 100%">
                             <tr>
                                 <td>
-                                    <input type="date" name="waktu_from" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->waktu_from ?>">
+                                    <input type="date" name="waktu_from" id="" class="form-control form-control-sm">
                                 </td>
                                 <td class="text-center"> - </td>
                                 <td>
-                                    <input type="date" name="waktu_to" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->waktu_to ?>">
+                                    <input type="date" name="waktu_to" id="" class="form-control form-control-sm">
                                 </td>
                             </tr>
                         </table>
@@ -68,11 +64,11 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">PIC</td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="text" name="pic" id="" class="form-control form-control-sm text-center" value="<?= $list_spk_penawaran->nm_pic ?>" readonly>
+                        <input type="text" name="pic" id="" class="form-control form-control-sm text-center" value="<?= $list_penawaran->nm_pic ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Sales</td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="text" name="sales" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->nm_sales ?>" readonly>
+                        <input type="text" name="sales" id="" class="form-control form-control-sm" value="<?= $list_marketing->nama ?>" readonly>
                     </td>
                 </tr>
                 <tr>
@@ -91,14 +87,13 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Upload</td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="file_upload" name="sales" id="" class="form-control form-control-sm" disabled>
                         <?php
                         if (
-                            $list_spk_penawaran->upload_proposal !== '' &&
-                            $list_spk_penawaran->upload_proposal !== null &&
-                            file_exists('./uploads/proposal_penawaran/' . $list_spk_penawaran->upload_proposal)
+                            $list_penawaran->upload_proposal !== '' &&
+                            $list_penawaran->upload_proposal !== null &&
+                            file_exists('./uploads/proposal_penawaran/' . $list_penawaran->upload_proposal)
                         ) {
-                            echo '<a href="' . base_url('uploads/proposal_penawaran/' . $list_spk_penawaran->upload_proposal) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                            echo '<a href="' . base_url('uploads/proposal_penawaran/' . $list_penawaran->upload_proposal) . '" target="_blank" class="btn btn-sm btn-primary" style="">
                             <i class="fa fa-download"></i> Download Proposal
                         </a>';
                         }
@@ -115,7 +110,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                 <tr>
                     <td class="pd-5 semi-bold" valign="top" rowspan="2">Project</td>
                     <td class="pd-5" width="390" valign="top" rowspan="2">
-                        <textarea name="" id="" class="form-control form-control-sm" readonly><?= $list_spk_penawaran->nm_project ?></textarea>
+                        <textarea name="" id="" class="form-control form-control-sm" readonly><?= $nm_paket ?></textarea>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Project Leader</td>
                     <td class="pd-5" width="390" valign="top">
@@ -123,11 +118,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                             <option value="">- Select Project Leader -</option>
                             <?php
                             foreach ($list_all_marketing as $item) {
-                                $selected = '';
-                                if ($item->id == $list_spk_penawaran->id_project_leader) {
-                                    $selected = 'selected';
-                                }
-                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
                             }
                             ?>
                         </select>
@@ -140,11 +131,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                             <option value="">- Select Konsultan 1 -</option>
                             <?php
                             foreach ($list_all_marketing as $item) {
-                                $selected = '';
-                                if ($item->id == $list_spk_penawaran->id_konsultan_1) {
-                                    $selected = 'selected';
-                                }
-                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
                             }
                             ?>
                         </select>
@@ -157,11 +144,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                             <option value="">- Select Divisi -</option>
                             <?php
                             foreach ($list_divisi as $item) {
-                                $selected = '';
-                                if ($item->id == $list_spk_penawaran->id_divisi) {
-                                    $selected = 'selected';
-                                }
-                                echo '<option value="' . $item->id . '" ' . $selected . '>' . strtoupper($item->nama) . '</option>';
+                                echo '<option value="' . $item->id . '">' . strtoupper($item->nama) . '</option>';
                             }
                             ?>
                         </select>
@@ -172,11 +155,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                             <option value="">- Select Konsultan 2 -</option>
                             <?php
                             foreach ($list_all_marketing as $item) {
-                                $selected = '';
-                                if ($item->id == $list_spk_penawaran->id_konsultan_2) {
-                                    $selected = 'selected';
-                                }
-                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
                             }
                             ?>
                         </select>
@@ -206,9 +185,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                     <?php
                     $no = 1;
                     $total_mandays = 0;
-                    $total_mandays_subcont = 0;
-                    $total_subcont = 0;
-                    foreach ($list_spk_penawaran_subcont as $item) {
+                    foreach ($list_aktifitas as $item) {
                         echo '<tr class="subcont_' . $no . '">';
                         echo '<td>';
                         echo '<select class="form-control form-control-sm chosen_select" name="dt[' . $no . '][id_aktifitas]">';
@@ -224,10 +201,10 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                         echo '</td>';
                         echo '<td class="text-center">' . $item->mandays . ' <input type="hidden" name="dt[' . $no . '][mandays]" value="' . $item->mandays . '"></td>';
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm edit_mandays_subcont mandays_subcont_' . $item->id . '" name="dt[' . $no . '][mandays_subcont]" data-id="' . $item->id . '" value="' . $item->mandays_subcont . '">';
+                        echo '<input type="text" class="form-control form-control-sm edit_mandays_subcont mandays_subcont_' . $item->id . '" name="dt[' . $no . '][mandays_subcont]" data-id="' . $item->id . '">';
                         echo '</td>';
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm text-right edit_price_subcont price_subcont_' . $item->id . ' auto_num" name="dt[' . $no . '][price_subcont]" value="' . $item->price_subcont . '" data-id="' . $item->id . '">';
+                        echo '<input type="text" class="form-control form-control-sm text-right edit_price_subcont price_subcont_' . $item->id . ' auto_num" name="dt[' . $no . '][price_subcont]" value="' . $item->harga_aktifitas . '" data-id="' . $item->id . '">';
                         echo '</td>';
                         echo '<td>';
                         echo '<input type="text" class="form-control form-control-sm total_subcont_' . $item->id . ' auto_num text-right" name="dt[' . $no . '][total_subcont]" readonly>';
@@ -238,8 +215,6 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                         echo '</tr>';
 
                         $total_mandays += $item->mandays;
-                        $total_mandays_subcont = $item->mandays_subcont;
-                        $total_subcont = $item->total_subcont;
                         $no++;
                     }
                     ?>
@@ -247,9 +222,9 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                 <tfoot>
                     <th>Total</th>
                     <th class="text-center ttl_mandays"><?= $total_mandays ?></th>
-                    <th class="text-center ttl_mandays_subcont"><?= $total_mandays_subcont ?></th>
+                    <th class="text-center ttl_mandays_subcont"></th>
                     <th class="text-center"></th>
-                    <th class="text-center ttl_total_subcont"><?= number_format($total_subcont, 2) ?></th>
+                    <th class="text-center ttl_total_subcont"></th>
                 </tfoot>
             </table>
         </div>
@@ -261,37 +236,37 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Nilai Kontrak</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="nilai_kontrak" id="" class="form-control form-control-sm auto_num text-right" value="<?= $list_spk_penawaran->nilai_kontrak ?>" readonly>
+                        <input type="text" name="nilai_kontrak" id="" class="form-control form-control-sm auto_num text-right" value="<?= $nilai_kontrak ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Total Mandays</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($list_spk_penawaran->total_mandays) ?>" readonly>
+                        <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays) ?>" readonly>
                     </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Biaya Subcont</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="biaya_subcont" id="" class="form-control form-control-sm auto_num text-right biaya_subcont" value="<?= number_format($list_spk_penawaran->biaya_subcont) ?>" readonly>
+                        <input type="text" name="biaya_subcont" id="" class="form-control form-control-sm auto_num text-right biaya_subcont" value="0" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Mandays Subcont</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right mandays_subcont" value="<?= $list_spk_penawaran->mandays_subcont ?>" readonly>
+                        <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right mandays_subcont" value="0" readonly>
                     </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Nilai Internal</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="nilai_internal" id="" class="form-control form-control-sm auto_num text-right nilai_internal" value="<?= $list_spk_penawaran->nilai_internal; ?>" readonly>
+                        <input type="text" name="nilai_internal" id="" class="form-control form-control-sm auto_num text-right nilai_internal" value="<?= $nilai_kontrak; ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Mandays Internal</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right" value="<?= $list_spk_penawaran->mandays_internal ?>" readonly>
+                        <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right" value="0" readonly>
                     </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm auto_num text-right mandays_rate" value="<?= $list_spk_penawaran->mandays_rate ?>" readonly>
+                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm auto_num text-right mandays_rate" value="0" readonly>
                     </td>
                     <td colspan="3"></td>
                 </tr>
@@ -318,37 +293,37 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                     <tr>
                         <td>Pemberi Informasi</td>
                         <td>
-                            <input type="text" name="nama_pemberi_informasi_komisi" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->nama_pemberi_informasi_komisi ?>">
+                            <input type="text" name="nama_pemberi_informasi_komisi" id="" class="form-control form-control-sm">
                         </td>
                         <td>
-                            <input type="text" name="persentase_pemberi_informasi_komisi" id="" class="form-control form-control-sm text-right" value="<?= $list_spk_penawaran->persentase_pemberi_informasi_komisi ?>" onchange="persen_komisi('pemberi_informasi')">
+                            <input type="text" name="persentase_pemberi_informasi_komisi" id="" class="form-control form-control-sm text-right" onchange="persen_komisi('pemberi_informasi')">
                         </td>
                         <td>
-                            <input type="text" name="nominal_pemberi_informasi_komisi" id="" class="form-control form-control-sm text-right" value="<?= number_format($list_spk_penawaran->nominal_pemberi_informasi_komisi, 2) ?>" readonly>
+                            <input type="text" name="nominal_pemberi_informasi_komisi" id="" class="form-control form-control-sm text-right" readonly>
                         </td>
                     </tr>
                     <tr>
                         <td>Sales</td>
                         <td>
-                            <input type="text" name="nama_sales_komisi" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->nama_sales_komisi ?>">
+                            <input type="text" name="nama_sales_komisi" id="" class="form-control form-control-sm">
                         </td>
                         <td>
-                            <input type="text" name="persentase_sales_komisi" id="" class="form-control form-control-sm text-right" value="<?= $list_spk_penawaran->persentase_sales_komisi ?>" onchange="persen_komisi('sales')">
+                            <input type="text" name="persentase_sales_komisi" id="" class="form-control form-control-sm text-right" onchange="persen_komisi('sales')">
                         </td>
                         <td>
-                            <input type="text" name="nominal_sales_komisi" id="" class="form-control form-control-sm text-right" value="<?= number_format($list_spk_penawaran->nominal_sales_komisi, 2) ?>" readonly>
+                            <input type="text" name="nominal_sales_komisi" id="" class="form-control form-control-sm text-right" readonly>
                         </td>
                     </tr>
                     <tr>
                         <td>Others</td>
                         <td>
-                            <input type="text" name="nama_others_komisi" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->nama_others_komisi ?>">
+                            <input type="text" name="nama_others_komisi" id="" class="form-control form-control-sm">
                         </td>
                         <td>
-                            <input type="text" name="persentase_others_komisi" id="" class="form-control form-control-sm text-right" value="<?= $list_spk_penawaran->persentase_others_komisi ?>" onchange="persen_komisi('others')">
+                            <input type="text" name="persentase_others_komisi" id="" class="form-control form-control-sm text-right" onchange="persen_komisi('others')">
                         </td>
                         <td>
-                            <input type="text" name="nominal_others_komisi" id="" class="form-control form-control-sm text-right" value="<?= number_format($list_spk_penawaran->nominal_others_komisi, 2) ?>" readonly>
+                            <input type="text" name="nominal_others_komisi" id="" class="form-control form-control-sm text-right" readonly>
                         </td>
                     </tr>
                 </tbody>
@@ -356,8 +331,8 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                     <tr>
                         <th></th>
                         <th></th>
-                        <th class="text-right ttl_persen_komisi"><?= number_format($ttl_persen_komisi, 2) ?></th>
-                        <th class="text-right ttl_nilai_komisi"><?= number_format($ttl_nominal_komisi, 2) ?></th>
+                        <th class="text-right ttl_persen_komisi">0</th>
+                        <th class="text-right ttl_nilai_komisi">0</th>
                     </tr>
                 </tfoot>
             </table>
@@ -400,49 +375,15 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                     </tr>
                 </thead>
                 <tbody class="list_payment_term">
-                    <?php
-                    $no_payment = 1;
 
-                    $ttl_persen_payment = 0;
-                    $ttl_nominal_payment = 0;
-                    foreach ($list_spk_penawaran_payment as $item) {
-                        echo '<tr class="payment_' . $no_payment . '">';
-                        echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm" name="pt[' . $no_payment . '][term_payment]" value="' . $item->term_payment . '">';
-                        echo '</td>';
-
-                        echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right persen_payment" name="pt[' . $no_payment . '][persen_payment]" data-no="' . $no_payment . '" value="' . $item->persen_payment . '">';
-                        echo '</td>';
-
-                        echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right nominal_payment" name="pt[' . $no_payment . '][nominal_payment]" data-no="' . $no_payment . '" value="' . $item->nominal_payment . '">';
-                        echo '</td>';
-
-                        echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm" name="pt[' . $no_payment . '][desc_payment]" value="' . $item->desc_payment . '">';
-                        echo '</td>';
-
-                        echo '<td class="text-center">';
-                        echo '<button type="button" class="btn btn-sm btn-danger del_term_payment" data-no_payment="' . $no_payment . '"><i class="fa fa-trash"></i></button>';
-                        echo '</td>';
-
-                        echo '</tr>';
-
-                        $ttl_persen_payment += $item->persen_payment;
-                        $ttl_nominal_payment += $item->nominal_payment;
-
-                        $no_payment++;
-                    }
-                    ?>
                 </tbody>
                 <tfoot>
                     <tr>
                         <th></th>
-                        <th class="text-right ttl_persentase_payment"><?= number_format($ttl_persen_payment, 2) ?></th>
-                        <th class="text-right ttl_nominal_payment"><?= number_format($ttl_nominal_payment, 2) ?></th>
-                        <th class="text-right"></th>
-                        <th class="text-right"></th>
+                        <th class="text-center ttl_persentase_payment">0.00</th>
+                        <th class="text-center ttl_nominal_payment">0.00</th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
                     </tr>
                 </tfoot>
             </table>
@@ -455,13 +396,13 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
     </button>
 </form>
 
-<input type="hidden" name="no_payment" value="<?= $no_payment ?>">
+<input type="hidden" name="no_payment" value="1">
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script>
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
         $('.chosen_select').chosen({
-            width: "400px"
+            width: "100%"
         });
 
         $('.select_divisi').chosen();
@@ -682,7 +623,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
 
                 $.ajax({
                     type: "POST",
-                    url: siteurl + active_controller + 'update_spk_penawaran',
+                    url: siteurl + active_controller + 'save_spk_penawaran',
                     data: formData,
                     cache: false,
                     dataType: "JSON",

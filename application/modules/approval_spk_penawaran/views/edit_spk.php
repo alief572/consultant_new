@@ -461,7 +461,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
         $('.chosen_select').chosen({
-            width: "400px"
+            width: "100%"
         });
 
         $('.select_divisi').chosen();

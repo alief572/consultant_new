@@ -231,7 +231,29 @@ class SPK_penawaran extends Admin_Controller
         foreach ($get_data->result() as $item) {
 
             $status = '<button type="button" class="btn btn-sm btn-success">NEW</button>';
-            $status_spk = '<button type="button" class="btn btn-sm btn-success">NEW</button>';
+            $status_spk = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+
+            $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $item->id_penawaran])->row();
+            if ($get_penawaran->sts_cust == 0) {
+                $status = '
+                    <span class="btn btn-sm btn-success" style="width: 100% !important;">
+                        <b>NEW</b>
+                    </span>
+                ';
+            } else {
+                $status = '
+                    <span class="btn btn-sm btn-primary" style="width: 100% !important;">
+                        <b>REPEAT</b>
+                    </span>
+                ';
+            }
+
+            if($item->sts_spk == '1') {
+                $status_spk = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+            }
+            if($item->sts_spk == '0') {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+            }
 
             $option = '
             <div class="btn-group">

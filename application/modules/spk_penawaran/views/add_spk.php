@@ -402,7 +402,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
         $('.chosen_select').chosen({
-            width: "100%"
+            width: "400px"
         });
 
         $('.select_divisi').chosen();
