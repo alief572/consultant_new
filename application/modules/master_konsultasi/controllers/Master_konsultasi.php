@@ -420,6 +420,8 @@ class Master_konsultasi extends Admin_Controller
 
             $this->db->trans_begin();
 
+            $this->db->delete('kons_master_konsultasi_detail', ['id_konsultasi_h' => $id_konsultasi]);
+
             $valid = 1;
             $msg = '';
             if (! empty($post['nm_aktifitas'])) {
@@ -456,36 +458,22 @@ class Master_konsultasi extends Admin_Controller
                             $bobot            = $post['bobot'][$key];
                             $mandays          = $post['mandays'][$key];
                             if (! empty($value)) {
-                                if (! empty($post['id_konsultasi_d'][$key])) {
-                                    $detail['nm_aktifitas']     = $nm_aktifitas;
-                                    $detail['harga_aktifitas']  = $harga_aktifitas;
-                                    $detail['bobot']            = $bobot;
-                                    $detail['mandays']          = $mandays;
-                                    $detail['tahapan']          = $tahapan;
-                                    $detail['update_date']      = date('Y-m-d H:i:s');
-                                    $detail['update_by']        = $this->auth->user_name();
-                                    $detail_input = $this->db->where('id_konsultasi_d', $post['id_konsultasi_d'][$key])->update('kons_master_konsultasi_detail', $detail);
-                                    if ($detail_input) {
-                                        $terinput++;
-                                    }
+                                $new['id_konsultasi_h']  = $id_konsultasi;
+                                $new['id_aktifitas']     = $id_aktifitas;
+                                $new['nm_aktifitas']     = $nm_aktifitas;
+                                $new['harga_aktifitas']  = $harga_aktifitas;
+                                $new['bobot']            = $bobot;
+                                $new['mandays']          = $mandays;
+                                $new['tahapan']          = $tahapan;
+                                $new['input_date']       = date('Y-m-d H:i:s');
+                                $new['input_by']         = $this->auth->user_name();
+                                $new_input = $this->db->insert('kons_master_konsultasi_detail', $new);
+                                if ($new_input) {
+                                    $terinput++;
                                 } else {
-                                    $new['id_konsultasi_h']  = $id_konsultasi;
-                                    $new['id_aktifitas']     = $id_aktifitas;
-                                    $new['nm_aktifitas']     = $nm_aktifitas;
-                                    $new['harga_aktifitas']  = $harga_aktifitas;
-                                    $new['bobot']            = $bobot;
-                                    $new['mandays']          = $mandays;
-                                    $new['tahapan']          = $tahapan;
-                                    $new['input_date']       = date('Y-m-d H:i:s');
-                                    $new['input_by']         = $this->auth->user_name();
-                                    $new_input = $this->db->insert('kons_master_konsultasi_detail', $new);
-                                    if ($new_input) {
-                                        $terinput++;
-                                    } else {
-                                        $this->db->trans_rollback();
-                                        print_r($this->db->error($new_input));
-                                        exit;
-                                    }
+                                    $this->db->trans_rollback();
+                                    print_r($this->db->error($new_input));
+                                    exit;
                                 }
                             }
                             $tahapan++;
@@ -517,7 +505,7 @@ class Master_konsultasi extends Admin_Controller
                 $msg = 'Mohon tambahkan aktifitas baru.';
             }
 
-            if($this->db->trans_status() === false || $valid == 0) {
+            if ($this->db->trans_status() === false || $valid == 0) {
                 $this->db->trans_rollback();
             } else {
                 $this->db->trans_commit();
