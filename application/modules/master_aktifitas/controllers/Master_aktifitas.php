@@ -426,7 +426,7 @@ class Master_aktifitas extends Admin_Controller
                                 if (! empty($unik_id) or ($cek_id->num_rows() > 0)) {
                                     ## I. UPDATE AKTIFITAS
                                     $aktifitas = array(
-                                        'nm_aktifitas'    => $this->clean_tag_input($nm_aktifitas),
+                                        'nm_aktifitas'    => $nm_aktifitas,
                                         'harga_aktifitas' => $harga_aktifitas,
                                         'bobot'           => $bobot,
                                         'mandays'         => $mandays,
