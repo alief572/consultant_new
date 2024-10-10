@@ -11,7 +11,7 @@
  * Last Update : Monday, 23 June 2018
  *
  */
-
+// awd
 class Master_aktifitas extends Admin_Controller
 {
     /*
