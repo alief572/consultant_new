@@ -541,6 +541,7 @@ class SPK_penawaran extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Add SPK');
         $this->template->render('add_spk');
     }
 

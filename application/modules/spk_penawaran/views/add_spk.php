@@ -87,14 +87,13 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Upload</td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="file_upload" name="sales" id="" class="form-control form-control-sm" disabled>
                         <?php
                         if (
                             $list_penawaran->upload_proposal !== '' &&
                             $list_penawaran->upload_proposal !== null &&
                             file_exists('./uploads/proposal_penawaran/' . $list_penawaran->upload_proposal)
                         ) {
-                            echo '<a href="' . base_url('uploads/proposal_penawaran/' . $list_penawaran->upload_proposal) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                            echo '<a href="' . base_url('uploads/proposal_penawaran/' . $list_penawaran->upload_proposal) . '" target="_blank" class="btn btn-sm btn-primary" style="">
                             <i class="fa fa-download"></i> Download Proposal
                         </a>';
                         }
