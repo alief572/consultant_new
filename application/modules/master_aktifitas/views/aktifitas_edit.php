@@ -183,11 +183,9 @@
                         }
 
                         // JIKA REDIRECT PAGE
-                        if (data.redirect_page == "YES") {
-                            setTimeout(function() {
-                                GoToPage(data.redirect_page_URL);
-                            }, 1500);
-                        }
+                        setTimeout(function() {
+                            window.location.href = siteurl + active_controller;
+                        }, 1500);
 
                         $('#' + FormID).each(function() {
                             this.reset();

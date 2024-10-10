@@ -426,7 +426,7 @@ class Master_aktifitas extends Admin_Controller
                                 if (! empty($unik_id) or ($cek_id->num_rows() > 0)) {
                                     ## I. UPDATE AKTIFITAS
                                     $aktifitas = array(
-                                        'nm_aktifitas'    => $this->clean_tag_input($nm_aktifitas),
+                                        'nm_aktifitas'    => $nm_aktifitas,
                                         'harga_aktifitas' => $harga_aktifitas,
                                         'bobot'           => $bobot,
                                         'mandays'         => $mandays,
@@ -443,20 +443,49 @@ class Master_aktifitas extends Admin_Controller
                                 }
                             }
                         }
-                        if ($terinput > 0) {
-                            $pesan  = "Data Successfully Updated";
-                            $params['redirect_page']     = "YES";
-                            $params['redirect_page_URL'] = site_url('master-aktifitas');
-                            echo $this->query_success($pesan, $params);
+                        // if ($terinput > 0) {
+                        //     $pesan  = "Data Successfully Updated";
+                        //     $params['redirect_page']     = "YES";
+                        //     $params['redirect_page_URL'] = site_url('master-aktifitas');
+                        //     echo $this->query_success($pesan, $params);
+                        // } else {
+                        //     echo $this->query_error('Terjadi kesalahan, coba lagi');
+                        // }
+
+                        if ($this->db->trans_status() === false) {
+                            $this->db->trans_rollback();
+                            $valid = 0;
+                            $pesan = 'Terjadi kesalahan, coba lagi';
                         } else {
-                            echo $this->query_error('Terjadi kesalahan, coba lagi');
+                            $this->db->trans_commit();
+                            $valid = 1;
+                            $pesan = 'Data Successfully Updated';
                         }
+
+                        echo json_encode([
+                            'status' => $valid,
+                            'pesan' => $pesan
+                        ]);
                     } else {
-                        echo $this->input_error();
+                        $this->db->trans_rollback();
+                        $valid = 0;
+                        $pesan = 'Terjadi kesalahan, coba lagi';
+
+                        echo json_encode([
+                            'status' => $valid,
+                            'pesan' => $pesan
+                        ]);
                     }
                 }
             } else {
-                echo $this->query_error("Mohon tambahkan aktifitas baru.");
+                $this->db->trans_rollback();
+                $valid = 0;
+                $pesan = 'Mohon tambahkan aktifitas baru.';
+
+                echo json_encode([
+                    'status' => $valid,
+                    'pesan' => $pesan
+                ]);
             }
         } else {
             $dt['id_aktifitas'] = $id_aktifitas;
