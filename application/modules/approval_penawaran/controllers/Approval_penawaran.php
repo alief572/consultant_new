@@ -296,7 +296,7 @@ class Approval_penawaran extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $update_sts_penawaran = $this->db->update('kons_tr_penawaran', ['sts_quot' => 1], ['id_quotation' => $id_penawaran]);
+        $update_sts_penawaran = $this->db->update('kons_tr_penawaran', ['sts_quot' => 2], ['id_quotation' => $id_penawaran]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
