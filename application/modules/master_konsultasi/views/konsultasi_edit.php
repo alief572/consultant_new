@@ -180,11 +180,12 @@
         // chosen bootstrap
         for (i = 1; i <= no; i++) {
             $('.chosen-select-' + i).chosen({
-                width: '100%'
+                width: '400px'
             });
         }
         $('.chosen-select-deselect').chosen({
-            allow_single_deselect: true
+            allow_single_deselect: true,
+            width: '400px'
         });
 
         // Append New Line
@@ -245,7 +246,9 @@
                 dataType: 'json',
                 success: function(data) {
                     if (data.status == 0) {
-                        ModalOpen("modal-sm", "Oops !", data.msg, "html", "Close");
+                        AjaxNotif(data.msg);
+                        $('#AnimateLoad').show();
+                        $('#MyModal').modal('hide');
                     }
                     if (data.status == 1) {
                         AjaxNotif(data.msg);

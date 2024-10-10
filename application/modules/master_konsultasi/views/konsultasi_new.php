@@ -226,6 +226,7 @@
 
     function run_select2() {
         $('.select2').chosen();
+
     }
 
     function number_format(number, decimals, dec_point, thousands_sep) {
@@ -287,7 +288,9 @@
         Baris += "</tr>";
         $('.listKonsultasi').append(Baris);
 
-        $('.id_aktifitas_' + Nomor).chosen();
+        $('.id_aktifitas_' + Nomor).chosen({
+            width: '400px'
+        });
         auto_num();
 
         /*

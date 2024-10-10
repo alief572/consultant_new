@@ -250,7 +250,7 @@ class Master_konsultasi extends Admin_Controller
                                 $explode          = explode("*_*", $value);
                                 $id_aktifitas     = $explode[0];
                                 $nm_aktifitas     = $post['nm_aktifitas'][$key];
-                                $harga_aktifitas  = $post['hrg_aktifitas'][$key];
+                                $harga_aktifitas  = str_replace(',', '', $post['hrg_aktifitas'][$key]);
                                 $bobot            = $post['bobot'][$key];
                                 $mandays          = $post['mandays'][$key];
 
@@ -435,7 +435,7 @@ class Master_konsultasi extends Admin_Controller
 
                     if (count(array_unique($post['nm_aktifitas'])) < count($post['nm_aktifitas'])) {
                         $valid = 0;
-                        $msg = '<i class="fa fa-remove"></i> Maaf, tidak boleh ada nama aktifitas yang sama !';
+                        $msg = 'Maaf, tidak boleh ada nama aktifitas yang sama !';
                     } else {
                         $terinput  = 0;
                         $tahapan   = 1;
@@ -452,7 +452,7 @@ class Master_konsultasi extends Admin_Controller
                             $explode          = explode("*_*", $value);
                             $id_aktifitas     = $explode[0];
                             $nm_aktifitas     = $post['nm_aktifitas'][$key];
-                            $harga_aktifitas  = $post['hrg_aktifitas'][$key];
+                            $harga_aktifitas  = str_replace(',', '', $post['hrg_aktifitas'][$key]);
                             $bobot            = $post['bobot'][$key];
                             $mandays          = $post['mandays'][$key];
                             if (! empty($value)) {
@@ -517,10 +517,15 @@ class Master_konsultasi extends Admin_Controller
                 $msg = 'Mohon tambahkan aktifitas baru.';
             }
 
+            if($this->db->trans_status() === false || $valid == 0) {
+                $this->db->trans_rollback();
+            } else {
+                $this->db->trans_commit();
+            }
+
             echo json_encode([
                 'status' => $valid,
-                'msg' => $msg,
-                'count_point' => $this->db->where('id_aktifitas', $id_aktifitas)->get('kons_master_check_point')->num_rows()
+                'msg' => $msg
             ]);
         } else {
             $dt['id_konsultasi'] = $id_konsultasi;
