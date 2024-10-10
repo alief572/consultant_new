@@ -210,27 +210,60 @@ class Master_aktifitas extends Admin_Controller
                     $this->form_validation->set_message('required', '%s harus diisi.');
                     $this->form_validation->set_message('greater_than', '%s harus lebih besar dari nol.');
                     $this->form_validation->set_message('Check_aktifitas', '%s Nama Aktifitas Sudah ada !');
-                    if ($this->form_validation->run() == TRUE) {
-                        if (count(array_unique($post['nm_aktifitas'])) < count($post['nm_aktifitas'])) {
-                            $valid = 0;
-                            $msg = 'Maaf, tidak boleh ada nama aktifitas yang sama !';
-                        } else {
-                            $terinput  = 0;
-                            $tahapan   = 1;
-                            $unique_id = sha1(time(microtime()));
-                            foreach ($post['aktifitas_num'] as $key => $value) {
-                                $id_aktifitas     = $value;
-                                $nm_aktifitas     = $post['nm_aktifitas'][$key];
-                                $harga_aktifitas  = $post['hrg_aktifitas'][$key];
-                                $bobot            = $post['bobot'][$key];
-                                $mandays          = $post['mandays'][$key];
-                                $unik_id          = $post['aktifitas_unique_id'][$key];
+                    if (count(array_unique($post['nm_aktifitas'])) < count($post['nm_aktifitas'])) {
+                        $valid = 0;
+                        $msg = 'Maaf, tidak boleh ada nama aktifitas yang sama !';
+                    } else {
+                        $terinput  = 0;
+                        $tahapan   = 1;
+                        $unique_id = sha1(time(microtime()));
+                        foreach ($post['aktifitas_num'] as $key => $value) {
+                            $id_aktifitas     = $value;
+                            $nm_aktifitas     = $post['nm_aktifitas'][$key];
+                            $harga_aktifitas  = $post['hrg_aktifitas'][$key];
+                            $bobot            = $post['bobot'][$key];
+                            $mandays          = $post['mandays'][$key];
+                            $unik_id          = $post['aktifitas_unique_id'][$key];
 
-                                if (! empty($value)) {
-                                    $cek_id = $this->db->select('id_aktifitas')->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas');
-                                    if (! empty($unik_id) or ($cek_id->num_rows() > 0)) {
-                                        ## I. UPDATE AKTIFITAS
+                            if (! empty($value)) {
+                                $cek_id = $this->db->select('id_aktifitas')->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas');
+                                if (! empty($unik_id) or ($cek_id->num_rows() > 0)) {
+                                    ## I. UPDATE AKTIFITAS
+                                    $aktifitas = array(
+                                        'datet'           => date('Y-m-d'),
+                                        'nm_aktifitas'    => $nm_aktifitas,
+                                        'harga_aktifitas' => $harga_aktifitas,
+                                        'bobot'           => $bobot,
+                                        'mandays'         => $mandays,
+                                        'tahapan'         => $tahapan,
+                                        'keterangan'      => '',
+                                        'id_kompetensi'   => '0',
+                                        'input_date'      => date('Y-m-d H:i:s'),
+                                        'input_by'        => $this->session->userdata('usr_username')
+                                    );
+                                    $update_db = $this->db
+                                        ->where('unique_id', $unik_id)
+                                        ->where('id_aktifitas', $id_aktifitas)
+                                        ->update('kons_master_aktifitas', $aktifitas);
+                                    if ($update_db) {
+                                        $terinput++;
+                                    }
+
+                                    #%# REMOVE ONE OR ALL ROW JIKA DIPILIH DELETE #%#
+                                    // if( ! empty($unik_id))
+                                    // {
+                                    //     $this->aktifitas_delete_rest($id_paket, $id_aktifitas);
+                                    // }
+                                    // if(empty($id_aktifitas))
+                                    // {
+                                    //     $this->aktifitas_delete_all($id_aktifitas);
+                                    // }
+
+                                } else {
+                                    if ($cek_id->num_rows() < 1) {
+                                        ## II. INSERT AKTIFITAS
                                         $aktifitas = array(
+                                            'id_aktifitas'    => $id_aktifitas,
                                             'datet'           => date('Y-m-d'),
                                             'nm_aktifitas'    => $nm_aktifitas,
                                             'harga_aktifitas' => $harga_aktifitas,
@@ -239,78 +272,40 @@ class Master_aktifitas extends Admin_Controller
                                             'tahapan'         => $tahapan,
                                             'keterangan'      => '',
                                             'id_kompetensi'   => '0',
+                                            'unique_id'       => $unique_id,
                                             'input_date'      => date('Y-m-d H:i:s'),
                                             'input_by'        => $this->session->userdata('usr_username')
                                         );
-                                        $update_db = $this->db
-                                            ->where('unique_id', $unik_id)
-                                            ->where('id_aktifitas', $id_aktifitas)
-                                            ->update('kons_master_aktifitas', $aktifitas);
-                                        if ($update_db) {
+                                        $insert_db = $this->db->insert('kons_master_aktifitas', $aktifitas);
+                                        if ($insert_db) {
+                                            //##&## INSERT ACTIVITY USERS
+                                            H_activity_record("Master Aktifitas > Add New Aktifitas > " . $nm_aktifitas);
                                             $terinput++;
-                                        }
-
-                                        #%# REMOVE ONE OR ALL ROW JIKA DIPILIH DELETE #%#
-                                        // if( ! empty($unik_id))
-                                        // {
-                                        //     $this->aktifitas_delete_rest($id_paket, $id_aktifitas);
-                                        // }
-                                        // if(empty($id_aktifitas))
-                                        // {
-                                        //     $this->aktifitas_delete_all($id_aktifitas);
-                                        // }
-
-                                    } else {
-                                        if ($cek_id->num_rows() < 1) {
-                                            ## II. INSERT AKTIFITAS
-                                            $aktifitas = array(
-                                                'id_aktifitas'    => $id_aktifitas,
-                                                'datet'           => date('Y-m-d'),
-                                                'nm_aktifitas'    => $nm_aktifitas,
-                                                'harga_aktifitas' => $harga_aktifitas,
-                                                'bobot'           => $bobot,
-                                                'mandays'         => $mandays,
-                                                'tahapan'         => $tahapan,
-                                                'keterangan'      => '',
-                                                'id_kompetensi'   => '0',
-                                                'unique_id'       => $unique_id,
-                                                'input_date'      => date('Y-m-d H:i:s'),
-                                                'input_by'        => $this->session->userdata('usr_username')
-                                            );
-                                            $insert_db = $this->db->insert('kons_master_aktifitas', $aktifitas);
-                                            if ($insert_db) {
-                                                //##&## INSERT ACTIVITY USERS
-                                                H_activity_record("Master Aktifitas > Add New Aktifitas > " . $nm_aktifitas);
-                                                $terinput++;
-                                            }
                                         }
                                     }
                                 }
-
-                                $tahapan++;
                             }
 
-                            // if ($terinput > 0) {
-                            //     $pesan  = "Data Successfully Saved";
-                            //     $params['redirect_page']     = "YES";
-                            //     $params['redirect_page_URL'] = site_url('master-aktifitas');
-                            //     echo $this->query_success($pesan, $params);
-                            // } else {
-                            //     echo $this->query_error('Terjadi kesalahan, coba lagi');
-                            // }
-
-                            if ($this->db->trans_status() === false) {
-                                $this->db->trans_rollback();
-                                $msg = 'Please try again later !';
-                                $valid = 0;
-                            } else {
-                                $this->db->trans_commit();
-                                $msg = 'Data successfully saved !';
-                            }
+                            $tahapan++;
                         }
-                    } else {
-                        $msg = 'Please try again later!';
-                        $valid = 0;
+
+                        // if ($terinput > 0) {
+                        //     $pesan  = "Data Successfully Saved";
+                        //     $params['redirect_page']     = "YES";
+                        //     $params['redirect_page_URL'] = site_url('master-aktifitas');
+                        //     echo $this->query_success($pesan, $params);
+                        // } else {
+                        //     echo $this->query_error('Terjadi kesalahan, coba lagi');
+                        // }
+
+                        if ($this->db->trans_status() === false) {
+                            $this->db->trans_rollback();
+                            $msg = 'Please try again later !';
+                            $valid = 0;
+                        } else {
+                            $this->db->trans_commit();
+                            $msg = 'Data successfully saved !';
+                        }
                     }
                 } else {
                     $msg = 'Harap masukan minimal 1 nama aktifitas.';
