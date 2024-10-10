@@ -365,7 +365,7 @@ class Master_konsultasi extends Admin_Controller
                 $msg = 'Mohon tambahkan aktifitas baru.';
             }
 
-            if ($valid == 1) {
+            if ($this->db->trans_status() !== false && $valid == 1) {
                 $this->db->trans_commit();
             } else {
                 $this->db->trans_rollback();

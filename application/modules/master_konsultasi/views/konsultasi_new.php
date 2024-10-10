@@ -181,13 +181,9 @@
                 dataType: 'json',
                 success: function(data) {
                     if (data.status == 0) {
-                        swal({
-                            type: 'warning',
-                            title: 'Failed !',
-                            text: data.pesan
-                        }, function(after) {
-                            location.reload(true);
-                        });
+                        AjaxNotif(data.pesan);
+                        $('#AnimateLoad').show();
+                        $('#MyModal').modal('hide');
                     }
                     if (data.status == 1) {
                         AjaxNotif(data.pesan);
