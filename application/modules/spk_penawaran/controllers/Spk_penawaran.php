@@ -580,10 +580,14 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id', $post['konsultan_1']);
         $get_konsultan_1 = $this->db->get()->row();
 
+        $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nama : '';
+
         $this->db->select('a.id, a.nama');
         $this->db->from('members a');
         $this->db->where('a.id', $post['konsultan_2']);
         $get_konsultan_2 = $this->db->get()->row();
+
+        $nm_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->nama : '';
 
         $this->db->trans_begin();
 
@@ -608,9 +612,9 @@ class SPK_penawaran extends Admin_Controller
             'id_project_leader' => $post['project_leader'],
             'nm_project_leader' => $get_project_leader->nama,
             'id_konsultan_1' => $post['konsultan_1'],
-            'nm_konsultan_1' => $get_konsultan_1->nama,
+            'nm_konsultan_1' => $nm_konsultan_1,
             'id_konsultan_2' => $post['konsultan_2'],
-            'nm_konsultan_2' => $get_konsultan_2->nama,
+            'nm_konsultan_2' => $nm_konsultan_2,
             'nilai_kontrak' => ($post['nilai_kontrak'] !== '') ? str_replace(',', '', $post['nilai_kontrak']) : 0,
             'biaya_subcont' => ($post['biaya_subcont'] !== '') ? str_replace(',', '', $post['biaya_subcont']) : 0,
             'nilai_internal' => ($post['nilai_internal'] !== '') ? str_replace(',', '', $post['nilai_internal']) : 0,
@@ -752,10 +756,14 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id', $post['konsultan_1']);
         $get_konsultan_1 = $this->db->get()->row();
 
+        $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nama : '';
+
         $this->db->select('a.id, a.nama');
         $this->db->from('members a');
         $this->db->where('a.id', $post['konsultan_2']);
         $get_konsultan_2 = $this->db->get()->row();
+
+        $nm_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->nama : '';
 
         $this->db->trans_begin();
 
@@ -781,9 +789,9 @@ class SPK_penawaran extends Admin_Controller
             'id_project_leader' => $post['project_leader'],
             'nm_project_leader' => $get_project_leader->nama,
             'id_konsultan_1' => $post['konsultan_1'],
-            'nm_konsultan_1' => $get_konsultan_1->nama,
+            'nm_konsultan_1' => $nm_konsultan_1,
             'id_konsultan_2' => $post['konsultan_2'],
-            'nm_konsultan_2' => $get_konsultan_2->nama,
+            'nm_konsultan_2' => $nm_konsultan_2,
             'nilai_kontrak' => ($post['nilai_kontrak'] !== '') ? str_replace(',', '', $post['nilai_kontrak']) : 0,
             'biaya_subcont' => ($post['biaya_subcont'] !== '') ? str_replace(',', '', $post['biaya_subcont']) : 0,
             'nilai_internal' => ($post['nilai_internal'] !== '') ? str_replace(',', '', $post['nilai_internal']) : 0,
