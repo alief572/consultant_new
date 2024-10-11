@@ -249,10 +249,10 @@ class SPK_penawaran extends Admin_Controller
                 ';
             }
 
-            if($item->sts_spk == '1') {
+            if ($item->sts_spk == '1') {
                 $status_spk = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
-            if($item->sts_spk == '0') {
+            if ($item->sts_spk == '0') {
                 $status_spk = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
             }
 
@@ -372,7 +372,11 @@ class SPK_penawaran extends Admin_Controller
         $this->db->from('kons_tr_penawaran a');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
+        $this->db->group_start();
         $this->db->where('a.id_spk_penawaran', null);
+        $this->db->or_where('a.id_spk_penawaran', '');
+        $this->db->group_end();
+        $this->db->where('a.sts_deal', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.tgl_quotation', $search['value'], 'both');

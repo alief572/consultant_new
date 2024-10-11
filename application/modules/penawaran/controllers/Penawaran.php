@@ -266,7 +266,7 @@ class Penawaran extends Admin_Controller
             if($this->managePermission && $item->sts_quot == '2' && ($item->sts_deal == null || $item->sts_deal == '')) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="#" class="btn btn-sm btn-warning " style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
+                        <a href="#" class="btn btn-sm btn-warning deal_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-check"></i>
@@ -904,7 +904,30 @@ class Penawaran extends Admin_Controller
 
         echo json_encode([
             'status' => $valid,
-            'msg' => $msg
+            'msg' => $msg,
+        ]);
+    }
+
+    public function deal_penawaran() {
+        $id_penawaran = $this->input->post('id_penawaran');
+
+        $this->db->trans_begin();
+
+        $this->db->update('kons_tr_penawaran', ['sts_deal' => 1], ['id_quotation' => $id_penawaran]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $valid = 0;
+            $msg = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+            $valid = 1;
+            $msg = 'Quotation status has changed to Deal !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'msg' => $msg,
         ]);
     }
 }

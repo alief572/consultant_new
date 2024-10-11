@@ -109,6 +109,53 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         });
     });
 
+    $(document).on('click', '.deal_penawaran', function() {
+        var id_penawaran = $(this).data('id_penawaran');
+
+        swal({
+            type: 'warning',
+            title: 'Warning !',
+            text: 'Are you sure to deal this Quotation ?',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'deal_penawaran',
+                    data: {
+                        'id_penawaran': id_penawaran
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(result) {
+                        if (result.status == 1) {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.msg
+                            }, function(after) {
+                                location.reload(true);
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: result.msg
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
     function DataTables() {
         // var dataTables = $('#table_penawaran').dataTable();
         // dataTables.destroy();
