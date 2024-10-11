@@ -124,7 +124,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                         <?php
                         foreach ($list_all_marketing as $item) {
                             if ($item->id == $list_spk_penawaran->id_project_leader) {
-                                echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                             }
                         }
                         ?>
@@ -138,7 +138,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                         <?php
                         foreach ($list_all_marketing as $item) {
                             if ($item->id == $list_spk_penawaran->id_konsultan_1) {
-                                echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                             }
                         }
                         ?>
@@ -164,7 +164,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                         <?php
                         foreach ($list_all_marketing as $item) {
                             if ($item->id == $list_spk_penawaran->id_konsultan_2) {
-                                echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                             }
                         }
                         ?>
@@ -200,7 +200,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                 foreach ($list_spk_penawaran_subcont as $item) {
                     echo '<tr class="subcont_' . $no . '">';
                     echo '<td>';
-                    echo '<select class="form-control form-control-sm chosen_select" name="dt[' . $no . '][id_aktifitas]" disabled>';
+                    echo '<select class="form-control form-control-sm chosen_select" name="dt[' . $no . '][id_aktifitas]">';
                     foreach ($list_all_aktifitas as $item_aktifitas) {
                         if ($item_aktifitas->id_aktifitas == $item->id_aktifitas) {
                             echo '<option value="' . $item_aktifitas->id_aktifitas . '" ' . $selected . '>' . $item_aktifitas->nm_aktifitas . '</option>';
@@ -434,7 +434,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
         $('.chosen_select').chosen({
-            width: "100%"
+            width: "400px"
         });
 
         $('.select_divisi').chosen();

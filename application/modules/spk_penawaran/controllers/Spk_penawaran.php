@@ -58,14 +58,15 @@ class SPK_penawaran extends Admin_Controller
         $get_customer = $this->db->get()->row();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('b.nm_paket');
@@ -86,12 +87,12 @@ class SPK_penawaran extends Admin_Controller
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
             $this->db->select('a.*');
-            $this->db->from('members a');
-            $this->db->where('a.nama <>', '');
+            $this->db->from('employee a');
+            $this->db->where('a.deleted', 'N');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
-            $detail_informasi_awal = $get_marketing_informasi_awal->nama;
+            $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
         } else {
             $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
         }
@@ -132,14 +133,15 @@ class SPK_penawaran extends Admin_Controller
         $get_customer = $this->db->get()->row();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('b.nm_paket');
@@ -160,12 +162,12 @@ class SPK_penawaran extends Admin_Controller
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
             $this->db->select('a.*');
-            $this->db->from('members a');
-            $this->db->where('a.nama <>', '');
+            $this->db->from('employee a');
+            $this->db->where('a.deleted', 'N');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
-            $detail_informasi_awal = $get_marketing_informasi_awal->nama;
+            $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
         } else {
             $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
         }
@@ -370,6 +372,10 @@ class SPK_penawaran extends Admin_Controller
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_penawaran a');
+        $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
+        $this->db->join('members c', 'c.id = a.id_marketing', 'left');
+        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
+        $this->db->join('kons_master_paket e', 'e.id_paket = d.id_paket', 'left');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
         $this->db->group_start();
@@ -380,10 +386,10 @@ class SPK_penawaran extends Admin_Controller
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.tgl_quotation', $search['value'], 'both');
-            $this->db->or_like('a.nm_marketing', $search['value'], 'both');
-            $this->db->or_like('a.nm_paket', $search['value'], 'both');
-            $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('c.nama', $search['value'], 'both');
+            $this->db->or_like('e.nm_paket', $search['value'], 'both');
+            $this->db->or_like('b.nm_customer', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
             $this->db->group_end();
         }
 
@@ -435,8 +441,8 @@ class SPK_penawaran extends Admin_Controller
             ';
 
 
-            $get_marketing = $this->db->get_where('members', ['id' => $item->id_marketing])->row();
-            $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nama : '';
+            $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
+            $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nm_karyawan : '';
 
             $this->db->select('a.*, b.nm_paket');
             $this->db->from('kons_master_konsultasi_header a');
@@ -446,8 +452,8 @@ class SPK_penawaran extends Admin_Controller
 
             $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
 
-            $get_customers = $this->db->get_where('customers', ['id_customer' => $item->id_customer])->row();
-            $nm_customer = (!empty($get_customers)) ? $get_customers->name : '';
+            $get_customers = $this->db->get_where('customer', ['id_customer' => $item->id_customer])->row();
+            $nm_customer = (!empty($get_customers)) ? $get_customers->nm_customer : '';
 
             $hasil[] = [
                 'no' => $no,
@@ -476,20 +482,21 @@ class SPK_penawaran extends Admin_Controller
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $id_quotation])->row();
 
         $this->db->select('a.*');
-        $this->db->from('customers a');
-        $this->db->where('a.name <>', '');
+        $this->db->from('customer a');
+        $this->db->where('a.nm_customer <>', '');
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('b.nm_paket');
@@ -506,12 +513,12 @@ class SPK_penawaran extends Admin_Controller
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
             $this->db->select('a.*');
-            $this->db->from('members a');
-            $this->db->where('a.nama <>', '');
+            $this->db->from('employee a');
+            $this->db->where('a.deleted', 'N');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
-            $detail_informasi_awal = $get_marketing_informasi_awal->nama;
+            $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
         } else {
             $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
         }
@@ -580,15 +587,21 @@ class SPK_penawaran extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $post['id_quotation']])->row();
 
-        $this->db->select('a.id_customer, a.name');
-        $this->db->from('customers a');
+        $this->db->select('a.id_customer, a.nm_customer');
+        $this->db->from('customer a');
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('members a');
+        $id_customer = (!empty($get_customer)) ? $get_customer->id_customer : '';
+        $nm_customer = (!empty($get_customer)) ? $get_customer->nm_customer : '';
+
+        $this->db->select('a.id, a.nm_karyawan');
+        $this->db->from('employee a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
+
+        $id_marketing = (!empty($get_marketing)) ? $get_marketing->id : '';
+        $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nm_karyawan : '';
 
         $this->db->select('a.*, b.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
@@ -598,47 +611,55 @@ class SPK_penawaran extends Admin_Controller
 
         $get_divisi = $this->db->get_where('ms_department', ['id' => $post['divisi']])->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('members a');
+        $id_divisi = (!empty($get_divisi)) ? $get_divisi->id : '';
+        $nm_divisi = (!empty($get_divisi)) ? $get_divisi->nama : '';
+
+        $this->db->select('a.id, a.nm_karyawan');
+        $this->db->from('employee a');
         $this->db->where('a.id', $post['project_leader']);
         $get_project_leader = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('members a');
+        $id_project_leader = (!empty($get_project_leader)) ? $get_project_leader->id : '';
+        $nm_project_leader = (!empty($get_project_leader)) ? $get_project_leader->nm_karyawan : '';
+
+        $this->db->select('a.id, a.nm_karyawan');
+        $this->db->from('employee a');
         $this->db->where('a.id', $post['konsultan_1']);
         $get_konsultan_1 = $this->db->get()->row();
 
-        $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nama : '';
+        $id_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->id : '';
+        $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nm_karyawan : '';
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('members a');
+        $this->db->select('a.id, a.nm_karyawan');
+        $this->db->from('employee a');
         $this->db->where('a.id', $post['konsultan_2']);
         $get_konsultan_2 = $this->db->get()->row();
 
-        $nm_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->nama : '';
+        $id_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->id : '';
+        $nm_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->nm_karyawan : '';
 
         $this->db->trans_begin();
 
         $arr_insert = [
             'id_spk_penawaran' => $id_spk_penawaran,
             'id_penawaran' => $post['id_quotation'],
-            'id_customer' => $get_penawaran->id_customer,
-            'nm_customer' => $get_customer->name,
+            'id_customer' => $id_customer,
+            'nm_customer' => $nm_customer,
             'address' => $post['address'],
             'nm_pic' => $post['pic'],
             'tipe_informasi_awal' => $get_penawaran->tipe_informasi_awal,
             'detail_informasi_awal' => $get_penawaran->detail_informasi_awal,
             'waktu_from' => $post['waktu_from'],
             'waktu_to' => $post['waktu_to'],
-            'id_sales' => $get_marketing->id,
-            'nm_sales' => $get_marketing->nama,
+            'id_sales' => $id_marketing,
+            'nm_sales' => $nm_marketing,
             'upload_proposal' => $get_penawaran->upload_proposal,
             'id_project' => $get_konsultasi->id_konsultasi_h,
             'nm_project' => $get_konsultasi->nm_paket,
-            'id_divisi' => $post['divisi'],
-            'nm_divisi' => $get_divisi->nama,
-            'id_project_leader' => $post['project_leader'],
-            'nm_project_leader' => $get_project_leader->nama,
+            'id_divisi' => $id_divisi,
+            'nm_divisi' => $nm_divisi,
+            'id_project_leader' => $id_project_leader,
+            'nm_project_leader' => $nm_project_leader,
             'id_konsultan_1' => $post['konsultan_1'],
             'nm_konsultan_1' => $nm_konsultan_1,
             'id_konsultan_2' => $post['konsultan_2'],

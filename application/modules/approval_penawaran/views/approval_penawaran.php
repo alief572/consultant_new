@@ -57,7 +57,7 @@ if (count($list_penawaran_others) > 0) {
                         foreach ($list_customers as $item) {
                             $selected = '';
                             if ($item->id_customer == $list_penawaran->id_customer) {
-                                echo '<option value="' . $item->id_customer . '">' . strtoupper($item->name) . '</option>';
+                                echo '<option value="' . $item->id_customer . '">' . strtoupper($item->nm_customer) . '</option>';
                             }
                         }
                         ?>
@@ -69,7 +69,7 @@ if (count($list_penawaran_others) > 0) {
                         <?php
                         foreach ($list_marketing as $item) {
                             if ($item->id == $list_penawaran->id_marketing) {
-                                echo '<option value="' . $item->id . '">' . strtoupper($item->nama) . '</option>';
+                                echo '<option value="' . $item->id . '">' . strtoupper($item->nm_karyawan) . '</option>';
                             }
                         }
                         ?>
@@ -99,7 +99,7 @@ if (count($list_penawaran_others) > 0) {
                                     <?php
                                     foreach ($list_marketing as $item) {
                                         if ($list_penawaran->tipe_informasi_awal == 'Sales' && $item->id == $list_penawaran->detail_informasi_awal) {
-                                            echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                            echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                                         }
                                     }
                                     ?>
@@ -141,7 +141,7 @@ if (count($list_penawaran_others) > 0) {
                                     <?php
                                     foreach ($list_marketing as $item) {
                                         if ($list_penawaran->tipe_informasi_awal == 'Others' && $item->id == $list_penawaran->detail_informasi_awal) {
-                                            echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                            echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                                         }
                                     }
                                     ?>

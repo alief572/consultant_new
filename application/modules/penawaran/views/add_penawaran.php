@@ -47,7 +47,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             <option value="">- Select Customer -</option>
                             <?php
                             foreach ($list_customers as $item) {
-                                echo '<option value="' . $item->id_customer . '">' . strtoupper($item->name) . '</option>';
+                                echo '<option value="' . $item->id_customer . '">' . strtoupper($item->nm_customer) . '</option>';
                             }
                             ?>
                         </select>
@@ -58,7 +58,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             <option value="">- Select Marketing -</option>
                             <?php
                             foreach ($list_marketing as $item) {
-                                echo '<option value="' . $item->id . '">' . strtoupper($item->nama) . '</option>';
+                                echo '<option value="' . $item->id . '">' . strtoupper($item->nm_karyawan) . '</option>';
                             }
                             ?>
                         </select>
@@ -87,7 +87,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                         <option value="">- Select Sales -</option>
                                         <?php
                                         foreach ($list_marketing as $item) {
-                                            echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                            echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                                         }
                                         ?>
                                     </select>
@@ -117,7 +117,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                         <option value="">- Select Employee -</option>
                                         <?php
                                         foreach ($list_marketing as $item) {
-                                            echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                            echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                                         }
                                         ?>
                                     </select>

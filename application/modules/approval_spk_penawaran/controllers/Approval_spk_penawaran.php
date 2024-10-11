@@ -51,14 +51,15 @@ class Approval_spk_penawaran extends Admin_Controller
         $get_customer = $this->db->get()->row();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('b.nm_paket');
@@ -79,12 +80,12 @@ class Approval_spk_penawaran extends Admin_Controller
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
             $this->db->select('a.*');
-            $this->db->from('members a');
-            $this->db->where('a.nama <>', '');
+            $this->db->from('employee a');
+            $this->db->where('a.deleted', 'N');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
-            $detail_informasi_awal = $get_marketing_informasi_awal->nama;
+            $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
         } else {
             $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
         }
@@ -258,14 +259,15 @@ class Approval_spk_penawaran extends Admin_Controller
         $get_customer = $this->db->get()->row();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('b.nm_paket');
@@ -286,12 +288,12 @@ class Approval_spk_penawaran extends Admin_Controller
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
             $this->db->select('a.*');
-            $this->db->from('members a');
-            $this->db->where('a.nama <>', '');
+            $this->db->from('employee a');
+            $this->db->where('a.deleted', 'N');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
-            $detail_informasi_awal = $get_marketing_informasi_awal->nama;
+            $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
         } else {
             $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
         }

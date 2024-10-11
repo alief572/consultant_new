@@ -127,7 +127,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                                 if ($item->id == $list_spk_penawaran->id_project_leader) {
                                     $selected = 'selected';
                                 }
-                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nm_karyawan . '</option>';
                             }
                             ?>
                         </select>
@@ -144,7 +144,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                                 if ($item->id == $list_spk_penawaran->id_konsultan_1) {
                                     $selected = 'selected';
                                 }
-                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nm_karyawan . '</option>';
                             }
                             ?>
                         </select>
@@ -176,7 +176,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                                 if ($item->id == $list_spk_penawaran->id_konsultan_2) {
                                     $selected = 'selected';
                                 }
-                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nm_karyawan . '</option>';
                             }
                             ?>
                         </select>

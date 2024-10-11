@@ -44,7 +44,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Customer</td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="text" name="customer" id="" class="form-control form-control-sm text-center" value="<?= $list_customer->name ?>" readonly>
+                        <input type="text" name="customer" id="" class="form-control form-control-sm text-center" value="<?= $list_customer->nm_customer ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Waktu</td>
                     <td class="pd-5" width="390" valign="top">
@@ -68,7 +68,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Sales</td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="text" name="sales" id="" class="form-control form-control-sm" value="<?= $list_marketing->nama ?>" readonly>
+                        <input type="text" name="sales" id="" class="form-control form-control-sm" value="<?= $list_marketing->nm_karyawan ?>" readonly>
                     </td>
                 </tr>
                 <tr>
@@ -118,7 +118,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                             <option value="">- Select Project Leader -</option>
                             <?php
                             foreach ($list_all_marketing as $item) {
-                                echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                             }
                             ?>
                         </select>
@@ -131,7 +131,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                             <option value="">- Select Konsultan 1 -</option>
                             <?php
                             foreach ($list_all_marketing as $item) {
-                                echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                             }
                             ?>
                         </select>
@@ -155,7 +155,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                             <option value="">- Select Konsultan 2 -</option>
                             <?php
                             foreach ($list_all_marketing as $item) {
-                                echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                                echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                             }
                             ?>
                         </select>
@@ -240,7 +240,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Total Mandays</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays) ?>" readonly>
+                        <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays, 2) ?>" readonly>
                     </td>
                 </tr>
                 <tr>

@@ -61,7 +61,7 @@ if (count($list_penawaran_others) > 0) {
                                 if ($item->id_customer == $list_penawaran->id_customer) {
                                     $selected = 'selected';
                                 }
-                                echo '<option value="' . $item->id_customer . '" ' . $selected . '>' . strtoupper($item->name) . '</option>';
+                                echo '<option value="' . $item->id_customer . '" ' . $selected . '>' . strtoupper($item->nm_customer) . '</option>';
                             }
                             ?>
                         </select>
@@ -76,7 +76,7 @@ if (count($list_penawaran_others) > 0) {
                                 if ($item->id == $list_penawaran->id_marketing) {
                                     $selected = 'selected';
                                 }
-                                echo '<option value="' . $item->id . '" ' . $selected . '>' . strtoupper($item->nama) . '</option>';
+                                echo '<option value="' . $item->id . '" ' . $selected . '>' . strtoupper($item->nm_karyawan) . '</option>';
                             }
                             ?>
                         </select>
@@ -109,7 +109,7 @@ if (count($list_penawaran_others) > 0) {
                                             if ($list_penawaran->tipe_informasi_awal == 'Sales' && $list_penawaran->detail_informasi_awal == $item->id) {
                                                 $selected = 'selected';
                                             }
-                                            echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                                            echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nm_karyawan . '</option>';
                                         }
                                         ?>
                                     </select>
@@ -143,7 +143,7 @@ if (count($list_penawaran_others) > 0) {
                                             if ($list_penawaran->tipe_informasi_awal == 'Others' && $item->detail_informasi_awal == $item->id) {
                                                 $selected = 'selected';
                                             }
-                                            echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                                            echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nm_karyawan . '</option>';
                                         }
                                         ?>
                                     </select>

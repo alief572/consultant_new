@@ -52,14 +52,15 @@ class Penawaran extends Admin_Controller
         $get_penawaran_others = $this->db->get_where('kons_tr_penawaran_others', ['id_penawaran' => $id_penawaran])->result();
 
         $this->db->select('a.*');
-        $this->db->from('customers a');
-        $this->db->where('a.name <>', '');
-        $this->db->group_by('a.name');
+        $this->db->from('customer a');
+        $this->db->where('a.nm_customer <>', '');
+        $this->db->group_by('a.nm_customer');
         $get_customer = $this->db->get()->result();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $this->db->order_by('a.nm_karyawan', 'asc');
         $get_marketing = $this->db->get()->result();
 
         $this->db->select('a.*, b.nm_paket');
@@ -104,14 +105,15 @@ class Penawaran extends Admin_Controller
         $get_penawaran_others = $this->db->get_where('kons_tr_penawaran_others', ['id_penawaran' => $id_penawaran])->result();
 
         $this->db->select('a.*');
-        $this->db->from('customers a');
-        $this->db->where('a.name <>', '');
-        $this->db->group_by('a.name');
+        $this->db->from('customer a');
+        $this->db->where('a.nm_customer <>', '');
+        $this->db->group_by('a.nm_customer');
         $get_customer = $this->db->get()->result();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $this->db->order_by('a.nm_karyawan', 'asc');
         $get_marketing = $this->db->get()->result();
 
         $this->db->select('a.*, b.nm_paket');
@@ -148,17 +150,22 @@ class Penawaran extends Admin_Controller
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_penawaran a');
+        $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
+        $this->db->join('members c', 'c.id = a.id_marketing', 'left');
+        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
+        $this->db->join('kons_master_paket e', 'e.id_paket = d.id_paket', 'left');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.tgl_quotation', $search['value'], 'both');
-            $this->db->or_like('a.nm_marketing', $search['value'], 'both');
-            $this->db->or_like('a.nm_paket', $search['value'], 'both');
-            $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('c.nama', $search['value'], 'both');
+            $this->db->or_like('e.nm_paket', $search['value'], 'both');
+            $this->db->or_like('b.nm_customer', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
             $this->db->group_end();
         }
+        $this->db->group_by('a.id_quotation');
         $this->db->order_by('a.input_date', 'desc');
 
         $get_data = $this->db->get();
@@ -296,8 +303,8 @@ class Penawaran extends Admin_Controller
             $option .= '</div>';
 
 
-            $get_marketing = $this->db->get_where('members', ['id' => $item->id_marketing])->row();
-            $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nama : '';
+            $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
+            $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nm_karyawan : '';
 
             $this->db->select('a.*, b.nm_paket');
             $this->db->from('kons_master_konsultasi_header a');
@@ -307,8 +314,8 @@ class Penawaran extends Admin_Controller
 
             $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
 
-            $get_customers = $this->db->get_where('customers', ['id_customer' => $item->id_customer])->row();
-            $nm_customer = (!empty($get_customers)) ? $get_customers->name : '';
+            $get_customers = $this->db->get_where('customer', ['id_customer' => $item->id_customer])->row();
+            $nm_customer = (!empty($get_customers)) ? $get_customers->nm_customer : '';
 
             $hasil[] = [
                 'no' => $no,
@@ -342,13 +349,15 @@ class Penawaran extends Admin_Controller
 
 
         $this->db->select('a.*');
-        $this->db->from('customers a');
-        $this->db->where('a.name <>', '');
+        $this->db->from('customer a');
+        $this->db->where('a.nm_customer <>', '');
+        $this->db->group_by('a.nm_customer');
         $get_customer = $this->db->get()->result();
 
         $this->db->select('a.*');
-        $this->db->from('members a');
-        $this->db->where('a.nama <>', '');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $this->db->order_by('a.nm_karyawan', 'asc');
         $get_marketing = $this->db->get()->result();
 
         $this->db->select('a.*, b.nm_paket');
@@ -376,8 +385,9 @@ class Penawaran extends Admin_Controller
     {
         $id_customer = $this->input->post('id_customer');
 
-        $this->db->select('a.contact, a.address');
-        $this->db->from('customers a');
+        $this->db->select('a.alamat as address, b.nm_pic as contact');
+        $this->db->from('customer a');
+        $this->db->join('customer_pic b', 'b.id_pic = a.id_pic', 'left');
         $this->db->where('a.id_customer', $id_customer);
         $get_cust = $this->db->get()->row();
 
