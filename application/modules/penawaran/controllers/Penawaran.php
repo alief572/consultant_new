@@ -233,7 +233,7 @@ class Penawaran extends Admin_Controller
                 ';
             }
 
-            if ($this->managePermission) {
+            if ($this->managePermission && ($item->sts_deal == null || $item->sts_deal == '')) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
                         <a href="' . base_url('penawaran/edit_penawaran/' . $item->id_quotation) . '" class="btn btn-sm btn-success" style="color: #000000">
@@ -248,7 +248,7 @@ class Penawaran extends Admin_Controller
                 ';
             }
 
-            if ($this->deletePermission) {
+            if ($this->deletePermission && ($item->sts_deal == null || $item->sts_deal == '')) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
                         <a href="#" class="btn btn-sm btn-danger del_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
@@ -259,6 +259,21 @@ class Penawaran extends Admin_Controller
                             </div>
                         </a>
                         <span style="font-weight: 500"> Delete </span>
+                    </div>
+                ';
+            }
+
+            if($this->managePermission && $item->sts_quot == '2' && ($item->sts_deal == null || $item->sts_deal == '')) {
+                $option .= '
+                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
+                        <a href="#" class="btn btn-sm btn-warning " style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-check"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Deal </span>
                     </div>
                 ';
             }

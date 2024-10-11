@@ -119,7 +119,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Project Leader</td>
                     <td class="pd-5" width="390" valign="top">
-                        <select name="project_leader" id="" class="form-control form-control-sm select_project_leader" required>
+                        <select name="project_leader" id="" class="form-control form-control-sm select_project_leader">
                             <option value="">- Select Project Leader -</option>
                             <?php
                             foreach ($list_all_marketing as $item) {
@@ -562,6 +562,17 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
 
     function persen_komisi(tipe) {
         var persentase = get_num($('input[name="persentase_' + tipe + '_komisi"]').val());
+        if (persentase > 2) {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: 'Persen komisi tidak boleh lebih dari 2% !'
+            });
+
+            persentase = 2;
+
+            $('input[name="persentase_' + tipe + '_komisi"]').val(persentase);
+        }
         var nilai_internal = get_num($('.nilai_internal').val());
 
         var nilai_komisi = parseFloat(nilai_internal * persentase / 100);
@@ -671,48 +682,89 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_komisi + $
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
 
-        swal({
-            type: 'warning',
-            title: 'Are you sure ?',
-            text: 'This data will be saved !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
-                var formData = $('#frm-data').serialize();
+        var ttl_persen_komisi = get_num($('.ttl_persen_komisi').html());
+        var ttl_persentase_payment = get_num($('.ttl_persentase_payment').html());
+        var waktu_from = $('input[name="waktu_from"]').val();
+        var waktu_to = $('input[name="waktu_to"]').val();
+        var project_leader = $('input[name="project_leader"]').val();
 
-                $.ajax({
-                    type: "POST",
-                    url: siteurl + active_controller + 'update_spk_penawaran',
-                    data: formData,
-                    cache: false,
-                    dataType: "JSON",
-                    success: function(result) {
-                        if (result.status == 1) {
+        if (ttl_persen_komisi > 5) {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: 'Total Persentase Komisi tidak boleh lebih dari 4% !'
+            });
+
+            return false;
+        } else if (ttl_persentase_payment < 100 || ttl_persentase_payment > 100) {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: 'Persentase payment harus 100% !'
+            });
+
+            return false;
+        } else if (waktu_from == '' || waktu_to == '') {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: 'Pastikan Kolom waktu sudah terisi !'
+            });
+
+            return false;
+        } else if (project_leader == '') {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: 'Project leader wajib diisi !'
+            });
+
+            return false;
+        } else {
+            swal({
+                type: 'warning',
+                title: 'Are you sure ?',
+                text: 'This data will be saved !',
+                showCancelButton: true
+            }, function(next) {
+                if (next) {
+                    var formData = $('#frm-data').serialize();
+
+                    $.ajax({
+                        type: "POST",
+                        url: siteurl + active_controller + 'update_spk_penawaran',
+                        data: formData,
+                        cache: false,
+                        dataType: "JSON",
+                        success: function(result) {
+                            if (result.status == 1) {
+                                swal({
+                                    type: 'success',
+                                    title: 'Success !',
+                                    text: result.msg
+                                }, function(after) {
+                                    window.location.href = siteurl + active_controller;
+                                });
+                            } else {
+                                swal({
+                                    type: 'warning',
+                                    title: 'Failed !',
+                                    text: result.msg
+                                });
+                            }
+                        },
+                        error: function(result) {
                             swal({
-                                type: 'success',
-                                title: 'Success !',
-                                text: result.msg
-                            }, function(after) {
-                                window.location.href = siteurl + active_controller;
-                            });
-                        } else {
-                            swal({
-                                type: 'warning',
-                                title: 'Failed !',
-                                text: result.msg
+                                type: 'error',
+                                title: 'Error !',
+                                text: 'Please try again later !'
                             });
                         }
-                    },
-                    error: function(result) {
-                        swal({
-                            type: 'error',
-                            title: 'Error !',
-                            text: 'Please try again later !'
-                        });
-                    }
-                })
-            }
-        });
+                    })
+                }
+            });
+        }
+
     });
 
     $(document).on('click', '.del_subcont', function() {
