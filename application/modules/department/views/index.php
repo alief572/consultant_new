@@ -27,7 +27,7 @@ $ENABLE_DELETE  = has_permission('Master_Department.Delete');
 			<thead>
 				<tr>
 					<th>#</th>
-					<th>Department Name</th>
+					<th>Division Name</th>
 					<th>Status</th>
 					<th>Action</th>
 				</tr>
