@@ -435,66 +435,61 @@ class Master_konsultasi extends Admin_Controller
                 if ($total > 0) {
                     $no = 0;
 
-                    if (count(array_unique($post['nm_aktifitas'])) < count($post['nm_aktifitas'])) {
-                        $valid = 0;
-                        $msg = 'Maaf, tidak boleh ada nama aktifitas yang sama !';
-                    } else {
-                        $terinput  = 0;
-                        $tahapan   = 1;
-                        $head['update_date'] = date('Y-m-d H:i:s');
-                        $head['update_by']   = $this->session->userdata('usr_username');
-                        $this->db->where('id_konsultasi_h', $id_konsultasi)->update('kons_master_konsultasi_header', $head);
+                    $terinput  = 0;
+                    $tahapan   = 1;
+                    $head['update_date'] = date('Y-m-d H:i:s');
+                    $head['update_by']   = $this->session->userdata('usr_username');
+                    $this->db->where('id_konsultasi_h', $id_konsultasi)->update('kons_master_konsultasi_header', $head);
 
-                        //##%# REMOVE ONE OR ALL ROW JIKA DIPILIH DELETE #%#
-                        if (! empty($post['id_konsultasi_d'])) {
-                            $this->aktifitas_delete_rest($id_konsultasi, $post['id_konsultasi_d']);
-                        }
+                    //##%# REMOVE ONE OR ALL ROW JIKA DIPILIH DELETE #%#
+                    if (! empty($post['id_konsultasi_d'])) {
+                        $this->aktifitas_delete_rest($id_konsultasi, $post['id_konsultasi_d']);
+                    }
 
-                        foreach ($post['id_aktifitas'] as $key => $value) {
-                            $explode          = explode("*_*", $value);
-                            $id_aktifitas     = $explode[0];
-                            $nm_aktifitas     = $post['nm_aktifitas'][$key];
-                            $harga_aktifitas  = str_replace(',', '', $post['hrg_aktifitas'][$key]);
-                            $bobot            = $post['bobot'][$key];
-                            $mandays          = $post['mandays'][$key];
-                            if (! empty($value)) {
-                                $new['id_konsultasi_h']  = $id_konsultasi;
-                                $new['id_aktifitas']     = $id_aktifitas;
-                                $new['nm_aktifitas']     = $nm_aktifitas;
-                                $new['harga_aktifitas']  = $harga_aktifitas;
-                                $new['bobot']            = $bobot;
-                                $new['mandays']          = $mandays;
-                                $new['tahapan']          = $tahapan;
-                                $new['input_date']       = date('Y-m-d H:i:s');
-                                $new['input_by']         = $this->auth->user_name();
-                                $new_input = $this->db->insert('kons_master_konsultasi_detail', $new);
-                                if ($new_input) {
-                                    $terinput++;
-                                } else {
-                                    $this->db->trans_rollback();
-                                    print_r($this->db->error($new_input));
-                                    exit;
-                                }
+                    foreach ($post['id_aktifitas'] as $key => $value) {
+                        $explode          = explode("*_*", $value);
+                        $id_aktifitas     = $explode[0];
+                        $nm_aktifitas     = $post['nm_aktifitas'][$key];
+                        $harga_aktifitas  = str_replace(',', '', $post['hrg_aktifitas'][$key]);
+                        $bobot            = $post['bobot'][$key];
+                        $mandays          = $post['mandays'][$key];
+                        if (! empty($value)) {
+                            $new['id_konsultasi_h']  = $id_konsultasi;
+                            $new['id_aktifitas']     = $id_aktifitas;
+                            $new['nm_aktifitas']     = $nm_aktifitas;
+                            $new['harga_aktifitas']  = $harga_aktifitas;
+                            $new['bobot']            = $bobot;
+                            $new['mandays']          = $mandays;
+                            $new['tahapan']          = $tahapan;
+                            $new['input_date']       = date('Y-m-d H:i:s');
+                            $new['input_by']         = $this->auth->user_name();
+                            $new_input = $this->db->insert('kons_master_konsultasi_detail', $new);
+                            if ($new_input) {
+                                $terinput++;
+                            } else {
+                                $this->db->trans_rollback();
+                                print_r($this->db->error($new_input));
+                                exit;
                             }
-                            $tahapan++;
                         }
+                        $tahapan++;
+                    }
 
-                        // if ($terinput > 0) {
-                        //     $pesan  = "Data Successfully Saved";
-                        //     $params['redirect_page'] = "YES";
-                        //     $params['redirect_page_URL'] = site_url('master-konsultasi');
-                        //     echo $this->query_success($pesan, $params);
-                        // } else {
-                        //     echo $this->query_error('Terjadi kesalahan, coba lagi');
-                        // }
+                    // if ($terinput > 0) {
+                    //     $pesan  = "Data Successfully Saved";
+                    //     $params['redirect_page'] = "YES";
+                    //     $params['redirect_page_URL'] = site_url('master-konsultasi');
+                    //     echo $this->query_success($pesan, $params);
+                    // } else {
+                    //     echo $this->query_error('Terjadi kesalahan, coba lagi');
+                    // }
 
-                        if ($this->db->trans_status() === false) {
-                            $valid = 0;
-                            $msg = 'Please try again later!';
-                        } else {
-                            $valid = 1;
-                            $msg = 'Data Successfully Saved';
-                        }
+                    if ($this->db->trans_status() === false) {
+                        $valid = 0;
+                        $msg = 'Please try again later!';
+                    } else {
+                        $valid = 1;
+                        $msg = 'Data Successfully Saved';
                     }
                 } else {
                     $valid = 0;
