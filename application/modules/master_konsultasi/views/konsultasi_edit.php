@@ -56,7 +56,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                        $no = 1;
+                                                    $no = 1;
                                                     if ($detail->num_rows() > 0) {
                                                         foreach ($detail->result() as $dt) {
                                                     ?>

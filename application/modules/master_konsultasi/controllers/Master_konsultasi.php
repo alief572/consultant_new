@@ -518,7 +518,7 @@ class Master_konsultasi extends Admin_Controller
         } else {
             $dt['id_konsultasi'] = $id_konsultasi;
             $dt['header']        = $this->db->where('id_konsultasi_h', $id_konsultasi)->get('kons_master_konsultasi_header')->row();
-            $dt['detail']        = $this->db->query("SELECT * FROM kons_master_konsultasi_detail WHERE id_konsultasi_h = '" . $id_konsultasi . "'");
+            $dt['detail']        = $this->db->query("SELECT * FROM kons_master_konsultasi_detail WHERE id_konsultasi_h = '" . $id_konsultasi . "' ORDER BY id_konsultasi_d ASC");
             $dt['paket']         = $this->db->where('id_paket', $dt['header']->id_paket)->get('kons_master_paket');
             $dt['all_aktifitas'] = $this->db->order_by('nm_aktifitas', 'asc')->get('kons_master_aktifitas');
 
