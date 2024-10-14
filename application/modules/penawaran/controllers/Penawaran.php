@@ -414,7 +414,13 @@ class Penawaran extends Admin_Controller
     {
         $id_package = $this->input->post('id_package');
 
-        $get_konsultasi_detail = $this->db->get_where('kons_master_konsultasi_detail', ['id_konsultasi_h' => $id_package])->result();
+        // $get_konsultasi_detail = $this->db->get_where('kons_master_konsultasi_detail', ['id_konsultasi_h' => $id_package])->order_by('id_konsultasi_d', 'asc')->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_master_konsultasi_detail a');
+        $this->db->where('a.id_konsultasi_h', $id_package);
+        $this->db->order_by('a.id_konsultasi_d', 'asc');
+        $get_konsultasi_detail = $this->db->get()->result();
 
         $hasil = '';
 

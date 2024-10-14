@@ -46,8 +46,14 @@ class SPK_penawaran extends Admin_Controller
     public function view_spk($id_spk_penawaran)
     {
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
-        $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
+        // $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_spk_penawaran_subcont a');
+        $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
+        $this->db->order_by('a.id', 'asc');
+        $get_spk_penawaran_subcont = $this->db->get()->result();
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
 
@@ -121,8 +127,14 @@ class SPK_penawaran extends Admin_Controller
     public function edit_spk($id_spk_penawaran)
     {
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
-        $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
+        // $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_spk_penawaran_subcont a');
+        $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
+        $this->db->order_by('a.id', 'asc');
+        $get_spk_penawaran_subcont = $this->db->get()->result();
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
 
@@ -176,6 +188,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->from('kons_tr_penawaran_aktifitas a');
         $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $this->db->order_by('a.id', 'asc');
         $get_aktifitas = $this->db->get()->result();
 
         $nilai_kontrak = 0;
@@ -527,6 +540,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->from('kons_tr_penawaran_aktifitas a');
         $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $id_quotation);
+        $this->db->order_by('a.id', 'asc');
         $get_aktifitas = $this->db->get()->result();
 
         $nilai_kontrak = 0;
