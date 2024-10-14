@@ -3,10 +3,10 @@
 class Master_employee extends Admin_Controller
 {
     //Permission
-    protected $viewPermission   = "Master_Karyawan.View";
-    protected $addPermission    = "Master_Karyawan.Add";
-    protected $managePermission = "Master_Karyawan.Manage";
-    protected $deletePermission = "Master_Karyawan.Delete";
+    protected $viewPermission   = "Master_Employee.View";
+    protected $addPermission    = "Master_Employee.Add";
+    protected $managePermission = "Master_Employee.Manage";
+    protected $deletePermission = "Master_Employee.Delete";
 
     public function __construct()
     {

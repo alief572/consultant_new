@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Master_Karyawan.Add');
-$ENABLE_MANAGE  = has_permission('Master_Karyawan.Manage');
-$ENABLE_VIEW    = has_permission('Master_Karyawan.View');
-$ENABLE_DELETE  = has_permission('Master_Karyawan.Delete');
+$ENABLE_ADD     = has_permission('Master_Employee.Add');
+$ENABLE_MANAGE  = has_permission('Master_Employee.Manage');
+$ENABLE_VIEW    = has_permission('Master_Employee.View');
+$ENABLE_DELETE  = has_permission('Master_Employee.Delete');
 ?>
 
 <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>">
