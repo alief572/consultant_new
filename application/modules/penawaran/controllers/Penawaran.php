@@ -46,6 +46,7 @@ class Penawaran extends Admin_Controller
         $this->db->join('kons_master_check_point c', 'c.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $id_penawaran);
         $this->db->group_by('a.id_aktifitas');
+        $this->db->order_by('a.id_aktifitas', 'asc');
         $get_penawaran_aktifitas = $this->db->get()->result();
 
         $get_penawaran_akomodasi = $this->db->get_where('kons_tr_penawaran_akomodasi', ['id_penawaran' => $id_penawaran])->result();
