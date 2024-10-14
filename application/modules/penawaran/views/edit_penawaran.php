@@ -616,14 +616,17 @@ if (count($list_penawaran_others) > 0) {
         auto_num();
     });
 
-    $(document).on('click', '.add_activity', function() {
+    $(document).on('click', '.add_activity', function(e) {
+        e.preventDefault();
         addActivity();
     });
 
-    $(document).on('click', '.add_akomodasi', function() {
+    $(document).on('click', '.add_akomodasi', function(e) {
+        e.preventDefault();
         addAkomodasi();
     });
-    $(document).on('click', '.add_others', function() {
+    $(document).on('click', '.add_others', function(e) {
+        e.preventDefault();
         addAOthers();
     });
 
