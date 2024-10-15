@@ -795,6 +795,7 @@ class Penawaran extends Admin_Controller
                 'ppn' => $ppn,
                 'persen_disc' => str_replace(',', '', $post['persen_disc']),
                 'nilai_disc' => str_replace(',', '', $post['nilai_disc']),
+                'grand_total' => $post['grand_total'],
                 'tipe_informasi_awal' => $tipe_info_awal,
                 'detail_informasi_awal' => $detail_info_awal,
                 'updated_by' => $this->auth->user_id(),

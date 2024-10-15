@@ -414,23 +414,23 @@ if (count($list_penawaran_others) > 0) {
                         echo '<tr class="tr_others_' . $no_others . '">';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_others . '][nm_others]" value="' . $item_others->nm_item . '">';
+                        echo '<input type="text" class="form-control form-control-sm" name="dt_oth[' . $no_others . '][nm_others]" value="' . $item_others->nm_item . '">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_others . '][qty_others]" value="' . $item_others->qty . '" onchange="hitung_item_others(' . $no_others . ')">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' . $no_others . '][qty_others]" value="' . $item_others->qty . '" onchange="hitung_item_others(' . $no_others . ')">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_others . '][harga_others]" value="' . $item_others->price_unit . '" onchange="hitung_item_others(' . $no_others . ')">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' . $no_others . '][harga_others]" value="' . $item_others->price_unit . '" onchange="hitung_item_others(' . $no_others . ')">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_ako[' . $no_others . '][total_others]" value="' . $item_others->total . '" readonly>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' . $no_others . '][total_others]" value="' . $item_others->total . '" readonly>';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_others . '][keterangan_others]" value="' . $item_others->keterangan . '">';
+                        echo '<input type="text" class="form-control form-control-sm" name="dt_oth[' . $no_others . '][keterangan_others]" value="' . $item_others->keterangan . '">';
                         echo '</td>';
 
                         echo '<td>';
