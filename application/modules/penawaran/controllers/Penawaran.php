@@ -461,10 +461,6 @@ class Penawaran extends Admin_Controller
             $hasil .= '</td>';
 
             $hasil .= '<td class="text-center">';
-            $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_bobot_' . $no . '" name="dt_act[' . $no . '][bobot]" value="' . $item->bobot . '" onchange="hitung_total_activity()">';
-            $hasil .= '</td>';
-
-            $hasil .= '<td class="text-center">';
             $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' . $no . '" name="dt_act[' . $no . '][mandays]" value="' . $item->mandays . '" onchange="hitung_total_activity()">';
             $hasil .= '</td>';
 

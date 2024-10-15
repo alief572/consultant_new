@@ -87,7 +87,6 @@ class Master_aktifitas extends Admin_Controller
             $nestedData[]   = $row['datet'];
             $nestedData[]   = $row['nm_aktifitas'];
             $nestedData[]   = number_format($row['harga_aktifitas']);
-            $nestedData[]   = $row['bobot'];
             $nestedData[]   = $row['mandays'];
             $nestedData[]   = "
                 <div class='btn-group'>
@@ -220,7 +219,7 @@ class Master_aktifitas extends Admin_Controller
                             $id_aktifitas     = $value;
                             $nm_aktifitas     = $post['nm_aktifitas'][$key];
                             $harga_aktifitas  = $post['hrg_aktifitas'][$key];
-                            $bobot            = $post['bobot'][$key];
+                            // $bobot            = $post['bobot'][$key];
                             $mandays          = $post['mandays'][$key];
                             $unik_id          = $post['aktifitas_unique_id'][$key];
 
@@ -232,7 +231,6 @@ class Master_aktifitas extends Admin_Controller
                                         'datet'           => date('Y-m-d'),
                                         'nm_aktifitas'    => $nm_aktifitas,
                                         'harga_aktifitas' => $harga_aktifitas,
-                                        'bobot'           => $bobot,
                                         'mandays'         => $mandays,
                                         'tahapan'         => $tahapan,
                                         'keterangan'      => '',
@@ -266,7 +264,6 @@ class Master_aktifitas extends Admin_Controller
                                             'datet'           => date('Y-m-d'),
                                             'nm_aktifitas'    => $nm_aktifitas,
                                             'harga_aktifitas' => $harga_aktifitas,
-                                            'bobot'           => $bobot,
                                             'mandays'         => $mandays,
                                             'tahapan'         => $tahapan,
                                             'keterangan'      => '',
@@ -410,7 +407,7 @@ class Master_aktifitas extends Admin_Controller
                         $id_aktifitas     = $value;
                         $nm_aktifitas     = $_POST['nm_aktifitas'][$key];
                         $harga_aktifitas  = $_POST['hrg_aktifitas'][$key];
-                        $bobot            = $_POST['bobot'][$key];
+                        // $bobot            = $_POST['bobot'][$key];
                         $mandays          = $_POST['mandays'][$key];
                         $unik_id          = $_POST['aktifitas_unique_id'][$key];
 
@@ -421,7 +418,6 @@ class Master_aktifitas extends Admin_Controller
                                 $aktifitas = array(
                                     'nm_aktifitas'    => $nm_aktifitas,
                                     'harga_aktifitas' => $harga_aktifitas,
-                                    'bobot'           => $bobot,
                                     'mandays'         => $mandays,
                                     'update_date'     => date('Y-m-d H:i:s'),
                                     'update_by'       => $this->session->userdata('usr_username')

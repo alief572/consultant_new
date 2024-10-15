@@ -198,7 +198,6 @@ if (count($list_penawaran_others) > 0) {
             <thead>
                 <tr>
                     <th class="text-center">Activity Name</th>
-                    <th class="text-center">Bobot</th>
                     <th class="text-center">Mandays</th>
                     <th class="text-center">Price</th>
                 </tr>
@@ -216,7 +215,6 @@ if (count($list_penawaran_others) > 0) {
                     echo '<tr>';
 
                     echo '<td>' . $item_aktifitas->nama_aktifitas . '</td>';
-                    echo '<td class="text-center">' . number_format($item_aktifitas->bobot, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_aktifitas->mandays, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_aktifitas->harga_aktifitas, 2) . '</td>';
 
@@ -234,7 +232,6 @@ if (count($list_penawaran_others) > 0) {
             <tfoot>
                 <tr>
                     <th class="text-center">Total</th>
-                    <th class="text-center ttl_act_bobot"><?= number_format($ttl_bobot, 2) ?></th>
                     <th class="text-center ttl_act_mandays"><?= number_format($ttl_mandays, 2) ?></th>
                     <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
                 </tr>

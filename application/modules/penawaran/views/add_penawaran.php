@@ -21,6 +21,16 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     .pd-5 {
         padding: 5px;
     }
+
+    /* .chosen-container {
+        z-index: 9999;
+        /* Set a high z-index */
+    }
+
+    .chosen-container .chosen-drop {
+        z-index: 9999;
+        /* Ensure the dropdown itself has a high z-index */
+    } */
 </style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 
@@ -166,7 +176,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <thead>
                     <tr>
                         <th class="text-center">Activity Name</th>
-                        <th class="text-center">Bobot</th>
                         <th class="text-center">Mandays</th>
                         <th class="text-center">Price</th>
                         <th class="text-center">Action</th>
@@ -178,7 +187,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <tfoot>
                     <tr>
                         <th class="text-center">Total</th>
-                        <th class="text-center ttl_act_bobot">00,0</th>
                         <th class="text-center ttl_act_mandays">00,0</th>
                         <th class="text-center ttl_act_price">00,0</th>
                         <th class="text-center"></th>
@@ -643,19 +651,11 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hasil += '</td>';
 
         hasil += '<td class="text-center">';
-        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_bobot_' + no_activity + '" name="dt_act[' + no_activity + '][bobot]" value="" onchange="hitung_total_activity()">';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center">';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' + no_activity + '" name="dt_act[' + no_activity + '][mandays]" value="" onchange="hitung_total_activity()">';
         hasil += '</td>';
 
         hasil += '<td class="text-center">';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][harga_aktifitas]" value="" onchange="hitung_total_activity()">';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center td_check_point_' + no_activity + '">';
-        hasil += '';
         hasil += '</td>';
 
         hasil += '<td class="text-center">';
@@ -848,6 +848,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 $('.ttl_act_check_point').html(number_format(result.ttl_check_point, 2));
 
                 $('.no').val(result.no);
+
+                // for (i = 1; i <= result.no; i++) {
+                //     $('.select_nm_aktifitas_' + i).chosen();
+                // }
 
                 hitung_summary();
             },

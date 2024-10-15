@@ -29,7 +29,6 @@
                                                         <tr>
                                                             <th>Aktifitas</th>
                                                             <th width="15%">Harga</th>
-                                                            <th width="10%">Bobot</th>
                                                             <th width="10%">Mandays</th>
                                                         </tr>
                                                     </thead>
@@ -46,9 +45,6 @@
                                                                     </td>
                                                                     <td>
                                                                         <input type='number' class='form-control' name='hrg_aktifitas[]' value="<?php echo @$d->harga_aktifitas; ?>">
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type='number' class='form-control' name='bobot[]' value="<?php echo @$d->bobot; ?>">
                                                                     </td>
                                                                     <td>
                                                                         <input type='number' class='form-control' name='mandays[]' value="<?php echo @$d->mandays; ?>">

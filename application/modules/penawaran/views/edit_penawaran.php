@@ -207,7 +207,6 @@ if (count($list_penawaran_others) > 0) {
                 <thead>
                     <tr>
                         <th class="text-center">Activity Name</th>
-                        <th class="text-center">Bobot</th>
                         <th class="text-center">Mandays</th>
                         <th class="text-center">Price</th>
                         <th class="text-center">Action</th>
@@ -241,10 +240,6 @@ if (count($list_penawaran_others) > 0) {
                         echo '</td>';
 
                         echo '<td class="text-center">';
-                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_bobot_' . $no_activity . '" name="dt_act[' . $no_activity . '][bobot]" value="' . $item_aktifitas->bobot . '" onchange="hitung_total_activity()">';
-                        echo '</td>';
-
-                        echo '<td class="text-center">';
                         echo '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' . $no_activity . '" name="dt_act[' . $no_activity . '][mandays]" value="' . $item_aktifitas->mandays . '" onchange="hitung_total_activity()">';
                         echo '</td>';
 
@@ -270,7 +265,6 @@ if (count($list_penawaran_others) > 0) {
                 <tfoot>
                     <tr>
                         <th class="text-center">Total</th>
-                        <th class="text-center ttl_act_bobot"><?= number_format($ttl_bobot, 2) ?></th>
                         <th class="text-center ttl_act_mandays"><?= number_format($ttl_mandays, 2) ?></th>
                         <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
                         <th class="text-center"></th>
@@ -821,10 +815,6 @@ if (count($list_penawaran_others) > 0) {
         hasil += '</td>';
 
         hasil += '<td class="text-center">';
-        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_bobot_' + no_activity + '" name="dt_act[' + no_activity + '][bobot]" value="" onchange="hitung_total_activity()">';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center">';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' + no_activity + '" name="dt_act[' + no_activity + '][mandays]" value="" onchange="hitung_total_activity()">';
         hasil += '</td>';
 
@@ -832,9 +822,6 @@ if (count($list_penawaran_others) > 0) {
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][harga_aktifitas]" value="" onchange="hitung_total_activity()">';
         hasil += '</td>';
 
-        hasil += '<td class="text-center td_check_point_' + no_activity + '">';
-        hasil += '';
-        hasil += '</td>';
 
         hasil += '<td class="text-center">';
         hasil += '<button type="button" class="btn btn-sm btn-danger del_aktifitas" data-no="' + no_activity + '"><i class="fa fa-trash"></i></button>';

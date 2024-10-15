@@ -33,7 +33,6 @@
                                                             <th width="5%" style="text-align: center;">#</th>
                                                             <th>Aktifitas</th>
                                                             <th width="15%">Harga</th>
-                                                            <th width="10%">Bobot</th>
                                                             <th width="10%">Mandays</th>
                                                             <th width="6%">Hapus</th>
                                                         </tr>
@@ -220,9 +219,6 @@
         Baris += "    </td>";
         Baris += "    <td>";
         Baris += "        <input type='text' class='form-control text-right auto_num' name='hrg_aktifitas[]' id='hrg_aktifitas'>";
-        Baris += "    </td>";
-        Baris += "    <td>";
-        Baris += "        <input type='number' class='form-control' name='bobot[]' id='bobot' min='0'>";
         Baris += "    </td>";
         Baris += "    <td>";
         Baris += "        <input type='number' class='form-control' name='mandays[]' id='mandays' min='0'>";

@@ -27,7 +27,6 @@
                                                     <th>Input Date</th>
                                                     <th>Nama Aktifitas</th>
                                                     <th class="no-sort">Harga</th>
-                                                    <th>Bobot</th>
                                                     <th>Mandays</th>
                                                     <th class="no-sort" width="">Option</th>
                                                 </tr>
