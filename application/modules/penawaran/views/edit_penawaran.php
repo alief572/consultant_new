@@ -1050,11 +1050,13 @@ if (count($list_penawaran_others) > 0) {
             cache: false,
             dataType: 'JSON',
             success: function(result) {
-                $('.input_bobot_' + no).val(result.bobot);
+                // $('.input_bobot_' + no).val(result.bobot);
                 $('.input_mandays_' + no).val(result.mandays);
+                $('.input_mandays_rate_' + no).val(number_format(result.mandays_rate, 2));
                 $('.input_price_' + no).val(result.price);
-                $('.td_check_point_' + no).html('<button type="button" class="btn btn-xs btn-secondary">' + result.check_point + ' Point</button>');
+                // $('.td_check_point_' + no).html('<button type="button" class="btn btn-xs btn-secondary">' + result.check_point + ' Point</button>');
 
+                auto_num();
                 hitung_total_activity();
             },
             else: function(result) {

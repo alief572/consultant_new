@@ -35,4 +35,23 @@ class Master_biaya extends Admin_Controller
         $this->template->title('Master Biaya');
         $this->template->render('index');
     }
+
+    public function add() {
+        $this->template->render('add');
+    }
+
+    public function save_biaya() {
+        $post = $this->input->post();
+
+        $this->db->trans_begin();
+
+        if($post['id'] == '') {
+            $this->db->insert('kons_master_biaya', [
+                'nm_biaya' => $post['nm_biaya'],
+                'tipe_biaya' => $post['tipe_biaya'],
+            ]);
+        } else {
+
+        }
+    }
 }

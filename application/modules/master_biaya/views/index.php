@@ -27,45 +27,15 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 			<thead>
 				<tr>
 					<th>#</th>
-					<th>Division Name</th>
+					<th>Nama Biaya</th>
+					<th>Tipe Biaya</th>
 					<th>Status</th>
 					<th>Action</th>
 				</tr>
 			</thead>
 
 			<tbody>
-				<?php if (empty($result)) {
-				} else {
-					$numb = 0;
-					foreach ($result as $record) {
-						$numb++; ?>
-						<tr>
-							<td><?= $numb; ?></td>
-							<td><?= strtoupper($record->nama) ?></td>
 
-							<td>
-								<?php if ($record->status == '1') { ?>
-									<label class="label label-success">Aktif</label>
-								<?php } else { ?>
-									<label class="label label-danger">Non Aktif</label>
-								<?php } ?>
-							</td>
-							<td>
-
-								<?php if ($ENABLE_MANAGE) : ?>
-									<a class="btn btn-primary btn-sm edit" href="javascript:void(0)" title="Edit" data-id="<?= $record->id ?>"><i class="fa fa-edit"></i>
-									</a>
-								<?php endif; ?>
-
-								<?php if ($ENABLE_DELETE) : ?>
-									<a class="btn btn-danger btn-sm delete" href="javascript:void(0)" title="Delete" data-id="<?= $record->id ?>"><i class="fa fa-trash"></i>
-									</a>
-								<?php endif; ?>
-							</td>
-
-						</tr>
-				<?php }
-				}  ?>
 			</tbody>
 		</table>
 	</div>
@@ -81,9 +51,19 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 				<h4 class="modal-title" id="head_title">Default</h4>
 			</div>
-			<div class="modal-body" id="ModalView">
-				...
-			</div>
+			<form action="" method="post" id="frm-data">
+				<div class="modal-body" id="ModalView">
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger">
+						<i class="fa fa-close"></i> Cancel
+					</button>
+					<button type="submit" class="btn btn-primary">
+						<i class="fa fa-save"></i> Save
+					</button>
+				</div>
+			</form>
 		</div>
 	</div>
 
@@ -93,139 +73,58 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 
 	<!-- page script -->
 	<script type="text/javascript">
-		$(document).on('click', '.edit', function(e) {
-			var id = $(this).data('id');
-			$("#head_title").html("<b>Department</b>");
-			$.ajax({
-				type: 'POST',
-				url: siteurl + active_controller + '/add/' + id,
-				success: function(data) {
-					$("#dialog-popup").modal();
-					$("#ModalView").html(data);
-
-				}
-			})
-		});
-
 		$(document).on('click', '.add', function() {
-			$("#head_title").html("<b>Department</b>");
+			$("#head_title").html("<b>Add Biaya</b>");
 			$.ajax({
 				type: 'POST',
-				url: siteurl + active_controller + '/add/',
+				url: siteurl + active_controller + 'add/',
 				success: function(data) {
 					$("#dialog-popup").modal();
 					$("#ModalView").html(data);
-
 				}
 			})
 		});
 
-		$(document).on('submit', '#data_form', function(e) {
-			e.preventDefault()
-			var data = $('#data_form').serialize();
-			// alert(data);
+		$(document).on('submit', '#frm-data', function(e) {
+			e.preventDefault();
 
 			swal({
-					title: "Anda Yakin?",
-					text: "Data akan diproses!",
-					type: "warning",
-					showCancelButton: true,
-					confirmButtonClass: "btn-info",
-					confirmButtonText: "Yes",
-					cancelButtonText: "No",
-					closeOnConfirm: false
-				},
-				function() {
+				type: 'warning',
+				title: 'Are you sure ?',
+				text: 'This data will be saved !',
+				showCancelButton: true
+			}, function(next) {
+				if (next) {
+					var formData = new FormData($('#frm-data')[0]);
+
 					$.ajax({
-						type: 'POST',
-						url: siteurl + active_controller + 'add',
-						dataType: "json",
-						data: data,
-						success: function(data) {
-							if (data.status == '1') {
-								swal({
-										title: "Sukses",
-										text: data.pesan,
-										type: "success"
-									},
-									function() {
-										window.location.reload(true);
-									})
+						type: 'post',
+						url: siteurl + active_controller + 'save_biaya',
+						data: formData,
+						cache: false,
+						dataType: 'json',
+						success: function(result) {
+							if (result.status == 1) {
+
 							} else {
 								swal({
-									title: "Error",
-									text: data.pesan,
-									type: "error"
-								})
-
+									type: 'warning',
+									title: 'Failed !',
+									text: result.pesan
+								});
 							}
 						},
-						error: function() {
+						error: function(result) {
 							swal({
-								title: "Error",
-								text: "Error proccess !",
-								type: "error"
-							})
+								type: 'error',
+								title: 'Error !',
+								text: 'Please try again later !'
+							});
 						}
-					})
-				});
-
-		})
-
-
-		// DELETE DATA
-		$(document).on('click', '.delete', function(e) {
-			e.preventDefault()
-			var id = $(this).data('id');
-			// alert(id);
-			swal({
-					title: "Anda Yakin?",
-					text: "Data akan di hapus!",
-					type: "warning",
-					showCancelButton: true,
-					confirmButtonClass: "btn-info",
-					confirmButtonText: "Yes",
-					cancelButtonText: "No",
-					closeOnConfirm: false
-				},
-				function() {
-					$.ajax({
-						type: 'POST',
-						url: siteurl + active_controller + '/delete',
-						dataType: "json",
-						data: {
-							'id': id
-						},
-						success: function(data) {
-							if (data.status == '1') {
-								swal({
-										title: "Sukses",
-										text: data.pesan,
-										type: "success"
-									},
-									function() {
-										window.location.reload(true);
-									})
-							} else {
-								swal({
-									title: "Error",
-									text: data.pesan,
-									type: "error"
-								})
-
-							}
-						},
-						error: function() {
-							swal({
-								title: "Error",
-								text: "Error proccess !",
-								type: "error"
-							})
-						}
-					})
-				});
-
-		})
+					});
+				}
+			});
+		});
 
 		$(function() {
 			var table = $('#example1').DataTable({

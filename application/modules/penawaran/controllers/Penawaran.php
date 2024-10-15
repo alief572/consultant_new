@@ -501,22 +501,23 @@ class Penawaran extends Admin_Controller
         $mandays = 0;
         $price = 0;
         $check_point = 0;
+        $mandays_rate = 0;
 
         $get_aktifitas = $this->db->get_where('kons_master_aktifitas', ['id_aktifitas' => $id_aktifitas])->row();
         if (!empty($get_aktifitas)) {
             $bobot = $get_aktifitas->bobot;
             $mandays = $get_aktifitas->mandays;
             $price = $get_aktifitas->harga_aktifitas;
+            $mandays_rate = $get_aktifitas->harga_aktifitas;
         }
 
         $get_check_point = $this->db->get_where('kons_master_check_point', ['id_aktifitas' => $id_aktifitas])->num_rows();
         $check_point = $get_check_point;
 
         echo json_encode([
-            'bobot' => $bobot,
             'mandays' => $mandays,
-            'price' => $price,
-            'check_point' => $check_point
+            'mandays_rate' => $mandays_rate,
+            'price' => ($mandays * $mandays_rate)
         ]);
     }
 
