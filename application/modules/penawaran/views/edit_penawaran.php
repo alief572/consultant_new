@@ -827,6 +827,10 @@ if (count($list_penawaran_others) > 0) {
         hasil += '</td>';
 
         hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][harga_aktifitas]" value="" onchange="hitung_total_activity()">';
         hasil += '</td>';
 

@@ -29,11 +29,9 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 					<th>#</th>
 					<th>Nama Biaya</th>
 					<th>Tipe Biaya</th>
-					<th>Status</th>
 					<th>Action</th>
 				</tr>
 			</thead>
-
 			<tbody>
 
 			</tbody>
@@ -73,6 +71,34 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 
 	<!-- page script -->
 	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#table_penawaran').dataTable({
+				ajax: {
+					url: siteurl + active_controller + 'get_data_biaya',
+					type: "POST",
+					dataType: "JSON",
+					data: function(d) {
+
+					}
+				},
+				columns: [{
+					data: 'no',
+				}, {
+					data: 'nm_biaya'
+				}, {
+					data: 'tipe_biaya'
+				}, {
+					data: 'option'
+				}],
+				responsive: true,
+				processing: true,
+				serverSide: true,
+				stateSave: true,
+				destroy: true,
+				paging: true
+			});
+		});
+
 		$(document).on('click', '.add', function() {
 			$("#head_title").html("<b>Add Biaya</b>");
 			$.ajax({
@@ -95,7 +121,7 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 				showCancelButton: true
 			}, function(next) {
 				if (next) {
-					var formData = new FormData($('#frm-data')[0]);
+					var formData = $('#frm-data').serialize();
 
 					$.ajax({
 						type: 'post',
@@ -105,7 +131,13 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 						dataType: 'json',
 						success: function(result) {
 							if (result.status == 1) {
-
+								swal({
+									type: 'success',
+									title: 'Success !',
+									text: result.pesan
+								}, function(after) {
+									location.reload();
+								});
 							} else {
 								swal({
 									type: 'warning',
@@ -124,13 +156,5 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 					});
 				}
 			});
-		});
-
-		$(function() {
-			var table = $('#example1').DataTable({
-				orderCellsTop: true,
-				fixedHeader: true
-			});
-			$("#form-area").hide();
 		});
 	</script>
