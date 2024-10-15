@@ -197,10 +197,9 @@ if (count($list_penawaran_others) > 0) {
             <thead>
                 <tr>
                     <th class="text-center">Activity Name</th>
-                    <th class="text-center">Bobot</th>
                     <th class="text-center">Mandays</th>
+                    <th class="text-center">Mandays Rate</th>
                     <th class="text-center">Price</th>
-                    <th class="text-center">Check Point</th>
                 </tr>
             </thead>
             <tbody class="list_activity">
@@ -209,6 +208,7 @@ if (count($list_penawaran_others) > 0) {
                 $ttl_mandays = 0;
                 $ttl_price = 0;
                 $ttl_check_point = 0;
+                $ttl_mandays_rate = 0;
 
                 $no_activity = 1;
                 foreach ($list_penawaran_aktifitas as $item_aktifitas) {
@@ -216,12 +216,9 @@ if (count($list_penawaran_others) > 0) {
                     echo '<tr>';
 
                     echo '<td>' . $item_aktifitas->nama_aktifitas . '</td>';
-                    echo '<td class="text-center">' . number_format($item_aktifitas->bobot, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_aktifitas->mandays, 2) . '</td>';
-                    echo '<td class="text-center">' . number_format($item_aktifitas->harga_aktifitas, 2) . '</td>';
-                    echo '<td class="text-center">';
-                    echo '<button type="button" class="btn btn-sm btn-secondary">' . $item_aktifitas->jml_check_point . ' Point</button>';
-                    echo '</td>';
+                    echo '<td class="text-center">' . number_format($item_aktifitas->mandays_rate, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_aktifitas->total_aktifitas, 2) . '</td>';
 
                     echo '</tr>';
 
@@ -229,6 +226,7 @@ if (count($list_penawaran_others) > 0) {
                     $ttl_mandays += $item_aktifitas->mandays;
                     $ttl_price += $item_aktifitas->harga_aktifitas;
                     $ttl_check_point += $item_aktifitas->jml_check_point;
+                    $ttl_mandays_rate += $item_aktifitas->mandays_rate;
 
                     $no_activity++;
                 }
@@ -237,10 +235,9 @@ if (count($list_penawaran_others) > 0) {
             <tfoot>
                 <tr>
                     <th class="text-center">Total</th>
-                    <th class="text-center ttl_act_bobot"><?= number_format($ttl_bobot, 2) ?></th>
                     <th class="text-center ttl_act_mandays"><?= number_format($ttl_mandays, 2) ?></th>
+                    <th class="text-center ttl_act_mandays_rate"><?= number_format($ttl_mandays_rate, 2) ?></th>
                     <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
-                    <th class="text-center ttl_act_check_point"><?= number_format($ttl_check_point, 2) ?></th>
                 </tr>
             </tfoot>
         </table>

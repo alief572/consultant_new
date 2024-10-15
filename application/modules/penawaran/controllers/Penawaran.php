@@ -426,10 +426,9 @@ class Penawaran extends Admin_Controller
 
         $hasil = '';
 
-        $ttl_bobot = 0;
         $ttl_mandays = 0;
+        $ttl_mandays_rate = 0;
         $ttl_price = 0;
-        $ttl_check_point = 0;
 
         $no = 1;
         foreach ($get_konsultasi_detail as $item) {
@@ -464,8 +463,12 @@ class Penawaran extends Admin_Controller
             $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' . $no . '" name="dt_act[' . $no . '][mandays]" value="' . $item->mandays . '" onchange="hitung_total_activity()">';
             $hasil .= '</td>';
 
+            $hasil .= '<td class="text-center">';
+            $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_' . $no . '" name="dt_act[' . $no . '][mandays_rate]" value="' . $item->harga_aktifitas . '" onchange="hitung_total_activity()">';
+            $hasil .= '</td>';
+
             $hasil .= '<td class="text-right">';
-            $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' . $no . '" name="dt_act[' . $no . '][harga_aktifitas]" value="' . $item->harga_aktifitas . '" onchange="hitung_total_activity()">';
+            $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' . $no . '" name="dt_act[' . $no . '][harga_aktifitas]" value="' . ($item->harga_aktifitas * $item->mandays) . '" onchange="hitung_total_activity()" readonly>';
             $hasil .= '</td>';
 
             $hasil .= '<td class="text-center">';
@@ -476,19 +479,17 @@ class Penawaran extends Admin_Controller
 
             $no++;
 
-            $ttl_bobot += $item->bobot;
             $ttl_mandays += $item->mandays;
-            $ttl_price += $item->harga_aktifitas;
-            $ttl_check_point += $get_check_point->num_rows();
+            $ttl_mandays_rate += $item->harga_aktifitas;
+            $ttl_price += ($item->harga_aktifitas * $item->mandays);
         }
 
         echo json_encode([
             'hasil' => $hasil,
             'no' => $no,
-            'ttl_bobot' => $ttl_bobot,
             'ttl_mandays' => $ttl_mandays,
-            'ttl_price' => $ttl_price,
-            'ttl_check_point' => $ttl_check_point
+            'ttl_mandays_rate' => $ttl_mandays_rate,
+            'ttl_price' => $ttl_price
         ]);
     }
 
@@ -614,9 +615,10 @@ class Penawaran extends Admin_Controller
                 $arr_insert_act[] = [
                     'id_penawaran' => $id_penawaran,
                     'id_aktifitas' => $item_act['nm_aktifitas'],
-                    'bobot' => str_replace(',', '',  $item_act['bobot']),
                     'mandays' => str_replace(',', '',  $item_act['mandays']),
+                    'mandays_rate' => str_replace(',', '',  $item_act['mandays_rate']),
                     'harga_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
+                    'total_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
                     'input_by' => $this->auth->user_id(),
                     'input_date' => date('Y-m-d H:i:s')
                 ];
@@ -825,9 +827,10 @@ class Penawaran extends Admin_Controller
                 $arr_insert_act[] = [
                     'id_penawaran' => $id_penawaran,
                     'id_aktifitas' => $item_act['nm_aktifitas'],
-                    'bobot' => str_replace(',', '',  $item_act['bobot']),
                     'mandays' => str_replace(',', '',  $item_act['mandays']),
+                    'mandays_rate' => str_replace(',', '',  $item_act['mandays_rate']),
                     'harga_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
+                    'total_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
                     'input_by' => $this->auth->user_id(),
                     'input_date' => date('Y-m-d H:i:s')
                 ];

@@ -177,6 +177,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <tr>
                         <th class="text-center">Activity Name</th>
                         <th class="text-center">Mandays</th>
+                        <th class="text-center">Mandays Rate</th>
                         <th class="text-center">Price</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -188,6 +189,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <tr>
                         <th class="text-center">Total</th>
                         <th class="text-center ttl_act_mandays">00,0</th>
+                        <th class="text-center ttl_act_mandays_rate">00,0</th>
                         <th class="text-center ttl_act_price">00,0</th>
                         <th class="text-center"></th>
                     </tr>
@@ -497,22 +499,22 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     function hitung_total_activity() {
         var no_activity = parseFloat($('.no').val());
 
-        var ttl_bobot = 0;
         var ttl_mandays = 0;
+        var ttl_mandays_rate = 0;
         var ttl_price = 0;
-        var ttl_check_point = 0;
 
         var arr_id_aktifitas = [];
 
         for (i = 1; i < no_activity; i++) {
             if ($('.select_nm_aktifitas_' + i).length) {
-                var bobot = get_num($('input[name="dt_act[' + i + '][bobot]"]').val());
                 var mandays = get_num($('input[name="dt_act[' + i + '][mandays]"]').val());
-                var price = get_num($('.input_harga_aktifitas_' + i).val());
+                var mandays_rate = get_num($('input[name="dt_act[' + i + '][mandays_rate]"]').val());
 
-                ttl_bobot += bobot;
                 ttl_mandays += mandays;
-                ttl_price += price;
+                ttl_mandays_rate += mandays_rate;
+                ttl_price += (mandays * mandays_rate);
+
+                $('.input_harga_aktifitas_' + i).val(number_format(mandays * mandays_rate, 2));
 
                 var id_aktifitas = $('.select_nm_aktifitas_' + i).val();
                 if (id_aktifitas !== '') {
@@ -535,8 +537,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             });
         }
 
-        $('.ttl_act_bobot').html(number_format(ttl_bobot, 2));
         $('.ttl_act_mandays').html(number_format(ttl_mandays, 2));
+        $('.ttl_act_mandays_rate').html(number_format(ttl_mandays_rate, 2));
         $('.ttl_act_price').html(number_format(ttl_price, 2));
 
         hitung_summary();
@@ -842,10 +844,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 $('.list_activity').html(result.hasil);
                 auto_num();
 
-                $('.ttl_act_bobot').html(number_format(result.ttl_bobot, 2));
                 $('.ttl_act_mandays').html(number_format(result.ttl_mandays, 2));
+                $('.ttl_act_mandays_rate').html(number_format(result.ttl_mandays_rate, 2));
                 $('.ttl_act_price').html(number_format(result.ttl_price, 2));
-                $('.ttl_act_check_point').html(number_format(result.ttl_check_point, 2));
 
                 $('.no').val(result.no);
 
