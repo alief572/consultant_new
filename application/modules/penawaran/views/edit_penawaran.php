@@ -210,7 +210,6 @@ if (count($list_penawaran_others) > 0) {
                         <th class="text-center">Bobot</th>
                         <th class="text-center">Mandays</th>
                         <th class="text-center">Price</th>
-                        <th class="text-center">Check Point</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -253,10 +252,6 @@ if (count($list_penawaran_others) > 0) {
                         echo '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' . $no_activity . '" name="dt_act[' . $no_activity . '][harga_aktifitas]" value="' . $item_aktifitas->harga_aktifitas . '" onchange="hitung_total_activity()">';
                         echo '</td>';
 
-                        echo '<td class="text-center td_check_point_' . $no_activity . '">';
-                        echo '<button type="button" class="btn btn-sm btn-secondary">' . $item_aktifitas->jml_check_point . ' Point</button>';
-                        echo '</td>';
-
                         echo '<td class="text-center">';
                         echo '<button type="button" class="btn btn-sm btn-danger del_aktifitas" data-no="' . $no_activity . '"><i class="fa fa-trash"></i></button>';
                         echo '</td>';
@@ -278,7 +273,6 @@ if (count($list_penawaran_others) > 0) {
                         <th class="text-center ttl_act_bobot"><?= number_format($ttl_bobot, 2) ?></th>
                         <th class="text-center ttl_act_mandays"><?= number_format($ttl_mandays, 2) ?></th>
                         <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
-                        <th class="text-center ttl_act_check_point"><?= number_format($ttl_check_point, 2) ?></th>
                         <th class="text-center"></th>
                     </tr>
                 </tfoot>

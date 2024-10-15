@@ -35,7 +35,6 @@
                                                             <th width="15%">Harga</th>
                                                             <th width="10%">Bobot</th>
                                                             <th width="10%">Mandays</th>
-                                                            <th width="17%">Check Point</th>
                                                             <th width="6%">Hapus</th>
                                                         </tr>
                                                     </thead>
@@ -227,14 +226,6 @@
         Baris += "    </td>";
         Baris += "    <td>";
         Baris += "        <input type='number' class='form-control' name='mandays[]' id='mandays' min='0'>";
-        Baris += "    </td>";
-        Baris += "    <td>";
-        Baris += "        <a href='<?php echo site_url('master_aktifitas/aktifitas_check_point'); ?>/" + UnikNumber + "' ";
-        Baris += "           class='btn btn-success btn-xs add-point' id='AddChekPoint'>ADD POINT";
-        Baris += "        </a>";
-        Baris += "        <a href='<?php echo site_url('master_aktifitas/aktifitas_delete_point'); ?>/" + UnikNumber + "' ";
-        Baris += "           class='btn btn-danger btn-xs add-point' id='DeleteChekPoint' style='display:none;'>DELETE POINT";
-        Baris += "        </a>";
         Baris += "    </td>";
         Baris += "    <td align='center' style='padding-top:13px'>" + Hapus;
         Baris += "    </td>";

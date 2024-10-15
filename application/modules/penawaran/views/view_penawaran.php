@@ -201,7 +201,6 @@ if (count($list_penawaran_others) > 0) {
                     <th class="text-center">Bobot</th>
                     <th class="text-center">Mandays</th>
                     <th class="text-center">Price</th>
-                    <th class="text-center">Check Point</th>
                 </tr>
             </thead>
             <tbody class="list_activity">
@@ -220,9 +219,6 @@ if (count($list_penawaran_others) > 0) {
                     echo '<td class="text-center">' . number_format($item_aktifitas->bobot, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_aktifitas->mandays, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_aktifitas->harga_aktifitas, 2) . '</td>';
-                    echo '<td class="text-center">';
-                    echo '<button type="button" class="btn btn-sm btn-secondary">' . $item_aktifitas->jml_check_point . ' Point</button>';
-                    echo '</td>';
 
                     echo '</tr>';
 
@@ -241,7 +237,6 @@ if (count($list_penawaran_others) > 0) {
                     <th class="text-center ttl_act_bobot"><?= number_format($ttl_bobot, 2) ?></th>
                     <th class="text-center ttl_act_mandays"><?= number_format($ttl_mandays, 2) ?></th>
                     <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
-                    <th class="text-center ttl_act_check_point"><?= number_format($ttl_check_point, 2) ?></th>
                 </tr>
             </tfoot>
         </table>

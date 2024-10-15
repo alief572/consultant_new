@@ -472,10 +472,6 @@ class Penawaran extends Admin_Controller
             $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' . $no . '" name="dt_act[' . $no . '][harga_aktifitas]" value="' . $item->harga_aktifitas . '" onchange="hitung_total_activity()">';
             $hasil .= '</td>';
 
-            $hasil .= '<td class="text-center tr_check_point_' . $no . '">';
-            $hasil .= '<button type="button" class="btn btn-xs btn-secondary">' . $get_check_point->num_rows() . ' Point</button>';
-            $hasil .= '</td>';
-
             $hasil .= '<td class="text-center">';
             $hasil .= '<button type="button" class="btn btn-sm btn-danger del_aktifitas" data-no="' . $no . '"><i class="fa fa-trash"></i></button>';
             $hasil .= '</td>';

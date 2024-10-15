@@ -31,7 +31,6 @@
                                                             <th width="15%">Harga</th>
                                                             <th width="10%">Bobot</th>
                                                             <th width="10%">Mandays</th>
-                                                            <th width="17%">Check Point</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -54,21 +53,7 @@
                                                                     <td>
                                                                         <input type='number' class='form-control' name='mandays[]' value="<?php echo @$d->mandays; ?>">
                                                                     </td>
-                                                                    <td>
-                                                                        <?php
-                                                                        $total_point = $this->db->where('id_aktifitas', $d->id_aktifitas)->get('kons_master_check_point')->num_rows();
-                                                                        $display = "style='display:none;'";
-                                                                        if ($total_point > 0) {
-                                                                            $display = "";
-                                                                        }
-                                                                        ?>
-                                                                        <a href='<?php echo site_url('master_aktifitas/aktifitas_check_point/' . @$d->id_aktifitas); ?>' class='btn btn-default btn-xs add-point' id='AddChekPoint'>
-                                                                            <?php echo $total_point; ?> POINT
-                                                                        </a>
-                                                                        <a href='<?php echo site_url('master_aktifitas/aktifitas_delete_point/' . @$d->id_aktifitas); ?>' class='btn btn-danger btn-xs add-point' id='DeleteChekPoint' <?php echo $display; ?>>
-                                                                            DELETE POINT
-                                                                        </a>
-                                                                    </td>
+                                                                    
                                                                 </tr>
                                                         <?php
                                                             }

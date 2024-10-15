@@ -169,7 +169,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th class="text-center">Bobot</th>
                         <th class="text-center">Mandays</th>
                         <th class="text-center">Price</th>
-                        <th class="text-center">Check Point</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -182,7 +181,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th class="text-center ttl_act_bobot">00,0</th>
                         <th class="text-center ttl_act_mandays">00,0</th>
                         <th class="text-center ttl_act_price">00,0</th>
-                        <th class="text-center ttl_act_check_point">00,0</th>
                         <th class="text-center"></th>
                     </tr>
                 </tfoot>

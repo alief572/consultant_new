@@ -29,7 +29,6 @@
                                                     <th class="no-sort">Harga</th>
                                                     <th>Bobot</th>
                                                     <th>Mandays</th>
-                                                    <th class="no-sort">Point</th>
                                                     <th class="no-sort" width="">Option</th>
                                                 </tr>
                                             </thead>

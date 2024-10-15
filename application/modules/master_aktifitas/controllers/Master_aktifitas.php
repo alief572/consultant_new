@@ -89,7 +89,6 @@ class Master_aktifitas extends Admin_Controller
             $nestedData[]   = number_format($row['harga_aktifitas']);
             $nestedData[]   = $row['bobot'];
             $nestedData[]   = $row['mandays'];
-            $nestedData[]   = ($total_point > 0) ? "<b>" . $total_point . "</b> POINT" : "-";
             $nestedData[]   = "
                 <div class='btn-group'>
                     " . $edit_btn . "
