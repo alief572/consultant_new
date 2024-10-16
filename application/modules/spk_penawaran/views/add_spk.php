@@ -204,7 +204,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                         echo '<input type="text" class="form-control form-control-sm edit_mandays_subcont mandays_subcont_' . $item->id . '" name="dt[' . $no . '][mandays_subcont]" data-id="' . $item->id . '">';
                         echo '</td>';
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm text-right edit_price_subcont price_subcont_' . $item->id . ' auto_num" name="dt[' . $no . '][price_subcont]" value="' . $item->harga_aktifitas . '" data-id="' . $item->id . '">';
+                        echo '<input type="text" class="form-control form-control-sm text-right edit_price_subcont price_subcont_' . $item->id . ' auto_num" name="dt[' . $no . '][price_subcont]" value="" data-id="' . $item->id . '">';
                         echo '</td>';
                         echo '<td>';
                         echo '<input type="text" class="form-control form-control-sm total_subcont_' . $item->id . ' auto_num text-right" name="dt[' . $no . '][total_subcont]" readonly>';
