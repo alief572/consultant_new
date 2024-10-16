@@ -22,10 +22,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         padding: 5px;
     }
 
-    /* .chosen-container {
-        z-index: 9999;
-        /* Set a high z-index */
-    }
 
     .chosen-container .chosen-drop {
         z-index: 9999;
@@ -687,6 +683,17 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         hasil += '<td>';
         hasil += '<input type="text" class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][nm_akomodasi]">';
+        // hasil += '<select class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][nm_akomodasi]">';
+        
+        // $.ajax({
+        //     type: 'post',
+        //     url: siteurl + active_controller + 'get_list_def_akomodasi',
+        //     success: function(result) {
+        //         hasil += result;
+        //     }
+        // });
+
+        // hasil += '</select>';
         hasil += '</td>';
 
         hasil += '<td>';

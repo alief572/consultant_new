@@ -371,11 +371,23 @@ class Penawaran extends Admin_Controller
         $this->db->from('kons_master_aktifitas a');
         $get_aktifitas = $this->db->get()->result();
 
+        $this->db->select('a.*');
+        $this->db->from('kons_master_biaya a');
+        $this->db->where('a.tipe_biaya', 1);
+        $get_def_biaya_akomodasi = $this->db->get()->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_master_biaya a');
+        $this->db->where('a.tipe_biaya', 2);
+        $get_def_biaya_others = $this->db->get()->result();
+
         $data = [
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
-            'list_aktifitas' => $get_aktifitas
+            'list_aktifitas' => $get_aktifitas,
+            'list_def_akomodasi' => $get_def_biaya_akomodasi,
+            'list_def_others' => $get_def_biaya_others
         ];
 
         $this->template->title('Create Quotation');
@@ -799,6 +811,8 @@ class Penawaran extends Admin_Controller
                 'grand_total' => $post['grand_total'],
                 'tipe_informasi_awal' => $tipe_info_awal,
                 'detail_informasi_awal' => $detail_info_awal,
+                'sts_quot' => 1,
+                'sts_deal' => null,
                 'updated_by' => $this->auth->user_id(),
                 'updated_date' => date('Y-m-d H:i:s')
             ];
@@ -944,5 +958,15 @@ class Penawaran extends Admin_Controller
             'status' => $valid,
             'msg' => $msg,
         ]);
+    }
+
+    public function get_list_def_akomodasi() {
+        $this->db->select('a.*');
+        $this->db->from('kons_master_biaya a');
+        $this->db->where('a.tipe_biaya', 1);
+        $get_data = $this->db->get()->result();
+
+        $hasil = [];
+
     }
 }
