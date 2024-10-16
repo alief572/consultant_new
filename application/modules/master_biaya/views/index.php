@@ -54,7 +54,7 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-danger">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">
 						<i class="fa fa-close"></i> Cancel
 					</button>
 					<button type="submit" class="btn btn-primary">
@@ -111,6 +111,23 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 			$.ajax({
 				type: 'POST',
 				url: siteurl + active_controller + 'add/',
+				success: function(data) {
+					$("#dialog-popup").modal();
+					$("#ModalView").html(data);
+				}
+			})
+		});
+
+		$(document).on('click', '.edit_biaya_modal', function() {
+			var id = $(this).data('id');
+
+			$("#head_title").html("<b>Edit Biaya</b>");
+			$.ajax({
+				type: 'POST',
+				url: siteurl + active_controller + 'edit/',
+				data: {
+					'id': id
+				},
 				success: function(data) {
 					$("#dialog-popup").modal();
 					$("#ModalView").html(data);

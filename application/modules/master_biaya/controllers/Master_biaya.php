@@ -42,6 +42,15 @@ class Master_biaya extends Admin_Controller
         $this->template->render('add');
     }
 
+    public function edit(){
+        $id = $this->input->post('id');
+
+        $get_biaya = $this->db->get_where('kons_master_biaya', ['id' => $id])->row();
+
+        $this->template->set('data_biaya', $get_biaya);
+        $this->template->render('edit');
+    }
+
     public function save_biaya()
     {
         $post = $this->input->post();
@@ -125,7 +134,7 @@ class Master_biaya extends Admin_Controller
             $delete = '';
 
             if ($this->managePermission) {
-                $edit = '<button type="button" class="btn btn-sm btn-warning" title="Edit Biaya"><i class="fa fa-pencil"></i></button>';
+                $edit = '<button type="button" class="btn btn-sm btn-warning edit_biaya_modal" data-id="' . $item->id . '" title="Edit Biaya"><i class="fa fa-pencil"></i></button>';
             }
 
             if ($this->deletePermission) {
