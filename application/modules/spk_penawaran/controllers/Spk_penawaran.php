@@ -787,17 +787,17 @@ class SPK_penawaran extends Admin_Controller
 
         $id_spk_penawaran = $post['id_spk_penawaran'];
 
-        $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran')->row();
+        $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
 
-        $this->db->select('a.id_customer, a.name');
-        $this->db->from('customers a');
+        $this->db->select('a.id_customer, a.nm_customer');
+        $this->db->from('customer a');
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('members a');
+        $this->db->select('a.id, a.nm_karyawan');
+        $this->db->from('employee a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
@@ -809,24 +809,28 @@ class SPK_penawaran extends Admin_Controller
 
         $get_divisi = $this->db->get_where('ms_department', ['id' => $post['divisi']])->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('members a');
+        $nm_divisi = (!empty($get_divisi)) ? $get_divisi->nama : '';
+
+        $this->db->select('a.id, a.nm_karyawan');
+        $this->db->from('employee a');
         $this->db->where('a.id', $post['project_leader']);
         $get_project_leader = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('members a');
+        $nm_project_leader = (!empty($get_project_leader)) ? $get_project_leader->nm_karyawan : '';
+
+        $this->db->select('a.id, a.nm_karyawan');
+        $this->db->from('employee a');
         $this->db->where('a.id', $post['konsultan_1']);
         $get_konsultan_1 = $this->db->get()->row();
 
-        $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nama : '';
+        $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nm_karyawan : '';
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('members a');
+        $this->db->select('a.id, a.nm_karyawan');
+        $this->db->from('employee a');
         $this->db->where('a.id', $post['konsultan_2']);
         $get_konsultan_2 = $this->db->get()->row();
 
-        $nm_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->nama : '';
+        $nm_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->nm_karyawan : '';
 
         $this->db->trans_begin();
 
@@ -834,8 +838,8 @@ class SPK_penawaran extends Admin_Controller
         $this->db->delete('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran]);
 
         $arr_insert = [
-            'id_customer' => $get_penawaran->id_customer,
-            'nm_customer' => $get_customer->name,
+            'id_customer' => $get_customer->id_customer,
+            'nm_customer' => $get_customer->nm_customer,
             'address' => $post['address'],
             'nm_pic' => $post['pic'],
             'tipe_informasi_awal' => $get_penawaran->tipe_informasi_awal,
@@ -843,14 +847,14 @@ class SPK_penawaran extends Admin_Controller
             'waktu_from' => $post['waktu_from'],
             'waktu_to' => $post['waktu_to'],
             'id_sales' => $get_marketing->id,
-            'nm_sales' => $get_marketing->nama,
+            'nm_sales' => $get_marketing->nm_karyawan,
             'upload_proposal' => $get_penawaran->upload_proposal,
             'id_project' => $get_konsultasi->id_konsultasi_h,
             'nm_project' => $get_konsultasi->nm_paket,
             'id_divisi' => $post['divisi'],
-            'nm_divisi' => $get_divisi->nama,
+            'nm_divisi' => $nm_divisi,
             'id_project_leader' => $post['project_leader'],
-            'nm_project_leader' => $get_project_leader->nama,
+            'nm_project_leader' => $nm_project_leader,
             'id_konsultan_1' => $post['konsultan_1'],
             'nm_konsultan_1' => $nm_konsultan_1,
             'id_konsultan_2' => $post['konsultan_2'],

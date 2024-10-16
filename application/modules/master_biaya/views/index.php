@@ -72,7 +72,14 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 	<!-- page script -->
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$('#table_penawaran').dataTable({
+			datatables();
+		});
+
+		function datatables() {
+			// var dataTable = $('#example1').dataTable();
+			// datatable.destroy();
+
+			var dataTable = $('#example1').dataTable({
 				ajax: {
 					url: siteurl + active_controller + 'get_data_biaya',
 					type: "POST",
@@ -97,7 +104,7 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 				destroy: true,
 				paging: true
 			});
-		});
+		}
 
 		$(document).on('click', '.add', function() {
 			$("#head_title").html("<b>Add Biaya</b>");
@@ -157,4 +164,51 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 				}
 			});
 		});
+
+		$(document).on('click', '.del_biaya', function() {
+			var id = $(this).data('id');
+
+			swal({
+				type: 'warning',
+				title: 'Are you sure ?',
+				text: 'This will delete the data !',
+				showCancelButton: true
+			}, function(next) {
+				if (next) {
+					$.ajax({
+						type: 'post',
+						url: siteurl + active_controller + 'del_biaya',
+						data: {
+							'id': id
+						},
+						cache: false,
+						dataType: 'JSON',
+						success: function(result) {
+							if (result.status == 1) {
+								swal({
+									type: 'success',
+									title: 'Success !',
+									text: result.pesan
+								}, function(after) {
+									datatables();
+								});
+							} else {
+								swal({
+									type: 'warning',
+									title: 'Failed !',
+									text: result.pesan
+								});
+							}
+						},
+						error: function(result) {
+							swal({
+								type: 'error',
+								title: 'Error !',
+								text: 'Please try again later !'
+							});
+						}
+					});
+				}
+			});
+		})
 	</script>

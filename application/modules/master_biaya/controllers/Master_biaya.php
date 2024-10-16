@@ -103,10 +103,10 @@ class Master_biaya extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.nm_biaya, IF(a.tipe_biaya = 1, "Akomodasi", "Others") as tipe');
+        $this->db->select('a.id, a.nm_biaya, IF(a.tipe_biaya = 1, "Akomodasi", "Others") as tipe');
         $this->db->from('kons_master_biaya a');
-        $this->db->where(1, 1);
-        if(!empty($search)) {
+        $this->db->where('a.deleted_by', null);
+        if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.nm_biaya', $search['value'], 'both');
             $this->db->or_like('IF(a.tipe_biaya = 1, "Akomodasi", "Others")', $search['value'], 'both');
@@ -114,23 +114,67 @@ class Master_biaya extends Admin_Controller
         }
         $this->db->order_by('a.id', 'desc');
 
-        $get_data_biaya = $this->db->get()->result();
+        $get_data_biaya = $this->db->get();
 
         $hasil = [];
 
         $no = 1;
-        foreach($get_data_biaya as $item) {
+        foreach ($get_data_biaya->result() as $item) {
 
             $edit = '';
             $delete = '';
+
+            if ($this->managePermission) {
+                $edit = '<button type="button" class="btn btn-sm btn-warning" title="Edit Biaya"><i class="fa fa-pencil"></i></button>';
+            }
+
+            if ($this->deletePermission) {
+                $delete = '<button type="button" class="btn btn-sm btn-sm btn-danger del_biaya" data-id="' . $item->id . '" title="Delete Biaya"><i class="fa fa-trash"></i></button>';
+            }
+
+            $buttons = $edit . ' ' . $delete;
+
             $hasil[] = [
                 'no' => $no,
                 'nm_biaya' => $item->nm_biaya,
-                'tipe' => $item->tipe,
-                'option' => 
+                'tipe_biaya' => $item->tipe,
+                'option' => $buttons
             ];
 
             $no++;
         }
+
+        echo json_encode([
+            'draw' => intval($draw),
+            'recordsTotal' => $get_data_biaya->num_rows(),
+            'recordsFiltered' => $get_data_biaya->num_rows(),
+            'data' => $hasil
+        ]);
+    }
+
+    public function del_biaya()
+    {
+        $id = $this->input->post('id');
+
+        $this->db->trans_begin();
+
+        $this->db->update('kons_master_biaya', ['deleted_by' => $this->auth->user_id(), 'deleted_date' => date('Y-m-d H:i:s')], ['id' => $id]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $pesan = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $pesan = 'Data has been deleted !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
     }
 }
