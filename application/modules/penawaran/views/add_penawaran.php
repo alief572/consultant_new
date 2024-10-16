@@ -682,18 +682,18 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var hasil = '<tr class="tr_akomodasi_' + no_akomodasi + '">';
 
         hasil += '<td>';
-        hasil += '<input type="text" class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][nm_akomodasi]">';
-        // hasil += '<select class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][nm_akomodasi]">';
-        
-        // $.ajax({
-        //     type: 'post',
-        //     url: siteurl + active_controller + 'get_list_def_akomodasi',
-        //     success: function(result) {
-        //         hasil += result;
-        //     }
-        // });
+        hasil += '<select class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
+        hasil += '<option value="">- Item Akomodasi -</option>';
+        <?php 
+            foreach($list_def_akomodasi as $item) {
+                ?>
 
-        // hasil += '</select>';
+                hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+
+                <?php
+            }
+        ?>
+        hasil += '</select>';
         hasil += '</td>';
 
         hasil += '<td>';
@@ -734,7 +734,18 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var hasil = '<tr class="tr_others_' + no_others + '">';
 
         hasil += '<td>';
-        hasil += '<input type="text" class="form-control form-control-sm" name="dt_oth[' + no_others + '][nm_others]">';
+        hasil += '<select class="form-control form-control-sm" name="dt_oth[' + no_others + '][id_others]">';
+        hasil += '<option value="">- Item Others -</option>';
+        <?php 
+            foreach($list_def_others as $item) {
+                ?>
+
+                hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+
+                <?php
+            }
+        ?>
+        hasil += '</select>';
         hasil += '</td>';
 
         hasil += '<td>';

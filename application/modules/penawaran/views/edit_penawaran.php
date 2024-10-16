@@ -204,7 +204,7 @@ if (count($list_penawaran_others) > 0) {
 
         <div class="box-body">
             <table class="table custom-table">
-            <thead>
+                <thead>
                     <tr>
                         <th class="text-center">Activity Name</th>
                         <th class="text-center">Mandays</th>
@@ -326,7 +326,17 @@ if (count($list_penawaran_others) > 0) {
                         echo '<tr class="tr_akomodasi_' . $no_akomodasi . '">';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm" name="dt_ako[' . $no_akomodasi . '][nm_akomodasi]" value="' . $item_akomodasi->nm_item . '">';
+                        echo '<select class="form-control form-control-sm" name="dt_ako[' . $no_akomodasi . '][id_akomodasi]">';
+                        echo '<option value="">- Select Akomodasi -</option>';
+                        foreach ($list_def_akomodasi as $item_def_akomodasi) {
+                            $selected = '';
+                            if ($item_def_akomodasi->id == $item_akomodasi->id_item) {
+                                $selected = 'selected';
+                            }
+
+                            echo '<option value="' . $item_def_akomodasi->id . '" ' . $selected . '>' . $item_def_akomodasi->nm_biaya . '</option>';
+                        }
+                        echo '</select>';
                         echo '</td>';
 
                         echo '<td>';
@@ -414,7 +424,16 @@ if (count($list_penawaran_others) > 0) {
                         echo '<tr class="tr_others_' . $no_others . '">';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm" name="dt_oth[' . $no_others . '][nm_others]" value="' . $item_others->nm_item . '">';
+                        echo '<select class="form-control form-control-sm" name="dt_oth[' . $no_others . '][id_others]">';
+                        echo '<option value="">- Select Others -</option>';
+                        foreach ($list_def_others as $item_def_others) {
+                            $selected = '';
+                            if ($item_def_others->id = $item_others->id_item) {
+                                $selected = 'selected';
+                            }
+                            echo '<option value="' . $item_def_others->id . '" ' . $selected . '>' . $item_def_others->nm_biaya . '</option>';
+                        }
+                        echo '</select>';
                         echo '</td>';
 
                         echo '<td>';

@@ -73,6 +73,16 @@ class Penawaran extends Admin_Controller
         $this->db->from('kons_master_aktifitas a');
         $get_aktifitas = $this->db->get()->result();
 
+        $this->db->select('a.*');
+        $this->db->from('kons_master_biaya a');
+        $this->db->where('a.tipe_biaya', 1);
+        $get_def_biaya_akomodasi = $this->db->get()->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_master_biaya a');
+        $this->db->where('a.tipe_biaya', 2);
+        $get_def_biaya_others = $this->db->get()->result();
+
         $data = [
             'list_penawaran' => $get_penawaran,
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
@@ -81,7 +91,9 @@ class Penawaran extends Admin_Controller
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
-            'list_aktifitas' => $get_aktifitas
+            'list_aktifitas' => $get_aktifitas,
+            'list_def_akomodasi' => $get_def_biaya_akomodasi,
+            'list_def_others' => $get_def_biaya_others
         ];
 
         $this->template->title('View Quotation');
@@ -103,8 +115,19 @@ class Penawaran extends Admin_Controller
         $this->db->order_by('a.id', 'asc');
         $get_penawaran_aktifitas = $this->db->get()->result();
 
-        $get_penawaran_akomodasi = $this->db->get_where('kons_tr_penawaran_akomodasi', ['id_penawaran' => $id_penawaran])->result();
-        $get_penawaran_others = $this->db->get_where('kons_tr_penawaran_others', ['id_penawaran' => $id_penawaran])->result();
+        // $get_penawaran_akomodasi = $this->db->get_where('kons_tr_penawaran_akomodasi', ['id_penawaran' => $id_penawaran])->result();
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_penawaran_akomodasi a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $id_penawaran);
+        $get_penawaran_akomodasi = $this->db->get()->result();
+
+        // $get_penawaran_others = $this->db->get_where('kons_tr_penawaran_others', ['id_penawaran' => $id_penawaran])->result();
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_penawaran_others a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $id_penawaran);
+        $get_penawaran_others = $this->db->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('customer a');
@@ -272,7 +295,7 @@ class Penawaran extends Admin_Controller
                 ';
             }
 
-            if($this->managePermission && $item->sts_quot == '2' && ($item->sts_deal == null || $item->sts_deal == '')) {
+            if ($this->managePermission && $item->sts_quot == '2' && ($item->sts_deal == null || $item->sts_deal == '')) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
                         <a href="#" class="btn btn-sm btn-warning deal_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
@@ -643,7 +666,7 @@ class Penawaran extends Admin_Controller
             foreach ($post['dt_ako'] as $item_ako) {
                 $arr_insert_ako[] = [
                     'id_penawaran' => $id_penawaran,
-                    'nm_item' => $item_ako['nm_akomodasi'],
+                    'id_item' => $item_ako['id_akomodasi'],
                     'qty' => str_replace(',', '', $item_ako['qty_akomodasi']),
                     'price_unit' => str_replace(',', '', $item_ako['harga_akomodasi']),
                     'total' => str_replace(',', '', $item_ako['total_akomodasi']),
@@ -659,7 +682,7 @@ class Penawaran extends Admin_Controller
             foreach ($post['dt_oth'] as $item_oth) {
                 $arr_insert_oth[] = [
                     'id_penawaran' => $id_penawaran,
-                    'nm_item' => $item_oth['nm_others'],
+                    'id_item' => $item_oth['id_others'],
                     'qty' => str_replace(',', '', $item_oth['qty_others']),
                     'price_unit' => str_replace(',', '', $item_oth['harga_others']),
                     'total' => str_replace(',', '', $item_oth['total_others']),
@@ -858,7 +881,7 @@ class Penawaran extends Admin_Controller
             foreach ($post['dt_ako'] as $item_ako) {
                 $arr_insert_ako[] = [
                     'id_penawaran' => $id_penawaran,
-                    'nm_item' => $item_ako['nm_akomodasi'],
+                    'id_item' => $item_ako['id_akomodasi'],
                     'qty' => str_replace(',', '', $item_ako['qty_akomodasi']),
                     'price_unit' => str_replace(',', '', $item_ako['harga_akomodasi']),
                     'total' => str_replace(',', '', $item_ako['total_akomodasi']),
@@ -874,7 +897,7 @@ class Penawaran extends Admin_Controller
             foreach ($post['dt_oth'] as $item_oth) {
                 $arr_insert_oth[] = [
                     'id_penawaran' => $id_penawaran,
-                    'nm_item' => $item_oth['nm_others'],
+                    'id_item' => $item_oth['id_others'],
                     'qty' => str_replace(',', '', $item_oth['qty_others']),
                     'price_unit' => str_replace(',', '', $item_oth['harga_others']),
                     'total' => str_replace(',', '', $item_oth['total_others']),
@@ -937,7 +960,8 @@ class Penawaran extends Admin_Controller
         ]);
     }
 
-    public function deal_penawaran() {
+    public function deal_penawaran()
+    {
         $id_penawaran = $this->input->post('id_penawaran');
 
         $this->db->trans_begin();
@@ -960,13 +984,21 @@ class Penawaran extends Admin_Controller
         ]);
     }
 
-    public function get_list_def_akomodasi() {
+    public function get_list_def_akomodasi()
+    {
         $this->db->select('a.*');
         $this->db->from('kons_master_biaya a');
         $this->db->where('a.tipe_biaya', 1);
         $get_data = $this->db->get()->result();
 
-        $hasil = [];
+        $hasil = '';
 
+        foreach ($get_data as $item) {
+            $hasil .= '<option value="' . $item->id . '">' . $item->nm_biaya . '</option>';
+        }
+
+        echo json_encode([
+            'hasil' => $hasil
+        ]);
     }
 }

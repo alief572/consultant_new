@@ -281,7 +281,7 @@ if (count($list_penawaran_others) > 0) {
                 $ttl_akomodasi = 0;
                 foreach ($list_penawaran_akomodasi as $item_akomodasi) {
                     echo '<tr>';
-                    echo '<td>' . $item_akomodasi->nm_item . '</td>';
+                    echo '<td>' . $item_akomodasi->nm_biaya . '</td>';
                     echo '<td class="text-center">' . number_format($item_akomodasi->qty, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_akomodasi->price_unit, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_akomodasi->total, 2) . '</td>';
@@ -342,7 +342,7 @@ if (count($list_penawaran_others) > 0) {
                 $ttl_others = 0;
                 foreach ($list_penawaran_others as $item_others) {
                     echo '<tr>';
-                    echo '<td>' . $item_others->nm_item . '</td>';
+                    echo '<td>' . $item_others->nm_biaya . '</td>';
                     echo '<td class="text-center">' . number_format($item_others->qty, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_others->price_unit, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_others->total, 2) . '</td>';
