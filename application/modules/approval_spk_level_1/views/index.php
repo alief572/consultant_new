@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Penawaran.Add');
-$ENABLE_MANAGE  = has_permission('Penawaran.Manage');
-$ENABLE_VIEW    = has_permission('Penawaran.View');
-$ENABLE_DELETE  = has_permission('Penawaran.Delete');
+$ENABLE_ADD     = has_permission('Approval_SPK.Add');
+$ENABLE_MANAGE  = has_permission('Approval_SPK.Manage');
+$ENABLE_VIEW    = has_permission('Approval_SPK.View');
+$ENABLE_DELETE  = has_permission('Approval_SPK.Delete');
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -21,13 +21,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 <div class="box">
     <div class="box-header">
-        <?php if ($ENABLE_ADD) : ?>
-            <div class="dropdown text-right">
-                <a class="btn btn-sm btn-success" href="<?= base_url('penawaran/add_penawaran') ?>">
-                    New Quotation
-                </a>
-            </div>
-        <?php endif; ?>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
@@ -35,13 +28,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <thead>
                 <tr>
                     <th align="center">No</th>
-                    <th align="center">Date</th>
+                    <th align="center">Nomor SPK</th>
                     <th align="center">Marketing</th>
                     <th align="center">Package</th>
                     <th align="center">Customer</th>
                     <th align="center">Grand Total</th>
-                    <th align="center">Status Cust.</th>
-                    <th align="center">Status Quot.</th>
+                    <th align="center">Status</th>
+                    <th align="center">Status SPK</th>
                     <th align="center">Action</th>
                 </tr>
             </thead>
@@ -62,8 +55,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         DataTables();
     });
 
-    $(document).on('click', '.del_penawaran', function() {
-        var id_penawaran = $(this).data('id_penawaran');
+    $(document).on('click', '.del_spk', function() {
+        var id_spk_penawaran = $(this).data('id_spk_penawaran');
 
         swal({
             type: 'warning',
@@ -74,9 +67,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             if (next) {
                 $.ajax({
                     type: 'post',
-                    url: siteurl + active_controller + 'del_penawaran',
+                    url: siteurl + active_controller + 'del_spk',
                     data: {
-                        'id_penawaran': id_penawaran
+                        'id_spk_penawaran': id_spk_penawaran
                     },
                     cache: false,
                     dataType: 'JSON',
@@ -87,7 +80,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                 title: 'Success !',
                                 text: result.msg
                             }, function(after) {
-                                location.reload(true);
+                                window.location.href = siteurl + active_controller;
                             });
                         } else {
                             swal({
@@ -109,60 +102,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         });
     });
 
-    $(document).on('click', '.deal_penawaran', function() {
-        var id_penawaran = $(this).data('id_penawaran');
-
-        swal({
-            type: 'warning',
-            title: 'Warning !',
-            text: 'Are you sure to deal this Quotation ?',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'deal_penawaran',
-                    data: {
-                        'id_penawaran': id_penawaran
-                    },
-                    cache: false,
-                    dataType: 'JSON',
-                    success: function(result) {
-                        if (result.status == 1) {
-                            swal({
-                                type: 'success',
-                                title: 'Success !',
-                                text: result.msg
-                            }, function(after) {
-                                DataTables();
-                            });
-                        } else {
-                            swal({
-                                type: 'warning',
-                                title: 'Failed !',
-                                text: result.msg
-                            });
-                        }
-                    },
-                    error: function(result) {
-                        swal({
-                            type: 'error',
-                            title: 'Error !',
-                            text: 'Please try again later !'
-                        });
-                    }
-                });
-            }
-        });
-    });
-
     function DataTables() {
         // var dataTables = $('#table_penawaran').dataTable();
         // dataTables.destroy();
 
         var dataTables = $('#table_penawaran').dataTable({
             ajax: {
-                url: siteurl + active_controller + 'get_data_penawaran',
+                url: siteurl + active_controller + 'get_data_spk',
                 type: "POST",
                 dataType: "JSON",
                 data: function(d) {
@@ -172,7 +118,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             columns: [{
                     data: 'no',
                 }, {
-                    data: 'tgl_quotation'
+                    data: 'id_spk_penawaran'
                 },
                 {
                     data: 'nm_marketing'
@@ -187,10 +133,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     data: 'grand_total'
                 },
                 {
-                    data: 'status_cust'
+                    data: 'status'
                 },
                 {
-                    data: 'status_quot'
+                    data: 'status_spk'
                 },
                 {
                     data: 'option'

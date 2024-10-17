@@ -240,7 +240,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Total Mandays</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays, 2) ?>" readonly>
+                        <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= $total_mandays ?>" readonly>
                     </td>
                 </tr>
                 <tr>
@@ -260,13 +260,13 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Mandays Internal</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right" value="0" readonly>
+                        <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right" value="<?= $total_mandays ?>" readonly>
                     </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                     <td class="pd-5" width="370" valign="top">
-                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm auto_num text-right mandays_rate" value="0" readonly>
+                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm auto_num text-right mandays_rate" value="<?= ($nilai_kontrak / $total_mandays) ?>" readonly>
                     </td>
                     <td colspan="3"></td>
                 </tr>

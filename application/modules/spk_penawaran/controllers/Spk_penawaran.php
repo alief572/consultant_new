@@ -231,6 +231,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.deleted_by', null);
         if (!empty($search)) {
             $this->db->group_start();
+            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
             $this->db->or_like('a.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
@@ -405,6 +406,7 @@ class SPK_penawaran extends Admin_Controller
             $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
             $this->db->group_end();
         }
+        $this->db->order_by('a.id_quotation', 'desc');
 
         $get_data = $this->db->get();
 

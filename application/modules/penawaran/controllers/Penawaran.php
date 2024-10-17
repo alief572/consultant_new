@@ -283,7 +283,7 @@ class Penawaran extends Admin_Controller
             if ($this->deletePermission && ($item->sts_deal == null || $item->sts_deal == '')) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="#" class="btn btn-sm btn-danger del_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-trash"></i>
@@ -298,7 +298,7 @@ class Penawaran extends Admin_Controller
             if ($this->managePermission && $item->sts_quot == '2' && ($item->sts_deal == null || $item->sts_deal == '')) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="#" class="btn btn-sm btn-warning deal_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-warning deal_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-check"></i>
@@ -313,7 +313,7 @@ class Penawaran extends Admin_Controller
             $option .= '
                 <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
                     <a
-                        href="#"
+                        href="javascript:void(0);"
                         class="btn btn-sm"
                         style="background-color: #ff0066; color: #000000">
                         <div class="col-12 dropdown-item">

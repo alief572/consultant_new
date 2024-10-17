@@ -102,8 +102,17 @@ class Approval_penawaran extends Admin_Controller
         $this->db->group_by('a.id_aktifitas');
         $get_penawaran_aktifitas = $this->db->get()->result();
 
-        $get_penawaran_akomodasi = $this->db->get_where('kons_tr_penawaran_akomodasi', ['id_penawaran' => $id_penawaran])->result();
-        $get_penawaran_others = $this->db->get_where('kons_tr_penawaran_others', ['id_penawaran' => $id_penawaran])->result();
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_penawaran_akomodasi a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $id_penawaran);
+        $get_penawaran_akomodasi = $this->db->get()->result();
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_penawaran_others a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $id_penawaran);
+        $get_penawaran_others = $this->db->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('customer a');
