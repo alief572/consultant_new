@@ -197,6 +197,7 @@ class Approval_spk_level_1 extends Admin_Controller
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->where('a.deleted_by', null);
+        $this->db->where_in('a.sts_spk', array(null, 0));
 
         $this->db->group_start();
         $this->db->where('a.approval_sales_sts', null);
