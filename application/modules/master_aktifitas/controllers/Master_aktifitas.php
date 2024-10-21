@@ -218,7 +218,7 @@ class Master_aktifitas extends Admin_Controller
                         foreach ($post['aktifitas_num'] as $key => $value) {
                             $id_aktifitas     = $value;
                             $nm_aktifitas     = $post['nm_aktifitas'][$key];
-                            $harga_aktifitas  = $post['hrg_aktifitas'][$key];
+                            $harga_aktifitas  = str_replace(',', '', $post['hrg_aktifitas'][$key]);
                             // $bobot            = $post['bobot'][$key];
                             $mandays          = $post['mandays'][$key];
                             $unik_id          = $post['aktifitas_unique_id'][$key];
