@@ -193,11 +193,15 @@ class Approval_spk_level_1 extends Admin_Controller
         $this->db->where('a.id_user', $this->auth->user_id());
         $get_user = $this->db->get()->row();
 
+        // print_r($get_user);
+        // exit;
+
         $this->db->select('a.*, b.grand_total');
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->where('a.deleted_by', null);
-        $this->db->where_in('a.sts_spk', array(null, 0));
+        $this->db->where('a.sts_spk', null);
+        $this->db->where('a.approval_manager_sales', null);
 
         $this->db->group_start();
         $this->db->where('a.approval_sales_sts', null);
@@ -206,15 +210,17 @@ class Approval_spk_level_1 extends Admin_Controller
         $this->db->or_where('IF(a.id_konsultan_2 IS NULL, "1", a.approval_konsultan_2_sts) IS NULL');
         $this->db->group_end();
 
-        $this->db->group_start();
-        $this->db->like('a.id_spk_penawaran', $search['value'], 'both');
-        $this->db->or_like('a.nm_sales', $search['value'], 'both');
-        $this->db->or_like('a.nm_project', $search['value'], 'both');
-        $this->db->or_like('a.nm_customer', $search['value'], 'both');
-        $this->db->or_like('b.grand_total', $search['value'], 'both');
-        $this->db->group_end();
+        if (!empty($search['value'])) {
+            $this->db->group_start();
+            $this->db->like('a.id_spk_penawaran', $search['value'], 'both');
+            $this->db->or_like('a.nm_sales', $search['value'], 'both');
+            $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->or_like('a.nm_customer', $search['value'], 'both');
+            $this->db->or_like('b.grand_total', $search['value'], 'both');
+            $this->db->group_end();
+        }
 
-        if (!$this->is_admin) {
+        if ((!$this->is_admin) && $get_user->employee_id !== '168') {
             $this->db->group_start();
             $this->db->where('a.id_project_leader', $get_user->employee_id);
             $this->db->or_where('a.id_konsultan_1', $get_user->employee_id);
@@ -330,25 +336,41 @@ class Approval_spk_level_1 extends Admin_Controller
 
             $nm_customer = $item->nm_customer;
 
-            $hasil[] = [
-                'no' => $no,
-                'id_spk_penawaran' => $item->id_spk_penawaran,
-                'nm_marketing' => $nm_marketing,
-                'nm_paket' => $nm_paket,
-                'nm_customer' => $nm_customer,
-                'grand_total' => number_format($item->grand_total),
-                'status' => $status,
-                'status_spk' => $status_spk,
-                'option' => $option
-            ];
+            $valid_show = 1;
+            if ($get_user->employee_id == $item->id_sales && $item->approval_sales_sts !== null) {
+                $valid_show = 0;
+            }
+            if ($get_user->employee_id == $item->id_project_leader && $item->approval_project_leader_sts !== null) {
+                $valid_show = 0;
+            }
+            if ($get_user->employee_id == $item->id_konsultan_1 && $item->approval_konsultan_1_sts !== null) {
+                $valid_show = 0;
+            }
+            if ($get_user->employee_id == $item->id_konsultan_2 && $item->approval_konsultan_2_sts !== null) {
+                $valid_show = 0;
+            }
 
-            $no++;
+            if ($valid_show == 1) {
+                $hasil[] = [
+                    'no' => $no,
+                    'id_spk_penawaran' => $item->id_spk_penawaran,
+                    'nm_marketing' => $nm_marketing,
+                    'nm_paket' => $nm_paket,
+                    'nm_customer' => $nm_customer,
+                    'grand_total' => number_format($item->grand_total),
+                    'status' => $status,
+                    'status_spk' => $status_spk,
+                    'option' => $option
+                ];
+
+                $no++;
+            }
         }
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data->num_rows(),
-            'recordsFiltered' => $get_data->num_rows(),
+            'recordsTotal' => $no,
+            'recordsFiltered' => $no,
             'data' => $hasil
         ]);
     }
@@ -401,6 +423,15 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_konsultan_2_sts' => 1,
                 'reject_konsultan_2_date' => date('Y-m-d H:i:s'),
                 'reject_konsultan_2_reason' => $reject_reason
+            ];
+        }
+        if ($get_user->employee_id == '168') {
+            $data_arr = [
+                'reject_manager_sales_sts' => 1,
+                'reject_manager_sales_date' => date('Y-m-d H:i:s'),
+                'reject_manager_sales_reason' => $reject_reason,
+                'approval_manager_sales_sts' => null,
+                'approval_manager_sales_date' => null
             ];
         }
 
@@ -469,6 +500,24 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_konsultan_2_sts' => null,
                 'reject_konsultan_2_date' => null,
                 'reject_konsultan_2_reason' => null
+            ];
+        }
+        if ($get_user->employee_id == '168') {
+            $data_arr = [
+                'approval_manager_sales' => 1,
+                'approval_manager_sales_date' => date('Y-m-d H:i:s'),
+                'reject_konsultan_1_sts' => null,
+                'reject_konsultan_1_date' => null,
+                'reject_konsultan_1_reason' => null,
+                'reject_konsultan_2_sts' => null,
+                'reject_konsultan_2_date' => null,
+                'reject_konsultan_2_reason' => null,
+                'reject_project_leader_sts' => null,
+                'reject_project_leader_date' => null,
+                'reject_project_leader_reason' => null,
+                'reject_manager_sales_sts' => null,
+                'reject_manager_sales_date' => null,
+                'reject_manager_sales_reason' => null
             ];
         }
 

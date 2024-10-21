@@ -197,14 +197,15 @@ class Approval_spk_level_2 extends Admin_Controller
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->where('a.deleted_by', null);
-        $this->db->where_in('a.sts_spk', array(null, 0));
+        $this->db->where('a.sts_spk', null);
+        $this->db->where('a.approval_manager_sales', 1);
 
-        $this->db->group_start();
-        $this->db->where('a.approval_sales_sts', 1);
-        $this->db->or_where('a.approval_project_leader_sts', 1);
-        $this->db->or_where('IF(a.id_konsultan_1 IS NULL, "1", a.approval_konsultan_1_sts) = 1');
-        $this->db->or_where('IF(a.id_konsultan_2 IS NULL, "1", a.approval_konsultan_2_sts) = 1');
-        $this->db->group_end();
+        // $this->db->group_start();
+        // $this->db->where('a.approval_sales_sts', 1);
+        // $this->db->or_where('a.approval_project_leader_sts', 1);
+        // $this->db->or_where('IF(a.id_konsultan_1 IS NULL, "1", a.approval_konsultan_1_sts) = 1');
+        // $this->db->or_where('IF(a.id_konsultan_2 IS NULL, "1", a.approval_konsultan_2_sts) = 1');
+        // $this->db->group_end();
 
         $this->db->group_start();
         $this->db->like('a.id_spk_penawaran', $search['value'], 'both');
