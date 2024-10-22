@@ -56,10 +56,11 @@ class Master_customer extends Admin_Controller
 			//Check Customer
 			$qCheckName		= "SELECT * FROM customer WHERE nm_customer = '" . trim(strtoupper($data['nm_customer'])) . "' ";
 			$NumCheckName	= $this->db->query($qCheckName)->num_rows();
+			$getName = $this->db->query($qCheckName)->row();
 			// echo $NumCheckName;
 
 			//Check PIC
-			$qCheckPIC		= "SELECT * FROM customer_pic WHERE email_pic = '" . trim(strtolower($data['email_pic'])) . "' ";
+			$qCheckPIC		= "SELECT * FROM customer_pic WHERE email_pic = '" . trim(strtolower($data['email_pic'])) . "' OR hp = '" . str_replace('-', '', $data['hp']) . "' ";
 			$NumCheckPIC	= $this->db->query($qCheckPIC)->num_rows();
 			$dataPIC		= $this->db->query($qCheckPIC)->result_array();
 
@@ -90,8 +91,14 @@ class Master_customer extends Admin_Controller
 			$urut2x			= sprintf('%03s', $urutan2x);
 			$kodePIC		= "PIC-" . $Ymonth . $urut2x;
 
-			if ($NumCheckPIC > 0) {
-				$kodePIC		= $dataPIC[0]['id_pic'];
+			if ($NumCheckName > 0) {
+				$qCheckPIC		= "SELECT * FROM customer_pic WHERE id_pic = '" . $getName->id_pic . "' ";
+				$NumCheckPIC	= $this->db->query($qCheckPIC)->num_rows();
+				$dataPIC		= $this->db->query($qCheckPIC)->result_array();
+
+				if (!empty($dataPIC)) {
+					$kodePIC		= $dataPIC[0]['id_pic'];
+				}
 			}
 
 			$ArrCust = array(
@@ -145,19 +152,17 @@ class Master_customer extends Admin_Controller
 				'created_by' 		=> $this->id_user
 			);
 
-			if ($NumCheckPIC < 1) {
-				$ArrPIC	= array(
-					'id_pic' 			=> $kodePIC,
-					'nm_pic' 			=> ucwords(strtolower($data['nm_pic'])),
-					'divisi' 			=> strtolower($data['divisi']),
-					'jabatan' 			=> NULL,
-					'hp' 				=> str_replace('-', '', $data['hp']),
-					'email_pic' 		=> trim(strtolower($data['email_pic'])),
-					'created_on' 		=> $this->datetime,
-					'created_by' 		=> $this->id_user
-				);
-				// print_r($ArrPIC);
-			}
+			$ArrPIC	= array(
+				'id_pic' 			=> $kodePIC,
+				'nm_pic' 			=> ucwords(strtolower($data['nm_pic'])),
+				'divisi' 			=> strtolower($data['divisi']),
+				'jabatan' 			=> NULL,
+				'hp' 				=> str_replace('-', '', $data['hp']),
+				'email_pic' 		=> trim(strtolower($data['email_pic'])),
+				'created_on' 		=> $this->datetime,
+				'created_by' 		=> $this->id_user
+			);
+
 			$ArrPICUpdate	= array(
 				'id_pic' 			=> $kodePIC,
 				'nm_pic' 			=> ucwords(strtolower($data['nm_pic'])),
@@ -168,6 +173,8 @@ class Master_customer extends Admin_Controller
 				'modified_on' 		=> $this->datetime,
 				'modified_by' 		=> $this->id_user
 			);
+
+
 			// echo "<pre>";
 			// exit;
 
@@ -216,12 +223,22 @@ class Master_customer extends Admin_Controller
 				if (!empty($ArrBidUsaha)) {
 					$this->db->insert('customer_bidang_usaha', $ArrBidUsaha);
 				}
-				if ($NumCheckPIC < 1) {
+				if (empty($data['id_customer'])) {
 					$this->db->insert('customer_pic', $ArrPIC);
 				} else {
-					$this->db->where('id_pic', $kodePIC);
-					$this->db->update('customer_pic', $ArrPICUpdate);
+
+					if ($NumCheckPIC < 1) {
+						$this->db->insert('customer_pic', $ArrPIC);
+					} else {
+						$this->db->where('id_pic', $kodePIC);
+						$this->db->update('customer_pic', $ArrPICUpdate);
+					}
 				}
+				// Input PIC
+				// $this->db->delete('customer_pic', ['id_pic' => $kodePIC]);
+				// $this->db->insert('customer_pic', $ArrPIC);
+
+				// Input Customer Reference
 				$this->db->insert('customer_referensi', $ArrReferensi);
 
 				//Cutsomer

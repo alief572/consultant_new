@@ -142,7 +142,7 @@ $email_pic = (!empty($restPIC[0]['email_pic'])) ? $restPIC[0]['email_pic'] : '';
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="form-group row">
                             <label class='label-control col-sm-2'><b>Address<span class='text-red'>*</span></b></label>
                             <div class='col-sm-10'>
@@ -175,7 +175,7 @@ $email_pic = (!empty($restPIC[0]['email_pic'])) ? $restPIC[0]['email_pic'] : '';
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group row" >
+                        <div class="form-group row">
                             <label class='label-control col-sm-2'><b>NPWP</b></label>
                             <div class='col-sm-4'>
                                 <div class="input-group">
