@@ -64,7 +64,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             <option value="">- Select Marketing -</option>
                             <?php
                             foreach ($list_marketing as $item) {
-                                echo '<option value="' . $item->id . '">' . strtoupper($item->nm_karyawan) . '</option>';
+                                echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
                             }
                             ?>
                         </select>
@@ -93,7 +93,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                         <option value="">- Select Sales -</option>
                                         <?php
                                         foreach ($list_marketing as $item) {
-                                            echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
+                                            echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
                                         }
                                         ?>
                                     </select>
@@ -123,7 +123,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                         <option value="">- Select Employee -</option>
                                         <?php
                                         foreach ($list_marketing as $item) {
-                                            echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
+                                            echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
                                         }
                                         ?>
                                     </select>
@@ -172,8 +172,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <thead>
                     <tr>
                         <th class="text-center">Activity Name</th>
-                        <th class="text-center">Mandays</th>
-                        <th class="text-center">Mandays Rate</th>
+                        <th class="text-center">Mandays Internal</th>
+                        <th class="text-center">Mandays Rate Internal</th>
+                        <th class="text-center">Mandays Subcont</th>
+                        <th class="text-center">Mandays Rate Subcont</th>
                         <th class="text-center">Price</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -186,6 +188,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th class="text-center">Total</th>
                         <th class="text-center ttl_act_mandays">00,0</th>
                         <th class="text-center ttl_act_mandays_rate">00,0</th>
+                        <th class="text-center ttl_act_mandays_subcont">00,0</th>
+                        <th class="text-center ttl_act_mandays_rate_subcont">00,0</th>
                         <th class="text-center ttl_act_price">00,0</th>
                         <th class="text-center"></th>
                     </tr>
@@ -497,6 +501,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         var ttl_mandays = 0;
         var ttl_mandays_rate = 0;
+        var ttl_mandays_subcont = 0;
+        var ttl_mandays_rate_subcont = 0;
         var ttl_price = 0;
 
         var arr_id_aktifitas = [];
@@ -505,12 +511,16 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             if ($('.select_nm_aktifitas_' + i).length) {
                 var mandays = get_num($('input[name="dt_act[' + i + '][mandays]"]').val());
                 var mandays_rate = get_num($('input[name="dt_act[' + i + '][mandays_rate]"]').val());
+                var mandays_subcont = get_num($('input[name="dt_act[' + i + '][mandays_subcont]"]').val());
+                var mandays_rate_subcont = get_num($('input[name="dt_act[' + i + '][mandays_rate_subcont]"]').val());
 
                 ttl_mandays += mandays;
                 ttl_mandays_rate += mandays_rate;
-                ttl_price += (mandays * mandays_rate);
+                ttl_mandays_subcont += mandays_subcont;
+                ttl_mandays_rate_subcont += mandays_rate_subcont;
+                ttl_price += ((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont));
 
-                $('.input_harga_aktifitas_' + i).val(number_format(mandays * mandays_rate, 2));
+                $('.input_harga_aktifitas_' + i).val(number_format(((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont)), 2));
 
                 var id_aktifitas = $('.select_nm_aktifitas_' + i).val();
                 if (id_aktifitas !== '') {
@@ -519,22 +529,24 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             }
         }
 
-        if (arr_id_aktifitas.length > 0) {
-            $.ajax({
-                type: 'post',
-                url: siteurl + active_controller + 'hitung_ttl_check_point',
-                data: {
-                    'id_aktifitas': id_aktifitas
-                },
-                cache: false,
-                success: function(result) {
-                    $('.ttl_act_check_point').html(number_format(result, 2));
-                }
-            });
-        }
+        // if (arr_id_aktifitas.length > 0) {
+        //     $.ajax({
+        //         type: 'post',
+        //         url: siteurl + active_controller + 'hitung_ttl_check_point',
+        //         data: {
+        //             'id_aktifitas': id_aktifitas
+        //         },
+        //         cache: false,
+        //         success: function(result) {
+        //             $('.ttl_act_check_point').html(number_format(result, 2));
+        //         }
+        //     });
+        // }
 
         $('.ttl_act_mandays').html(number_format(ttl_mandays, 2));
         $('.ttl_act_mandays_rate').html(number_format(ttl_mandays_rate, 2));
+        $('.ttl_act_mandays_subcont').html(number_format(ttl_mandays_subcont, 2));
+        $('.ttl_act_mandays_rate_subcont').html(number_format(ttl_mandays_rate_subcont, 2));
         $('.ttl_act_price').html(number_format(ttl_price, 2));
 
         hitung_summary();
@@ -654,6 +666,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         hasil += '<td class="text-center">';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_subcont_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_subcont]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_subcont_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate_subcont]" value="" onchange="hitung_total_activity()">';
         hasil += '</td>';
 
         hasil += '<td class="text-center">';

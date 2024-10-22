@@ -76,7 +76,7 @@ if (count($list_penawaran_others) > 0) {
                                 if ($item->id == $list_penawaran->id_marketing) {
                                     $selected = 'selected';
                                 }
-                                echo '<option value="' . $item->id . '" ' . $selected . '>' . strtoupper($item->nm_karyawan) . '</option>';
+                                echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
                             }
                             ?>
                         </select>
@@ -109,7 +109,7 @@ if (count($list_penawaran_others) > 0) {
                                             if ($list_penawaran->tipe_informasi_awal == 'Sales' && $list_penawaran->detail_informasi_awal == $item->id) {
                                                 $selected = 'selected';
                                             }
-                                            echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nm_karyawan . '</option>';
+                                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
                                         }
                                         ?>
                                     </select>
@@ -143,7 +143,7 @@ if (count($list_penawaran_others) > 0) {
                                             if ($list_penawaran->tipe_informasi_awal == 'Others' && $item->detail_informasi_awal == $item->id) {
                                                 $selected = 'selected';
                                             }
-                                            echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nm_karyawan . '</option>';
+                                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
                                         }
                                         ?>
                                     </select>
@@ -209,6 +209,8 @@ if (count($list_penawaran_others) > 0) {
                         <th class="text-center">Activity Name</th>
                         <th class="text-center">Mandays</th>
                         <th class="text-center">Mandays Rate</th>
+                        <th class="text-center">Mandays Subcont</th>
+                        <th class="text-center">Mandays Rate Subcont</th>
                         <th class="text-center">Price</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -217,9 +219,11 @@ if (count($list_penawaran_others) > 0) {
                     <?php
                     $ttl_bobot = 0;
                     $ttl_mandays = 0;
+                    $ttl_mandays_subcont = 0;
                     $ttl_price = 0;
                     $ttl_check_point = 0;
                     $ttl_mandays_rate = 0;
+                    $ttl_mandays_rate_subcont = 0;
 
                     $no_activity = 1;
                     foreach ($list_penawaran_aktifitas as $item_aktifitas) {
@@ -250,6 +254,14 @@ if (count($list_penawaran_others) > 0) {
                         echo '</td>';
 
                         echo '<td class="text-center">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_subcont_' . $no_activity . '" name="dt_act[' . $no_activity . '][mandays_subcont]" value="' . $item_aktifitas->mandays_subcont . '" onchange="hitung_total_activity()">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_subcont_' . $no_activity . '" name="dt_act[' . $no_activity . '][mandays_rate_subcont]" value="' . $item_aktifitas->mandays_rate_subcont . '" onchange="hitung_total_activity()">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
                         echo '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' . $no_activity . '" name="dt_act[' . $no_activity . '][harga_aktifitas]" value="' . $item_aktifitas->total_aktifitas . '" onchange="hitung_total_activity()">';
                         echo '</td>';
 
@@ -265,6 +277,9 @@ if (count($list_penawaran_others) > 0) {
                         $ttl_check_point += $item_aktifitas->jml_check_point;
                         $ttl_mandays_rate  += $item_aktifitas->mandays_rate;
 
+                        $ttl_mandays_subcont += $item_aktifitas->mandays_subcont;
+                        $ttl_mandays_rate_subcont += $item_aktifitas->mandays_rate_subcont;
+
                         $no_activity++;
                     }
                     ?>
@@ -274,6 +289,8 @@ if (count($list_penawaran_others) > 0) {
                         <th class="text-center">Total</th>
                         <th class="text-center ttl_act_mandays"><?= number_format($ttl_mandays, 2) ?></th>
                         <th class="text-center ttl_act_mandays_rate"><?= number_format($ttl_mandays_rate, 2) ?></th>
+                        <th class="text-center ttl_act_mandays_subcont"><?= number_format($ttl_mandays_subcont, 2) ?></th>
+                        <th class="text-center ttl_act_mandays_rate_subcont"><?= number_format($ttl_mandays_rate_subcont, 2) ?></th>
                         <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
                         <th class="text-center"></th>
                     </tr>
@@ -690,6 +707,8 @@ if (count($list_penawaran_others) > 0) {
 
         var ttl_mandays = 0;
         var ttl_mandays_rate = 0;
+        var ttl_mandays_subcont = 0;
+        var ttl_mandays_rate_subcont = 0;
         var ttl_price = 0;
 
         var arr_id_aktifitas = [];
@@ -698,12 +717,16 @@ if (count($list_penawaran_others) > 0) {
             if ($('.select_nm_aktifitas_' + i).length) {
                 var mandays = get_num($('input[name="dt_act[' + i + '][mandays]"]').val());
                 var mandays_rate = get_num($('input[name="dt_act[' + i + '][mandays_rate]"]').val());
+                var mandays_subcont = get_num($('input[name="dt_act[' + i + '][mandays_subcont]"]').val());
+                var mandays_rate_subcont = get_num($('input[name="dt_act[' + i + '][mandays_rate_subcont]"]').val());
 
                 ttl_mandays += mandays;
                 ttl_mandays_rate += mandays_rate;
-                ttl_price += (mandays * mandays_rate);
+                ttl_mandays_subcont += mandays_subcont;
+                ttl_mandays_rate_subcont += mandays_rate_subcont;
+                ttl_price += ((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont));
 
-                $('.input_harga_aktifitas_' + i).val(number_format(mandays * mandays_rate, 2));
+                $('.input_harga_aktifitas_' + i).val(number_format(((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont)), 2));
 
                 var id_aktifitas = $('.select_nm_aktifitas_' + i).val();
                 if (id_aktifitas !== '') {
@@ -712,22 +735,24 @@ if (count($list_penawaran_others) > 0) {
             }
         }
 
-        if (arr_id_aktifitas.length > 0) {
-            $.ajax({
-                type: 'post',
-                url: siteurl + active_controller + 'hitung_ttl_check_point',
-                data: {
-                    'id_aktifitas': id_aktifitas
-                },
-                cache: false,
-                success: function(result) {
-                    $('.ttl_act_check_point').html(number_format(result, 2));
-                }
-            });
-        }
+        // if (arr_id_aktifitas.length > 0) {
+        //     $.ajax({
+        //         type: 'post',
+        //         url: siteurl + active_controller + 'hitung_ttl_check_point',
+        //         data: {
+        //             'id_aktifitas': id_aktifitas
+        //         },
+        //         cache: false,
+        //         success: function(result) {
+        //             $('.ttl_act_check_point').html(number_format(result, 2));
+        //         }
+        //     });
+        // }
 
         $('.ttl_act_mandays').html(number_format(ttl_mandays, 2));
         $('.ttl_act_mandays_rate').html(number_format(ttl_mandays_rate, 2));
+        $('.ttl_act_mandays_subcont').html(number_format(ttl_mandays_subcont, 2));
+        $('.ttl_act_mandays_rate_subcont').html(number_format(ttl_mandays_rate_subcont, 2));
         $('.ttl_act_price').html(number_format(ttl_price, 2));
 
         hitung_summary();
@@ -850,6 +875,14 @@ if (count($list_penawaran_others) > 0) {
         hasil += '</td>';
 
         hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_subcont_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_subcont]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_subcont_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate_subcont]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][harga_aktifitas]" value="" onchange="hitung_total_activity()">';
         hasil += '</td>';
 
@@ -876,7 +909,18 @@ if (count($list_penawaran_others) > 0) {
         var hasil = '<tr class="tr_akomodasi_' + no_akomodasi + '">';
 
         hasil += '<td>';
-        hasil += '<input type="text" class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][nm_akomodasi]">';
+        hasil += '<select class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
+        hasil += '<option value="">- Item Akomodasi -</option>';
+        <?php 
+            foreach($list_def_akomodasi as $item) {
+                ?>
+
+                hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+
+                <?php
+            }
+        ?>
+        hasil += '</select>';
         hasil += '</td>';
 
         hasil += '<td>';
@@ -917,7 +961,18 @@ if (count($list_penawaran_others) > 0) {
         var hasil = '<tr class="tr_others_' + no_others + '">';
 
         hasil += '<td>';
-        hasil += '<input type="text" class="form-control form-control-sm" name="dt_oth[' + no_others + '][nm_others]">';
+        hasil += '<select class="form-control form-control-sm" name="dt_oth[' + no_others + '][id_others]">';
+        hasil += '<option value="">- Item Others -</option>';
+        <?php 
+            foreach($list_def_others as $item) {
+                ?>
+
+                hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+
+                <?php
+            }
+        ?>
+        hasil += '</select>';
         hasil += '</td>';
 
         hasil += '<td>';

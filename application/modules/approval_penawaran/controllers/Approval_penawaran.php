@@ -47,6 +47,7 @@ class Approval_penawaran extends Admin_Controller
         $this->db->join('kons_master_check_point c', 'c.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $id_penawaran);
         $this->db->group_by('a.id_aktifitas');
+        $this->db->order_by('a.id', 'asc');
         $get_penawaran_aktifitas = $this->db->get()->result();
 
         $get_penawaran_akomodasi = $this->db->get_where('kons_tr_penawaran_akomodasi', ['id_penawaran' => $id_penawaran])->result();
@@ -100,6 +101,7 @@ class Approval_penawaran extends Admin_Controller
         $this->db->join('kons_master_check_point c', 'c.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $id_penawaran);
         $this->db->group_by('a.id_aktifitas');
+        $this->db->order_by('a.id', 'asc');
         $get_penawaran_aktifitas = $this->db->get()->result();
 
         $this->db->select('a.*, b.nm_biaya');
@@ -285,7 +287,7 @@ class Approval_penawaran extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'tgl_quotation' => $item->tgl_quotation,
-                'nm_marketing' => $nm_marketing,
+                'nm_marketing' => ucfirst($nm_marketing),
                 'nm_paket' => $nm_paket,
                 'nm_customer' => $nm_customer,
                 'grand_total' => number_format($item->grand_total),

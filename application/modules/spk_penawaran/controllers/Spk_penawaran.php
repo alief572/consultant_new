@@ -357,7 +357,7 @@ class SPK_penawaran extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'id_spk_penawaran' => $item->id_spk_penawaran,
-                'nm_marketing' => $nm_marketing,
+                'nm_marketing' => ucfirst($nm_marketing),
                 'nm_paket' => $nm_paket,
                 'nm_customer' => $nm_customer,
                 'grand_total' => number_format($item->grand_total),
@@ -474,7 +474,7 @@ class SPK_penawaran extends Admin_Controller
                 'no' => $no,
                 'id_quotation' => $item->id_quotation,
                 'tgl_quotation' => $item->tgl_quotation,
-                'nm_marketing' => $nm_marketing,
+                'nm_marketing' => ucfirst($nm_marketing),
                 'nm_paket' => $nm_paket,
                 'nm_customer' => $nm_customer,
                 'grand_total' => number_format($item->grand_total),
@@ -496,8 +496,9 @@ class SPK_penawaran extends Admin_Controller
     {
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $id_quotation])->row();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, b.nm_pic, b.divisi as jabatan_pic, b.hp as no_hp_pic');
         $this->db->from('customer a');
+        $this->db->join('customer_pic b', 'b.id_pic = a.id_pic', 'left');
         $this->db->where('a.nm_customer <>', '');
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
@@ -587,7 +588,9 @@ class SPK_penawaran extends Admin_Controller
             'detail_informasi_awal' => $detail_informasi_awal,
             'nm_paket' => $get_konsultasi->nm_paket,
             'nilai_kontrak' => $nilai_kontrak,
-            'nilai_project' => $nilai_project
+            'nilai_project' => $nilai_project,
+            'nilai_akomodasi' => $nilai_akomodasi,
+            'nilai_others' => $nilai_others
         ];
 
         $this->template->set($data);
