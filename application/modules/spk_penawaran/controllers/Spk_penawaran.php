@@ -57,9 +57,10 @@ class SPK_penawaran extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
 
-        $this->db->select('a.*');
-        $this->db->from('customers a');
-        $this->db->where('a.name <>', '');
+        $this->db->select('a.*, b.nm_pic, b.divisi as jabatan_pic, b.hp as no_hp_pic');
+        $this->db->from('customer a');
+        $this->db->join('customer_pic b', 'b.id_pic = a.id_pic', 'left');
+        $this->db->where('a.nm_customer <>', '');
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
@@ -138,9 +139,10 @@ class SPK_penawaran extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
 
-        $this->db->select('a.*');
-        $this->db->from('customers a');
-        $this->db->where('a.name <>', '');
+        $this->db->select('a.*, b.nm_pic, b.divisi as jabatan_pic, b.hp as no_hp_pic');
+        $this->db->from('customer a');
+        $this->db->join('customer_pic b', 'b.id_pic = a.id_pic', 'left');
+        $this->db->where('a.nm_customer <>', '');
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
@@ -657,6 +659,15 @@ class SPK_penawaran extends Admin_Controller
         $id_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->id : '';
         $nm_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->nm_karyawan : '';
 
+        $tipe_info_awal_eks = (isset($post['informasi_awal_eksternal'])) ? $post['informasi_awal_eksternal'] : null;
+
+        $detail_info_awal_eks = '';
+        $cp_info_awal_eks = '';
+        if (isset($post['informasi_awal_eksternal'])) {
+            $detail_info_awal_eks = $post['informasi_awal_eksternal_detail_' . $tipe_info_awal_eks];
+            $cp_info_awal_eks = $post['informasi_awal_eksternal_cp_' . $tipe_info_awal_eks];
+        }
+
         $this->db->trans_begin();
 
         $arr_insert = [
@@ -664,7 +675,8 @@ class SPK_penawaran extends Admin_Controller
             'id_penawaran' => $post['id_quotation'],
             'id_customer' => $id_customer,
             'nm_customer' => $nm_customer,
-            'address' => $post['address'],
+            'address' => $post['alamat'],
+            'npwp_cust' => $post['no_npwp'],
             'nm_pic' => $post['pic'],
             'tipe_informasi_awal' => $get_penawaran->tipe_informasi_awal,
             'detail_informasi_awal' => $get_penawaran->detail_informasi_awal,
@@ -685,20 +697,29 @@ class SPK_penawaran extends Admin_Controller
             'nm_konsultan_2' => $nm_konsultan_2,
             'nilai_kontrak' => ($post['nilai_kontrak'] !== '') ? str_replace(',', '', $post['nilai_kontrak']) : 0,
             'biaya_subcont' => ($post['biaya_subcont'] !== '') ? str_replace(',', '', $post['biaya_subcont']) : 0,
-            'nilai_internal' => ($post['nilai_internal'] !== '') ? str_replace(',', '', $post['nilai_internal']) : 0,
+            'biaya_akomodasi' => ($post['biaya_akomodasi'] !== '') ? str_replace(',', '', $post['biaya_akomodasi']) : 0,
+            'biaya_others' => ($post['biaya_others'] !== '') ? str_replace(',', '', $post['biaya_others']) : 0,
+            'nilai_kontrak_bersih' => ($post['nilai_kontrak_bersih'] !== '') ? str_replace(',', '', $post['nilai_kontrak_bersih']) : 0,
             'mandays_rate' => ($post['mandays_rate'] !== '') ? str_replace(',', '', $post['mandays_rate']) : 0,
             'total_mandays' => ($post['total_mandays'] !== '') ? str_replace(',', '', $post['total_mandays']) : 0,
             'mandays_subcont' => ($post['mandays_subcont'] !== '') ? str_replace(',', '', $post['mandays_subcont']) : 0,
             'mandays_internal' => ($post['mandays_internal'] !== '') ? str_replace(',', '', $post['mandays_internal']) : 0,
-            'nama_pemberi_informasi_komisi' => $post['nama_pemberi_informasi_komisi'],
-            'persentase_pemberi_informasi_komisi' => ($post['persentase_pemberi_informasi_komisi'] !== '') ? str_replace(',', '', $post['persentase_pemberi_informasi_komisi']) : 0,
-            'nominal_pemberi_informasi_komisi' => ($post['nominal_pemberi_informasi_komisi'] !== '') ? str_replace(',', '', $post['nominal_pemberi_informasi_komisi']) : 0,
-            'nama_sales_komisi' => $post['nama_sales_komisi'],
-            'persentase_sales_komisi' => ($post['persentase_sales_komisi'] !== '') ? str_replace(',', '', $post['persentase_sales_komisi']) : 0,
-            'nominal_sales_komisi' => ($post['nominal_sales_komisi'] !== '') ? str_replace(',', '', $post['nominal_sales_komisi']) : 0,
-            'nama_others_komisi' => $post['nama_others_komisi'],
-            'persentase_others_komisi' => ($post['persentase_others_komisi'] !== '') ? str_replace(',', '', $post['persentase_others_komisi']) : 0,
-            'nominal_others_komisi' => ($post['nominal_others_komisi'] !== '') ? str_replace(',', '', $post['nominal_others_komisi']) : 0,
+            'nm_pemberi_informasi_1_komisi' => $post['nm_pemberi_informasi_1_komisi'],
+            'persen_pemberi_informasi_1_komisi' => ($post['persentase_pemberi_informasi_1_komisi'] !== '') ? str_replace(',', '', $post['persentase_pemberi_informasi_1_komisi']) : 0,
+            'nominal_pemberi_informasi_1_komisi' => ($post['nominal_pemberi_informasi_1_komisi'] !== '') ? str_replace(',', '', $post['nominal_pemberi_informasi_1_komisi']) : 0,
+            'nm_pemberi_informasi_2_komisi' => $post['nm_pemberi_informasi_2_komisi'],
+            'persen_pemberi_informasi_2_komisi' => ($post['persentase_pemberi_informasi_2_komisi'] !== '') ? str_replace(',', '', $post['persentase_pemberi_informasi_2_komisi']) : 0,
+            'nominal_pemberi_informasi_2_komisi' => ($post['nominal_pemberi_informasi_2_komisi'] !== '') ? str_replace(',', '', $post['nominal_pemberi_informasi_2_komisi']) : 0,
+            'nm_sales_1_komisi' => $post['nm_sales_1_komisi'],
+            'persen_sales_1_komisi' => ($post['persentase_sales_1_komisi'] !== '') ? str_replace(',', '', $post['persentase_sales_1_komisi']) : 0,
+            'nominal_sales_1_komisi' => ($post['nominal_sales_1_komisi'] !== '') ? str_replace(',', '', $post['nominal_sales_1_komisi']) : 0,
+            'nm_sales_2_komisi' => $post['nm_sales_2_komisi'],
+            'persen_sales_2_komisi' => ($post['persentase_sales_2_komisi'] !== '') ? str_replace(',', '', $post['persentase_sales_2_komisi']) : 0,
+            'nominal_sales_2_komisi' => ($post['nominal_sales_2_komisi'] !== '') ? str_replace(',', '', $post['nominal_sales_2_komisi']) : 0,
+            'isu_khusus' => $post['isu_khusus'],
+            'tipe_info_awal_eks' => $tipe_info_awal_eks,
+            'detail_info_awal_eks' => $detail_info_awal_eks,
+            'cp_info_awal_eks' => $cp_info_awal_eks,
             'input_by' => $this->auth->user_id(),
             'input_date' => date('Y-m-d H:i:s')
         ];
@@ -717,6 +738,7 @@ class SPK_penawaran extends Admin_Controller
                     'id_aktifitas' => $item['id_aktifitas'],
                     'nm_aktifitas' => $nm_aktifitas,
                     'mandays' => ($item['mandays'] !== '') ? str_replace(',', '', $item['mandays']) : 0,
+                    'mandays_rate' => ($item['mandays_rate'] !== '') ? str_replace(',', '', $item['mandays_rate']) : 0,
                     'mandays_subcont' => ($item['mandays_subcont'] !== '') ? str_replace(',', '', $item['mandays_subcont']) : 0,
                     'price_subcont' => ($item['price_subcont'] !== '') ? str_replace(',', '', $item['price_subcont']) : 0,
                     'total_subcont' => ($item['total_subcont'] !== '') ? str_replace(',', '', $item['total_subcont']) : 0,
@@ -745,7 +767,7 @@ class SPK_penawaran extends Admin_Controller
         $insert_spk_penawaran = $this->db->insert('kons_tr_spk_penawaran', $arr_insert);
         if (!$insert_spk_penawaran) {
             $this->db->trans_rollback();
-            print_r($this->db->error($insert_spk_penawaran) . ' ' . $this->db->last_query());
+            print_r($this->db->last_query());
             exit;
         }
 
@@ -842,6 +864,15 @@ class SPK_penawaran extends Admin_Controller
         $this->db->delete('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran]);
         $this->db->delete('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran]);
 
+        $tipe_info_awal_eks = (isset($post['informasi_awal_eksternal'])) ? $post['informasi_awal_eksternal'] : null;
+
+        $detail_info_awal_eks = '';
+        $cp_info_awal_eks = '';
+        if (isset($post['informasi_awal_eksternal'])) {
+            $detail_info_awal_eks = $post['informasi_awal_eksternal_detail_' . $tipe_info_awal_eks];
+            $cp_info_awal_eks = $post['informasi_awal_eksternal_cp_' . $tipe_info_awal_eks];
+        }
+
         $arr_insert = [
             'id_customer' => $get_customer->id_customer,
             'nm_customer' => $get_customer->nm_customer,
@@ -866,20 +897,29 @@ class SPK_penawaran extends Admin_Controller
             'nm_konsultan_2' => $nm_konsultan_2,
             'nilai_kontrak' => ($post['nilai_kontrak'] !== '') ? str_replace(',', '', $post['nilai_kontrak']) : 0,
             'biaya_subcont' => ($post['biaya_subcont'] !== '') ? str_replace(',', '', $post['biaya_subcont']) : 0,
-            'nilai_internal' => ($post['nilai_internal'] !== '') ? str_replace(',', '', $post['nilai_internal']) : 0,
+            'biaya_akomodasi' => ($post['biaya_akomodasi'] !== '') ? str_replace(',', '', $post['biaya_akomodasi']) : 0,
+            'biaya_others' => ($post['biaya_others'] !== '') ? str_replace(',', '', $post['biaya_akomodasi']) : 0,
+            'nilai_kontrak_bersih' => ($post['nilai_kontrak_bersih'] !== '') ? str_replace(',', '', $post['nilai_kontrak_bersih']) : 0,
             'mandays_rate' => ($post['mandays_rate'] !== '') ? str_replace(',', '', $post['mandays_rate']) : 0,
             'total_mandays' => ($post['total_mandays'] !== '') ? str_replace(',', '', $post['total_mandays']) : 0,
             'mandays_subcont' => ($post['mandays_subcont'] !== '') ? str_replace(',', '', $post['mandays_subcont']) : 0,
             'mandays_internal' => ($post['mandays_internal'] !== '') ? str_replace(',', '', $post['mandays_internal']) : 0,
-            'nama_pemberi_informasi_komisi' => $post['nama_pemberi_informasi_komisi'],
-            'persentase_pemberi_informasi_komisi' => ($post['persentase_pemberi_informasi_komisi'] !== '') ? str_replace(',', '', $post['persentase_pemberi_informasi_komisi']) : 0,
-            'nominal_pemberi_informasi_komisi' => ($post['nominal_pemberi_informasi_komisi'] !== '') ? str_replace(',', '', $post['nominal_pemberi_informasi_komisi']) : 0,
-            'nama_sales_komisi' => $post['nama_sales_komisi'],
-            'persentase_sales_komisi' => ($post['persentase_sales_komisi'] !== '') ? str_replace(',', '', $post['persentase_sales_komisi']) : 0,
-            'nominal_sales_komisi' => ($post['nominal_sales_komisi'] !== '') ? str_replace(',', '', $post['nominal_sales_komisi']) : 0,
-            'nama_others_komisi' => $post['nama_others_komisi'],
-            'persentase_others_komisi' => ($post['persentase_others_komisi'] !== '') ? str_replace(',', '', $post['persentase_others_komisi']) : 0,
-            'nominal_others_komisi' => ($post['nominal_others_komisi'] !== '') ? str_replace(',', '', $post['nominal_others_komisi']) : 0,
+            'nm_pemberi_informasi_1_komisi' => $post['nm_pemberi_informasi_1_komisi'],
+            'persen_pemberi_informasi_1_komisi' => ($post['persentase_pemberi_informasi_1_komisi'] !== '') ? str_replace(',', '', $post['persentase_pemberi_informasi_1_komisi']) : 0,
+            'nominal_pemberi_informasi_1_komisi' => ($post['nominal_pemberi_informasi_1_komisi'] !== '') ? str_replace(',', '', $post['nominal_pemberi_informasi_1_komisi']) : 0,
+            'nm_pemberi_informasi_2_komisi' => $post['nm_pemberi_informasi_2_komisi'],
+            'persen_pemberi_informasi_2_komisi' => ($post['persentase_pemberi_informasi_2_komisi'] !== '') ? str_replace(',', '', $post['persentase_pemberi_informasi_2_komisi']) : 0,
+            'nominal_pemberi_informasi_2_komisi' => ($post['nominal_pemberi_informasi_2_komisi'] !== '') ? str_replace(',', '', $post['nominal_pemberi_informasi_2_komisi']) : 0,
+            'nm_sales_1_komisi' => $post['nm_sales_1_komisi'],
+            'persen_sales_1_komisi' => ($post['persentase_sales_1_komisi'] !== '') ? str_replace(',', '', $post['persentase_sales_1_komisi']) : 0,
+            'nominal_sales_1_komisi' => ($post['nominal_sales_1_komisi'] !== '') ? str_replace(',', '', $post['nominal_sales_1_komisi']) : 0,
+            'nm_sales_2_komisi' => $post['nm_sales_2_komisi'],
+            'persen_sales_2_komisi' => ($post['persentase_sales_2_komisi'] !== '') ? str_replace(',', '', $post['persentase_sales_2_komisi']) : 0,
+            'nominal_sales_2_komisi' => ($post['nominal_sales_2_komisi'] !== '') ? str_replace(',', '', $post['nominal_sales_2_komisi']) : 0,
+            'isu_khusus' => $post['isu_khusus'],
+            'tipe_info_awal_eks' => $tipe_info_awal_eks,
+            'detail_info_awal_eks' => $detail_info_awal_eks,
+            'cp_info_awal_eks' => $cp_info_awal_eks,
             'edited_by' => $this->auth->user_id(),
             'edited_date' => date('Y-m-d H:i:s')
         ];

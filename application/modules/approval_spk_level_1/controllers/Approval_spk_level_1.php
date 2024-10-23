@@ -39,9 +39,10 @@ class Approval_spk_level_1 extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
 
-        $this->db->select('a.*');
-        $this->db->from('customers a');
-        $this->db->where('a.name <>', '');
+        $this->db->select('a.*, b.nm_pic, b.divisi as jabatan_pic, b.hp as no_hp_pic');
+        $this->db->from('customer a');
+        $this->db->join('customer_pic b', 'b.id_pic = a.id_pic', 'left');
+        $this->db->where('a.nm_customer <>', '');
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
@@ -114,9 +115,10 @@ class Approval_spk_level_1 extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
 
-        $this->db->select('a.*');
-        $this->db->from('customers a');
-        $this->db->where('a.name <>', '');
+        $this->db->select('a.*, b.nm_pic, b.divisi as jabatan_pic, b.hp as no_hp_pic');
+        $this->db->from('customer a');
+        $this->db->join('customer_pic b', 'b.id_pic = a.id_pic', 'left');
+        $this->db->where('a.nm_customer <>', '');
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
