@@ -475,15 +475,6 @@ class Master_konsultasi extends Admin_Controller
                         $tahapan++;
                     }
 
-                    // if ($terinput > 0) {
-                    //     $pesan  = "Data Successfully Saved";
-                    //     $params['redirect_page'] = "YES";
-                    //     $params['redirect_page_URL'] = site_url('master-konsultasi');
-                    //     echo $this->query_success($pesan, $params);
-                    // } else {
-                    //     echo $this->query_error('Terjadi kesalahan, coba lagi');
-                    // }
-
                     if ($this->db->trans_status() === false) {
                         $valid = 0;
                         $msg = 'Please try again later!';

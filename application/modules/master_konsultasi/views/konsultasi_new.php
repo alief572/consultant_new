@@ -195,9 +195,9 @@
 
                         // JIKA REDIRECT PAGE
                         // if (data.redirect_page == "YES") {
-                            setTimeout(function() {
-                                GoToPage(siteurl + active_controller);
-                            }, 1500);
+                        setTimeout(function() {
+                            GoToPage(siteurl + active_controller);
+                        }, 1500);
                         // }
 
                         $('#' + FormID).each(function() {
@@ -255,6 +255,17 @@
 
     function AppendBaris() {
 
+        var no = $('.TableKonsultasi tbody tr').length;
+        var arr_akt = [];
+        for (i = 1; i <= no; i++) {
+            $('.id_aktifitas_' + i).each(function() {
+                var val_akt = $(this).val();
+                if (val_akt !== '' && val_akt !== null) {
+                    arr_akt.push(val_akt);
+                }
+            });
+        }
+
         var UnikNumber = "ACT-" + WaktuUnik();
         var Nomor = $('.TableKonsultasi tbody tr').length + 1;
         var Hapus = "<a href='#' class='btn btn-xs btn-danger' id='Batalkan' title='Hapus Baris'> <i class='fa fa-trash'></i> </a>";
@@ -268,7 +279,9 @@
         Baris += "              <option value=''>Pilih Aktifitas</option>";
         Baris += "              <?php if ($all_aktifitas->num_rows() > 0) { ?>";
         Baris += "                  <?php foreach ($all_aktifitas->result() as $d) { ?>";
-        Baris += "                      <option value='<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>'><?php echo $d->nm_aktifitas; ?></option>";
+        if (!arr_akt.includes("<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>")) {
+            Baris += "<option value='<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>'><?php echo $d->nm_aktifitas; ?></option>";
+        }
         Baris += "                  <?php } ?>";
         Baris += "              <?php } ?>";
         Baris += "         </select>";

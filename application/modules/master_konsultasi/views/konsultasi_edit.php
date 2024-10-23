@@ -280,6 +280,18 @@
      * //////////////////////////////////////////////////////////////////////////////////
      */
     function AppendBaris() {
+
+        var no = $('.TableKonsultasi tbody tr').length;
+        var arr_akt = [];
+        for (i = 1; i <= no; i++) {
+            $('.id_aktifitas_' + i).each(function() {
+                var val_akt = $(this).val();
+                if (val_akt !== '' && val_akt !== null) {
+                    arr_akt.push(val_akt);
+                }
+            });
+        }
+
         var UnikNumber = "ACT-" + WaktuUnik();
         var Nomor = $('.TableKonsultasi tbody tr').length + 1;
         var Hapus = "<a href='#' class='btn btn-xs btn-danger' id='Batalkan' title='Hapus Baris'> <i class='fa fa-trash'></i> </a>";
@@ -289,11 +301,13 @@
         var Baris = "<tr>";
         Baris += "    <td style='vertical-align:middle; width:40px;'><center>" + Nomor + "</center></td>";
         Baris += "    <td style='vertical-align:middle;'>";
-        Baris += "         <select class='form-control chosen-select-" + Nomor + "' name='id_aktifitas[]' id='NamaAktifitas'>";
+        Baris += "         <select class='form-control id_aktifitas_" + Nomor + "' name='id_aktifitas[]' id='NamaAktifitas'>";
         Baris += "              <option value=''>Pilih Aktifitas</option>";
         Baris += "              <?php if ($all_aktifitas->num_rows() > 0) { ?>";
         Baris += "                  <?php foreach ($all_aktifitas->result() as $d) { ?>";
-        Baris += "                      <option value='<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>'><?php echo $d->nm_aktifitas; ?></option>";
+        if (!arr_akt.includes("<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>")) {
+            Baris += "<option value='<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>'><?php echo $d->nm_aktifitas; ?></option>";
+        }
         Baris += "                  <?php } ?>";
         Baris += "              <?php } ?>";
         Baris += "         </select>";
@@ -311,9 +325,18 @@
         Baris += "    <td></td>";
         Baris += "    <td align='center' style='padding-top:13px'>" + Hapus + "</td>";
         Baris += "</tr>";
-        $('.TableKonsultasi tbody').append(Baris);
-        $('.chosen-select-' + Nomor).chosen();
-        $('.auto_num').autoNumeric();
+        $('.listKonsultasi').append(Baris);
+
+        $('.id_aktifitas_' + Nomor).chosen({
+            width: '400px'
+        });
+        auto_num();
+
+        /*
+         * //////////////////////////////////////////////////////////////////////////////////
+         * SELECT ACTIVITY
+         * //////////////////////////////////////////////////////////////////////////////////
+         */
     }
     /*
      * //////////////////////////////////////////////////////////////////////////////////
