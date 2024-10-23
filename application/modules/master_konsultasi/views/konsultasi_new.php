@@ -279,9 +279,9 @@
         Baris += "              <option value=''>Pilih Aktifitas</option>";
         Baris += "              <?php if ($all_aktifitas->num_rows() > 0) { ?>";
         Baris += "                  <?php foreach ($all_aktifitas->result() as $d) { ?>";
-        if (!arr_akt.includes("<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>")) {
+        // if (!arr_akt.includes("<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>")) {
             Baris += "<option value='<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>'><?php echo $d->nm_aktifitas; ?></option>";
-        }
+        // }
         Baris += "                  <?php } ?>";
         Baris += "              <?php } ?>";
         Baris += "         </select>";
