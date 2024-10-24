@@ -16,13 +16,13 @@ class Spk_penawaran_model extends BF_Model
     function generate_id_spk_penawaran()
     {
         $Ym             = date('ym');
-        $srcMtr            = "SELECT MAX(id_spk_penawaran) as maxP FROM kons_tr_spk_penawaran WHERE id_spk_penawaran LIKE 'SPK" . $Ym . "%' ";
+        $srcMtr            = "SELECT MAX(id_spk_penawaran) as maxP FROM kons_tr_spk_penawaran WHERE id_spk_penawaran LIKE '%/STM/MKT-SPK/" . int_to_roman(date('m')) . "/" . date('y') . "%' ";
         $resultMtr        = $this->db->query($srcMtr)->result_array();
         $angkaUrut2        = $resultMtr[0]['maxP'];
-        $urutan2        = (int)substr($angkaUrut2, 7, 4);
+        $urutan2        = (int)substr($angkaUrut2, 0, 3);
         $urutan2++;
-        $urut2            = sprintf('%04s', $urutan2);
-        $kode_trans        = "SPK" . $Ym . $urut2;
+        $urut2            = sprintf('%03s', $urutan2);
+        $kode_trans        = $urut2 . '/STM/MKT-SPK/' . int_to_roman(date('m')) . '/' . date('y');
 
         return $kode_trans;
     }
