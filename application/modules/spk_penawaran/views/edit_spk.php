@@ -272,7 +272,7 @@ $nilai_others = $list_spk_penawaran->biaya_others;
             <h4 style="font-weight: 600;">Subcont</h4>
         </div>
         <div class="box-body">
-            <table class="table table-striped">
+            <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th class="text-center">No.</th>
@@ -455,7 +455,7 @@ $nilai_others = $list_spk_penawaran->biaya_others;
                     ?>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                     <td class="pd-5" valign="top">
-                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($total_mandays_rate / ($total_mandays), 2) ?>" readonly>
+                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Nilai Kontrak Bersih</td>
                     <td class="pd-5" valign="top">
