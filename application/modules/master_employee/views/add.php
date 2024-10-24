@@ -35,6 +35,7 @@ $bank_account		= (!empty($header[0]->id))?$header[0]->bank_account:'';
 $sts_karyawan		= (!empty($header[0]->id))?$header[0]->sts_karyawan:'';
 $status				= (!empty($header[0]->id))?$header[0]->status:'';
 $tanda_tangan		= (!empty($header[0]->id))?$header[0]->tanda_tangan:'';
+$employee_code		= (!empty($header[0]->id))?$header[0]->employee_code:'';
 
 ?>
 <form action="#" method="POST" id="form_employee" autocomplete='off'>   
@@ -141,6 +142,14 @@ $tanda_tangan		= (!empty($header[0]->id))?$header[0]->tanda_tangan:'';
                         <?php
                             echo form_input(array('id'=>'email','name'=>'email','class'=>'form-control input-md','placeholder'=>'Email'),$email);											
                         ?>	
+                    </div>
+                </div>
+                <div class='form-group row'>		 	 
+                    <label class='label-control col-sm-2'><b>Employee Code</b></label>
+                    <div class='col-sm-4'>
+                        <?php 
+                            echo form_input(array('id'=>'employee_code','name'=>'employee_code','class'=>'form-control input-md numberOnly','placeholder'=>'Employee Code'),$employee_code);		
+                        ?>
                     </div>
                 </div>
             </div>
