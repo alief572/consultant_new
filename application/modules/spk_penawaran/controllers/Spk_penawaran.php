@@ -45,6 +45,9 @@ class SPK_penawaran extends Admin_Controller
 
     public function view_spk($id_spk_penawaran)
     {
+        $id_spk_penawaran = urldecode($id_spk_penawaran);
+        $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
+
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
         // $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
@@ -127,6 +130,9 @@ class SPK_penawaran extends Admin_Controller
 
     public function edit_spk($id_spk_penawaran)
     {
+        $id_spk_penawaran = urldecode($id_spk_penawaran);
+        $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
+
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
         // $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
@@ -241,8 +247,27 @@ class SPK_penawaran extends Admin_Controller
             $this->db->group_end();
         }
         $this->db->order_by('a.input_date', 'desc');
+        $this->db->limit($length, $start);
 
         $get_data = $this->db->get();
+
+        $this->db->select('a.*, b.grand_total');
+        $this->db->from('kons_tr_spk_penawaran a');
+        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->where(1, 1);
+        $this->db->where('a.deleted_by', null);
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
+            $this->db->or_like('a.nm_sales', $search['value'], 'both');
+            $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->or_like('a.nm_customer', $search['value'], 'both');
+            $this->db->or_like('b.grand_total', $search['value'], 'both');
+            $this->db->group_end();
+        }
+        $this->db->order_by('a.input_date', 'desc');
+
+        $get_data_all = $this->db->get();
 
         $hasil = [];
 
@@ -291,7 +316,7 @@ class SPK_penawaran extends Admin_Controller
             if ($this->viewPermission) {
                 $option .= '
                     <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('spk_penawaran/view_spk/' . $item->id_spk_penawaran) . '" class="btn btn-sm btn-info" style="color: #000000">
+                        <a href="' . base_url('spk_penawaran/view_spk/' . str_replace('/', '|', $item->id_spk_penawaran)) . '" class="btn btn-sm btn-info" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-file"></i>
@@ -306,7 +331,7 @@ class SPK_penawaran extends Admin_Controller
             if ($this->managePermission) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('spk_penawaran/edit_spk/' . $item->id_spk_penawaran) . '" class="btn btn-sm btn-success" style="color: #000000">
+                        <a href="' . base_url('spk_penawaran/edit_spk/' . str_replace('/', '|', $item->id_spk_penawaran)) . '" class="btn btn-sm btn-success" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-edit"></i>
@@ -373,8 +398,8 @@ class SPK_penawaran extends Admin_Controller
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data->num_rows(),
-            'recordsFiltered' => $get_data->num_rows(),
+            'recordsTotal' => $get_data_all->num_rows(),
+            'recordsFiltered' => $get_data_all->num_rows(),
             'data' => $hasil
         ]);
     }

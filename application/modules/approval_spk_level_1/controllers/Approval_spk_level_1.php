@@ -33,6 +33,9 @@ class Approval_spk_level_1 extends Admin_Controller
 
     public function view_spk($id_spk_penawaran)
     {
+        $id_spk_penawaran = urldecode($id_spk_penawaran);
+        $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
+
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
         $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
@@ -109,6 +112,9 @@ class Approval_spk_level_1 extends Admin_Controller
 
     public function approval_spk($id_spk_penawaran)
     {
+        $id_spk_penawaran = urldecode($id_spk_penawaran);
+        $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
+
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
         $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
@@ -231,10 +237,45 @@ class Approval_spk_level_1 extends Admin_Controller
             $this->db->group_end();
         }
         $this->db->order_by('a.input_date', 'desc');
+        $this->db->limit($length, $start);
 
         $get_data = $this->db->get();
-        if (!$get_data) {
+
+        $this->db->select('a.*, b.grand_total');
+        $this->db->from('kons_tr_spk_penawaran a');
+        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->where('a.deleted_by', null);
+        $this->db->where('a.sts_spk', null);
+        $this->db->where('a.approval_manager_sales', null);
+
+        $this->db->group_start();
+        $this->db->where('a.approval_sales_sts', null);
+        $this->db->or_where('a.approval_project_leader_sts', null);
+        $this->db->or_where('IF(a.id_konsultan_1 IS NULL, "1", a.approval_konsultan_1_sts) IS NULL');
+        $this->db->or_where('IF(a.id_konsultan_2 IS NULL, "1", a.approval_konsultan_2_sts) IS NULL');
+        $this->db->group_end();
+
+        if (!empty($search['value'])) {
+            $this->db->group_start();
+            $this->db->like('a.id_spk_penawaran', $search['value'], 'both');
+            $this->db->or_like('a.nm_sales', $search['value'], 'both');
+            $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->or_like('a.nm_customer', $search['value'], 'both');
+            $this->db->or_like('b.grand_total', $search['value'], 'both');
+            $this->db->group_end();
         }
+
+        if ((!$this->is_admin) && $get_user->employee_id !== '168') {
+            $this->db->group_start();
+            $this->db->where('a.id_project_leader', $get_user->employee_id);
+            $this->db->or_where('a.id_konsultan_1', $get_user->employee_id);
+            $this->db->or_where('a.id_konsultan_2', $get_user->employee_id);
+            $this->db->or_where('a.id_sales', $get_user->employee_id);
+            $this->db->group_end();
+        }
+        $this->db->order_by('a.input_date', 'desc');
+
+        $get_data_all = $this->db->get();
         // print_r($this->is_admin);
         // echo '<br><br>';
         // print_r($this->db->last_query());
@@ -287,7 +328,7 @@ class Approval_spk_level_1 extends Admin_Controller
             if ($this->viewPermission) {
                 $option .= '
                     <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('approval_spk_level_1/view_spk/' . $item->id_spk_penawaran) . '" class="btn btn-sm btn-info" style="color: #000000">
+                        <a href="' . base_url('approval_spk_level_1/view_spk/' . str_replace('/', '|', $item->id_spk_penawaran)) . '" class="btn btn-sm btn-info" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-file"></i>
@@ -318,7 +359,7 @@ class Approval_spk_level_1 extends Admin_Controller
                 if ($valid == 1) {
                     $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('approval_spk_level_1/approval_spk/' . $item->id_spk_penawaran) . '" class="btn btn-sm btn-success" style="color: #000000">
+                        <a href="' . base_url('approval_spk_level_1/approval_spk/' . str_replace('/', '|', $item->id_spk_penawaran)) . '" class="btn btn-sm btn-success" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-check"></i>

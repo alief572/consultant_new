@@ -179,7 +179,15 @@ if (count($list_penawaran_others) > 0) {
                         ?>
                     </select>
                 </td>
-                <td colspan="3"></td>
+                <td class="pd-5 semi-bold" valign="top">Tipe Penawaran</td>
+                <td class="pd-5" width="390" valign="top">
+                    <select name="tipe_penawaran" id="" class="form-control form-control-sm tipe_penawaran" disabled>
+                        <option value="">- Tipe Penawaran -</option>
+                        <option value="STM/" <?= ($list_penawaran->tipe_penawaran == 'STM/') ? 'selected' : '' ?>>Normal</option>
+                        <option value="STM/IC-MKT/" <?= ($list_penawaran->tipe_penawaran == 'STM/IC-MKT/') ? 'selected' : '' ?>>Incoming Call</option>
+                        <option value="STM/INT/" <?= ($list_penawaran->tipe_penawaran == 'STM/INT/') ? 'selected' : '' ?>>Internal</option>
+                    </select>
+                </td>
             </tr>
         </table>
     </div>

@@ -2589,17 +2589,17 @@ function H_activity_record($activity)
 	}
 }
 
-function generateNoPenawaran($employee_code)
+function generateNoPenawaran($employee_code, $tipe_penawaran)
 {
 	$CI = &get_instance();
 	$Ym 			= date('ym');
-	$srcMtr			= "SELECT MAX(id_quotation) as maxP FROM kons_tr_penawaran WHERE id_quotation LIKE '%/STM/" . $employee_code . "/" . int_to_roman(date('m')) . "/" . date('y') . "%' ";
+	$srcMtr			= "SELECT MAX(id_quotation) as maxP FROM kons_tr_penawaran WHERE id_quotation LIKE '%/" . $tipe_penawaran . $employee_code . "/" . int_to_roman(date('m')) . "/" . date('y') . "%' ";
 	$resultMtr		= $CI->db->query($srcMtr)->result_array();
 	$angkaUrut2		= $resultMtr[0]['maxP'];
 	$urutan2		= (int)substr($angkaUrut2, 0, 3);
 	$urutan2++;
 	$urut2			= sprintf('%03s', $urutan2);
-	$kode_trans		= $urut2 . '/STM/' . $employee_code . '/' . int_to_roman(date('m')) . '/' . date('y');
+	$kode_trans		= $urut2 . '/' . $tipe_penawaran . $employee_code . '/' . int_to_roman(date('m')) . '/' . date('y');
 
 	return $kode_trans;
 }

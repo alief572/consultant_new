@@ -39,6 +39,9 @@ class Approval_penawaran extends Admin_Controller
     public function view_penawaran($id_penawaran)
     {
 
+        $id_penawaran = urldecode($id_penawaran);
+        $id_penawaran = str_replace('|', '/', $id_penawaran);
+
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $id_penawaran])->row();
 
         $this->db->select('a.*, b.nm_aktifitas as nama_aktifitas, COUNT(c.id_chk_point) AS jml_check_point');
@@ -92,6 +95,9 @@ class Approval_penawaran extends Admin_Controller
 
     public function approval($id_penawaran)
     {
+
+        $id_penawaran = urldecode($id_penawaran);
+        $id_penawaran = str_replace('|', '/', $id_penawaran);
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $id_penawaran])->row();
 
@@ -179,8 +185,31 @@ class Approval_penawaran extends Admin_Controller
             $this->db->group_end();
         }
         $this->db->order_by('a.input_date', 'desc');
+        $this->db->limit($length, $start);
 
         $get_data = $this->db->get();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran a');
+        $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
+        $this->db->join('members c', 'c.id = a.id_marketing', 'left');
+        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
+        $this->db->join('kons_master_paket e', 'e.id_paket = d.id_paket', 'left');
+        $this->db->where(1, 1);
+        $this->db->where('a.deleted_by', null);
+        $this->db->where_in('a.sts_quot', [0, 1]);
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('a.tgl_quotation', $search['value'], 'both');
+            $this->db->or_like('c.nama', $search['value'], 'both');
+            $this->db->or_like('e.nm_paket', $search['value'], 'both');
+            $this->db->or_like('b.nm_customer', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
+            $this->db->group_end();
+        }
+        $this->db->order_by('a.input_date', 'desc');
+
+        $get_data_all = $this->db->get();
 
         $hasil = [];
 
@@ -240,7 +269,7 @@ class Approval_penawaran extends Admin_Controller
             if ($this->viewPermission) {
                 $option .= '
                     <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('approval_penawaran/view_penawaran/' . $item->id_quotation) . '" class="btn btn-sm btn-info" style="color: #000000">
+                        <a href="' . base_url('approval_penawaran/view_penawaran/' . str_replace('/', '|', $item->id_quotation)) . '" class="btn btn-sm btn-info" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-file"></i>
@@ -255,7 +284,7 @@ class Approval_penawaran extends Admin_Controller
             if ($this->managePermission) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('approval_penawaran/approval/' . $item->id_quotation) . '" class="btn btn-sm btn-success" style="color: #000000" >
+                        <a href="' . base_url('approval_penawaran/approval/' . str_replace('/', '|', $item->id_quotation)) . '" class="btn btn-sm btn-success" style="color: #000000" >
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-edit"></i>
@@ -302,8 +331,8 @@ class Approval_penawaran extends Admin_Controller
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data->num_rows(),
-            'recordsFiltered' => $get_data->num_rows(),
+            'recordsTotal' => $get_data_all->num_rows(),
+            'recordsFiltered' => $get_data_all->num_rows(),
             'data' => $hasil
         ]);
     }

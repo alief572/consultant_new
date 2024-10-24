@@ -150,7 +150,15 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             ?>
                         </select>
                     </td>
-                    <td colspan="3"></td>
+                    <td class="pd-5 semi-bold" valign="top">Tipe Penawaran</td>
+                    <td class="pd-5" width="390" valign="top">
+                        <select name="tipe_penawaran" id="" class="form-control form-control-sm">
+                            <option value="">- Tipe Penawaran -</option>
+                            <option value="STM/">Normal</option>
+                            <option value="STM/IC-MKT/">Incoming Call</option>
+                            <option value="STM/INT/">Internal</option>
+                        </select>
+                    </td>
                 </tr>
             </table>
         </div>
