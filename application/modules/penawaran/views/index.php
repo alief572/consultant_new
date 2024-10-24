@@ -35,6 +35,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <thead>
                 <tr>
                     <th align="center">No</th>
+                    <th align="center">ID Quotation</th>
                     <th align="center">Date</th>
                     <th align="center">Marketing</th>
                     <th align="center">Package</th>
@@ -172,6 +173,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             columns: [{
                     data: 'no',
                 }, {
+                    data: 'id_quotation'
+                },
+                {
                     data: 'tgl_quotation'
                 },
                 {

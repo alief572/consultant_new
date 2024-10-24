@@ -206,11 +206,14 @@ if (count($list_penawaran_others) > 0) {
             <table class="table custom-table">
                 <thead>
                     <tr>
+                        <th class="text-center">No.</th>
                         <th class="text-center">Activity Name</th>
                         <th class="text-center">Mandays</th>
                         <th class="text-center">Mandays Rate</th>
                         <th class="text-center">Mandays Subcont</th>
                         <th class="text-center">Mandays Rate Subcont</th>
+                        <th class="text-center">Mandays Tandem</th>
+                        <th class="text-center">Mandays Rate Tandem</th>
                         <th class="text-center">Price</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -220,15 +223,19 @@ if (count($list_penawaran_others) > 0) {
                     $ttl_bobot = 0;
                     $ttl_mandays = 0;
                     $ttl_mandays_subcont = 0;
+                    $ttl_mandays_tandem = 0;
                     $ttl_price = 0;
                     $ttl_check_point = 0;
                     $ttl_mandays_rate = 0;
                     $ttl_mandays_rate_subcont = 0;
+                    $ttl_mandays_rate_tandem = 0;
 
                     $no_activity = 1;
                     foreach ($list_penawaran_aktifitas as $item_aktifitas) {
 
                         echo '<tr class="tr_aktifitas_' . $no_activity . '">';
+
+                        echo '<td class="text-center">' . $no_activity . '</td>';
 
                         echo '<td class="text-left">';
 
@@ -262,6 +269,14 @@ if (count($list_penawaran_others) > 0) {
                         echo '</td>';
 
                         echo '<td class="text-center">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_tandem_' . $no_activity . '" name="dt_act[' . $no_activity . '][mandays_tandem]" value="' . $item_aktifitas->mandays_tandem . '" onchange="hitung_total_activity()">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_tandem_' . $no_activity . '" name="dt_act[' . $no_activity . '][mandays_rate_tandem]" value="' . $item_aktifitas->mandays_rate_tandem . '" onchange="hitung_total_activity()">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
                         echo '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' . $no_activity . '" name="dt_act[' . $no_activity . '][harga_aktifitas]" value="' . $item_aktifitas->total_aktifitas . '" onchange="hitung_total_activity()">';
                         echo '</td>';
 
@@ -280,17 +295,23 @@ if (count($list_penawaran_others) > 0) {
                         $ttl_mandays_subcont += $item_aktifitas->mandays_subcont;
                         $ttl_mandays_rate_subcont += $item_aktifitas->mandays_rate_subcont;
 
+                        $ttl_mandays_tandem += $item_aktifitas->mandays_tandem;
+                        $ttl_mandays_rate_tandem += $item_aktifitas->mandays_rate_tandem;
+
                         $no_activity++;
                     }
                     ?>
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th class="text-center"></th>
                         <th class="text-center">Total</th>
                         <th class="text-center ttl_act_mandays"><?= number_format($ttl_mandays, 2) ?></th>
                         <th class="text-center ttl_act_mandays_rate"><?= number_format($ttl_mandays_rate, 2) ?></th>
                         <th class="text-center ttl_act_mandays_subcont"><?= number_format($ttl_mandays_subcont, 2) ?></th>
                         <th class="text-center ttl_act_mandays_rate_subcont"><?= number_format($ttl_mandays_rate_subcont, 2) ?></th>
+                        <th class="text-center ttl_act_mandays_tandem"><?= number_format($ttl_mandays_tandem, 2) ?></th>
+                        <th class="text-center ttl_act_mandays_rate_tandem"><?= number_format($ttl_mandays_rate_tandem, 2) ?></th>
                         <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
                         <th class="text-center"></th>
                     </tr>
@@ -709,6 +730,8 @@ if (count($list_penawaran_others) > 0) {
         var ttl_mandays_rate = 0;
         var ttl_mandays_subcont = 0;
         var ttl_mandays_rate_subcont = 0;
+        var ttl_mandays_tandem = 0;
+        var ttl_mandays_rate_tandem = 0;
         var ttl_price = 0;
 
         var arr_id_aktifitas = [];
@@ -719,14 +742,18 @@ if (count($list_penawaran_others) > 0) {
                 var mandays_rate = get_num($('input[name="dt_act[' + i + '][mandays_rate]"]').val());
                 var mandays_subcont = get_num($('input[name="dt_act[' + i + '][mandays_subcont]"]').val());
                 var mandays_rate_subcont = get_num($('input[name="dt_act[' + i + '][mandays_rate_subcont]"]').val());
+                var mandays_tandem = get_num($('input[name="dt_act[' + i + '][mandays_tandem]"]').val());
+                var mandays_rate_tandem = get_num($('input[name="dt_act[' + i + '][mandays_rate_tandem]"]').val());
 
                 ttl_mandays += mandays;
                 ttl_mandays_rate += mandays_rate;
                 ttl_mandays_subcont += mandays_subcont;
                 ttl_mandays_rate_subcont += mandays_rate_subcont;
-                ttl_price += ((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont));
+                ttl_mandays_tandem += mandays_tandem;
+                ttl_mandays_rate_tandem += mandays_rate_tandem;
+                ttl_price += ((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont) + (mandays_tandem * mandays_rate_tandem));
 
-                $('.input_harga_aktifitas_' + i).val(number_format(((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont)), 2));
+                $('.input_harga_aktifitas_' + i).val(number_format(((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont) + (mandays_tandem * mandays_rate_tandem)), 2));
 
                 var id_aktifitas = $('.select_nm_aktifitas_' + i).val();
                 if (id_aktifitas !== '') {
@@ -753,6 +780,8 @@ if (count($list_penawaran_others) > 0) {
         $('.ttl_act_mandays_rate').html(number_format(ttl_mandays_rate, 2));
         $('.ttl_act_mandays_subcont').html(number_format(ttl_mandays_subcont, 2));
         $('.ttl_act_mandays_rate_subcont').html(number_format(ttl_mandays_rate_subcont, 2));
+        $('.ttl_act_mandays_tandem').html(number_format(ttl_mandays_tandem, 2));
+        $('.ttl_act_mandays_rate_tandem').html(number_format(ttl_mandays_rate_tandem, 2));
         $('.ttl_act_price').html(number_format(ttl_price, 2));
 
         hitung_summary();
@@ -850,6 +879,8 @@ if (count($list_penawaran_others) > 0) {
 
         var hasil = '<tr class="tr_aktifitas_' + no_activity + '">';
 
+        hasil += '<td class="text-center">' + no_activity + '</td>';
+
         hasil += '<td class="text-left">';
 
         hasil += '<select class="form-control form-control-sm change_aktifitas select_nm_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][nm_aktifitas]" style="max-width: 500px;" data-no="' + no_activity + '">';
@@ -883,9 +914,16 @@ if (count($list_penawaran_others) > 0) {
         hasil += '</td>';
 
         hasil += '<td class="text-center">';
-        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][harga_aktifitas]" value="" onchange="hitung_total_activity()">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_tandem_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_tandem]" value="" onchange="hitung_total_activity()">';
         hasil += '</td>';
 
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_tandem_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate_tandem]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][harga_aktifitas]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
 
         hasil += '<td class="text-center">';
         hasil += '<button type="button" class="btn btn-sm btn-danger del_aktifitas" data-no="' + no_activity + '"><i class="fa fa-trash"></i></button>';
@@ -911,14 +949,14 @@ if (count($list_penawaran_others) > 0) {
         hasil += '<td>';
         hasil += '<select class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
         hasil += '<option value="">- Item Akomodasi -</option>';
-        <?php 
-            foreach($list_def_akomodasi as $item) {
-                ?>
+        <?php
+        foreach ($list_def_akomodasi as $item) {
+        ?>
 
-                hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+            hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
 
-                <?php
-            }
+        <?php
+        }
         ?>
         hasil += '</select>';
         hasil += '</td>';
@@ -963,14 +1001,14 @@ if (count($list_penawaran_others) > 0) {
         hasil += '<td>';
         hasil += '<select class="form-control form-control-sm" name="dt_oth[' + no_others + '][id_others]">';
         hasil += '<option value="">- Item Others -</option>';
-        <?php 
-            foreach($list_def_others as $item) {
-                ?>
+        <?php
+        foreach ($list_def_others as $item) {
+        ?>
 
-                hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+            hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
 
-                <?php
-            }
+        <?php
+        }
         ?>
         hasil += '</select>';
         hasil += '</td>';

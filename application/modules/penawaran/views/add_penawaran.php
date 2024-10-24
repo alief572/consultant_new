@@ -26,7 +26,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     .chosen-container .chosen-drop {
         z-index: 9999;
         /* Ensure the dropdown itself has a high z-index */
-    } */
+    }
+
+    */
 </style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 
@@ -171,11 +173,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <table class="table custom-table">
                 <thead>
                     <tr>
+                        <th class="text-center">No.</th>
                         <th class="text-center">Activity Name</th>
                         <th class="text-center">Mandays Internal</th>
                         <th class="text-center">Mandays Rate Internal</th>
                         <th class="text-center">Mandays Subcont</th>
                         <th class="text-center">Mandays Rate Subcont</th>
+                        <th class="text-center">Mandays Tandem</th>
+                        <th class="text-center">Mandays Rate Tandem</th>
                         <th class="text-center">Price</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -185,11 +190,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th class="text-center"></th>
                         <th class="text-center">Total</th>
                         <th class="text-center ttl_act_mandays">00,0</th>
                         <th class="text-center ttl_act_mandays_rate">00,0</th>
                         <th class="text-center ttl_act_mandays_subcont">00,0</th>
                         <th class="text-center ttl_act_mandays_rate_subcont">00,0</th>
+                        <th class="text-center ttl_act_mandays_tandem">00,0</th>
+                        <th class="text-center ttl_act_mandays_rate_tandem">00,0</th>
                         <th class="text-center ttl_act_price">00,0</th>
                         <th class="text-center"></th>
                     </tr>
@@ -503,6 +511,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var ttl_mandays_rate = 0;
         var ttl_mandays_subcont = 0;
         var ttl_mandays_rate_subcont = 0;
+        var ttl_mandays_tandem = 0;
+        var ttl_mandays_rate_tandem = 0;
         var ttl_price = 0;
 
         var arr_id_aktifitas = [];
@@ -513,14 +523,18 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 var mandays_rate = get_num($('input[name="dt_act[' + i + '][mandays_rate]"]').val());
                 var mandays_subcont = get_num($('input[name="dt_act[' + i + '][mandays_subcont]"]').val());
                 var mandays_rate_subcont = get_num($('input[name="dt_act[' + i + '][mandays_rate_subcont]"]').val());
+                var mandays_tandem = get_num($('input[name="dt_act[' + i + '][mandays_tandem]"]').val());
+                var mandays_rate_tandem = get_num($('input[name="dt_act[' + i + '][mandays_rate_tandem]"]').val());
 
                 ttl_mandays += mandays;
                 ttl_mandays_rate += mandays_rate;
                 ttl_mandays_subcont += mandays_subcont;
                 ttl_mandays_rate_subcont += mandays_rate_subcont;
-                ttl_price += ((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont));
+                ttl_mandays_tandem += mandays_tandem;
+                ttl_mandays_rate_tandem += mandays_rate_tandem;
+                ttl_price += ((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont) + (mandays_tandem * mandays_rate_tandem));
 
-                $('.input_harga_aktifitas_' + i).val(number_format(((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont)), 2));
+                $('.input_harga_aktifitas_' + i).val(number_format(((mandays * mandays_rate) + (mandays_subcont * mandays_rate_subcont) + (mandays_tandem * mandays_rate_tandem)), 2));
 
                 var id_aktifitas = $('.select_nm_aktifitas_' + i).val();
                 if (id_aktifitas !== '') {
@@ -547,6 +561,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         $('.ttl_act_mandays_rate').html(number_format(ttl_mandays_rate, 2));
         $('.ttl_act_mandays_subcont').html(number_format(ttl_mandays_subcont, 2));
         $('.ttl_act_mandays_rate_subcont').html(number_format(ttl_mandays_rate_subcont, 2));
+        $('.ttl_act_mandays_tandem').html(number_format(ttl_mandays_tandem, 2));
+        $('.ttl_act_mandays_rate_tandem').html(number_format(ttl_mandays_rate_tandem, 2));
         $('.ttl_act_price').html(number_format(ttl_price, 2));
 
         hitung_summary();
@@ -644,6 +660,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         var hasil = '<tr class="tr_aktifitas_' + no_activity + '">';
 
+        hasil += '<td class="text-center">'+ no_activity +'</td>';
+
         hasil += '<td class="text-left">';
 
         hasil += '<select class="form-control form-control-sm change_aktifitas select_nm_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][nm_aktifitas]" style="max-width: 500px;" data-no="' + no_activity + '">';
@@ -677,6 +695,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hasil += '</td>';
 
         hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_tandem_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_tandem]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_tandem_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate_tandem]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][harga_aktifitas]" value="" onchange="hitung_total_activity()">';
         hasil += '</td>';
 
@@ -704,14 +730,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hasil += '<td>';
         hasil += '<select class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
         hasil += '<option value="">- Item Akomodasi -</option>';
-        <?php 
-            foreach($list_def_akomodasi as $item) {
-                ?>
+        <?php
+        foreach ($list_def_akomodasi as $item) {
+        ?>
 
-                hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+            hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
 
-                <?php
-            }
+        <?php
+        }
         ?>
         hasil += '</select>';
         hasil += '</td>';
@@ -756,14 +782,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hasil += '<td>';
         hasil += '<select class="form-control form-control-sm" name="dt_oth[' + no_others + '][id_others]">';
         hasil += '<option value="">- Item Others -</option>';
-        <?php 
-            foreach($list_def_others as $item) {
-                ?>
+        <?php
+        foreach ($list_def_others as $item) {
+        ?>
 
-                hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+            hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
 
-                <?php
-            }
+        <?php
+        }
         ?>
         hasil += '</select>';
         hasil += '</td>';

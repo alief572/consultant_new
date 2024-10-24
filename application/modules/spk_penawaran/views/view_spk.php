@@ -195,9 +195,12 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th class="text-center">No.</th>
                     <th class="text-center">Activity Name</th>
                     <th class="text-center">Mandays Internal</th>
                     <th class="text-center">Mandays Rate Internal</th>
+                    <th class="text-center">Mandays Tandem</th>
+                    <th class="text-center">Mandays Rate Tandem</th>
                     <th class="text-center">Mandays Subcont</th>
                     <th class="text-center">Price Subcont</th>
                     <th class="text-center">Total</th>
@@ -209,10 +212,16 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                 $total_mandays = 0;
                 $total_mandays_rate = 0;
 
+                $total_mandays_tandem = 0;
+                $total_mandays_rate_tandem = 0;
+
                 $ttl_mandays_subcont = 0;
                 $ttl_subcont = 0;
+
+                $nilai_tandem = 0;
                 foreach ($list_spk_penawaran_subcont as $item) {
                     echo '<tr class="subcont_' . $no . '">';
+                    echo '<td class="text-center">' . $no . '</td>';
                     echo '<td>';
                     echo '<select class="form-control form-control-sm chosen_select" name="dt[' . $no . '][id_aktifitas]" disabled>';
                     foreach ($list_all_aktifitas as $item_aktifitas) {
@@ -224,6 +233,8 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     echo '</td>';
                     echo '<td class="text-center">' . $item->mandays . ' <input type="hidden" name="dt[' . $no . '][mandays]" value="' . $item->mandays . '"></td>';
                     echo '<td class="text-center">' . number_format($item->mandays_rate, 2) . ' <input type="hidden" name="dt[' . $no . '][mandays_rate]" value="' . $item->mandays_rate . '"></td>';
+                    echo '<td class="text-center">' . $item->mandays_tandem . ' <input type="hidden" name="dt[' . $no . '][mandays_tandem]" value="' . $item->mandays_tandem . '"></td>';
+                    echo '<td class="text-center">' . number_format($item->mandays_rate_tandem, 2) . ' <input type="hidden" name="dt[' . $no . '][mandays_rate_tandem]" value="' . $item->mandays_rate_tandem . '"></td>';
                     echo '<td>';
                     echo '<input type="text" class="form-control form-control-sm edit_mandays_subcont mandays_subcont_' . $item->id . '" name="dt[' . $no . '][mandays_subcont]" data-id="' . $item->id . '" value="' . $item->mandays_subcont . '" readonly>';
                     echo '</td>';
@@ -237,9 +248,13 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
 
                     $total_mandays += $item->mandays;
                     $total_mandays_rate += $item->mandays_rate;
+                    $total_mandays_tandem += $item->mandays_tandem;
+                    $total_mandays_rate_tandem += $item->mandays_rate_tandem;
                     $ttl_mandays_subcont += $item->mandays_subcont;
 
                     $ttl_subcont += $item->total_subcont;
+
+                    $nilai_tandem += ($item->mandays_tandem * $item->mandays_rate_tandem);
 
                     $no++;
                 }
@@ -247,9 +262,12 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
             </tbody>
             <tfoot>
                 <tr>
+                    <th></th>
                     <th>Total</th>
                     <th class="text-center ttl_mandays"><?= $total_mandays ?></th>
                     <th class="text-center ttl_mandays"><?= number_format($total_mandays_rate, 2) ?></th>
+                    <th class="text-center ttl_mandays"><?= $total_mandays_tandem ?></th>
+                    <th class="text-center ttl_mandays"><?= number_format($total_mandays_rate_tandem, 2) ?></th>
                     <th class="text-center ttl_mandays_subcont"><?= $ttl_mandays_subcont ?></th>
                     <th class="text-center"></th>
                     <th class="text-center ttl_total_subcont"><?= number_format($ttl_subcont, 2) ?></th>
@@ -298,10 +316,9 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                 <td class="pd-5 semi-bold" valign="top">Divisi</td>
                 <td class="pd-5" width="400" valign="top">
                     <select name="divisi" id="" class="form-control form-control-sm select_divisi" disabled>
-                        <option value="">- Select Divisi -</option>
                         <?php
                         foreach ($list_divisi as $item) {
-                            if ($list_spk_penawaran->id_divisi == $item_id) {
+                            if ($list_spk_penawaran->id_divisi == $item->id) {
                                 echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
                             }
                             // echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
@@ -341,17 +358,21 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                 <td class="pd-5" width="400" valign="top">
                     <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right total_mandays_internal" value="<?= number_format($list_spk_penawaran->mandays_internal) ?>" readonly>
                 </td>
-                <td class="pd-5 semi-bold" valign="top">Nilai Kontrak Bersih</td>
-                <td class="pd-5" valign="top">
-                    <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right total_nilai_kontrak_bersih" value="<?= number_format($list_spk_penawaran->nilai_kontrak_bersih, 2) ?>" readonly>
-                </td>
 
+                <td class="pd-5 semi-bold" valign="top">Biaya Tandem</td>
+                <td class="pd-5" valign="top">
+                    <input type="text" name="biaya_tandem" id="" class="form-control form-control-sm text-right biaya_tandem" value="<?= number_format($nilai_tandem, 2) ?>" readonly>
+                </td>
             </tr>
             <tr>
 
                 <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                 <td class="pd-5" valign="top">
                     <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($list_spk_penawaran->mandays_rate, 2) ?>" readonly>
+                </td>
+                <td class="pd-5 semi-bold" valign="top">Nilai Kontrak Bersih</td>
+                <td class="pd-5" valign="top">
+                    <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right total_nilai_kontrak_bersih" value="<?= number_format($list_spk_penawaran->nilai_kontrak_bersih, 2) ?>" readonly>
                 </td>
             </tr>
         </table>
@@ -528,7 +549,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
         $('.chosen_select').chosen({
-            width: "400px"
+            width: "300px"
         });
 
         $('.select_divisi').chosen();

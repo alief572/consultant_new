@@ -45,14 +45,14 @@ class Penawaran extends Admin_Controller
         $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->join('kons_master_check_point c', 'c.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $id_penawaran);
-        $this->db->group_by('a.id_aktifitas');
+        $this->db->group_by('a.id');
         $this->db->order_by('a.id', 'asc');
         $get_penawaran_aktifitas = $this->db->get()->result();
 
         $get_penawaran_akomodasi = $this->db->get_where('kons_tr_penawaran_akomodasi', ['id_penawaran' => $id_penawaran])->result();
         $get_penawaran_others = $this->db->get_where('kons_tr_penawaran_others', ['id_penawaran' => $id_penawaran])->result();
 
-        
+
 
         $this->db->select('a.*');
         $this->db->from('customer a');
@@ -115,7 +115,7 @@ class Penawaran extends Admin_Controller
         $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->join('kons_master_check_point c', 'c.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $id_penawaran);
-        $this->db->group_by('a.id_aktifitas');
+        $this->db->group_by('a.id');
         $this->db->order_by('a.id', 'asc');
         $get_penawaran_aktifitas = $this->db->get()->result();
 
@@ -185,7 +185,8 @@ class Penawaran extends Admin_Controller
         $this->db->where('a.deleted_by', null);
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->like('a.tgl_quotation', $search['value'], 'both');
+            $this->db->like('a.id_quotation', $search['value'], 'both');
+            $this->db->or_like('a.tgl_quotation', $search['value'], 'both');
             $this->db->or_like('c.nama', $search['value'], 'both');
             $this->db->or_like('e.nm_paket', $search['value'], 'both');
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
@@ -346,6 +347,7 @@ class Penawaran extends Admin_Controller
 
             $hasil[] = [
                 'no' => $no,
+                'id_quotation' => $item->id_quotation,
                 'tgl_quotation' => $item->tgl_quotation,
                 'nm_marketing' => ucfirst($nm_marketing),
                 'nm_paket' => $nm_paket,
@@ -476,6 +478,8 @@ class Penawaran extends Admin_Controller
 
             $hasil .= '<tr class="tr_aktifitas_' . $no . '">';
 
+            $hasil .= '<td class="text-center">' . $no . '</td>';
+
             $hasil .= '<td class="text-left">';
             $hasil .= '<select class="form-control form-control-sm change_aktifitas select_nm_aktifitas_' . $no . '" name="dt_act[' . $no . '][nm_aktifitas]" style="max-width: 500px;" data-no="' . $no . '">';
 
@@ -512,6 +516,14 @@ class Penawaran extends Admin_Controller
 
             $hasil .= '<td class="text-center">';
             $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_subcont_' . $no . '" name="dt_act[' . $no . '][mandays_rate_subcont]" value="" onchange="hitung_total_activity()">';
+            $hasil .= '</td>';
+
+            $hasil .= '<td class="text-center">';
+            $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_tandem_' . $no . '" name="dt_act[' . $no . '][mandays_tandem]" value="" onchange="hitung_total_activity()">';
+            $hasil .= '</td>';
+
+            $hasil .= '<td class="text-center">';
+            $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_tandem_' . $no . '" name="dt_act[' . $no . '][mandays_rate_tandem]" value="" onchange="hitung_total_activity()">';
             $hasil .= '</td>';
 
 
@@ -668,6 +680,8 @@ class Penawaran extends Admin_Controller
                     'mandays_rate' => str_replace(',', '',  $item_act['mandays_rate']),
                     'mandays_subcont' => str_replace(',', '',  $item_act['mandays_subcont']),
                     'mandays_rate_subcont' => str_replace(',', '',  $item_act['mandays_rate_subcont']),
+                    'mandays_tandem' => str_replace(',', '',  $item_act['mandays_tandem']),
+                    'mandays_rate_tandem' => str_replace(',', '',  $item_act['mandays_rate_tandem']),
                     'harga_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
                     'total_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
                     'input_by' => $this->auth->user_id(),
@@ -885,6 +899,8 @@ class Penawaran extends Admin_Controller
                     'mandays_rate' => str_replace(',', '',  $item_act['mandays_rate']),
                     'mandays_subcont' => str_replace(',', '',  $item_act['mandays_subcont']),
                     'mandays_rate_subcont' => str_replace(',', '',  $item_act['mandays_rate_subcont']),
+                    'mandays_tandem' => str_replace(',', '',  $item_act['mandays_tandem']),
+                    'mandays_rate_tandem' => str_replace(',', '',  $item_act['mandays_rate_tandem']),
                     'harga_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
                     'total_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
                     'input_by' => $this->auth->user_id(),

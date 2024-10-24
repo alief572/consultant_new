@@ -201,6 +201,8 @@ if (count($list_penawaran_others) > 0) {
                     <th class="text-center">Mandays Rate</th>
                     <th class="text-center">Mandays Subcont</th>
                     <th class="text-center">Mandays Rate Subcont</th>
+                    <th class="text-center">Mandays Tandem</th>
+                    <th class="text-center">Mandays Rate Tandem</th>
                     <th class="text-center">Price</th>
                 </tr>
             </thead>
@@ -213,6 +215,8 @@ if (count($list_penawaran_others) > 0) {
                 $ttl_mandays_rate = 0;
                 $ttl_mandays_subcont = 0;
                 $ttl_mandays_rate_subcont = 0;
+                $ttl_mandays_tandem = 0;
+                $ttl_mandays_rate_tandem = 0;
 
                 $no_activity = 1;
                 foreach ($list_penawaran_aktifitas as $item_aktifitas) {
@@ -224,6 +228,8 @@ if (count($list_penawaran_others) > 0) {
                     echo '<td class="text-center">' . number_format($item_aktifitas->mandays_rate, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_aktifitas->mandays_subcont, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_aktifitas->mandays_rate_subcont, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_aktifitas->mandays_tandem, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_aktifitas->mandays_rate_tandem, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_aktifitas->total_aktifitas, 2) . '</td>';
 
                     echo '</tr>';
@@ -235,6 +241,8 @@ if (count($list_penawaran_others) > 0) {
                     $ttl_mandays_rate += $item_aktifitas->mandays_rate;
                     $ttl_mandays_subcont += $item_aktifitas->mandays_subcont;
                     $ttl_mandays_rate_subcont += $item_aktifitas->mandays_rate_subcont;
+                    $ttl_mandays_tandem += $item_aktifitas->mandays_tandem;
+                    $ttl_mandays_rate_tandem += $item_aktifitas->mandays_rate_tandem;
 
                     $no_activity++;
                 }
@@ -247,6 +255,8 @@ if (count($list_penawaran_others) > 0) {
                     <th class="text-center ttl_act_mandays_rate"><?= number_format($ttl_mandays_rate, 2) ?></th>
                     <th class="text-center ttl_act_mandays_subcont"><?= number_format($ttl_mandays_subcont, 2) ?></th>
                     <th class="text-center ttl_act_mandays_rate_subcont"><?= number_format($ttl_mandays_rate_subcont, 2) ?></th>
+                    <th class="text-center ttl_act_mandays_tandem"><?= number_format($ttl_mandays_tandem, 2) ?></th>
+                    <th class="text-center ttl_act_mandays_rate_tandem"><?= number_format($ttl_mandays_rate_tandem, 2) ?></th>
                     <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
                 </tr>
             </tfoot>

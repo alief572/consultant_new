@@ -44,7 +44,7 @@
                                                                         <input type='hidden' class='form-control' name='aktifitas_unique_id[]' value="<?php echo @$d->unique_id; ?>">
                                                                     </td>
                                                                     <td>
-                                                                        <input type='number' class='form-control' name='hrg_aktifitas[]' value="<?php echo @$d->harga_aktifitas; ?>">
+                                                                        <input type='text' class='form-control auto_num' name='hrg_aktifitas[]' value="<?php echo @$d->harga_aktifitas; ?>">
                                                                     </td>
                                                                     <td>
                                                                         <input type='number' class='form-control' name='mandays[]' value="<?php echo @$d->mandays; ?>">
@@ -102,6 +102,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        $('.auto_num').autoNumeric('init');
+
         $("#<?php echo $form_id; ?>").keypress(function(e) {
             //Enter key
             if (e.which == 13) {

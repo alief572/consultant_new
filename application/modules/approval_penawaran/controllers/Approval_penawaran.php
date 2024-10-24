@@ -46,7 +46,7 @@ class Approval_penawaran extends Admin_Controller
         $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->join('kons_master_check_point c', 'c.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $id_penawaran);
-        $this->db->group_by('a.id_aktifitas');
+        $this->db->group_by('a.id');
         $this->db->order_by('a.id', 'asc');
         $get_penawaran_aktifitas = $this->db->get()->result();
 
@@ -100,7 +100,7 @@ class Approval_penawaran extends Admin_Controller
         $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->join('kons_master_check_point c', 'c.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $id_penawaran);
-        $this->db->group_by('a.id_aktifitas');
+        $this->db->group_by('a.id');
         $this->db->order_by('a.id', 'asc');
         $get_penawaran_aktifitas = $this->db->get()->result();
 
