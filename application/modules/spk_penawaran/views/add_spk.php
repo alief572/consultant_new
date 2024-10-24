@@ -437,7 +437,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     ?>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                     <td class="pd-5" valign="top">
-                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($total_mandays_rate / ($total_mandays), 2) ?>" readonly>
+                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Nilai Kontrak Bersih</td>
                     <td class="pd-5" valign="top">
