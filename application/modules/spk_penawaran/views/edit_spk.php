@@ -76,7 +76,7 @@ $nilai_others = $list_spk_penawaran->biaya_others;
                 <tr>
                     <td class="pd-5 semi-bold" valign="top" rowspan="2">Alamat</td>
                     <td class="pd-5" width="400" valign="top" rowspan="2">
-                        <textarea name="alamat" id="" class="form-control form-control-sm" rows="4" readonly><?= $list_customer->alamat ?></textarea>
+                        <textarea name="address" id="" class="form-control form-control-sm" rows="4" readonly><?= $list_customer->alamat ?></textarea>
                     </td>
                     <!-- <td width="100"></td> -->
                     <td class="pd-5 semi-bold" valign="top">No. NPWP</td>
@@ -190,6 +190,84 @@ $nilai_others = $list_spk_penawaran->biaya_others;
     </div>
 
     <div class="box">
+        <div class="box-body">
+            <table border="0" style="width: 100%">
+                <tr>
+                    <td class="pd-5 semi-bold" valign="top" width="120">
+                        Project
+                    </td>
+                    <td class="pd-5" width="390" valign="top">
+                        <input type="text" name="nm_paket" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->nm_project ?>" readonly>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <!-- <td class="pd-5 semi-bold" valign="top" rowspan="2">Project</td>
+                    <td class="pd-5" width="390" valign="top" rowspan="2">
+                        <textarea name="" id="" class="form-control form-control-sm" readonly><?= $nm_paket ?></textarea>
+                    </td> -->
+                    <td class="pd-5 semi-bold" valign="top" width="120">Project Leader</td>
+                    <td class="pd-5" width="390" valign="top">
+                        <select name="project_leader" id="" class="form-control form-control-sm select_project_leader">
+                            <option value="">- Select Project Leader -</option>
+                            <?php
+                            foreach ($list_all_marketing as $item) {
+                                $selected = '';
+                                if($item->id == $list_spk_penawaran->id_project_leader) {
+                                    $selected = 'selected';
+                                }
+                                echo '<option value="' . $item->id . '" '.$selected.'>' . ucfirst($item->nm_karyawan) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="pd-5 semi-bold" valign="top" width="120">Konsultan 1</td>
+                    <td class="pd-5" width="390" valign="top">
+                        <select name="konsultan_1" id="" class="form-control form-control-sm select_konsultan_1">
+                            <option value="">- Select Konsultan 1 -</option>
+                            <?php
+                            foreach ($list_all_marketing as $item) {
+                                $selected = '';
+                                if($item->id == $list_spk_penawaran->id_konsultan_1) {
+                                    $selected = 'selected';
+                                }
+                                echo '<option value="' . $item->id . '" '.$selected.'>' . ucfirst($item->nm_karyawan) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="pd-5 semi-bold" valign="top" width="120">Konsultan 2</td>
+                    <td class="pd-5" width="390" valign="top">
+                        <select name="konsultan_2" id="" class="form-control form-control-sm select_konsultan_2">
+                            <option value="">- Select Konsultan 2 -</option>
+                            <?php
+                            foreach ($list_all_marketing as $item) {
+                                $selected = '';
+                                if($item->id == $list_spk_penawaran->id_konsultan_2) {
+                                    $selected = 'selected';
+                                }
+                                echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
         <div class="box-header">
             <h4 style="font-weight: 600;">Subcont</h4>
         </div>
@@ -280,13 +358,13 @@ $nilai_others = $list_spk_penawaran->biaya_others;
                     <td class="pd-5" width="400" valign="top">
                         <div class="form-inline">
                             <div class="form-group text-center">
-                                <input type="date" name="waktu_from" id="" class="form-control form-control-sm">
+                                <input type="date" name="waktu_from" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->waktu_from ?>">
                             </div>
                             <div class="form-group text-center" style="width: 30px;" valign="middle">
                                 -
                             </div>
                             <div class="form-group text-center">
-                                <input type="date" name="waktu_to" id="" class="form-control form-control-sm">
+                                <input type="date" name="waktu_to" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->waktu_to ?>">
                             </div>
                         </div>
                     </td>
@@ -310,7 +388,11 @@ $nilai_others = $list_spk_penawaran->biaya_others;
                             <option value="">- Select Divisi -</option>
                             <?php
                             foreach ($list_divisi as $item) {
-                                echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
+                                $selected = '';
+                                if($item->id == $list_spk_penawaran->id_divisi) {
+                                    $selected = 'selected';
+                                }
+                                echo '<option value="' . $item->id . '" '.$selected.'>' . ucfirst($item->nama) . '</option>';
                             }
                             ?>
                         </select>
