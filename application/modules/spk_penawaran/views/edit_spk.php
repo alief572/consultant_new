@@ -349,7 +349,7 @@ $nilai_others = $list_spk_penawaran->biaya_others;
                     ?>
                 </tbody>
                 <tfoot>
-                    <th></th>
+                    <th> </th>
                     <th>Total</th>
                     <th class="text-center ttl_mandays"><?= $total_mandays ?></th>
                     <th class="text-center ttl_mandays_rate"><?= number_format($total_mandays_rate, 2) ?></th>
