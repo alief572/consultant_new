@@ -646,7 +646,14 @@ class Penawaran extends Admin_Controller
             $detail_info_awal = $post['informasi_awal_others'];
         }
 
-        $id_penawaran = generateNoPenawaran();
+        $get_sales = $this->db->get_where('employee', ['id' => $post['marketing']])->row();
+
+        $employee_code = '';
+        if(!empty($get_sales)) {
+            $employee_code = $get_sales->employee_code;
+        }
+
+        $id_penawaran = generateNoPenawaran($employee_code);
 
         $arr_insert = [
             'id_quotation' => $id_penawaran,
