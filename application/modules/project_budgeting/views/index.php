@@ -126,22 +126,16 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     data: 'id_spk_penawaran'
                 },
                 {
-                    data: 'nm_marketing'
-                },
-                {
-                    data: 'nm_paket'
-                },
-                {
                     data: 'nm_customer'
                 },
                 {
-                    data: 'grand_total'
+                    data: 'nm_sales'
                 },
                 {
-                    data: 'status'
+                    data: 'nm_project_leader'
                 },
                 {
-                    data: 'status_spk'
+                    data: 'nm_project'
                 },
                 {
                     data: 'option'

@@ -244,7 +244,7 @@ class Project_budgeting extends Admin_Controller
             $this->db->or_like('a.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('b.grand_total', $search['value'], 'both');
+            $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.input_date', 'desc');
@@ -264,7 +264,7 @@ class Project_budgeting extends Admin_Controller
             $this->db->or_like('a.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('b.grand_total', $search['value'], 'both');
+            $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.input_date', 'desc');
@@ -301,7 +301,7 @@ class Project_budgeting extends Admin_Controller
                 $status_spk = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
             }
 
-            $option = '<a href="javascript:void(0);" class="btn btn-sm " style="background-color: #E100A5; color: white;"><i class="fa fa-arrow-up"></i></a>';
+            $option = '<a href="'.base_url('project_budgeting/add/'. urlencode(str_replace('/','|',$item->id_spk_penawaran))).'" class="btn btn-sm " style="background-color: #E100A5; color: white;"><i class="fa fa-arrow-up"></i></a>';
 
             $nm_marketing = $item->nm_sales;
 
@@ -313,6 +313,9 @@ class Project_budgeting extends Admin_Controller
                 'no' => $no,
                 'id_spk_penawaran' => $item->id_spk_penawaran,
                 'nm_customer' => $item->nm_customer,
+                'nm_sales' => $item->nm_sales,
+                'nm_project_leader' => $item->nm_project_leader,
+                'nm_project' => $item->nm_project,
                 'option' => $option
             ];
 
@@ -442,106 +445,12 @@ class Project_budgeting extends Admin_Controller
         ]);
     }
 
-    public function add_spk($id_quotation)
+    public function add($id_spk_penawaran)
     {
-        $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $id_quotation])->row();
 
-        $this->db->select('a.*, b.nm_pic, b.divisi as jabatan_pic, b.hp as no_hp_pic');
-        $this->db->from('customer a');
-        $this->db->join('customer_pic b', 'b.id_pic = a.id_pic', 'left');
-        $this->db->where('a.nm_customer <>', '');
-        $this->db->where('a.id_customer', $get_penawaran->id_customer);
-        $get_customer = $this->db->get()->row();
-
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->where('a.id', $get_penawaran->id_marketing);
-        $get_marketing = $this->db->get()->row();
-
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
-        $get_all_marketing = $this->db->get()->result();
-
-        $this->db->select('b.nm_paket');
-        $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
-        $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
-        $get_konsultasi = $this->db->get()->row();
-
-        $this->db->select('a.id, a.nama');
-        $this->db->from('ms_department a');
-        $this->db->where('a.deleted_by', null);
-        $get_divisi = $this->db->get()->result();
-
-        $detail_informasi_awal = '';
-        if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
-            $this->db->select('a.*');
-            $this->db->from('employee a');
-            $this->db->where('a.deleted', 'N');
-            $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
-            $get_marketing_informasi_awal = $this->db->get()->row();
-
-            $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
-        } else {
-            $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
-        }
-
-        $this->db->select('a.*, b.nm_aktifitas');
-        $this->db->from('kons_tr_penawaran_aktifitas a');
-        $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
-        $this->db->where('a.id_penawaran', $id_quotation);
-        $this->db->order_by('a.id', 'asc');
-        $get_aktifitas = $this->db->get()->result();
-
-        $nilai_kontrak = 0;
-        foreach ($get_aktifitas as $item_aktifitas) {
-            $nilai_kontrak += $item_aktifitas->harga_aktifitas;
-        }
-
-        $this->db->select('a.*');
-        $this->db->from('kons_master_aktifitas a');
-        $get_all_aktifitas = $this->db->get()->result();
-
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_penawaran_akomodasi a');
-        $this->db->where('a.id_penawaran', $id_quotation);
-        $get_akomodasi = $this->db->get()->result();
-
-        $nilai_akomodasi = 0;
-        foreach ($get_akomodasi as $item_akomodasi) {
-            $nilai_akomodasi += $item_akomodasi->total;
-        }
-
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_penawaran_others a');
-        $this->db->where('a.id_penawaran', $id_quotation);
-        $get_others = $this->db->get()->result();
-
-        $nilai_others = 0;
-        foreach ($get_others as $item_others) {
-            $nilai_others += $item_others->total;
-        }
-
-        $nilai_project = $get_penawaran->grand_total;
-
-        $data = [
-            'list_penawaran' => $get_penawaran,
-            'list_customer' => $get_customer,
-            'list_marketing' => $get_marketing,
-            'list_all_marketing' => $get_all_marketing,
-            'list_divisi' => $get_divisi,
-            'list_aktifitas' => $get_aktifitas,
-            'list_all_aktifitas' => $get_all_aktifitas,
-            'detail_informasi_awal' => $detail_informasi_awal,
-            'nm_paket' => $get_konsultasi->nm_paket,
-            'nilai_kontrak' => $nilai_kontrak,
-            'nilai_project' => $nilai_project,
-            'nilai_akomodasi' => $nilai_akomodasi,
-            'nilai_others' => $nilai_others
-        ];
+        $get_spk = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
+        
+        $data = [];
 
         $this->template->set($data);
         $this->template->title('Add SPK');

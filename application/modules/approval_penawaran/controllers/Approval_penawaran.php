@@ -269,7 +269,7 @@ class Approval_penawaran extends Admin_Controller
             if ($this->viewPermission) {
                 $option .= '
                     <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('approval_penawaran/view_penawaran/' . str_replace('/', '|', $item->id_quotation)) . '" class="btn btn-sm btn-info" style="color: #000000">
+                        <a href="' . base_url('approval_penawaran/view_penawaran/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '" class="btn btn-sm btn-info" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-file"></i>
@@ -284,7 +284,7 @@ class Approval_penawaran extends Admin_Controller
             if ($this->managePermission) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('approval_penawaran/approval/' . str_replace('/', '|', $item->id_quotation)) . '" class="btn btn-sm btn-success" style="color: #000000" >
+                        <a href="' . base_url('approval_penawaran/approval/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '" class="btn btn-sm btn-success" style="color: #000000" >
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-edit"></i>
