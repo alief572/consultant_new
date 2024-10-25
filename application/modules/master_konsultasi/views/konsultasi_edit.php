@@ -169,7 +169,7 @@
 
         var no = "<?= ($no > 0) ? $no : 0; ?>";
 
-        // $('.auto_num').autoNumeric();
+        $('.auto_num').autoNumeric();
 
         $("#<?php echo $form_id; ?>").keypress(function(e) {
             //Enter key
@@ -330,7 +330,7 @@
         $('.id_aktifitas_' + Nomor).chosen({
             width: '400px'
         });
-        auto_num();
+        $('.auto_num').autoNumeric();
 
         /*
          * //////////////////////////////////////////////////////////////////////////////////
