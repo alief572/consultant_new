@@ -54,7 +54,7 @@
                                                         <th width="6%">Hapus</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody class="listKonsultasi">
                                                     <?php
                                                     $no = 1;
                                                     if ($detail->num_rows() > 0) {
