@@ -169,7 +169,7 @@
 
         var no = "<?= ($no > 0) ? $no : 0; ?>";
 
-        $('.auto_num').autoNumeric();
+        // $('.auto_num').autoNumeric();
 
         $("#<?php echo $form_id; ?>").keypress(function(e) {
             //Enter key
