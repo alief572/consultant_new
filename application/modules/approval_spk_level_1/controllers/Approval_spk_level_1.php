@@ -440,6 +440,8 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_sales_date' => date('Y-m-d H:i:s'),
                 'reject_sales_reason' => $reject_reason
             ];
+
+            $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
         }
         if ($get_spk->id_project_leader == $get_user->employee_id) {
             $data_arr = [
@@ -449,6 +451,8 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_project_leader_date' => date('Y-m-d H:i:s'),
                 'reject_project_leader_reason' => $reject_reason
             ];
+
+            $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
         }
         if ($get_spk->id_konsultan_1 == $get_user->employee_id) {
             $data_arr = [
@@ -458,6 +462,8 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_konsultan_1_date' => date('Y-m-d H:i:s'),
                 'reject_konsultan_1_reason' => $reject_reason
             ];
+
+            $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
         }
         if ($get_spk->id_konsultan_2 == $get_user->employee_id) {
             $data_arr = [
@@ -467,6 +473,8 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_konsultan_2_date' => date('Y-m-d H:i:s'),
                 'reject_konsultan_2_reason' => $reject_reason
             ];
+
+            $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
         }
         if ($get_user->employee_id == '168') {
             $data_arr = [
@@ -476,9 +484,9 @@ class Approval_spk_level_1 extends Admin_Controller
                 'approval_manager_sales_sts' => null,
                 'approval_manager_sales_date' => null
             ];
-        }
 
-        $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
+            $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
+        }
 
         if ($this->db->trans_status() === false || empty($data_arr)) {
             $this->db->trans_rollback();
@@ -517,6 +525,8 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_sales_date' => null,
                 'reject_sales_reason' => null
             ];
+
+            $update_approve_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
         }
         if ($get_spk->id_project_leader == $get_user->employee_id) {
             $data_arr = [
@@ -526,6 +536,8 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_project_leader_date' => null,
                 'reject_project_leader_reason' => null
             ];
+
+            $update_approve_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
         }
         if ($get_spk->id_konsultan_1 == $get_user->employee_id) {
             $data_arr = [
@@ -535,6 +547,8 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_konsultan_1_date' => null,
                 'reject_konsultan_1_reason' => null
             ];
+
+            $update_approve_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
         }
         if ($get_spk->id_konsultan_2 == $get_user->employee_id) {
             $data_arr = [
@@ -544,6 +558,8 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_konsultan_2_date' => null,
                 'reject_konsultan_2_reason' => null
             ];
+
+            $update_approve_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
         }
         if ($get_user->employee_id == '168') {
             $data_arr = [
@@ -562,9 +578,9 @@ class Approval_spk_level_1 extends Admin_Controller
                 'reject_manager_sales_date' => null,
                 'reject_manager_sales_reason' => null
             ];
-        }
 
-        $update_approve_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
+            $update_approve_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
+        }
 
         if ($this->db->trans_status() === false || empty($data_arr)) {
             $this->db->trans_rollback();

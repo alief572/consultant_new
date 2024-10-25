@@ -11,13 +11,13 @@ if (!defined('BASEPATH')) {
  */
 
 $status = array();
-class SPK_penawaran extends Admin_Controller
+class Project_budgeting extends Admin_Controller
 {
     //Permission
-    protected $viewPermission     = 'SPK_penawaran.View';
-    protected $addPermission      = 'SPK_penawaran.Add';
-    protected $managePermission = 'SPK_penawaran.Manage';
-    protected $deletePermission = 'SPK_penawaran.Delete';
+    protected $viewPermission     = 'Project_Budgeting.View';
+    protected $addPermission      = 'Project_Budgeting.Add';
+    protected $managePermission = 'Project_Budgeting.Manage';
+    protected $deletePermission = 'Project_Budgeting.Delete';
 
     public function __construct()
     {
@@ -32,7 +32,7 @@ class SPK_penawaran extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('SPK');
+        $this->template->title('Project Budgeting');
         $this->template->render('index');
     }
 
@@ -237,6 +237,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
+        $this->db->where('a.sts_spk', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
@@ -256,6 +257,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
+        $this->db->where('a.sts_spk', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
@@ -299,81 +301,7 @@ class SPK_penawaran extends Admin_Controller
                 $status_spk = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
             }
 
-            $option = '
-            <div class="btn-group">
-                <button
-                    type="button"
-                    class="btn btn-sm btn-accent text-primary dropdown-toggle"
-                    title="Actions"
-                    data-toggle="dropdown"
-                    id="dropdownMenu' . $no . '"
-                    aria-expanded="false">
-                    <i class="fa fa-cogs"></i> <span class="caret"></span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-            ';
-
-            if ($this->viewPermission) {
-                $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('spk_penawaran/view_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-info" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-file"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> View </span>
-                    </div>
-                ';
-            }
-
-            if ($this->managePermission) {
-                $option .= '
-                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('spk_penawaran/edit_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-success" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-edit"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Revisi </span>
-                    </div>
-                ';
-            }
-
-            if ($this->deletePermission) {
-                $option .= '
-                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="#" class="btn btn-sm btn-danger del_spk" style="color: #000000" data-id_spk_penawaran="' . $item->id_spk_penawaran . '">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-trash"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Delete </span>
-                    </div>
-                ';
-            }
-
-            $option .= '
-                <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                    <a
-                        href="#"
-                        class="btn btn-sm"
-                        style="background-color: #ff0066; color: #000000">
-                        <div class="col-12 dropdown-item">
-                        <b>
-                            <i class="fa fa-print"></i>
-                        </b>
-                        </div>
-                    </a>
-                    <span style="font-weight: 500"> Print </span>
-                </div>
-            ';
-            $option .= '</div>';
+            $option = '<a href="javascript:void(0);" class="btn btn-sm " style="background-color: #E100A5; color: white;"><i class="fa fa-arrow-up"></i></a>';
 
             $nm_marketing = $item->nm_sales;
 
@@ -384,12 +312,7 @@ class SPK_penawaran extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'id_spk_penawaran' => $item->id_spk_penawaran,
-                'nm_marketing' => ucfirst($nm_marketing),
-                'nm_paket' => $nm_paket,
-                'nm_customer' => $nm_customer,
-                'grand_total' => number_format($item->grand_total),
-                'status' => $status,
-                'status_spk' => $status_spk,
+                'nm_customer' => $item->nm_customer,
                 'option' => $option
             ];
 
