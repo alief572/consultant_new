@@ -66,10 +66,10 @@ if (count($list_penawaran_others) > 0) {
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold">Marketing</td>
+                    <td class="pd-5 semi-bold">Sales</td>
                     <td class="pd-5" width="390">
                         <select name="marketing" id="" class="form-control form-control-sm select_marketing">
-                            <option value="">- Select Marketing -</option>
+                            <option value="">- Select Sales -</option>
                             <?php
                             foreach ($list_marketing as $item) {
                                 $selected = '';

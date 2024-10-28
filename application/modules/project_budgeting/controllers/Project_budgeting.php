@@ -448,6 +448,9 @@ class Project_budgeting extends Admin_Controller
     public function add($id_spk_penawaran)
     {
 
+        $id_spk_penawaran = urldecode($id_spk_penawaran);
+        $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
+
         // $get_spk = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
 
         $this->db->select('a.*, c.divisi as jabatan_pic, c.hp as kontak_pic');
@@ -456,6 +459,11 @@ class Project_budgeting extends Admin_Controller
         $this->db->join('customer_pic c', 'c.id_pic = b.id_pic', 'left');
         $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
         $get_spk = $this->db->get()->row();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran a');
+        $this->db->where('a.id_quotation', $get_spk->id_penawaran);
+        $get_penawaran = $this->db->get()->row();
 
         $this->db->select('a.*');
         $this->db->from('employee a');
@@ -474,6 +482,12 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
         $get_akomodasi = $this->db->get()->result();
 
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_penawaran_others a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
+        $get_others = $this->db->get()->result();
+
         // print_r($this->db->last_query());
         // exit;
 
@@ -484,7 +498,9 @@ class Project_budgeting extends Admin_Controller
             'list_spk_penawaran' => $get_spk,
             'list_all_marketing' => $get_all_marketing,
             'list_aktifitas' => $get_aktifitas,
-            'list_akomodasi' => $get_akomodasi
+            'list_akomodasi' => $get_akomodasi,
+            'list_others' => $get_others,
+            'list_penawaran' => $get_penawaran
         ];
 
         $this->template->set($data);

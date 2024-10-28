@@ -60,10 +60,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Marketing</td>
+                    <td class="pd-5 semi-bold" valign="top">Sales</td>
                     <td class="pd-5" width="390" valign="top">
                         <select name="marketing" id="" class="form-control form-control-sm select_marketing">
-                            <option value="">- Select Marketing -</option>
+                            <option value="">- Select Sales -</option>
                             <?php
                             foreach ($list_marketing as $item) {
                                 echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
