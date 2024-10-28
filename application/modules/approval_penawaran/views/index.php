@@ -21,7 +21,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 <div class="box">
     <div class="box-header">
-        
+
     </div>
     <!-- /.box-header -->
     <div class="box-body">
@@ -29,6 +29,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <thead>
                 <tr>
                     <th align="center">No</th>
+                    <th align="center">ID Quotation</th>
                     <th align="center">Date</th>
                     <th align="center">Marketing</th>
                     <th align="center">Package</th>
@@ -118,6 +119,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             },
             columns: [{
                     data: 'no',
+                }, {
+                    data: 'id_quotation'
                 }, {
                     data: 'tgl_quotation'
                 },

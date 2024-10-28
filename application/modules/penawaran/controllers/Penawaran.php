@@ -684,11 +684,26 @@ class Penawaran extends Admin_Controller
             $employee_code = $get_sales->employee_code;
         }
 
-        $id_penawaran = generateNoPenawaran($employee_code, $post['tipe_penawaran']);
+        // <option value="STM/">Normal</option>
+        // <option value="STM/IC-MKT/">Incoming Call</option>
+        // <option value="STM/INT/">Internal</option>
+
+        $tipe_penawaran = '';
+        if(isset($post['check_info_awal_sales'])){
+            $tipe_penawaran = 'STM/';
+        }
+        if(isset($post['check_info_awal_medsos'])){
+            $tipe_penawaran = 'STM/IC-MKT/';
+        }
+        if(isset($post['check_info_awal_others'])){
+            $tipe_penawaran = 'STM/INT/';
+        }
+
+        $id_penawaran = generateNoPenawaran($employee_code, $tipe_penawaran);
 
         $arr_insert = [
             'id_quotation' => $id_penawaran,
-            'tipe_penawaran' => $post['tipe_penawaran'],
+            'tipe_penawaran' => $tipe_penawaran,
             'tgl_quotation' => $post['tgl_quotation'],
             'id_customer' => $post['customer'],
             'id_marketing' => $post['marketing'],

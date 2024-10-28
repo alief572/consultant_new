@@ -479,7 +479,7 @@ class SPK_penawaran extends Admin_Controller
             }
 
             $option = '
-                <a href="' . base_url('spk_penawaran/add_spk/' . $item->id_quotation) . '" class="btn btn-sm btn-primary"><i class="fa fa-arrow-right"></i></a>
+                <a href="' . base_url('spk_penawaran/add_spk/' . urlencode(str_replace('/','|',$item->id_quotation))) . '" class="btn btn-sm btn-primary"><i class="fa fa-arrow-right"></i></a>
             ';
 
 
@@ -521,6 +521,10 @@ class SPK_penawaran extends Admin_Controller
 
     public function add_spk($id_quotation)
     {
+
+        $id_quotation = urldecode($id_quotation);
+        $id_quotation = str_replace('|', '/', $id_quotation);
+
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $id_quotation])->row();
 
         $this->db->select('a.*, b.nm_pic, b.divisi as jabatan_pic, b.hp as no_hp_pic');

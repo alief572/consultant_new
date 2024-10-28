@@ -315,6 +315,7 @@ class Approval_penawaran extends Admin_Controller
 
             $hasil[] = [
                 'no' => $no,
+                'id_quotation' => $item->id_quotation,
                 'tgl_quotation' => $item->tgl_quotation,
                 'nm_marketing' => ucfirst($nm_marketing),
                 'nm_paket' => $nm_paket,

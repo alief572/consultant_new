@@ -462,10 +462,20 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.deleted', 'N');
         $get_all_marketing = $this->db->get()->result();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, b.mandays as mandays_def');
         $this->db->from('kons_tr_spk_penawaran_subcont a');
+        $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
         $get_aktifitas = $this->db->get()->result();
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_penawaran_akomodasi a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
+        $get_akomodasi = $this->db->get()->result();
+
+        // print_r($this->db->last_query());
+        // exit;
 
         // print_r($get_all_marketing);
         // exit;
@@ -473,7 +483,8 @@ class Project_budgeting extends Admin_Controller
         $data = [
             'list_spk_penawaran' => $get_spk,
             'list_all_marketing' => $get_all_marketing,
-            'list_aktifitas' => $get_aktifitas
+            'list_aktifitas' => $get_aktifitas,
+            'list_akomodasi' => $get_akomodasi
         ];
 
         $this->template->set($data);
