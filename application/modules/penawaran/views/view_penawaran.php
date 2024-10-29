@@ -228,6 +228,8 @@ if (count($list_penawaran_others) > 0) {
                 $ttl_mandays_rate_subcont = 0;
                 $ttl_mandays_rate_tandem = 0;
 
+                $ttl_act = 0;
+
                 $no_activity = 1;
                 foreach ($list_penawaran_aktifitas as $item_aktifitas) {
 
@@ -246,7 +248,7 @@ if (count($list_penawaran_others) > 0) {
                     echo '</tr>';
 
                     $ttl_bobot += $item_aktifitas->bobot;
-                    $ttl_price += $item_aktifitas->harga_aktifitas;
+                    $ttl_price += $item_aktifitas->total_aktifitas;
                     $ttl_check_point += $item_aktifitas->jml_check_point;
                     $ttl_mandays += $item_aktifitas->mandays;
                     $ttl_mandays_rate += $item_aktifitas->mandays_rate;
@@ -254,6 +256,8 @@ if (count($list_penawaran_others) > 0) {
                     $ttl_mandays_rate_subcont += $item_aktifitas->mandays_rate_subcont;
                     $ttl_mandays_tandem += $item_aktifitas->mandays_tandem;
                     $ttl_mandays_rate_tandem += $item_aktifitas->mandays_rate_tandem;
+
+                    $ttl_act += (($item_aktifitas->mandays_rate * $item_aktifitas->mandays) + ($item_aktifitas->mandays_subcont * $item_aktifitas->mandays_rate_subcont) + ($item_aktifitas->mandays_tandem * $item_aktifitas->mandays_tandem));
 
                     $no_activity++;
                 }
@@ -269,7 +273,7 @@ if (count($list_penawaran_others) > 0) {
                     <th class="text-center ttl_act_mandays_rate_subcont"><?= number_format($ttl_mandays_rate_subcont, 2) ?></th>
                     <th class="text-center ttl_act_mandays_tandem"><?= number_format($ttl_mandays_tandem, 2) ?></th>
                     <th class="text-center ttl_act_mandays_rate_tandem"><?= number_format($ttl_mandays_rate_tandem, 2) ?></th>
-                    <th class="text-center ttl_act_price"><?= number_format($ttl_mandays_rate + $ttl_mandays_rate_subcont + $ttl_mandays_rate_tandem, 2) ?></th>
+                    <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
                 </tr>
             </tfoot>
         </table>
