@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Project_Budgeting.Add');
-$ENABLE_MANAGE  = has_permission('Project_Budgeting.Manage');
-$ENABLE_VIEW    = has_permission('Project_Budgeting.View');
-$ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
+$ENABLE_ADD     = has_permission('Approval_Project_Budgeting.Add');
+$ENABLE_MANAGE  = has_permission('Approval_Project_Budgeting.Manage');
+$ENABLE_VIEW    = has_permission('Approval_Project_Budgeting.View');
+$ENABLE_DELETE  = has_permission('Approval_Project_Budgeting.Delete');
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -21,13 +21,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 <div class="box">
     <div class="box-header">
-        <?php if ($ENABLE_ADD) : ?>
-            <div class="dropdown text-right">
-                <a class="btn btn-sm btn-success" href="<?= base_url('spk_penawaran/create_spk') ?>">
-                    Create SPK
-                </a>
-            </div>
-        <?php endif; ?>
+
     </div>
     <!-- /.box-header -->
     <div class="box-body">
@@ -35,12 +29,13 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             <thead>
                 <tr>
                     <th align="center">No</th>
-                    <th align="center">Nomor SPK</th>
+                    <th align="center">Nomor SPK Budgeting</th>
                     <th align="center">Customer</th>
                     <th align="center">Sales</th>
                     <th align="center">Project Leader</th>
                     <th align="center">Package</th>
                     <th align="center">Status</th>
+                    <th align="center">Reject Reason</th>
                     <th align="center">Action</th>
                 </tr>
             </thead>
@@ -124,7 +119,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             columns: [{
                     data: 'no',
                 }, {
-                    data: 'id_spk_penawaran'
+                    data: 'id_spk_budgeting'
                 },
                 {
                     data: 'nm_customer'
@@ -140,6 +135,9 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                 },
                 {
                     data: 'status'
+                },
+                {
+                    data: 'reject_reason'
                 },
                 {
                     data: 'option'

@@ -11,13 +11,13 @@ if (!defined('BASEPATH')) {
  */
 
 $status = array();
-class Project_budgeting extends Admin_Controller
+class Approval_project_budgeting extends Admin_Controller
 {
     //Permission
-    protected $viewPermission     = 'Project_Budgeting.View';
-    protected $addPermission      = 'Project_Budgeting.Add';
-    protected $managePermission = 'Project_Budgeting.Manage';
-    protected $deletePermission = 'Project_Budgeting.Delete';
+    protected $viewPermission     = 'Approval_Project_Budgeting.View';
+    protected $addPermission      = 'Approval_Project_Budgeting.Add';
+    protected $managePermission = 'Approval_Project_Budgeting.Manage';
+    protected $deletePermission = 'Approval_Project_Budgeting.Delete';
 
     public function __construct()
     {
@@ -32,7 +32,7 @@ class Project_budgeting extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Project Budgeting');
+        $this->template->title('Approval Project Budgeting');
         $this->template->render('index');
     }
 
@@ -43,42 +43,38 @@ class Project_budgeting extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*, b.grand_total');
-        $this->db->from('kons_tr_spk_penawaran a');
-        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
-        $this->db->where(1, 1);
-        $this->db->where('a.deleted_by', null);
-        $this->db->where('a.sts_spk', 1);
+        $this->db->select('a.*, b.nm_sales');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->where('a.sts <>', 1);
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
-            $this->db->or_like('a.nm_sales', $search['value'], 'both');
-            $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
+            $this->db->or_like('b.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
+            $this->db->or_like('a.nm_project', $search['value'], 'both');
             $this->db->group_end();
         }
-        $this->db->order_by('a.input_date', 'desc');
+        $this->db->order_by('a.create_date', 'desc');
         $this->db->limit($length, $start);
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*, b.grand_total');
-        $this->db->from('kons_tr_spk_penawaran a');
-        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
-        $this->db->where(1, 1);
-        $this->db->where('a.deleted_by', null);
-        $this->db->where('a.sts_spk', 1);
+        $this->db->select('a.*, b.nm_sales');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->where('a.sts <>', 1);
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
-            $this->db->or_like('a.nm_sales', $search['value'], 'both');
-            $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
+            $this->db->or_like('b.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
+            $this->db->or_like('a.nm_project', $search['value'], 'both');
             $this->db->group_end();
         }
-        $this->db->order_by('a.input_date', 'desc');
+        $this->db->order_by('a.create_date', 'desc');
 
         $get_data_all = $this->db->get();
 
@@ -87,81 +83,22 @@ class Project_budgeting extends Admin_Controller
         $no = 1;
         foreach ($get_data->result() as $item) {
 
-            $status = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-
-            $option = '<a href="' . base_url('project_budgeting/add/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm " style="background-color: #E100A5; color: white;"><i class="fa fa-arrow-up"></i></a>';
-
-            $check_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting', ['id_spk_penawaran' => $item->id_spk_penawaran])->row();
-            if (count($check_spk_budgeting) > 0) {
-
-                $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-
-                if ($check_spk_budgeting->sts == 1) {
-                    $status = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                }
-                if ($check_spk_budgeting->sts == 2) {
-                    $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                }
-
-                $option = '
-                    <div class="btn-group">
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-accent text-primary dropdown-toggle"
-                            title="Actions"
-                            data-toggle="dropdown"
-                            id="dropdownMenu' . $no . '"
-                            aria-expanded="false">
-                            <i class="fa fa-cogs"></i> <span class="caret"></span>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                    ';
-
-                if ($this->viewPermission) {
-                    $option .= '
-                        <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem;">
-                            <a href="' . base_url('project_budgeting/view_budget/' . urlencode(str_replace('/', '|', $check_spk_budgeting->id_spk_budgeting))) . '" class="btn btn-sm btn-info" style="color: #000000">
-                                <div class="col-12 dropdown-item">
-                                <b>
-                                    <i class="fa fa-file"></i>
-                                </b>
-                                </div>
-                            </a>
-                            <span style="font-weight: 500"> View </span>
-                        </div>
-                    ';
-                }
-
-                if ($this->deletePermission && $check_spk_budgeting->sts !== '1') {
-                    $option .= '
-                        <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem;">
-                            <a href="javascript:void(0);" class="btn btn-sm btn-danger del_spk_budget" style="color: #000000" data-id="'.$check_spk_budgeting->id_spk_budgeting.'">
-                                <div class="col-12 dropdown-item">
-                                <b>
-                                    <i class="fa fa-trash"></i>
-                                </b>
-                                </div>
-                            </a>
-                            <span style="font-weight: 500"> Delete </span>
-                        </div>
-                    ';
-                }
-                $option .= '</div>';
+            $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+            if($item->sts == 2) {
+                $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
             }
 
-            $nm_marketing = $item->nm_sales;
+            $option = '<a href="' . base_url('approval_project_budgeting/approval/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-success" title="Approval"><i class="fa fa-check"></i></a>';
 
-            $nm_paket = $item->nm_project;
-
-            $nm_customer = $item->nm_customer;
 
             $hasil[] = [
                 'no' => $no,
-                'id_spk_penawaran' => $item->id_spk_penawaran,
+                'id_spk_budgeting' => $item->id_spk_budgeting,
                 'nm_customer' => $item->nm_customer,
                 'nm_sales' => ucfirst($item->nm_sales),
                 'nm_project_leader' => ucfirst($item->nm_project_leader),
                 'nm_project' => $item->nm_project,
+                'reject_reason' => $item->reject_reason,
                 'status' => $status,
                 'option' => $option
             ];
@@ -240,7 +177,55 @@ class Project_budgeting extends Admin_Controller
         $this->template->render('add');
     }
 
-    public function view_budget($id_spk_budgeting) {
+    public function approval($id_spk_budgeting)
+    {
+        $id_spk_budgeting = urldecode($id_spk_budgeting);
+        $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_spk_budgeting = $this->db->get()->row();
+
+        $this->db->select('a.*');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $get_all_marketing = $this->db->get()->result();
+
+        $this->db->select('a.*, c.mandays as mandays_def');
+        $this->db->from('kons_tr_spk_budgeting_aktifitas a');
+        $this->db->join('kons_tr_spk_penawaran_subcont b', 'b.id = a.id_aktifitas', 'left');
+        $this->db->join('kons_master_aktifitas c', 'c.id_aktifitas = b.id_aktifitas', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_spk_budgeting_aktifitas = $this->db->get()->result();
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_spk_budgeting_akomodasi a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_spk_budgeting_akomodasi = $this->db->get()->result();
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_spk_budgeting_others a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_spk_budgeting_others = $this->db->get()->result();
+
+        $data = [
+            'id_spk_budgeting' => $id_spk_budgeting,
+            'list_budgeting' => $get_spk_budgeting,
+            'list_all_marketing' => $get_all_marketing,
+            'list_budgeting_aktifitas' => $get_spk_budgeting_aktifitas,
+            'list_budgeting_akomodasi' => $get_spk_budgeting_akomodasi,
+            'list_budgeting_others' => $get_spk_budgeting_others
+        ];
+
+        $this->template->set($data);
+        $this->template->render('approval');
+    }
+
+    public function view_budget($id_spk_budgeting)
+    {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
 
@@ -283,7 +268,6 @@ class Project_budgeting extends Admin_Controller
 
         $this->template->set($data);
         $this->template->render('view');
-
     }
 
     public function save_budgeting()
@@ -481,7 +465,8 @@ class Project_budgeting extends Admin_Controller
         ]);
     }
 
-    public function del_spk_budgeting() {
+    public function del_spk_budgeting()
+    {
         $id = $this->input->post('id');
 
         $this->db->trans_begin();
@@ -491,7 +476,7 @@ class Project_budgeting extends Admin_Controller
         $this->db->delete('kons_tr_spk_budgeting_aktifitas', ['id_spk_budgeting' => $id]);
         $this->db->delete('kons_tr_spk_budgeting', ['id_spk_budgeting' => $id]);
 
-        if($this->db->trans_status() === false) {
+        if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
             $valid = 0;
@@ -501,6 +486,57 @@ class Project_budgeting extends Admin_Controller
 
             $valid = 1;
             $pesan = 'Data has been successfully deleted !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
+    }
+
+    public function reject_budget() {
+        $id_spk_budgeting = $this->input->post('id_spk_budgeting');
+        $reject_reason = $this->input->post('reject_reason');
+
+        $this->db->trans_begin();
+
+        $this->db->update('kons_tr_spk_budgeting', ['sts' => 2, 'reject_reason' => $reject_reason], ['id_spk_budgeting' => $id_spk_budgeting]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $pesan = 'Sorry, please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $pesan = 'Data has been successfully Rejected !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
+    }
+
+    public function approve_budget() {
+        $id_spk_budgeting = $this->input->post('id_spk_budgeting');
+
+        $this->db->trans_begin();
+
+        $this->db->update('kons_tr_spk_budgeting', ['sts' => 1, 'reject_reason' => ''], ['id_spk_budgeting' => $id_spk_budgeting]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $pesan = 'Sorry, please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $pesan = 'Data has been successfully Approved !';
         }
 
         echo json_encode([
