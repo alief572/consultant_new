@@ -227,6 +227,7 @@ class SPK_penawaran extends Admin_Controller
 
     public function get_data_spk()
     {
+
         $draw = $this->input->post('draw');
         $start = $this->input->post('start');
         $length = $this->input->post('length');
@@ -313,7 +314,7 @@ class SPK_penawaran extends Admin_Controller
                 <div class="dropdown-menu dropdown-menu-right">
             ';
 
-            if ($this->viewPermission) {
+            if (has_permission($this->viewPermission)) {
                 $option .= '
                     <div class="col-12" style="margin-left: 0.5rem">
                         <a href="' . base_url('spk_penawaran/view_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-info" style="color: #000000">
@@ -328,7 +329,7 @@ class SPK_penawaran extends Admin_Controller
                 ';
             }
 
-            if ($this->managePermission) {
+            if (has_permission($this->managePermission)) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
                         <a href="' . base_url('spk_penawaran/edit_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-success" style="color: #000000">
@@ -343,7 +344,7 @@ class SPK_penawaran extends Admin_Controller
                 ';
             }
 
-            if ($this->deletePermission) {
+            if (has_permission($this->deletePermission)) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
                         <a href="#" class="btn btn-sm btn-danger del_spk" style="color: #000000" data-id_spk_penawaran="' . $item->id_spk_penawaran . '">
