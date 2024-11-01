@@ -134,7 +134,7 @@ if (count($list_penawaran_others) > 0) {
                         </tr>
                         <tr>
                             <td style="padding: 0.2rem;">
-                                <input type="checkbox" name="check_info_awal_others" id="" class="check_info_awal_others" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos') ? 'checked' : '' ?> disabled> Others
+                                <input type="checkbox" name="check_info_awal_others" id="" class="check_info_awal_others" <?= ($list_penawaran->tipe_informasi_awal == 'Others') ? 'checked' : '' ?> disabled> Others
                             </td>
                             <td style="padding: 0.2rem;">
                                 <select name="informasi_awal_others" id="" class="informasi_awal_others" disabled>
