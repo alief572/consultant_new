@@ -273,6 +273,84 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
 </div>
 
 <div class="box">
+    <div class="box-body">
+        <table border="0" style="width: 100%">
+            <tr>
+                <td class="pd-5 semi-bold" valign="top" width="120">
+                    Project
+                </td>
+                <td class="pd-5" width="390" valign="top">
+                    <input type="text" name="nm_paket" id="" class="form-control form-control-sm" value="<?= $list_spk_penawaran->nm_project ?>" readonly>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <!-- <td class="pd-5 semi-bold" valign="top" rowspan="2">Project</td>
+                    <td class="pd-5" width="390" valign="top" rowspan="2">
+                        <textarea name="" id="" class="form-control form-control-sm" readonly><?= $nm_paket ?></textarea>
+                    </td> -->
+                <td class="pd-5 semi-bold" valign="top" width="120">Project Leader</td>
+                <td class="pd-5" width="390" valign="top">
+                    <select name="project_leader" id="" class="form-control form-control-sm select_project_leader" disabled>
+                        <option value="">- Select Project Leader -</option>
+                        <?php
+                        foreach ($list_all_marketing as $item) {
+                            $selected = '';
+                            if ($item->id == $list_spk_penawaran->id_project_leader) {
+                                $selected = 'selected';
+                            }
+                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="pd-5 semi-bold" valign="top" width="120">Konsultan 1</td>
+                <td class="pd-5" width="390" valign="top">
+                    <select name="konsultan_1" id="" class="form-control form-control-sm select_konsultan_1" disabled>
+                        <option value="">- Select Konsultan 1 -</option>
+                        <?php
+                        foreach ($list_all_marketing as $item) {
+                            $selected = '';
+                            if ($item->id == $list_spk_penawaran->id_konsultan_1) {
+                                $selected = 'selected';
+                            }
+                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="pd-5 semi-bold" valign="top" width="120">Konsultan 2</td>
+                <td class="pd-5" width="390" valign="top">
+                    <select name="konsultan_2" id="" class="form-control form-control-sm select_konsultan_2" disabled>
+                        <option value="">- Select Konsultan 2 -</option>
+                        <?php
+                        foreach ($list_all_marketing as $item) {
+                            $selected = '';
+                            if ($item->id == $list_spk_penawaran->id_konsultan_2) {
+                                $selected = 'selected';
+                            }
+                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="box">
     <div class="box-header">
         <h4 style="font-weight: 600;">Subcont</h4>
     </div>

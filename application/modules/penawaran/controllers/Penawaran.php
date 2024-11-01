@@ -231,7 +231,7 @@ class Penawaran extends Admin_Controller
 
         $hasil = [];
 
-        $no = 1;
+        $no = ($start + 1);
         foreach ($get_data->result() as $item) {
 
             if ($item->sts_cust == 0) {
