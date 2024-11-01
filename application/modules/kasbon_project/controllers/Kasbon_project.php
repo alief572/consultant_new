@@ -124,8 +124,21 @@ class Kasbon_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budgeting = $this->db->get()->row();
 
+        $budget_subcont = 0;
+        $this->db->select('a.mandays_subcont_final, a.mandays_rate_subcont_final');
+        $this->db->from('kons_tr_spk_budgeting_aktifitas a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_subcont = $this->db->get()->result();
+
+        foreach($get_budget_subcont as $item) {
+            $budget_subcont += ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
+        }
+
+
+
         $data = [
-            'list_budgeting' => $get_budgeting
+            'list_budgeting' => $get_budgeting,
+            'budget_subcont' => $budget_subcont
         ];
 
         $this->template->set($data);

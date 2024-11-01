@@ -617,63 +617,63 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         <td>Total Mandays</td>
                         <td class="text-right">
                             <?= number_format(($ttl_mandays_internal + $ttl_mandays_tandem + $ttl_mandays_subcont)) ?>
-                            <input type="hidden" name="summary_mandays" value="<?= ($ttl_mandays_internal + $ttl_mandays_tandem + $ttl_mandays_subcont) ?>">
+
                         </td>
                     </tr>
                     <tr>
                         <td>Mandays Internal</td>
                         <td class="text-right summary_mandays_internal">
                             <?= number_format($ttl_mandays_internal) ?>
-                            <input type="hidden" name="summary_mandays_internal" value="<?= $ttl_mandays_internal ?>">
+
                         </td>
                     </tr>
                     <tr>
                         <td>Mandays Tandem</td>
                         <td class="text-right summary_mandays_tandem">
                             <?= number_format($ttl_mandays_tandem) ?>
-                            <input type="hidden" name="summary_mandays_tandem" value="<?= $ttl_mandays_tandem ?>">
+
                         </td>
                     </tr>
                     <tr>
                         <td>Mandays Subcont</td>
                         <td class="text-right summary_mandays_subcont">
                             <?= number_format($ttl_mandays_subcont) ?>
-                            <input type="hidden" name="summary_mandays_subcont" value="<?= $ttl_mandays_subcont ?>">
+
                         </td>
                     </tr>
                     <tr>
                         <td>Biaya Konsultasi</td>
                         <td class="text-right summary_biaya_act">
                             <?= number_format($ttl_activity, 2) ?>
-                            <input type="hidden" name="summary_biaya_act" value="<?= $ttl_activity ?>">
+
                         </td>
                     </tr>
                     <tr>
                         <td>Biaya Tandem</td>
                         <td class="text-right summary_biaya_tandem">
                             <?= number_format($ttl_tandem, 2) ?>
-                            <input type="hidden" name="summary_biaya_tandem" value="<?= $ttl_tandem ?>">
+
                         </td>
                     </tr>
                     <tr>
                         <td>Biaya Subcont</td>
                         <td class="text-right summary_biaya_subcont">
                             <?= number_format($ttl_subcont, 2) ?>
-                            <input type="hidden" name="summary_biaya_subcont" value="<?= $ttl_subcont ?>">
+
                         </td>
                     </tr>
                     <tr>
                         <td>Biaya Akomodasi</td>
                         <td class="text-right summary_biaya_akomodasi">
                             <?= number_format($ttl_total_akomodasi, 2) ?>
-                            <input type="hidden" name="summary_biaya_akomodasi" value="<?= $ttl_total_akomodasi ?>">
+
                         </td>
                     </tr>
                     <tr>
                         <td>Biaya Others</td>
                         <td class="text-right summary_biaya_others">
                             <?= number_format($ttl_total_others, 2) ?>
-                            <input type="hidden" name="summary_biaya_others" value="<?= $ttl_total_others ?>">
+
                         </td>
                     </tr>
                 </tbody>
@@ -682,7 +682,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         <th>Grand Total Pengeluaran</th>
                         <th class="text-right summary_total_pengeluaran">
                             <?= number_format(($ttl_activity + $ttl_tandem + $ttl_subcont + $ttl_total_akomodasi + $ttl_total_others), 2) ?>
-                            <input type="hidden" name="summary_total_pengeluaran" value="<?= ($ttl_activity + $ttl_tandem + $ttl_subcont + $ttl_total_akomodasi + $ttl_total_others) ?>">
+
                         </th>
                     </tr>
                 </tfoot>
@@ -708,6 +708,17 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             </div>
 
             <input type="hidden" class="grand_total" name="grand_total" value="<?= ($ttl_activity + $ttl_tandem + $ttl_subcont + $ttl_total_akomodasi + $ttl_total_others) ?>">
+
+            <input type="hidden" name="summary_mandays" value="<?= ($ttl_mandays_internal + $ttl_mandays_tandem + $ttl_mandays_subcont) ?>">
+            <input type="hidden" name="summary_mandays_internal" value="<?= $ttl_mandays_internal ?>">
+            <input type="hidden" name="summary_mandays_tandem" value="<?= $ttl_mandays_tandem ?>">
+            <input type="hidden" name="summary_mandays_subcont" value="<?= $ttl_mandays_subcont ?>">
+            <input type="hidden" name="summary_biaya_act" value="<?= $ttl_activity ?>">
+            <input type="hidden" name="summary_biaya_tandem" value="<?= $ttl_tandem ?>">
+            <input type="hidden" name="summary_biaya_subcont" value="<?= $ttl_subcont ?>">
+            <input type="hidden" name="summary_biaya_akomodasi" value="<?= $ttl_total_akomodasi ?>">
+            <input type="hidden" name="summary_biaya_others" value="<?= $ttl_total_others ?>">
+            <input type="hidden" name="summary_total_pengeluaran" value="<?= ($ttl_activity + $ttl_tandem + $ttl_subcont + $ttl_total_akomodasi + $ttl_total_others) ?>">
 
             <div style="float: right; margin-top: 1rem;">
                 <a href="<?= base_url('project_budgeting') ?>" class="btn btn-sm btn-danger">

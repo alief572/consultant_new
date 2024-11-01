@@ -118,7 +118,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;">Rp. 1,500,000</h3>
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_subcont) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -134,7 +134,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;">Rp. 1,500,000</h3>
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format(0) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -144,7 +144,35 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         </table>
     </div>
 
-    <div class="box-body"></div>
+    <div class="box-body">
+        <button type="button" class="btn btn-sm btn-success"></button>
+        <table class="table custom-table">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5"></th>
+                    <th class="text-center">0,00</th>
+                    <th colspan="2"></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>
+
+
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
