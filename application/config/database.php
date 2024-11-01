@@ -75,7 +75,7 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
+	'hostname' => '203.160.58.170',
 	'username' => 'root',
 	'password' => 'sentral2022**',
 	'database' => 'db_consultant_new',
@@ -97,7 +97,7 @@ $db['default'] = array(
 
 $db['accounting'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
+	'hostname' => '203.160.58.170',
 	'username' => 'root',
 	'password' => 'sentral2022**',
 	'database' => 'gl_consultant_new',

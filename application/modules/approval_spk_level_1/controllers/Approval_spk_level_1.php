@@ -412,8 +412,8 @@ class Approval_spk_level_1 extends Admin_Controller
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $no,
-            'recordsFiltered' => $no,
+            'recordsTotal' => $get_data_all->num_rows(),
+            'recordsFiltered' => $get_data_all->num_rows(),
             'data' => $hasil
         ]);
     }
