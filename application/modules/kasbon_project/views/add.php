@@ -52,6 +52,10 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
     .valign-top {
         vertical-align: top;
     }
+
+    .mt-5 {
+        margin-top: 5px;
+    }
 </style>
 
 <div class="box">
@@ -145,8 +149,158 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
     </div>
 
     <div class="box-body">
-        <button type="button" class="btn btn-sm btn-success"></button>
-        <table class="table custom-table">
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Kasbon
+        </a>
+        <table class="table custom-table mt-5">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5"></th>
+                    <th class="text-center">0,00</th>
+                    <th colspan="2"></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <table border="0" style="width: 100%;">
+            <tr>
+                <th class="pd-5" width="700">
+                    <h4 style="font-weight: 800;">Akomodasi</h4>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_akomodasi) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>On Process</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format(0) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box-body">
+        <button type="button" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Kasbon
+        </button>
+        <table class="table custom-table mt-5">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5"></th>
+                    <th class="text-center">0,00</th>
+                    <th colspan="2"></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <table border="0" style="width: 100%;">
+            <tr>
+                <th class="pd-5" width="700">
+                    <h4 style="font-weight: 800;">Others</h4>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_others) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>On Process</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format(0) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box-body">
+        <button type="button" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Kasbon
+        </button>
+        <table class="table custom-table mt-5">
             <thead>
                 <tr>
                     <th class="text-center">No</th>

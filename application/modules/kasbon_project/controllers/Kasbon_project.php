@@ -114,7 +114,8 @@ class Kasbon_project extends Admin_Controller
         ]);
     }
 
-    public function add_kasbon($id_spk_budgeting) {
+    public function add_kasbon($id_spk_budgeting)
+    {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
 
@@ -130,18 +131,80 @@ class Kasbon_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budget_subcont = $this->db->get()->result();
 
-        foreach($get_budget_subcont as $item) {
+        foreach ($get_budget_subcont as $item) {
             $budget_subcont += ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
         }
+
+        $this->db->select('SUM(a.total_final) as budget_akomodasi');
+        $this->db->from('kons_tr_spk_budgeting_akomodasi a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_akomodasi = $this->db->get()->row();
+        $budget_akomodasi = $get_budget_akomodasi->budget_akomodasi;
+
+        $this->db->select('SUM(a.total_final) as budget_others');
+        $this->db->from('kons_tr_spk_budgeting_others a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_others = $this->db->get()->row();
+        $budget_others = $get_budget_others->budget_others;
 
 
 
         $data = [
+            'id_spk_budgeting' => $id_spk_budgeting,
             'list_budgeting' => $get_budgeting,
-            'budget_subcont' => $budget_subcont
+            'budget_subcont' => $budget_subcont,
+            'budget_akomodasi' => $budget_akomodasi,
+            'budget_others' => $budget_others
         ];
 
         $this->template->set($data);
         $this->template->render('add');
+    }
+
+    public function add_kasbon_subcont($id_spk_budgeting)
+    {
+        $id_spk_budgeting = urldecode($id_spk_budgeting);
+        $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
+
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budgeting = $this->db->get()->row();
+
+        $budget_subcont = 0;
+        $this->db->select('a.mandays_subcont_final, a.mandays_rate_subcont_final');
+        $this->db->from('kons_tr_spk_budgeting_aktifitas a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_subcont = $this->db->get()->result();
+
+        foreach ($get_budget_subcont as $item) {
+            $budget_subcont += ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
+        }
+
+        $this->db->select('SUM(a.total_final) as budget_akomodasi');
+        $this->db->from('kons_tr_spk_budgeting_akomodasi a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_akomodasi = $this->db->get()->row();
+        $budget_akomodasi = $get_budget_akomodasi->budget_akomodasi;
+
+        $this->db->select('SUM(a.total_final) as budget_others');
+        $this->db->from('kons_tr_spk_budgeting_others a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_others = $this->db->get()->row();
+        $budget_others = $get_budget_others->budget_others;
+
+
+
+        $data = [
+            'id_spk_budgeting' => $id_spk_budgeting,
+            'list_budgeting' => $get_budgeting,
+            'budget_subcont' => $budget_subcont,
+            'budget_akomodasi' => $budget_akomodasi,
+            'budget_others' => $budget_others
+        ];
+
+        $this->template->set($data);
+        $this->template->render('add_kasbon_subcont');
     }
 }

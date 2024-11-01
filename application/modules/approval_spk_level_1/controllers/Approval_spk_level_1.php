@@ -359,7 +359,7 @@ class Approval_spk_level_1 extends Admin_Controller
                 if ($valid == 1) {
                     $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('approval_spk_level_1/approval_spk/' . str_replace('/', '|', $item->id_spk_penawaran)) . '" class="btn btn-sm btn-success" style="color: #000000">
+                        <a href="' . base_url('approval_spk_level_1/approval_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-success" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-check"></i>
