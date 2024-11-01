@@ -379,9 +379,11 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                         <option value="">- Select Divisi -</option>
                         <?php
                         foreach ($list_divisi as $item) {
-                            if ($list_spk_penawaran->id_divisi == $item_id) {
-                                echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
+                            $selected = '';
+                            if ($list_spk_penawaran->id_divisi == $item->id) {
+                                $selected = 'selected';
                             }
+                            echo '<option value="' . $item->id . '" '.$selected.'>' . ucfirst($item->nama) . '</option>';
                             // echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
                         }
                         ?>

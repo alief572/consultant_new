@@ -316,10 +316,11 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
                         <?php
                         foreach ($list_all_marketing as $item) {
                             $selected = '';
-                            if ($item->id == $list_spk_penawaran->id_konsultan_1) {
+                            if ($list_spk_penawaran->id_divisi == $item->id) {
                                 $selected = 'selected';
                             }
-                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
+                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nama) . '</option>';
+                            // echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
                         }
                         ?>
                     </select>
