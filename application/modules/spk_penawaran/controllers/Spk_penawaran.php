@@ -199,6 +199,26 @@ class SPK_penawaran extends Admin_Controller
         $this->db->order_by('a.id', 'asc');
         $get_aktifitas = $this->db->get()->result();
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_akomodasi a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_akomodasi = $this->db->get()->result();
+
+        $nilai_akomodasi = 0;
+        foreach ($get_akomodasi as $item_akomodasi) {
+            $nilai_akomodasi += $item_akomodasi->total;
+        }
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_others a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_others = $this->db->get()->result();
+
+        $nilai_others = 0;
+        foreach ($get_others as $item_others) {
+            $nilai_others += $item_others->total;
+        }
+
         $nilai_kontrak = 0;
         foreach ($get_aktifitas as $item_aktifitas) {
             $nilai_kontrak += $item_aktifitas->harga_aktifitas;
@@ -216,6 +236,8 @@ class SPK_penawaran extends Admin_Controller
             'list_all_aktifitas' => $get_all_aktifitas,
             'detail_informasi_awal' => $detail_informasi_awal,
             'nilai_project' => $get_penawaran->grand_total,
+            'nilai_akomodasi' => $nilai_akomodasi,
+            'nilai_others' => $nilai_others,
             'nilai_kontrak' => $nilai_kontrak
         ];
 
@@ -931,7 +953,7 @@ class SPK_penawaran extends Admin_Controller
             'nilai_kontrak' => ($post['nilai_kontrak'] !== '') ? str_replace(',', '', $post['nilai_kontrak']) : 0,
             'biaya_subcont' => ($post['biaya_subcont'] !== '') ? str_replace(',', '', $post['biaya_subcont']) : 0,
             'biaya_akomodasi' => ($post['biaya_akomodasi'] !== '') ? str_replace(',', '', $post['biaya_akomodasi']) : 0,
-            'biaya_others' => ($post['biaya_others'] !== '') ? str_replace(',', '', $post['biaya_akomodasi']) : 0,
+            'biaya_others' => ($post['biaya_others'] !== '') ? str_replace(',', '', $post['biaya_others']) : 0,
             'nilai_kontrak_bersih' => ($post['nilai_kontrak_bersih'] !== '') ? str_replace(',', '', $post['nilai_kontrak_bersih']) : 0,
             'mandays_rate' => ($post['mandays_rate'] !== '') ? str_replace(',', '', $post['mandays_rate']) : 0,
             'total_mandays' => ($post['total_mandays'] !== '') ? str_replace(',', '', $post['total_mandays']) : 0,

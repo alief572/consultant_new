@@ -8,8 +8,8 @@ $ttl_persen_komisi = ($list_spk_penawaran->persen_pemberi_informasi_1_komisi + $
 
 $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi + $list_spk_penawaran->nominal_pemberi_informasi_2_komisi + $list_spk_penawaran->nominal_sales_1_komisi + $list_spk_penawaran->nominal_sales_2_komisi);
 
-$nilai_akomodasi = $list_spk_penawaran->biaya_akomodasi;
-$nilai_others = $list_spk_penawaran->biaya_others;
+// $nilai_akomodasi = $list_spk_penawaran->biaya_akomodasi;
+// $nilai_others = $list_spk_penawaran->biaya_others;
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
