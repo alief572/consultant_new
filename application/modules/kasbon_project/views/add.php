@@ -4,7 +4,7 @@ $ENABLE_MANAGE  = has_permission('Project_Budgeting.Manage');
 $ENABLE_VIEW    = has_permission('Project_Budgeting.View');
 $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 ?>
-<!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
+
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
 
 <style>
@@ -56,6 +56,15 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
     .mt-5 {
         margin-top: 5px;
     }
+
+    .dropdown-menu {
+        z-index: 9999999 !important;
+        position: absolute;
+        top: 100%;
+        /* Position below the button */
+        right: 0;
+        /* Align with left edge */
+    }
 </style>
 
 <div class="box">
@@ -63,8 +72,8 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
     </div>
 
-    <div class="box-body">
-        <table border="0" style="width: 100%;">
+    <div class="box-body" style="z-index: 1 !important;">
+        <table border="0" style="width: 100%; z-index: 1 !important;">
             <tr>
                 <th class="pd-5 valign-top" width="150">No. SPK</th>
                 <td class="pd-5 valign-top" width="400"><?= $list_budgeting->id_spk_penawaran ?></td>
@@ -138,7 +147,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;">Rp. <?= number_format(0) ?></h3>
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($nilai_kasbon_on_proses) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -148,17 +157,18 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         </table>
     </div>
 
-    <div class="box-body">
+    <div class="box-body" style="overflow: visible !important;">
         <a href="<?= base_url('kasbon_project/add_kasbon_subcont/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
             <i class="fa fa-plus"></i> Add Kasbon
         </a>
-        <table class="table custom-table mt-5">
+        <table id="example1" class="table custom-table mt-5" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
+                    <th class="text-center">Qty</th>
                     <th class="text-center">Amount</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
@@ -168,13 +178,6 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             <tbody>
 
             </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="5"></th>
-                    <th class="text-center">0,00</th>
-                    <th colspan="2"></th>
-                </tr>
-            </tfoot>
         </table>
     </div>
 </div>
@@ -223,9 +226,9 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
     </div>
 
     <div class="box-body">
-        <button type="button" class="btn btn-sm btn-success">
+        <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
             <i class="fa fa-plus"></i> Add Kasbon
-        </button>
+</a>
         <table class="table custom-table mt-5">
             <thead>
                 <tr>
@@ -330,3 +333,155 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        DataTables_kasbon_subcont();
+    });
+
+    function DataTables_kasbon_subcont() {
+        var dataTables_kasbon_subcont = $('#example1').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_kasbon_subcont.destroy();
+        dataTables_kasbon_subcont = $('#example1').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_kasbon_subcont',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'req_number'
+                },
+                {
+                    data: 'nm_aktifitas'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'qty'
+                },
+                {
+                    data: 'amount'
+                },
+                {
+                    data: 'total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
+    function hitung_all_budget(){
+        
+    }
+
+    $(document).on('click', '.del_kasbon_subcont', function() {
+        var id_kasbon_subcont = $(this).data('id_kasbon_subcont');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_kasbon_subcont',
+                    data: {
+                        'id_kasbon_subcont': id_kasbon_subcont
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                DataTables_kasbon_subcont();
+                            });
+                        } else {
+                            swal({
+                                type: 'error',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.paid_kasbon_subcont', function() {
+        var id_kasbon_subcont = $(this).data('id_kasbon_subcont');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure?',
+            text: 'This data will be paid !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'paid_kasbon_subcont',
+                    data: {
+                        'id_kasbon_subcont': id_kasbon_subcont
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                DataTables_kasbon_subcont();
+                            });
+                        } else {
+                            swal({
+                                type: 'error',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    })
+</script>

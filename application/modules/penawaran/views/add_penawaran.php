@@ -28,6 +28,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         /* Ensure the dropdown itself has a high z-index */
     }
 
+    .chosen-container-active{
+        position: absolute;
+    }
+
     */
 </style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
@@ -663,7 +667,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         var hasil = '<tr class="tr_aktifitas_' + no_activity + '">';
 
-        hasil += '<td class="text-center">'+ no_activity +'</td>';
+        hasil += '<td class="text-center">' + no_activity + '</td>';
 
         hasil += '<td class="text-left">';
 
@@ -717,7 +721,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         $('.list_activity').append(hasil);
 
-        // $('.select_nm_aktifitas_' + no_activity).chosen();
+        $('.select_nm_aktifitas_' + no_activity).chosen({
+            width: '280px'
+        });
 
         no_activity = parseFloat(no_activity + 1);
         $('.no').val(no_activity);
@@ -731,7 +737,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var hasil = '<tr class="tr_akomodasi_' + no_akomodasi + '">';
 
         hasil += '<td>';
-        hasil += '<select class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
+        hasil += '<select class="form-control form-control-sm select_akomodasi_'+no_akomodasi+'" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
         hasil += '<option value="">- Item Akomodasi -</option>';
         <?php
         foreach ($list_def_akomodasi as $item) {
@@ -769,7 +775,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         $('.list_akomodasi').append(hasil);
 
-        // $('.select_nm_aktifitas_' + no_activity).chosen();
+        $('.select_akomodasi_' + no_akomodasi).chosen({
+            width: '280px'
+        });
 
         no_akomodasi = parseFloat(no_akomodasi + 1);
         $('.no_akomodasi').val(no_akomodasi);
@@ -783,7 +791,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var hasil = '<tr class="tr_others_' + no_others + '">';
 
         hasil += '<td>';
-        hasil += '<select class="form-control form-control-sm" name="dt_oth[' + no_others + '][id_others]">';
+        hasil += '<select class="form-control form-control-sm select_others_'+no_others+'" name="dt_oth[' + no_others + '][id_others]">';
         hasil += '<option value="">- Item Others -</option>';
         <?php
         foreach ($list_def_others as $item) {
@@ -821,7 +829,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         $('.list_others').append(hasil);
 
-        // $('.select_nm_aktifitas_' + no_activity).chosen();
+        $('.select_others_' + no_others).chosen({
+            width: '280px'
+        });
 
         no_others = parseFloat(no_others + 1);
         $('.no_others').val(no_others);

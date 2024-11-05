@@ -13,16 +13,16 @@ class Kasbon_project_model extends BF_Model
         $this->ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     }
 
-    function generate_id_spk_budgeting()
+    function generate_id_kasbon_subcont($no_tambah)
     {
         $Ym             = date('ym');
-        $srcMtr            = "SELECT MAX(id_spk_penawaran) as maxP FROM kons_tr_spk_penawaran WHERE id_spk_penawaran LIKE '%SPK-BUDGET/" . date('y') . "/" . date('m') . "%' ";
+        $srcMtr            = "SELECT MAX(id_kasbon_subcont) as maxP FROM kons_tr_kasbon_project_subcont WHERE id_kasbon_subcont LIKE '%/REQ/V/" . date('Y') . "%' ";
         $resultMtr        = $this->db->query($srcMtr)->result_array();
         $angkaUrut2        = $resultMtr[0]['maxP'];
-        $urutan2        = (int)substr($angkaUrut2, 0, 3);
-        $urutan2++;
-        $urut2            = sprintf('%03s', $urutan2);
-        $kode_trans        = "SPK-BUDGET/" . date('y') . "/" . date('m') . "/" . $urut2;
+        $urutan2        = (int)substr($angkaUrut2, 0, 4);
+        $urutan2 += $no_tambah;
+        $urut2            = sprintf('%04s', $urutan2);
+        $kode_trans        = $urut2 . '/REQ/V/' . date('Y');
 
         return $kode_trans;
     }

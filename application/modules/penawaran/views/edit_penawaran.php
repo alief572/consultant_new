@@ -31,6 +31,10 @@ if (count($list_penawaran_others) > 0) {
     .pd-5 {
         padding: 5px;
     }
+
+    .chosen-container-active{
+        position: absolute;
+    }
 </style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 
@@ -367,7 +371,7 @@ if (count($list_penawaran_others) > 0) {
                         echo '<tr class="tr_akomodasi_' . $no_akomodasi . '">';
 
                         echo '<td>';
-                        echo '<select class="form-control form-control-sm" name="dt_ako[' . $no_akomodasi . '][id_akomodasi]">';
+                        echo '<select class="form-control form-control-sm select_akomodasi_'.$no_akomodasi.'" name="dt_ako[' . $no_akomodasi . '][id_akomodasi]">';
                         echo '<option value="">- Select Akomodasi -</option>';
                         foreach ($list_def_akomodasi as $item_def_akomodasi) {
                             $selected = '';
@@ -465,7 +469,7 @@ if (count($list_penawaran_others) > 0) {
                         echo '<tr class="tr_others_' . $no_others . '">';
 
                         echo '<td>';
-                        echo '<select class="form-control form-control-sm" name="dt_oth[' . $no_others . '][id_others]">';
+                        echo '<select class="form-control form-control-sm select_others_'.$no_others.'" name="dt_oth[' . $no_others . '][id_others]">';
                         echo '<option value="">- Select Others -</option>';
                         foreach ($list_def_others as $item_def_others) {
                             $selected = '';
@@ -618,6 +622,27 @@ if (count($list_penawaran_others) > 0) {
     $('.select_customer').chosen();
     $('.select_marketing').chosen();
     $('.select_package').chosen();
+
+    var no_activity = "<?= $no_activity ?>";
+    for(i = 1; i <= no_activity; i++) {
+        $('.select_nm_aktifitas_' + i).chosen({
+            width: '280px'
+        });
+    }
+
+    var no_akomodasi = "<?= $no_akomodasi ?>";
+    for(i = 1; i <= no_akomodasi; i++) {
+        $('.select_akomodasi_' + i).chosen({
+            width: '280px'
+        });
+    }
+
+    var no_others = "<?= $no_others ?>";
+    for(i = 1; i <= no_others; i++) {
+        $('.select_others_' + i).chosen({
+            width: '280px'
+        });
+    }
 
     $('.informasi_awal_sales').chosen({
         width: "100%"
@@ -936,7 +961,9 @@ if (count($list_penawaran_others) > 0) {
 
         $('.list_activity').append(hasil);
 
-        // $('.select_nm_aktifitas_' + no_activity).chosen();
+        $('.select_nm_aktifitas_' + no_activity).chosen({
+            width: '280px'
+        });
 
         no_activity = parseFloat(no_activity + 1);
         $('.no').val(no_activity);
@@ -950,7 +977,7 @@ if (count($list_penawaran_others) > 0) {
         var hasil = '<tr class="tr_akomodasi_' + no_akomodasi + '">';
 
         hasil += '<td>';
-        hasil += '<select class="form-control form-control-sm" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
+        hasil += '<select class="form-control form-control-sm select_akomodasi_'+no_akomodasi+'" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
         hasil += '<option value="">- Item Akomodasi -</option>';
         <?php
         foreach ($list_def_akomodasi as $item) {
@@ -988,7 +1015,9 @@ if (count($list_penawaran_others) > 0) {
 
         $('.list_akomodasi').append(hasil);
 
-        // $('.select_nm_aktifitas_' + no_activity).chosen();
+        $('.select_akomodasi_' + no_akomodasi).chosen({
+            width: '280px'
+        });
 
         no_akomodasi = parseFloat(no_akomodasi + 1);
         $('.no_akomodasi').val(no_akomodasi);
@@ -1002,7 +1031,7 @@ if (count($list_penawaran_others) > 0) {
         var hasil = '<tr class="tr_others_' + no_others + '">';
 
         hasil += '<td>';
-        hasil += '<select class="form-control form-control-sm" name="dt_oth[' + no_others + '][id_others]">';
+        hasil += '<select class="form-control form-control-sm select_others_'+no_others+'" name="dt_oth[' + no_others + '][id_others]">';
         hasil += '<option value="">- Item Others -</option>';
         <?php
         foreach ($list_def_others as $item) {
@@ -1040,7 +1069,9 @@ if (count($list_penawaran_others) > 0) {
 
         $('.list_others').append(hasil);
 
-        // $('.select_nm_aktifitas_' + no_activity).chosen();
+        $('.select_others_' + no_others).chosen({
+            width: '280px'
+        });
 
         no_others = parseFloat(no_others + 1);
         $('.no_others').val(no_others);
