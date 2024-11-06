@@ -8,6 +8,91 @@ $ttl_persen_komisi = ($list_spk_penawaran->persen_pemberi_informasi_1_komisi + $
 
 $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi + $list_spk_penawaran->nominal_pemberi_informasi_2_komisi + $list_spk_penawaran->nominal_sales_1_komisi + $list_spk_penawaran->nominal_sales_2_komisi);
 
+$status_sales = '';
+$status_project_leader = '';
+$status_konsultan_1 = '';
+$status_konsultan_2 = '';
+
+if ($list_spk_penawaran->approval_sales_sts == 1) {
+    $status_sales = '<span class="btn btn-sm btn-success">Approved</span>';
+}
+if ($list_spk_penawaran->reject_sales_sts == 1) {
+    $status_sales = '<span class="btn btn-sm btn-danger">Rejected</span>';
+}
+
+if ($list_spk_penawaran->approval_project_leader_sts == 1) {
+    $status_project_leader = '<span class="btn btn-sm btn-success">Approved</span>';
+}
+if ($list_spk_penawaran->reject_project_leader_sts == 1) {
+    $status_project_leader = '<span class="btn btn-sm btn-danger">Rejected</span>';
+}
+
+if ($list_spk_penawaran->approval_konsultan_1_sts == 1) {
+    $status_konsultan_1 = '<span class="btn btn-sm btn-success">Approved</span>';
+}
+if ($list_spk_penawaran->reject_konsultan_1_sts == 1) {
+    $status_konsultan_1 = '<span class="btn btn-sm btn-danger">Rejected</span>';
+}
+
+if ($list_spk_penawaran->approval_konsultan_2_sts == 1) {
+    $status_konsultan_2 = '<span class="btn btn-sm btn-success">Approved</span>';
+}
+if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
+    $status_konsultan_2 = '<span class="btn btn-sm btn-danger">Rejected</span>';
+}
+
+$date_sales = '';
+if ($list_spk_penawaran->approval_sales_sts == 1) {
+    $date_sales = date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_sales_date));
+}
+if ($list_spk_penawaran->reject_sales_sts == 1) {
+    $date_sales = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_sales_date));
+}
+
+$date_project_leader = '';
+if ($list_spk_penawaran->approval_project_leader_sts == 1) {
+    $date_project_leader = date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_project_leader_date));
+}
+if ($list_spk_penawaran->reject_project_leader_sts == 1) {
+    $date_project_leader = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_project_leader_date));
+}
+
+$date_konsultan_1 = '';
+if ($list_spk_penawaran->approval_konsultan_1_sts == 1) {
+    $date_konsultan_1 = date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_konsultan_1_date));
+}
+if ($list_spk_penawaran->reject_konsultan_1_sts == 1) {
+    $date_konsultan_1 = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_konsultan_1_date));
+}
+
+$date_konsultan_2 = '';
+if ($list_spk_penawaran->approval_konsultan_2_sts == 1) {
+    $date_konsultan_2 = date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_konsultan_2_date));
+}
+if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
+    $date_konsultan_2 = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_konsultan_2_date));
+}
+
+$reason_sales = '';
+if ($list_spk_penawaran->reject_sales_sts == 1) {
+    $reason_sales = $list_spk_penawaran->reject_sales_reason;
+}
+
+$reason_project_leader = '';
+if ($list_spk_penawaran->reject_project_leader_sts == 1) {
+    $reason_project_leader = $list_spk_penawaran->reject_project_leader_reason;
+}
+
+$reason_konsultan_1 = '';
+if ($list_spk_penawaran->reject_konsultan_1_sts == 1) {
+    $reason_konsultan_1 = $list_spk_penawaran->reject_konsultan_1_reason;
+}
+
+$reason_konsultan_2 = '';
+if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
+    $reason_konsultan_2 = $list_spk_penawaran->reject_konsultan_2_reason;
+}
+
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -614,6 +699,65 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
             <label for="">Isu Khusus / Permintaan khusus dari customer / Tujuan Program / 3 objective utama (khusus konsultasi)</label>
             <textarea name="isu_khusus" id="" class="form-control form-control-sm" rows="10" readonly><?= $list_spk_penawaran->isu_khusus ?></textarea>
         </div>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <table style="width: 100%;" border="0">
+            <tr>
+                <th valign="top">
+                    <h4 style="font-weight: 600;">Approval History</h4>
+                </th>
+                <th class="text-right" valign="top">
+
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center">Posisi</th>
+                    <th class="text-center">Nama</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Reason</th>
+                </tr>
+            </thead>
+            <tbody class="list_payment_term">
+                <tr>
+                    <td class="text-center">Sales</td>
+                    <td class="text-center"><?= $list_spk_penawaran->nm_sales ?></td>
+                    <td class="text-center"><?= $status_sales ?></td>
+                    <td class="text-center"><?= $date_sales ?></td>
+                    <td class="text-center"><?= $reason_sales ?></td>
+                </tr>
+                <tr>
+                    <td class="text-center">Project Leader</td>
+                    <td class="text-center"><?= $list_spk_penawaran->nm_project_leader ?></td>
+                    <td class="text-center"><?= $status_project_leader ?></td>
+                    <td class="text-center"><?= $date_project_leader ?></td>
+                    <td class="text-center"><?= $reason_project_leader ?></td>
+                </tr>
+                <tr>
+                    <td class="text-center">Konsultan 1</td>
+                    <td class="text-center"><?= $list_spk_penawaran->nm_konsultan_1 ?></td>
+                    <td class="text-center"><?= $status_konsultan_1 ?></td>
+                    <td class="text-center"><?= $date_konsultan_1 ?></td>
+                    <td class="text-center"><?= $reason_konsultan_1 ?></td>
+                </tr>
+                <tr>
+                    <td class="text-center">Konsultan 2</td>
+                    <td class="text-center"><?= $list_spk_penawaran->nm_konsultan_2 ?></td>
+                    <td class="text-center"><?= $status_konsultan_2 ?></td>
+                    <td class="text-center"><?= $date_konsultan_2 ?></td>
+                    <td class="text-center"><?= $reason_konsultan_2 ?></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 

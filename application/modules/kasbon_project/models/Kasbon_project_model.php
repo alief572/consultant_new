@@ -40,4 +40,18 @@ class Kasbon_project_model extends BF_Model
 
         return $kode_trans;
     }
+
+    function generate_id_kasbon_others($no_tambah)
+    {
+        $Ym             = date('ym');
+        $srcMtr            = "SELECT MAX(id_kasbon_others) as maxP FROM kons_tr_kasbon_project_others WHERE id_kasbon_others LIKE '%/REQ/O/" . date('Y') . "%' ";
+        $resultMtr        = $this->db->query($srcMtr)->result_array();
+        $angkaUrut2        = $resultMtr[0]['maxP'];
+        $urutan2        = (int)substr($angkaUrut2, 0, 4);
+        $urutan2 += $no_tambah;
+        $urut2            = sprintf('%04s', $urutan2);
+        $kode_trans        = $urut2 . '/REQ/O/' . date('Y');
+
+        return $kode_trans;
+    }
 }

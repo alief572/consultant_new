@@ -58,7 +58,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
     }
 
     .dropdown-menu {
-        z-index: 9999999 !important;
+
         position: absolute;
         top: 100%;
         /* Position below the button */
@@ -225,11 +225,11 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         </table>
     </div>
 
-    <div class="box-body">
+    <div class="box-body" style="overflow: visible !important;">
         <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
             <i class="fa fa-plus"></i> Add Kasbon
-</a>
-        <table class="table custom-table mt-5">
+        </a>
+        <table class="table custom-table mt-5" id="table_kasbon_akomodasi" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -245,13 +245,6 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             <tbody>
 
             </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="5"></th>
-                    <th class="text-center">0,00</th>
-                    <th colspan="2"></th>
-                </tr>
-            </tfoot>
         </table>
     </div>
 </div>
@@ -300,10 +293,10 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
     </div>
 
     <div class="box-body">
-        <button type="button" class="btn btn-sm btn-success">
+        <a href="<?= base_url('kasbon_project/add_kasbon_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
             <i class="fa fa-plus"></i> Add Kasbon
-        </button>
-        <table class="table custom-table mt-5">
+        </a>
+        <table class="table custom-table mt-5" id="table_kasbon_others" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -319,13 +312,6 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             <tbody>
 
             </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="5"></th>
-                    <th class="text-center">0,00</th>
-                    <th colspan="2"></th>
-                </tr>
-            </tfoot>
         </table>
     </div>
 </div>
@@ -338,6 +324,8 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 <script>
     $(document).ready(function() {
         DataTables_kasbon_subcont();
+        DataTables_kasbon_akomodasi();
+        DataTables_kasbon_others();
     });
 
     function DataTables_kasbon_subcont() {
@@ -387,8 +375,102 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         });
     }
 
-    function hitung_all_budget(){
-        
+    function DataTables_kasbon_akomodasi() {
+        var dataTables_kasbon_akomodasi = $('#table_kasbon_akomodasi').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_kasbon_akomodasi.destroy();
+        dataTables_kasbon_akomodasi = $('#table_kasbon_akomodasi').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_kasbon_akomodasi',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'req_number'
+                },
+                {
+                    data: 'nm_biaya'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'qty'
+                },
+                {
+                    data: 'amount'
+                },
+                {
+                    data: 'total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
+    function DataTables_kasbon_others() {
+        var dataTables_kasbon_akomodasi = $('#table_kasbon_others').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_kasbon_akomodasi.destroy();
+        dataTables_kasbon_akomodasi = $('#table_kasbon_others').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_kasbon_others',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'req_number'
+                },
+                {
+                    data: 'nm_biaya'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'qty'
+                },
+                {
+                    data: 'amount'
+                },
+                {
+                    data: 'total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
+    function hitung_all_budget() {
+
     }
 
     $(document).on('click', '.del_kasbon_subcont', function() {
@@ -406,6 +488,53 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                     url: siteurl + active_controller + 'del_kasbon_subcont',
                     data: {
                         'id_kasbon_subcont': id_kasbon_subcont
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                DataTables_kasbon_subcont();
+                            });
+                        } else {
+                            swal({
+                                type: 'error',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_kasbon_akomodasi', function() {
+        var id_kasbon_subcont = $(this).data('id_kasbon_subcont');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_kasbon_akomodasi',
+                    data: {
+                        'id_kasbon_akomodasi': id_kasbon_akomodasi
                     },
                     cache: false,
                     dataType: 'json',
@@ -483,5 +612,52 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                 });
             }
         });
-    })
+    });
+
+    $(document).on('click', '.paid_kasbon_akomodasi', function() {
+        var id_kasbon_akomodasi = $(this).data('id_kasbon_akomodasi');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure?',
+            text: 'This data will be paid !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'paid_kasbon_akomodasi',
+                    data: {
+                        'id_kasbon_akomodasi': id_kasbon_akomodasi
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                DataTables_kasbon_akomodasi();
+                            });
+                        } else {
+                            swal({
+                                type: 'error',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
 </script>
