@@ -1171,9 +1171,11 @@ if (count($list_penawaran_others) > 0) {
 
                 $('.no').val(result.no);
 
-                // for (i = 1; i <= result.no; i++) {
-                //     $('.select_nm_aktifitas_' + i).chosen();
-                // }
+                for (i = 1; i <= result.no; i++) {
+                    $('.select_nm_aktifitas_' + i).chosen({
+                        width: '280px'
+                    });
+                }
 
                 hitung_summary();
             },

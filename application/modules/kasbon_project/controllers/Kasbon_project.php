@@ -382,9 +382,16 @@ class Kasbon_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budgeting = $this->db->get()->row();
 
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_spk_budgeting_akomodasi a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_data_akomodasi = $this->db->get()->result();
+
         $data = [
             'id_spk_budgeting' => $id_spk_budgeting,
-            'list_budgeting' => $get_budgeting
+            'list_budgeting' => $get_budgeting,
+            'list_akomodasi' => $get_data_akomodasi
         ];
 
         $this->template->set($data);
@@ -458,6 +465,97 @@ class Kasbon_project extends Admin_Controller
         }
 
         $insert_kasbon_subcont = $this->db->insert_batch('kons_tr_kasbon_project_subcont', $data_insert);
+        if (!$insert_kasbon_subcont) {
+            $this->db->trans_rollback();
+            print_r($this->db->last_query());
+            exit;
+        }
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $pesan = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $pesan = 'Data has been saved !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
+    }
+
+    public function save_kasbon_akomodasi() {
+        $post = $this->input->post();
+
+        $config['upload_path'] = './uploads/po'; //path folder
+        $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
+        $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
+        $config['encrypt_name'] = FALSE; // Encrypt the uploaded file's name.
+        $config['remove_spaces'] = TRUE; // Remove spaces from the file name.
+
+        $this->load->library('upload', $config);
+        $this->upload->initialize($config);
+
+        $upload_po = '';
+
+        $files = $_FILES['kasbon_document'];
+        $file_count = count($files['name']);
+
+        $_FILES['kasbon_document']['name'] = $files['name'];
+        $_FILES['kasbon_document']['type'] = $files['type'];
+        $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
+        $_FILES['kasbon_document']['error'] = $files['error'];
+        $_FILES['kasbon_document']['size'] = $files['size'];
+
+        if (!$this->upload->do_upload('upload_po')) {
+            // If upload fails, display error
+            $error = array('error' => $this->upload->display_errors());
+            // print_r($error);
+        } else {
+            $data_upload_po = $this->upload->data();
+            $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
+        }
+
+
+        $this->db->trans_begin();
+
+        $data_insert = [];
+
+        $no = 1;
+        foreach ($post['detail_akomodasi'] as $item) {
+            if (str_replace(',', '', $item['qty_pengajuan']) > 0 && str_replace(',', '', $item['nominal_pengajuan'])) {
+                $data_insert[] = [
+                    'id_kasbon_akomodasi' => $this->Kasbon_project_model->generate_id_kasbon_akomodasi($no),
+                    'id_spk_budgeting' => $post['id_spk_budgeting'],
+                    'id_spk_penawaran' => $post['id_spk_penawaran'],
+                    'id_penawaran' => $post['id_penawaran'],
+                    'id_akomodasi' => $item['id_akomodasi'],
+                    'id_item' => $item['id_item'],
+                    'nm_item' => $item['nm_item'],
+                    'qty_pengajuan' => str_replace(',', '', $item['qty_pengajuan']),
+                    'nominal_pengajuan' => str_replace(',', '', $item['nominal_pengajuan']),
+                    'total_pengajuan' => (str_replace(',', '', $item['nominal_pengajuan']) *  str_replace(',', '', $item['qty_pengajuan'])),
+                    'qty_estimasi' => $item['qty_estimasi'],
+                    'price_unit_estimasi' => $item['price_unit_estimasi'],
+                    'total_budget_estimasi' => $item['total_estimasi'],
+                    'document_link' => $upload_po,
+                    'bank' => $post['kasbon_bank'],
+                    'bank_number' => $post['kasbon_bank_number'],
+                    'bank_account' => $post['kasbon_bank_account'],
+                    'created_by' => $this->auth->user_id(),
+                    'created_date' => date('Y-m-d H:i:s')
+                ];
+
+                $no++;
+            }
+        }
+
+        $insert_kasbon_subcont = $this->db->insert_batch('kons_tr_kasbon_project_akomodasi', $data_insert);
         if (!$insert_kasbon_subcont) {
             $this->db->trans_rollback();
             print_r($this->db->last_query());
