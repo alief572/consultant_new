@@ -328,7 +328,7 @@ class Approval_spk_level_1 extends Admin_Controller
             if ($this->viewPermission) {
                 $option .= '
                     <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('approval_spk_level_1/view_spk/' . str_replace('/', '|', $item->id_spk_penawaran)) . '" class="btn btn-sm btn-info" style="color: #000000">
+                        <a href="' . base_url('approval_spk_level_1/view_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-info" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-file"></i>
