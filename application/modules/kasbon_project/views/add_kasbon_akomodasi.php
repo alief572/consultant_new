@@ -153,7 +153,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         $sisa_budget = (isset($data_kasbon_akomodasi[$item->id_akomodasi]['ttl_total_pengajuan'])) ? (($item->price_unit_final * $item->qty_final) - $data_kasbon_akomodasi[$item->id_akomodasi]['ttl_total_pengajuan']) : ($item->price_unit_final * $item->qty_final);
 
                         $readonly = '';
-                        if($sisa_budget <= 0) {
+                        if ($sisa_budget <= 0) {
                             $readonly = 'readonly';
                         }
 
@@ -168,30 +168,30 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_akomodasi[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" '.$readonly.'>';
+                        echo '<input type="text" name="detail_akomodasi[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_akomodasi[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" '.$readonly.'>';
+                        echo '<input type="text" name="detail_akomodasi[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
                         echo '</td>';
 
                         echo '<td class="text-center">';
                         echo number_format($item->qty_final);
-                        echo '<input type="hidden" name="detail_akomodasi['.$no.'][qty_estimasi]" value="'.$item->qty_final.'">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][qty_estimasi]" value="' . $item->qty_final . '">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
                         echo number_format($item->price_unit_final, 2);
-                        echo '<input type="hidden" name="detail_akomodasi['.$no.'][price_unit_estimasi]" value="'.$item->price_unit_final.'">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][price_unit_estimasi]" value="' . $item->price_unit_final . '">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
                         echo number_format($item->total_final, 2);
-                        echo '<input type="hidden" name="detail_akomodasi['.$no.'][total_estimasi]" value="'.$item->total_final.'">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][total_estimasi]" value="' . $item->total_final . '">';
                         echo '</td>';
 
-                        echo '<td class="text-center">'.number_format($aktual_terpakai).'</td>';
-                        echo '<td class="text-center">'.number_format($sisa_budget, 2).'</td>';
+                        echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
+                        echo '<td class="text-center">' . number_format($sisa_budget, 2) . '</td>';
 
                         echo '</tr>';
 
@@ -248,6 +248,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         </td>
                     </tr>
                 </table>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row">
+                    <!-- <div class="col-md-6"> -->
+                    <a href="<?= base_url('kasbon_project/add_request_budget_akomodasi/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
+                        <i class="fa fa-plus"></i> Request Overbudget
+                    </a>
+                    <!-- </div> -->
+                </div>
             </div>
 
             <div class="col-md-12 mt-5">
@@ -329,21 +339,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var valid = 1;
 
-        for(i = 1; i <= no; i++) {
-            var qty_pengajuan = get_num($('input[name="detail_akomodasi['+i+'][qty_pengajuan]"]').val());
-            var qty_estimasi = get_num($('input[name="detail_akomodasi['+i+'][qty_estimasi]"]').val());
-            var nominal_pengajuan = get_num($('input[name="detail_akomodasi['+i+'][nominal_pengajuan]"]').val());
-            var price_unit_estimasi = get_num($('input[name="detail_akomodasi['+i+'][price_unit_estimasi]"]').val());
+        for (i = 1; i <= no; i++) {
+            var qty_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][qty_pengajuan]"]').val());
+            var qty_estimasi = get_num($('input[name="detail_akomodasi[' + i + '][qty_estimasi]"]').val());
+            var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
+            var price_unit_estimasi = get_num($('input[name="detail_akomodasi[' + i + '][price_unit_estimasi]"]').val());
 
-            if(valid == '1' && qty_pengajuan > qty_estimasi) {
+            if (valid == '1' && qty_pengajuan > qty_estimasi) {
                 valid = 0;
             }
-            if(valid == '1' && nominal_pengajuan > price_unit_estimasi) {
+            if (valid == '1' && nominal_pengajuan > price_unit_estimasi) {
                 valid = 0;
             }
         }
 
-        if(valid == '0') {
+        if (valid == '0') {
             swal({
                 type: 'warning',
                 title: 'Warning !',
@@ -358,7 +368,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             }, function(next) {
                 if (next) {
                     var formData = new FormData($('#frm-data')[0]);
-    
+
                     $.ajax({
                         type: 'post',
                         url: siteurl + active_controller + 'save_kasbon_akomodasi',
@@ -374,7 +384,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                                     title: 'Success !',
                                     text: result.pesan
                                 }, function(lanjut) {
-                                    window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>"
+                                    window.location.href = siteurl + active_controller + "add_kasbon_/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>"
                                 });
                             } else {
                                 swal({
