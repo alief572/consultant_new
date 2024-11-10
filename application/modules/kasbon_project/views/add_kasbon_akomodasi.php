@@ -126,6 +126,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th rowspan="2" class="text-center valign-middle">Item</th>
                         <th colspan="2" class="text-center valign-middle">Pengajuan</th>
                         <th colspan="3" class="text-center valign-middle">Estimasi</th>
+                        <th rowspan="2" class="text-center valign-middle">Budget Tambahan</th>
                         <th rowspan="2" class="text-center valign-middle">Aktual Terpakai</th>
                         <th rowspan="2" class="text-center valign-middle">Sisa Budget</th>
                     </tr>
@@ -144,13 +145,19 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_est_qty = 0;
                     $ttl_est_price_unit = 0;
                     $ttl_est_total_budget = 0;
+                    $ttl_budget_tambahan = 0;
                     $ttl_aktual_pakai = 0;
                     $ttl_sisa_budget = 0;
 
                     foreach ($list_akomodasi as $item) {
 
                         $aktual_terpakai = (isset($data_kasbon_akomodasi[$item->id_akomodasi]['ttl_qty_pengajuan'])) ? $data_kasbon_akomodasi[$item->id_akomodasi]['ttl_qty_pengajuan'] : 0;
+
+                        $total_budget_tambahan = (isset($data_ovb_akomodasi[$item->id_item])) ? $data_ovb_akomodasi[$item->id_item]['total_budget_tambahan'] : 0;
+
                         $sisa_budget = (isset($data_kasbon_akomodasi[$item->id_akomodasi]['ttl_total_pengajuan'])) ? (($item->price_unit_final * $item->qty_final) - $data_kasbon_akomodasi[$item->id_akomodasi]['ttl_total_pengajuan']) : ($item->price_unit_final * $item->qty_final);
+
+                        $sisa_budget = ($sisa_budget + $total_budget_tambahan);
 
                         $readonly = '';
                         if ($sisa_budget <= 0) {
@@ -190,14 +197,24 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<input type="hidden" name="detail_akomodasi[' . $no . '][total_estimasi]" value="' . $item->total_final . '">';
                         echo '</td>';
 
-                        echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
-                        echo '<td class="text-center">' . number_format($sisa_budget, 2) . '</td>';
+                        echo '<td class="text-center">' . number_format($total_budget_tambahan, 2) . '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($aktual_terpakai);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($sisa_budget, 2);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
+                        echo '</td>';
 
                         echo '</tr>';
 
                         $ttl_est_qty += $item->qty_final;
                         $ttl_est_price_unit += $item->price_unit_final;
                         $ttl_est_total_budget += $item->total_final;
+                        $ttl_budget_tambahan += $total_budget_tambahan;
                         $ttl_aktual_pakai += $aktual_terpakai;
                         $ttl_sisa_budget += $sisa_budget;
 
@@ -213,6 +230,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_total_budget, 2) ?></td>
+                        <td class="text-center"><?= number_format($ttl_budget_tambahan, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_aktual_pakai) ?></td>
                         <td class="text-center"><?= number_format($ttl_sisa_budget, 2) ?></td>
                     </tr>
@@ -341,14 +359,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         for (i = 1; i <= no; i++) {
             var qty_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][qty_pengajuan]"]').val());
-            var qty_estimasi = get_num($('input[name="detail_akomodasi[' + i + '][qty_estimasi]"]').val());
             var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
-            var price_unit_estimasi = get_num($('input[name="detail_akomodasi[' + i + '][price_unit_estimasi]"]').val());
+            var sisa_budget = get_num($('input[name="detail_akomodasi[' + i + '][sisa_budget]"]').val());
 
-            if (valid == '1' && qty_pengajuan > qty_estimasi) {
-                valid = 0;
-            }
-            if (valid == '1' && nominal_pengajuan > price_unit_estimasi) {
+            if (valid == '1' && (qty_pengajuan * nominal_pengajuan) > sisa_budget) {
                 valid = 0;
             }
         }
@@ -357,7 +371,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             swal({
                 type: 'warning',
                 title: 'Warning !',
-                text: 'Qty atau Nominal pengajuan melebihi estimasi !'
+                text: 'Nominal pengajuan melebihi Sisa Budget !'
             });
         } else {
             swal({
@@ -384,7 +398,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                                     title: 'Success !',
                                     text: result.pesan
                                 }, function(lanjut) {
-                                    window.location.href = siteurl + active_controller + "add_kasbon_/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>"
+                                    window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>"
                                 });
                             } else {
                                 swal({

@@ -153,7 +153,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         $sisa_budget = (isset($data_kasbon_others[$item->id_others]['ttl_total_pengajuan'])) ? (($item->price_unit_final * $item->qty_final) - $data_kasbon_others[$item->id_others]['ttl_total_pengajuan']) : ($item->price_unit_final * $item->qty_final);
 
                         $readonly = '';
-                        if ($sisa_budget <= 0) {
+                        if($sisa_budget <= 0) {
                             $readonly = 'readonly';
                         }
 
@@ -168,37 +168,30 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_others[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_others[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" '.$readonly.'>';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_others[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_others[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" '.$readonly.'>';
                         echo '</td>';
 
                         echo '<td class="text-center">';
                         echo number_format($item->qty_final);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][qty_estimasi]" value="' . $item->qty_final . '">';
+                        echo '<input type="hidden" name="detail_others['.$no.'][qty_estimasi]" value="'.$item->qty_final.'">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
                         echo number_format($item->price_unit_final, 2);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][price_unit_estimasi]" value="' . $item->price_unit_final . '">';
+                        echo '<input type="hidden" name="detail_others['.$no.'][price_unit_estimasi]" value="'.$item->price_unit_final.'">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
                         echo number_format($item->total_final, 2);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][total_estimasi]" value="' . $item->total_final . '">';
+                        echo '<input type="hidden" name="detail_others['.$no.'][total_estimasi]" value="'.$item->total_final.'">';
                         echo '</td>';
 
-                        echo '<td class="text-center">';
-                        echo number_format($aktual_terpakai);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
-                        echo '</td>';
-
-                        echo '<td class="text-center">';
-                        echo number_format($sisa_budget, 2);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
-                        echo '</td>';
+                        echo '<td class="text-center">'.number_format($aktual_terpakai).'</td>';
+                        echo '<td class="text-center">'.number_format($sisa_budget, 2).'</td>';
 
                         echo '</tr>';
 
@@ -336,21 +329,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var valid = 1;
 
-        for (i = 1; i <= no; i++) {
-            var qty_pengajuan = get_num($('input[name="detail_others[' + i + '][qty_pengajuan]"]').val());
-            var qty_estimasi = get_num($('input[name="detail_others[' + i + '][qty_estimasi]"]').val());
-            var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
-            var price_unit_estimasi = get_num($('input[name="detail_others[' + i + '][price_unit_estimasi]"]').val());
+        for(i = 1; i <= no; i++) {
+            var qty_pengajuan = get_num($('input[name="detail_others['+i+'][qty_pengajuan]"]').val());
+            var qty_estimasi = get_num($('input[name="detail_others['+i+'][qty_estimasi]"]').val());
+            var nominal_pengajuan = get_num($('input[name="detail_others['+i+'][nominal_pengajuan]"]').val());
+            var price_unit_estimasi = get_num($('input[name="detail_others['+i+'][price_unit_estimasi]"]').val());
 
-            if (valid == '1' && qty_pengajuan > qty_estimasi) {
+            if(valid == '1' && qty_pengajuan > qty_estimasi) {
                 valid = 0;
             }
-            if (valid == '1' && nominal_pengajuan > price_unit_estimasi) {
+            if(valid == '1' && nominal_pengajuan > price_unit_estimasi) {
                 valid = 0;
             }
         }
 
-        if (valid == '0') {
+        if(valid == '0') {
             swal({
                 type: 'warning',
                 title: 'Warning !',
@@ -365,7 +358,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             }, function(next) {
                 if (next) {
                     var formData = new FormData($('#frm-data')[0]);
-
+    
                     $.ajax({
                         type: 'post',
                         url: siteurl + active_controller + 'save_kasbon_others',

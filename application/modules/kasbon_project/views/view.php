@@ -158,9 +158,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body" style="overflow: visible !important;">
-        <a href="<?= base_url('kasbon_project/add_kasbon_subcont/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Kasbon
-        </a>
         <table id="example1" class="table custom-table mt-5" style="overflow: visible !important;">
             <thead>
                 <tr>
@@ -226,9 +223,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body" style="overflow: visible !important;">
-        <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Kasbon
-        </a>
         <table class="table custom-table mt-5" id="table_kasbon_akomodasi" style="overflow: visible !important;">
             <thead>
                 <tr>
@@ -311,9 +305,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <a href="<?= base_url('kasbon_project/add_kasbon_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Kasbon
-        </a>
         <table class="table custom-table mt-5" id="table_kasbon_others" style="overflow: visible !important;">
             <thead>
                 <tr>
@@ -332,6 +323,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
             </tbody>
         </table>
+
         <a href="<?= base_url('kasbon_project') ?>" class="btn btn-sm btn-danger">
             <i class="fa fa-arrow-left"></i> Back
         </a>
@@ -345,10 +337,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
 <script>
     $(document).ready(function() {
-        DataTables_kasbon_subcont();
-        DataTables_kasbon_akomodasi();
-        DataTables_kasbon_others();
-        DataTables_ovb_akomodasi();
+        DataTables_kasbon_subcont('view');
+        DataTables_kasbon_akomodasi('view');
+        DataTables_kasbon_others('view');
+        DataTables_ovb_akomodasi('view');
     });
 
     function DataTables_kasbon_subcont(view = null) {
@@ -509,7 +501,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 dataType: "JSON",
                 data: function(d) {
                     d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
+                    d.view = null
                 }
             },
             columns: [{

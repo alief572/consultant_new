@@ -332,9 +332,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
             </tbody>
         </table>
-        <a href="<?= base_url('kasbon_project') ?>" class="btn btn-sm btn-danger">
-            <i class="fa fa-arrow-left"></i> Back
-        </a>
     </div>
 </div>
 
@@ -351,7 +348,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         DataTables_ovb_akomodasi();
     });
 
-    function DataTables_kasbon_subcont(view = null) {
+    function DataTables_kasbon_subcont() {
         var dataTables_kasbon_subcont = $('#example1').DataTable();
 
         // Destroying and Reinitializing (Make sure to destroy before reinitialize)
@@ -365,7 +362,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 dataType: "JSON",
                 data: function(d) {
                     d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
                 }
             },
             columns: [{
@@ -399,7 +395,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     }
 
-    function DataTables_kasbon_akomodasi(view = null) {
+    function DataTables_kasbon_akomodasi() {
         var dataTables_kasbon_akomodasi = $('#table_kasbon_akomodasi').DataTable();
 
         // Destroying and Reinitializing (Make sure to destroy before reinitialize)
@@ -413,7 +409,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 dataType: "JSON",
                 data: function(d) {
                     d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
                 }
             },
             columns: [{
@@ -447,7 +442,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     }
 
-    function DataTables_kasbon_others(view = null) {
+    function DataTables_kasbon_others() {
         var dataTables_kasbon_others = $('#table_kasbon_others').DataTable();
 
         // Destroying and Reinitializing (Make sure to destroy before reinitialize)
@@ -461,7 +456,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 dataType: "JSON",
                 data: function(d) {
                     d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
                 }
             },
             columns: [{
@@ -495,7 +489,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     }
 
-    function DataTables_ovb_akomodasi(view = null) {
+    function DataTables_ovb_akomodasi() {
         var dataTables_ovb_akomodasi = $('#table_ovb_akomodasi').DataTable();
 
         // Destroying and Reinitializing (Make sure to destroy before reinitialize)
@@ -509,7 +503,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 dataType: "JSON",
                 data: function(d) {
                     d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
                 }
             },
             columns: [{
