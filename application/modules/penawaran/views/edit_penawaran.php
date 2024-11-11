@@ -131,6 +131,7 @@ if (count($list_penawaran_others) > 0) {
                                         <option value="Linkedin" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Linkedin') ? 'checked' : '' ?>>Linkedin</option>
                                         <option value="Website" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Website') ? 'checked' : '' ?>>Website</option>
                                         <option value="Facebook" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Facebook') ? 'checked' : '' ?>>Facebook</option>
+                                        <option value="Incoming Call" <?= ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Incoming Call') ? 'checked' : '' ?>>Incoming Call</option>
                                     </select>
                                 </td>
                             </tr>
