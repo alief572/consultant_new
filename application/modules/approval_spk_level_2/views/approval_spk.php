@@ -276,6 +276,8 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     <th class="text-center">Activity Name</th>
                     <th class="text-center">Mandays Internal</th>
                     <th class="text-center">Mandays Rate Internal</th>
+                    <th class="text-center">Mandays Tandem</th>
+                    <th class="text-center">Mandays Rate Tandem</th>
                     <th class="text-center">Mandays Subcont</th>
                     <th class="text-center">Price Subcont</th>
                     <th class="text-center">Total</th>
@@ -286,6 +288,9 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                 $no = 1;
                 $total_mandays = 0;
                 $total_mandays_rate = 0;
+
+                $total_mandays_tandem = 0;
+                $total_mandays_rate_tandem = 0;
 
                 $ttl_mandays_subcont = 0;
                 $ttl_subcont = 0;
@@ -302,6 +307,8 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     echo '</td>';
                     echo '<td class="text-center">' . $item->mandays . ' <input type="hidden" name="dt[' . $no . '][mandays]" value="' . $item->mandays . '"></td>';
                     echo '<td class="text-center">' . number_format($item->mandays_rate, 2) . ' <input type="hidden" name="dt[' . $no . '][mandays_rate]" value="' . $item->mandays_rate . '"></td>';
+                    echo '<td class="text-center">' . $item->mandays_tandem . ' <input type="hidden" name="dt[' . $no . '][mandays_tandem]" value="' . $item->mandays_tandem . '"></td>';
+                    echo '<td class="text-center">' . number_format($item->mandays_rate_tandem, 2) . ' <input type="hidden" name="dt[' . $no . '][mandays_rate_tandem]" value="' . $item->mandays_rate_tandem . '"></td>';
                     echo '<td>';
                     echo '<input type="text" class="form-control form-control-sm edit_mandays_subcont mandays_subcont_' . $item->id . '" name="dt[' . $no . '][mandays_subcont]" data-id="' . $item->id . '" value="' . $item->mandays_subcont . '" readonly>';
                     echo '</td>';
@@ -315,6 +322,10 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
 
                     $total_mandays += $item->mandays;
                     $total_mandays_rate += $item->mandays_rate;
+
+                    $total_mandays_tandem += $item->mandays_tandem;
+                    $total_mandays_rate_tandem += $item->mandays_rate_tandem;
+
                     $ttl_mandays_subcont += $item->mandays_subcont;
 
                     $ttl_subcont += $item->total_subcont;
@@ -328,6 +339,8 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     <th>Total</th>
                     <th class="text-center ttl_mandays"><?= $total_mandays ?></th>
                     <th class="text-center ttl_mandays"><?= number_format($total_mandays_rate, 2) ?></th>
+                    <th class="text-center ttl_mandays"><?= $total_mandays_tandem ?></th>
+                    <th class="text-center ttl_mandays"><?= number_format($total_mandays_rate_tandem, 2) ?></th>
                     <th class="text-center ttl_mandays_subcont"><?= $ttl_mandays_subcont ?></th>
                     <th class="text-center"></th>
                     <th class="text-center ttl_total_subcont"><?= number_format($ttl_subcont, 2) ?></th>
