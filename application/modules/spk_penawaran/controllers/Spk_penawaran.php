@@ -797,6 +797,7 @@ class SPK_penawaran extends Admin_Controller
                     'mandays_subcont' => ($item['mandays_subcont'] !== '') ? str_replace(',', '', $item['mandays_subcont']) : 0,
                     'price_subcont' => ($item['price_subcont'] !== '') ? str_replace(',', '', $item['price_subcont']) : 0,
                     'total_subcont' => ($item['total_subcont'] !== '') ? str_replace(',', '', $item['total_subcont']) : 0,
+                    'grand_total' => ($item['grand_total'] !== '') ? str_replace(',', '', $item['grand_total']) : 0,
                     'dibuat_oleh' => $this->auth->user_id(),
                     'dibuat_tgl' => date('Y-m-d H:i:s')
                 ];

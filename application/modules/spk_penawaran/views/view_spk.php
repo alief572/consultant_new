@@ -366,6 +366,7 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
                     <th class="text-center">Mandays Rate Tandem</th>
                     <th class="text-center">Mandays Subcont</th>
                     <th class="text-center">Price Subcont</th>
+                    <th class="text-center">Grand Total</th>
                     <th class="text-center">Total</th>
                 </tr>
             </thead>
