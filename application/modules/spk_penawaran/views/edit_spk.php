@@ -284,6 +284,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                         <th class="text-center">Mandays Subcont</th>
                         <th class="text-center">Price Subcont</th>
                         <th class="text-center">Total</th>
+                        <th class="text-center">Grand Total</th>
                         <th class="text-center">Opsi</th>
                     </tr>
                 </thead>
@@ -299,9 +300,17 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     $total_mandays_rate_subcont = 0;
                     $total_activity = 0;
 
+                    $ttl_grand_total = 0;
+
                     $nilai_tandem = 0;
 
                     foreach ($list_spk_penawaran_subcont as $item) {
+                        $total_internal = ($item->mandays * $item->mandays_rate);
+                        $total_tandem = ($item->mandays_tandem * $item->mandays_rate_tandem);
+                        $total_subcont = ($item->mandays_subcont * $item->price_subcont);
+
+                        $nilai_grand_total = ($total_internal + $total_tandem + $total_subcont);
+
                         echo '<tr class="subcont_' . $no . '">';
                         echo '<td class="text-center">' . $no . '</td>';
                         echo '<td>';
@@ -330,6 +339,9 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                         echo '<input type="text" class="form-control form-control-sm total_subcont_' . $item->id . ' auto_num text-right" name="dt[' . $no . '][total_subcont]" value="' . ($item->price_subcont * $item->mandays_subcont) . '" readonly>';
                         echo '</td>';
                         echo '<td class="text-center">';
+                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="dt[' . $no . '][grand_total]" value="' . $nilai_grand_total . '" readonly>';
+                        echo '</td>';
+                        echo '<td class="text-center">';
                         echo '<button type="button" class="btn btn-sm btn-danger del_subcont" data-no="' . $no . '" ><i class="fa fa-trash"></i></button>';
                         echo '</td>';
                         echo '</tr>';
@@ -343,6 +355,8 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                         $total_activity += ($item->price_subcont * $item->mandays_subcont);
 
                         $nilai_tandem += ($item->mandays_rate_tandem * $item->mandays_tandem);
+
+                        $ttl_grand_total += $nilai_grand_total;
 
                         $no++;
                     }
@@ -358,6 +372,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     <th class="text-center ttl_mandays_subcont"><?= $total_mandays_subcont ?></th>
                     <th class="text-center"></th>
                     <th class="text-center ttl_total_subcont"><?= number_format($total_activity, 2) ?></th>
+                    <th class="text-center ttl_grand_total"><?= number_format($ttl_grand_total, 2) ?></th>
                 </tfoot>
             </table>
         </div>
@@ -659,7 +674,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
         $('.chosen_select').chosen({
-            width: "300px"
+            width: "250px"
         });
 
         $('.select_divisi').chosen();
@@ -833,6 +848,43 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
         $('.ttl_nominal_payment').html(number_format(ttl_nominal_payment, 2));
     }
 
+    function hitung_grand_ttl_subcont() {
+        var no = '<?= $no ?>';
+
+        var ttl_grand_total = 0;
+        for(i = 1; i <= no; i++) {
+            var mandays = get_num($('input[name="dt['+i+'][mandays]"]').val());
+            var mandays_rate = get_num($('input[name="dt['+i+'][mandays_rate]"]').val());
+            var mandays_tandem = get_num($('input[name="dt['+i+'][mandays_tandem]"]').val());
+            var mandays_rate_tandem = get_num($('input[name="dt['+i+'][mandays_rate_tandem]"]').val());
+            var mandays_subcont = get_num($('input[name="dt['+i+'][mandays_subcont]"]').val());
+            var mandays_rate_subcont = get_num($('input[name="dt['+i+'][price_subcont]"]').val());
+
+            var total_internal = (mandays * mandays_rate);
+            var total_tandem = (mandays_tandem * mandays_rate_tandem);
+            var total_subcont = (mandays_subcont * mandays_rate_subcont);
+
+            var grand_total = (total_internal + total_tandem + total_subcont);
+
+            ttl_grand_total += grand_total;
+
+            $('input[name="dt['+i+'][grand_total]"]').val(number_format(grand_total, 2));
+        }
+
+        $('input[name="nilai_kontrak"]').val(number_format(ttl_grand_total, 2));
+        $('.ttl_grand_total').html(number_format(ttl_grand_total, 2));
+
+        var nilai_kontrak = ttl_grand_total;
+        var biaya_akomodasi = get_num($('input[name="biaya_akomodasi"]').val());
+        var biaya_subcont = get_num($('input[name="biaya_subcont"]').val());
+        var biaya_others = get_num($('input[name="biaya_others"]').val());
+        var biaya_tandem = get_num($('input[name="biaya_tandem"]').val());
+
+        var nilai_kontrak_bersih = (nilai_kontrak - biaya_akomodasi - biaya_subcont - biaya_others - biaya_tandem);
+
+        $('input[name="nilai_kontrak_bersih"]').val(number_format(nilai_kontrak_bersih, 2));
+    }
+
     $(document).on('change', '.edit_mandays_subcont', function() {
         var id = $(this).data('id');
         var mandays_subcont = parseFloat($(this).val());
@@ -843,6 +895,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
         $('.total_subcont_' + id).val(number_format(total, 2));
         hitung_total_subcont();
         hitung_mandays_subcont();
+        hitung_grand_ttl_subcont();
     });
 
     $(document).on('change', '.edit_price_subcont', function() {
@@ -855,6 +908,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
         $('.total_subcont_' + id).val(number_format(total, 2));
         hitung_total_subcont();
         hitung_mandays_subcont();
+        hitung_grand_ttl_subcont();
     });
 
     $(document).on('click', '.add_payment_term', function() {

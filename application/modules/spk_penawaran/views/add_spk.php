@@ -666,7 +666,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
         $('.chosen_select').chosen({
-            width: "200px"
+            width: "250px"
         });
 
         $('.select_divisi').chosen({

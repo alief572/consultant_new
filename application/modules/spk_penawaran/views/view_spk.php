@@ -354,7 +354,7 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
     <div class="box-header">
         <h4 style="font-weight: 600;">Subcont</h4>
     </div>
-    <div class="box-body">
+    <div class="box-body table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -366,8 +366,8 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
                     <th class="text-center">Mandays Rate Tandem</th>
                     <th class="text-center">Mandays Subcont</th>
                     <th class="text-center">Price Subcont</th>
-                    <th class="text-center">Grand Total</th>
-                    <th class="text-center">Total</th>
+                    <th class="text-center">Total Subcont</th>
+                    <th class="text-center" width="150">Grand Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -382,8 +382,15 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
                 $ttl_mandays_subcont = 0;
                 $ttl_subcont = 0;
 
-                $nilai_tandem = 0;
+                $ttl_tandem = 0;
                 foreach ($list_spk_penawaran_subcont as $item) {
+
+                    $nilai_internal = ($item->mandays * $item->mandays_rate);
+                    $nilai_tandem = ($item->mandays_tandem * $item->mandays_rate_tandem);
+                    $nilai_subcont = ($item->mandays_subcont * $item->price_subcont);
+
+                    $grand_total = ($nilai_internal + $nilai_tandem + $nilai_subcont);
+
                     echo '<tr class="subcont_' . $no . '">';
                     echo '<td class="text-center">' . $no . '</td>';
                     echo '<td>';
@@ -408,6 +415,9 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
                     echo '<td>';
                     echo '<input type="text" class="form-control form-control-sm total_subcont_' . $item->id . ' auto_num text-right" name="dt[' . $no . '][total_subcont]" value="' . $item->total_subcont . '" readonly>';
                     echo '</td>';
+                    echo '<td>';
+                    echo '<input type="text" class="form-control form-control-sm text-right auto_num" value="'.$grand_total.'" readonly>';
+                    echo '</td>';
                     echo '</tr>';
 
                     $total_mandays += $item->mandays;
@@ -418,7 +428,7 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
 
                     $ttl_subcont += $item->total_subcont;
 
-                    $nilai_tandem += ($item->mandays_tandem * $item->mandays_rate_tandem);
+                    $ttl_tandem += ($item->mandays_tandem * $item->mandays_rate_tandem);
 
                     $no++;
                 }
@@ -525,7 +535,7 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
 
                 <td class="pd-5 semi-bold" valign="top">Biaya Tandem</td>
                 <td class="pd-5" valign="top">
-                    <input type="text" name="biaya_tandem" id="" class="form-control form-control-sm text-right biaya_tandem" value="<?= number_format($nilai_tandem, 2) ?>" readonly>
+                    <input type="text" name="biaya_tandem" id="" class="form-control form-control-sm text-right biaya_tandem" value="<?= number_format($ttl_tandem, 2) ?>" readonly>
                 </td>
             </tr>
             <tr>
@@ -772,7 +782,7 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
         $('.chosen_select').chosen({
-            width: "300px"
+            width: "250px"
         });
 
         $('.select_divisi').chosen();
