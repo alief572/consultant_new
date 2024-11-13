@@ -168,7 +168,10 @@ class Approval_spk_level_1 extends Admin_Controller
             $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
         }
 
-
+        $this->db->select('a.*');
+        $this->db->from('users a');
+        $this->db->where('a.id_user', $this->auth->user_id());
+        $get_user = $this->db->get()->row();
 
         $data = [
             'list_spk_penawaran' => $get_spk_penawaran,
@@ -180,7 +183,8 @@ class Approval_spk_level_1 extends Admin_Controller
             'list_all_marketing' => $get_all_marketing,
             'list_divisi' => $get_divisi,
             'list_all_aktifitas' => $get_all_aktifitas,
-            'detail_informasi_awal' => $detail_informasi_awal
+            'detail_informasi_awal' => $detail_informasi_awal,
+            'data_user' => $get_user
         ];
 
         $this->auth->restrict($this->viewPermission);
@@ -509,6 +513,7 @@ class Approval_spk_level_1 extends Admin_Controller
         $post = $this->input->post();
 
         $id_spk_penawaran = $post['id_spk_penawaran'];
+        $isu_khusus = $post['isu_khusus'];
 
         $get_user = $this->db->get_where('users', array('id_user' => $this->auth->user_id()))->row();
 
@@ -563,6 +568,7 @@ class Approval_spk_level_1 extends Admin_Controller
         }
         if ($get_user->employee_id == '168') {
             $data_arr = [
+                'isu_khusus' => $isu_khusus,
                 'approval_manager_sales' => 1,
                 'approval_manager_sales_date' => date('Y-m-d H:i:s'),
                 'reject_konsultan_1_sts' => null,

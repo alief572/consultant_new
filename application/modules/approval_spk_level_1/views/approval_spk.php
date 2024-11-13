@@ -1,12 +1,17 @@
 <?php
-$ENABLE_ADD     = has_permission('SPK.Add');
-$ENABLE_MANAGE  = has_permission('SPK.Manage');
-$ENABLE_VIEW    = has_permission('SPK.View');
-$ENABLE_DELETE  = has_permission('SPK.Delete');
+$ENABLE_ADD     = has_permission('Approval_SPK_Level_1.Add');
+$ENABLE_MANAGE  = has_permission('Approval_SPK_Level_1.Manage');
+$ENABLE_VIEW    = has_permission('Approval_SPK_Level_1.View');
+$ENABLE_DELETE  = has_permission('Approval_SPK_Level_1.Delete');
 
 $ttl_persen_komisi = ($list_spk_penawaran->persen_pemberi_informasi_1_komisi + $list_spk_penawaran->persen_pemberi_informasi_2_komisi + $list_spk_penawaran->persen_sales_1_komisi + $list_spk_penawaran->persen_sales_2_komisi);
 
 $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi + $list_spk_penawaran->nominal_pemberi_informasi_2_komisi + $list_spk_penawaran->nominal_sales_1_komisi + $list_spk_penawaran->nominal_sales_2_komisi);
+
+$readonly_isu = 'readonly';
+if($data_user->employee_id == '168') {
+    $readonly_isu = '';
+}
 
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
@@ -622,7 +627,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
     <div class="box-body">
         <div class="form-group">
             <label for="">Isu Khusus / Permintaan khusus dari customer / Tujuan Program / 3 objective utama (khusus konsultasi)</label>
-            <textarea name="isu_khusus" id="" class="form-control form-control-sm" rows="10" readonly><?= $list_spk_penawaran->isu_khusus ?></textarea>
+            <textarea name="isu_khusus" id="" class="form-control form-control-sm isu_khusus" rows="10" <?= $readonly_isu ?>><?= $list_spk_penawaran->isu_khusus ?></textarea>
         </div>
         <br><br>
     
@@ -717,6 +722,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
 
     $(document).on('click', '.approve_spk', function() {
         var id_spk_penawaran = $('.id_spk_penawaran').val();
+        var isu_khusus = $('.isu_khusus').val();
 
         swal({
             type: 'warning',
@@ -729,7 +735,8 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     type: "POST",
                     url: siteurl + active_controller + 'approve_spk',
                     data: {
-                        'id_spk_penawaran': id_spk_penawaran
+                        'id_spk_penawaran': id_spk_penawaran,
+                        'isu_khusus': isu_khusus
                     },
                     cache: false,
                     dataType: "JSON",
@@ -739,7 +746,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                                 type: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(aftter) {
+                            }, function(lanjut) {
                                 window.location.href = siteurl + active_controller;
                             });
                         } else {
