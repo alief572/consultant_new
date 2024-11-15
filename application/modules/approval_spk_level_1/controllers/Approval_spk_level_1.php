@@ -208,12 +208,19 @@ class Approval_spk_level_1 extends Admin_Controller
         // print_r($get_user);
         // exit;
 
+        // print_r($get_user);
+        // exit;
+
         $this->db->select('a.*, b.grand_total');
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', null);
         $this->db->where('a.approval_manager_sales', null);
+        $this->db->where('a.reject_project_leader_sts', null);
+        $this->db->where('a.reject_konsultan_1_sts', null);
+        $this->db->where('a.reject_konsultan_2_sts', null);
+        $this->db->where('a.reject_sales_sts', null);
 
         $this->db->group_start();
         $this->db->where('a.approval_sales_sts', null);
@@ -232,7 +239,7 @@ class Approval_spk_level_1 extends Admin_Controller
             $this->db->group_end();
         }
 
-        if ((!$this->is_admin) && $get_user->employee_id !== '168') {
+        if ($get_user->id_user !== '27' && $get_user->employee_id !== '168') {
             $this->db->group_start();
             $this->db->where('a.id_project_leader', $get_user->employee_id);
             $this->db->or_where('a.id_konsultan_1', $get_user->employee_id);
@@ -269,7 +276,7 @@ class Approval_spk_level_1 extends Admin_Controller
             $this->db->group_end();
         }
 
-        if ((!$this->is_admin) && $get_user->employee_id !== '168') {
+        if (($get_user->id_user !== '27') && $get_user->employee_id !== '168') {
             $this->db->group_start();
             $this->db->where('a.id_project_leader', $get_user->employee_id);
             $this->db->or_where('a.id_konsultan_1', $get_user->employee_id);

@@ -129,7 +129,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <td class="pd-5" width="400" valign="top">
                         <input type="text" name="customer" id="" class="form-control form-control-sm text-center" value="<?= ucfirst($list_marketing->nm_karyawan) ?>" readonly>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top" width="210">
+                    <td class="pd-5 semi-bold" valign="top" style="max-width: 200px;">
                         <input type="radio" name="informasi_awal_eksternal" class="iae_bs" id="" value="bs" onclick="iae('bs')"> Badan Sertifikasi
                     </td>
                     <td class="pd-5" width="500" valign="top">
@@ -148,7 +148,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top" width="210">Informasi Awal</td>
-                    <td class="pd-5" width="400" valign="top">
+                    <td class="pd-5" valign="top" style="max-width: 400px;">
                         <div class="form-inline">
                             <div class="form-group text-center">
                                 <input type="text" name="pic" id="" class="form-control form-control-sm" value="<?= ucfirst($detail_informasi_awal) ?>" readonly>
@@ -161,10 +161,10 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                             </div>
                         </div>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top" width="210">
+                    <td class="pd-5 semi-bold" valign="top" style="max-width: 200px;">
                         <input type="radio" name="informasi_awal_eksternal" class="iae_lain" id="" onclick="iae('lain')"> Lain - lain
                     </td>
-                    <td class="pd-5" width="500" valign="top">
+                    <td class="pd-5" valign="top" style="max-width: 400px;">
                         <div class="form-inline">
                             <div class="form-group text-center">
                                 <input type="text" name="informasi_awal_eksternal_detail_lain" id="" class="form-control form-control-sm iae_lain" readonly>

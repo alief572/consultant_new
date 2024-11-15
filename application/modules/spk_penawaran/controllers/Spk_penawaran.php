@@ -834,10 +834,12 @@ class SPK_penawaran extends Admin_Controller
             exit;
         }
 
+        // print_r($data_insert_subcont);
+
         $insert_spk_penawaran_subcont = $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_insert_subcont);
         if (!$insert_spk_penawaran_subcont) {
             $this->db->trans_rollback();
-            print_r($this->db->error($insert_spk_penawaran_subcont) . ' ' . $this->db->last_query());
+            print_r($this->db->last_query());
             exit;
         }
 
@@ -976,6 +978,10 @@ class SPK_penawaran extends Admin_Controller
             'tipe_info_awal_eks' => $tipe_info_awal_eks,
             'detail_info_awal_eks' => $detail_info_awal_eks,
             'cp_info_awal_eks' => $cp_info_awal_eks,
+            'reject_project_leader_sts' => null,
+            'reject_konsultan_1_sts' => null,
+            'reject_konsultan_2_sts' => null,
+            'reject_sales_sts' => null,
             'edited_by' => $this->auth->user_id(),
             'edited_date' => date('Y-m-d H:i:s')
         ];
