@@ -216,18 +216,23 @@ class Approval_spk_level_1 extends Admin_Controller
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', null);
-        $this->db->where('a.approval_manager_sales', null);
-        $this->db->where('a.reject_project_leader_sts', null);
-        $this->db->where('a.reject_konsultan_1_sts', null);
-        $this->db->where('a.reject_konsultan_2_sts', null);
-        $this->db->where('a.reject_sales_sts', null);
 
         $this->db->group_start();
-        $this->db->where('a.approval_sales_sts', null);
-        $this->db->or_where('a.approval_project_leader_sts', null);
-        $this->db->or_where('IF(a.id_konsultan_1 IS NULL, "1", a.approval_konsultan_1_sts) IS NULL');
-        $this->db->or_where('IF(a.id_konsultan_2 IS NULL, "1", a.approval_konsultan_2_sts) IS NULL');
+        $this->db->where('a.approval_manager_sales', null);
+        $this->db->or_where('a.reject_project_leader_sts', null);
+        $this->db->or_where('a.reject_konsultan_1_sts', null);
+        $this->db->or_where('a.reject_konsultan_2_sts', null);
+        $this->db->or_where('a.reject_sales_sts', null);
         $this->db->group_end();
+
+        if ($get_user->id_user !== '27' && $get_user->employee_id !== '168') {
+            $this->db->group_start();
+            $this->db->where('a.approval_sales_sts', null);
+            $this->db->or_where('a.approval_project_leader_sts', null);
+            $this->db->or_where('IF(a.id_konsultan_1 IS NULL, "1", a.approval_konsultan_1_sts) IS NULL');
+            $this->db->or_where('IF(a.id_konsultan_2 IS NULL, "1", a.approval_konsultan_2_sts) IS NULL');
+            $this->db->group_end();
+        }
 
         if (!empty($search['value'])) {
             $this->db->group_start();
@@ -257,14 +262,23 @@ class Approval_spk_level_1 extends Admin_Controller
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', null);
-        $this->db->where('a.approval_manager_sales', null);
 
         $this->db->group_start();
-        $this->db->where('a.approval_sales_sts', null);
-        $this->db->or_where('a.approval_project_leader_sts', null);
-        $this->db->or_where('IF(a.id_konsultan_1 IS NULL, "1", a.approval_konsultan_1_sts) IS NULL');
-        $this->db->or_where('IF(a.id_konsultan_2 IS NULL, "1", a.approval_konsultan_2_sts) IS NULL');
+        $this->db->where('a.approval_manager_sales', null);
+        $this->db->or_where('a.reject_project_leader_sts', null);
+        $this->db->or_where('a.reject_konsultan_1_sts', null);
+        $this->db->or_where('a.reject_konsultan_2_sts', null);
+        $this->db->or_where('a.reject_sales_sts', null);
         $this->db->group_end();
+
+        if ($get_user->id_user !== '27' && $get_user->employee_id !== '168') {
+            $this->db->group_start();
+            $this->db->where('a.approval_sales_sts', null);
+            $this->db->or_where('a.approval_project_leader_sts', null);
+            $this->db->or_where('IF(a.id_konsultan_1 IS NULL, "1", a.approval_konsultan_1_sts) IS NULL');
+            $this->db->or_where('IF(a.id_konsultan_2 IS NULL, "1", a.approval_konsultan_2_sts) IS NULL');
+            $this->db->group_end();
+        }
 
         if (!empty($search['value'])) {
             $this->db->group_start();
@@ -276,7 +290,7 @@ class Approval_spk_level_1 extends Admin_Controller
             $this->db->group_end();
         }
 
-        if (($get_user->id_user !== '27') && $get_user->employee_id !== '168') {
+        if ($get_user->id_user !== '27' && $get_user->employee_id !== '168') {
             $this->db->group_start();
             $this->db->where('a.id_project_leader', $get_user->employee_id);
             $this->db->or_where('a.id_konsultan_1', $get_user->employee_id);
