@@ -254,7 +254,7 @@ class Kasbon_project extends Admin_Controller
                 $no++;
 
                 $status = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                
+
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_req_kasbon_project a');
                 $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
@@ -263,11 +263,11 @@ class Kasbon_project extends Admin_Controller
                 $get_req_kasbon = $this->db->get()->row();
 
                 $reject_reason = '';
-                if(!empty($get_req_kasbon)) {
+                if (!empty($get_req_kasbon)) {
                     if ($get_req_kasbon->sts == '1' && $total_kasbon >= $total_budgeting) {
                         $status = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
                     }
-                    if($get_req_kasbon->sts == '2') {
+                    if ($get_req_kasbon->sts == '2') {
                         $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
                     }
                 }
@@ -313,16 +313,15 @@ class Kasbon_project extends Admin_Controller
         $view = $this->input->post('view');
 
         $this->db->select('a.*');
-        $this->db->from('kons_tr_kasbon_project_subcont a');
+        $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.tipe', 1);
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->like('a.id_kasbon_subcont', $search['value'], 'both');
-            $this->db->or_like('a.nm_aktifitas', $search['value'], 'both');
-            $this->db->or_like('DATE_FORMAT(a.created_date, "%d %M %Y")', $search['value'], 'both');
-            $this->db->or_like('a.qty_pengajuan', $search['value'], 'both');
-            $this->db->or_like('a.nominal_pengajuan', $search['value'], 'both');
-            $this->db->or_like('a.total_pengajuan', $search['value'], 'both');
+            $this->db->like('a.id', $search['value'], 'both');
+            $this->db->or_like('a.deskripsi', $search['value'], 'both');
+            $this->db->or_like('a.tgl', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
@@ -330,16 +329,15 @@ class Kasbon_project extends Admin_Controller
         $get_kasbon_subcont = $this->db->get();
 
         $this->db->select('a.*');
-        $this->db->from('kons_tr_kasbon_project_subcont a');
+        $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.tipe', 1);
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->like('a.id_kasbon_subcont', $search['value'], 'both');
-            $this->db->or_like('a.nm_aktifitas', $search['value'], 'both');
-            $this->db->or_like('DATE_FORMAT(a.created_date, "%d %M %Y")', $search['value'], 'both');
-            $this->db->or_like('a.qty_pengajuan', $search['value'], 'both');
-            $this->db->or_like('a.nominal_pengajuan', $search['value'], 'both');
-            $this->db->or_like('a.total_pengajuan', $search['value'], 'both');
+            $this->db->like('a.id', $search['value'], 'both');
+            $this->db->or_like('a.deskripsi', $search['value'], 'both');
+            $this->db->or_like('a.tgl', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
@@ -348,7 +346,7 @@ class Kasbon_project extends Admin_Controller
         $nilai_kasbon_on_proses = 0;
         foreach ($get_kasbon_subcont_all->result() as $item) {
             if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses += $item->total_pengajuan;
+                $nilai_kasbon_on_proses += $item->grand_total;
             }
         }
 
@@ -377,7 +375,7 @@ class Kasbon_project extends Admin_Controller
 
             $option .= '
                 <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                    <a href="'.base_url('kasbon_project/view_kasbon_subcont/'.urlencode(str_replace('/', '|', $item->id_kasbon_subcont))).'" class="btn btn-sm btn-info" style="color: #000000">
+                    <a href="' . base_url('kasbon_project/view_kasbon_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-info" style="color: #000000">
                         <div class="col-12 dropdown-item">
                         <b>
                             <i class="fa fa-eye"></i>
@@ -391,7 +389,7 @@ class Kasbon_project extends Admin_Controller
             if ($item->sts !== '1') {
                 $option .= '
                     <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_kasbon_subcont" style="color: #000000" data-id_kasbon_subcont="' . $item->id_kasbon_subcont . '">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_kasbon_subcont" style="color: #000000" data-id="' . $item->id . '">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-trash"></i>
@@ -402,18 +400,18 @@ class Kasbon_project extends Admin_Controller
                     </div>
                 ';
 
-                //     $option .= '
-                //     <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                //         <a href="javascript:void(0);" class="btn btn-sm btn-success paid_kasbon_subcont" style="color: #000000" data-id_kasbon_subcont="' . $item->id_kasbon_subcont . '">
-                //             <div class="col-12 dropdown-item">
-                //             <b>
-                //                 <i class="fa fa-check"></i>
-                //             </b>
-                //             </div>
-                //         </a>
-                //         <span style="font-weight: 500"> Paid </span>
-                //     </div>
-                // ';
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="' . base_url('kasbon_project/edit_kasbon_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-pencil"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Edit </span>
+                    </div>
+                ';
             }
 
             // $option .= '
@@ -433,18 +431,16 @@ class Kasbon_project extends Admin_Controller
 
             $option .= '</div>';
 
-            if($view == 'view') {
+            if ($view == 'view') {
                 $option = '';
             }
 
             $hasil[] = [
                 'no' => $no,
-                'req_number' => $item->id_kasbon_subcont,
-                'nm_aktifitas' => $item->nm_aktifitas,
-                'date' => date('d F Y', strtotime($item->created_date)),
-                'qty' => $item->qty_pengajuan,
-                'amount' => number_format($item->nominal_pengajuan, 2),
-                'total' => number_format($item->total_pengajuan, 2),
+                'req_number' => $item->id,
+                'nm_aktifitas' => $item->deskripsi,
+                'date' => date('d F Y', strtotime($item->tgl)),
+                'total' => number_format($item->grand_total, 2),
                 'status' => $sts,
                 'option' => $option
             ];
@@ -469,36 +465,32 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*, b.nm_biaya');
-        $this->db->from('kons_tr_kasbon_project_akomodasi a');
-        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.tipe', 2);
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->like('a.id_kasbon_akomodasi', $search['value'], 'both');
-            $this->db->or_like('b.nm_biaya', $search['value'], 'both');
-            $this->db->or_like('DATE_FORMAT(a.created_date, "%d %M %Y")', $search['value'], 'both');
-            $this->db->or_like('a.qty_pengajuan', $search['value'], 'both');
-            $this->db->or_like('a.nominal_pengajuan', $search['value'], 'both');
-            $this->db->or_like('a.total_pengajuan', $search['value'], 'both');
+            $this->db->like('a.id', $search['value'], 'both');
+            $this->db->or_like('a.deskripsi', $search['value'], 'both');
+            $this->db->or_like('a.tgl', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
         $this->db->limit($length, $start);
         $get_kasbon_akomodasi = $this->db->get();
 
-        $this->db->select('a.*, b.nm_biaya');
-        $this->db->from('kons_tr_kasbon_project_akomodasi a');
-        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.tipe', 2);
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->like('a.id_kasbon_akomodasi', $search['value'], 'both');
-            $this->db->or_like('b.nm_biaya', $search['value'], 'both');
-            $this->db->or_like('DATE_FORMAT(a.created_date, "%d %M %Y")', $search['value'], 'both');
-            $this->db->or_like('a.qty_pengajuan', $search['value'], 'both');
-            $this->db->or_like('a.nominal_pengajuan', $search['value'], 'both');
-            $this->db->or_like('a.total_pengajuan', $search['value'], 'both');
+            $this->db->like('a.id', $search['value'], 'both');
+            $this->db->or_like('a.deskripsi', $search['value'], 'both');
+            $this->db->or_like('a.tgl', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
@@ -507,7 +499,7 @@ class Kasbon_project extends Admin_Controller
         $nilai_kasbon_on_proses = 0;
         foreach ($get_kasbon_akomodasi_all->result() as $item) {
             if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses += $item->total_pengajuan;
+                $nilai_kasbon_on_proses += $item->grand_total;
             }
         }
 
@@ -536,7 +528,7 @@ class Kasbon_project extends Admin_Controller
 
             $option .= '
                 <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                    <a href="'.base_url('kasbon_project/view_kasbon_akomodasi/'.urlencode(str_replace('/', '|', $item->id_kasbon_akomodasi))).'" class="btn btn-sm btn-info" style="color: #000000">
+                    <a href="' . base_url('kasbon_project/view_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-info" style="color: #000000">
                         <div class="col-12 dropdown-item">
                         <b>
                             <i class="fa fa-eye"></i>
@@ -550,7 +542,7 @@ class Kasbon_project extends Admin_Controller
             if ($item->sts !== '1') {
                 $option .= '
                     <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_kasbon_akomodasi" style="color: #000000" data-id_kasbon_akomodasi="' . $item->id_kasbon_akomodasi . '">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_kasbon_akomodasi" style="color: #000000" data-id="' . $item->id . '">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-trash"></i>
@@ -561,34 +553,32 @@ class Kasbon_project extends Admin_Controller
                     </div>
                 ';
 
-                //     $option .= '
-                //     <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                //         <a href="javascript:void(0);" class="btn btn-sm btn-success paid_kasbon_akomodasi" style="color: #000000" data-id_kasbon_akomodasi="' . $item->id_kasbon_akomodasi . '">
-                //             <div class="col-12 dropdown-item">
-                //             <b>
-                //                 <i class="fa fa-check"></i>
-                //             </b>
-                //             </div>
-                //         </a>
-                //         <span style="font-weight: 500"> Paid </span>
-                //     </div>
-                // ';
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="'.base_url('kasbon_project/edit_kasbon_akomodasi/'. urlencode(str_replace('/', '|', $item->id))).'" class="btn btn-sm btn-warning" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-pencil"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Edit </span>
+                    </div>
+                ';
             }
 
             $option .= '</div>';
 
-            if($view == 'view') {
+            if ($view == 'view') {
                 $option = '';
             }
 
             $hasil[] = [
                 'no' => $no,
-                'req_number' => $item->id_kasbon_akomodasi,
-                'nm_biaya' => $item->nm_biaya,
-                'date' => date('d F Y', strtotime($item->created_date)),
-                'qty' => $item->qty_pengajuan,
-                'amount' => number_format($item->nominal_pengajuan, 2),
-                'total' => number_format($item->total_pengajuan, 2),
+                'req_number' => $item->id,
+                'nm_biaya' => $item->deskripsi,
+                'date' => date('d F Y', strtotime($item->tgl)),
+                'total' => number_format($item->grand_total, 2),
                 'status' => $sts,
                 'option' => $option
             ];
@@ -680,7 +670,7 @@ class Kasbon_project extends Admin_Controller
 
             $option .= '
                 <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                    <a href="'.base_url('kasbon_project/view_kasbon_others/'.urlencode(str_replace('/', '|', $item->id_kasbon_others))).'" class="btn btn-sm btn-info" style="color: #000000">
+                    <a href="' . base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item->id_kasbon_others))) . '" class="btn btn-sm btn-info" style="color: #000000">
                         <div class="col-12 dropdown-item">
                         <b>
                             <i class="fa fa-eye"></i>
@@ -721,7 +711,7 @@ class Kasbon_project extends Admin_Controller
 
             $option .= '</div>';
 
-            if($view == 'view') {
+            if ($view == 'view') {
                 $option = '';
             }
 
@@ -854,7 +844,7 @@ class Kasbon_project extends Admin_Controller
 
             $option .= '</div>';
 
-            if($view == 'view') {
+            if ($view == 'view') {
                 $option = '';
             }
 
@@ -977,7 +967,8 @@ class Kasbon_project extends Admin_Controller
         $this->template->render('add');
     }
 
-    public function view_kasbon($id_spk_budgeting){
+    public function view_kasbon($id_spk_budgeting)
+    {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
 
@@ -1147,25 +1138,117 @@ class Kasbon_project extends Admin_Controller
         $this->template->set($data);
         $this->template->render('add_kasbon_subcont');
     }
-
-    public function view_kasbon_subcont($id_kasbon_subcont){
+    
+    public function edit_kasbon_subcont($id_kasbon_subcont)
+    {
         $id_kasbon_subcont = urldecode($id_kasbon_subcont);
         $id_kasbon_subcont = str_replace('|', '/', $id_kasbon_subcont);
 
         $this->db->select('a.*');
-        $this->db->from('kons_tr_kasbon_project_subcont a');
-        $this->db->where('a.id_kasbon_subcont', $id_kasbon_subcont);
-        $get_data_kasbon = $this->db->get()->row();
+        $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->where('a.id', $id_kasbon_subcont);
+        $get_kasbon_subcont = $this->db->get()->row();
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
-        $this->db->where('a.id_spk_budgeting', $get_data_kasbon->id_spk_budgeting);
+        $this->db->where('a.id_spk_budgeting', $get_kasbon_subcont->id_spk_budgeting);
         $get_budgeting = $this->db->get()->row();
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_spk_budgeting_aktifitas a');
+        $this->db->where('a.id_spk_budgeting', $get_kasbon_subcont->id_spk_budgeting);
+        $this->db->where('a.mandays_rate_subcont_final >', 0);
+        $get_data_subcont = $this->db->get()->result();
+
+        $this->db->select('a.id_aktifitas, a.qty_pengajuan, a.nominal_pengajuan, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
+        $this->db->from('kons_tr_kasbon_project_subcont a');
+        $this->db->where('a.id_spk_budgeting', $get_kasbon_subcont->id_spk_budgeting);
+        $this->db->group_by('a.id_aktifitas');
+        $get_kasbon_subcont2 = $this->db->get()->result();
+
+        $data_kasbon_subcont = [];
+        foreach ($get_kasbon_subcont2 as $item) {
+            $data_kasbon_subcont[$item->id_aktifitas] = [
+                'ttl_qty_pengajuan' => $item->ttl_qty_pengajuan,
+                'ttl_total_pengajuan' => $item->ttl_total_pengajuan,
+                'qty_pengajuan' => $item->qty_pengajuan,
+                'nominal_pengajuan' => $item->nominal_pengajuan,
+                'aktual_terpakai' => $item->aktual_terpakai,
+                'sisa_budget' => $item->sisa_budget
+            ];
+        }
+
+
+
         $data = [
+            'id_spk_budgeting' => $get_kasbon_subcont->id_spk_budgeting,
             'list_budgeting' => $get_budgeting,
-            'list_data_kasbon' => $get_data_kasbon
+            'list_subcont' => $get_data_subcont,
+            'data_kasbon_subcont' => $data_kasbon_subcont,
+            'data_kasbon_subcont2' => $get_kasbon_subcont2,
+            'header' => $get_kasbon_subcont
+        ];
+
+        $this->template->set($data);
+        $this->template->render('edit_kasbon_subcont');
+    }
+
+    public function view_kasbon_subcont($id_header)
+    {
+        $id_header = urldecode($id_header);
+        $id_header = str_replace('|', '/', $id_header);
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->where('a.id', $id_header);
+        $get_header = $this->db->get()->row();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_spk_budgeting_aktifitas a');
+        $this->db->where('a.id_spk_budgeting', $get_header->id_spk_budgeting);
+        $this->db->where('a.mandays_rate_subcont_final >', 0);
+        $get_data_subcont = $this->db->get()->result();
+
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->where('a.id_spk_budgeting', $get_header->id_spk_budgeting);
+        $get_budgeting = $this->db->get()->row();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_subcont a');
+        $this->db->where('a.id_header', $id_header);
+        $get_kasbon_subcont = $this->db->get()->result();
+
+        // print_r($this->db->last_query());
+        // exit;
+
+        $data_list_kasbon_subcont = [];
+
+        foreach($get_kasbon_subcont as $item) {
+            $data_list_kasbon_subcont[$item->id_aktifitas] = [
+                'nm_aktifitas' => $item->nm_aktifitas,
+                'nominal_pengajuan' => $item->nominal_pengajuan,
+                'qty_pengajuan' => $item->qty_pengajuan,
+                'total_pengajuan' => $item->total_pengajuan,
+                'qty_estimasi' => $item->qty_estimasi,
+                'price_unit_estimasi' => $item->price_unit_estimasi,
+                'total_budgeting_estimasi' => $item->total_budget_estimasi,
+                'aktual_terpakai' => $item->aktual_terpakai,
+                'sisa_budget' => $item->sisa_budget
+            ];
+        }
+        // exit;
+
+        // print_r($data_list_kasbon_subcont);
+        // exit;
+
+        $data = [
+            'header' => $get_header,
+            'list_budgeting' => $get_budgeting,
+            'list_data_kasbon' => $get_data_subcont,
+            'data_list_kasbon_subcont' => $data_list_kasbon_subcont
         ];
 
         $this->template->set($data);
@@ -1231,42 +1314,75 @@ class Kasbon_project extends Admin_Controller
         $this->template->render('add_kasbon_akomodasi');
     }
 
-    public function view_kasbon_akomodasi($id_kasbon_akomodasi) {
-        $id_kasbon_akomodasi = urldecode($id_kasbon_akomodasi);
-        $id_kasbon_akomodasi = str_replace('|', '/', $id_kasbon_akomodasi);
+    public function view_kasbon_akomodasi($id_header)
+    {
+        $id_header = urldecode($id_header);
+        $id_header = str_replace('|', '/', $id_header);
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->where('a.id', $id_header);
+        $get_header = $this->db->get()->row();
 
         $this->db->select('a.*, b.nm_biaya');
-        $this->db->from('kons_tr_kasbon_project_akomodasi a');
+        $this->db->from('kons_tr_spk_budgeting_akomodasi a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
-        $this->db->where('a.id_kasbon_akomodasi', $id_kasbon_akomodasi);
-        $get_data_kasbon = $this->db->get()->row();
+        $this->db->where('a.id_spk_budgeting', $get_header->id_spk_budgeting);
+        $get_data_akomodasi = $this->db->get()->result();
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
-        $this->db->where('a.id_spk_budgeting', $get_data_kasbon->id_spk_budgeting);
+        $this->db->where('a.id_spk_budgeting', $get_header->id_spk_budgeting);
         $get_budgeting = $this->db->get()->row();
 
         $data_budget_tambahan = [];
-        
+
         $this->db->select('a.id_item, SUM(a.budget_tambahan) as ttl_budget_tambahan');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
         $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_header b', 'b.id_request_ovb = a.id_request_ovb');
-        $this->db->where('b.id_spk_budgeting', $get_data_kasbon->id_spk_budgeting);
+        $this->db->where('b.id_spk_budgeting', $get_header->id_spk_budgeting);
         $this->db->where('b.sts', '1');
         $this->db->group_by('a.id_item');
         $get_data_ovb = $this->db->get()->result();
 
-        foreach($get_data_ovb as $item) {
+        foreach ($get_data_ovb as $item) {
             $data_budget_tambahan[$item->id_item] = [
                 'budget_tambahan' => $item->ttl_budget_tambahan
             ];
         }
 
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_kasbon_project_akomodasi a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_header', $id_header);
+        $get_kasbon_akomodasi = $this->db->get()->result();
+
+        // print_r($this->db->last_query());
+        // exit;
+
+        $data_list_kasbon_akomodasi = [];
+
+        foreach($get_kasbon_akomodasi as $item) {
+            $data_list_kasbon_akomodasi[$item->id_item] = [
+                'nm_biaya' => $item->nm_biaya,
+                'nominal_pengajuan' => $item->nominal_pengajuan,
+                'qty_pengajuan' => $item->qty_pengajuan,
+                'total_pengajuan' => $item->total_pengajuan,
+                'qty_estimasi' => $item->qty_estimasi,
+                'price_unit_estimasi' => $item->price_unit_estimasi,
+                'total_budgeting_estimasi' => $item->total_budget_estimasi,
+                'aktual_terpakai' => $item->aktual_terpakai,
+                'sisa_budget' => $item->sisa_budget
+            ];
+        }
+
         $data = [
+            'header' => $get_header,
             'list_budgeting' => $get_budgeting,
-            'list_data_kasbon' => $get_data_kasbon,
-            'list_budget_tambahan' => $data_budget_tambahan
+            'list_data_kasbon' => $get_data_akomodasi,
+            'list_budget_tambahan' => $data_budget_tambahan,
+            'data_list_kasbon_akomodasi' => $data_list_kasbon_akomodasi
         ];
 
         $this->template->set($data);
@@ -1316,7 +1432,8 @@ class Kasbon_project extends Admin_Controller
         $this->template->render('add_kasbon_others');
     }
 
-    public function view_kasbon_others($id_kasbon_others) {
+    public function view_kasbon_others($id_kasbon_others)
+    {
         $id_kasbon_others = urldecode($id_kasbon_others);
         $id_kasbon_others = str_replace('|', '/', $id_kasbon_others);
 
@@ -1403,13 +1520,17 @@ class Kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $data_insert = [];
+        $id_header = $this->Kasbon_project_model->generate_id_kasbon_project();
+
+        $grand_total = 0;
+
+        $data_insert_detail = [];
 
         $no = 1;
         foreach ($post['detail_subcont'] as $item) {
             if (str_replace(',', '', $item['qty_pengajuan']) > 0 && str_replace(',', '', $item['nominal_pengajuan'])) {
-                $data_insert[] = [
-                    'id_kasbon_subcont' => $this->Kasbon_project_model->generate_id_kasbon_subcont($no),
+                $data_insert_detail[] = [
+                    'id_header' => $id_header,
                     'id_spk_budgeting' => $post['id_spk_budgeting'],
                     'id_spk_penawaran' => $post['id_spk_penawaran'],
                     'id_penawaran' => $post['id_penawaran'],
@@ -1423,19 +1544,41 @@ class Kasbon_project extends Admin_Controller
                     'total_budget_estimasi' => $item['total_estimasi'],
                     'aktual_terpakai' => $item['aktual_terpakai'],
                     'sisa_budget' => $item['sisa_budget'],
-                    'document_link' => $upload_po,
-                    'bank' => $post['kasbon_bank'],
-                    'bank_number' => $post['kasbon_bank_number'],
-                    'bank_account' => $post['kasbon_bank_account'],
                     'created_by' => $this->auth->user_id(),
                     'created_date' => date('Y-m-d H:i:s')
                 ];
+
+                $grand_total += (str_replace(',', '', $item['qty_pengajuan']) * str_replace(',', '', $item['nominal_pengajuan']));
 
                 $no++;
             }
         }
 
-        $insert_kasbon_subcont = $this->db->insert_batch('kons_tr_kasbon_project_subcont', $data_insert);
+        $data_insert_header = [
+            'id' => $id_header,
+            'id_spk_budgeting' => $post['id_spk_budgeting'],
+            'id_spk_penawaran' => $post['id_spk_penawaran'],
+            'id_penawaran' => $post['id_penawaran'],
+            'tipe' => 1,
+            'deskripsi' => $post['deskripsi'],
+            'tgl' => $post['tgl'],
+            'grand_total' => $grand_total,
+            'dokument_link' => $upload_po,
+            'bank' => $post['kasbon_bank'],
+            'bank_number' => $post['kasbon_bank_number'],
+            'bank_account' => $post['kasbon_bank_account'],
+            'created_by' => $this->auth->user_id(),
+            'created_date' => date('Y-m-d H:i:s')
+        ];
+
+        $insert_kasbon_header = $this->db->insert('kons_tr_kasbon_project_header', $data_insert_header);
+        if (!$insert_kasbon_header) {
+            $this->db->trans_rollback();
+            print_r($this->db->last_query());
+            exit;
+        }
+
+        $insert_kasbon_subcont = $this->db->insert_batch('kons_tr_kasbon_project_subcont', $data_insert_detail);
         if (!$insert_kasbon_subcont) {
             $this->db->trans_rollback();
             print_r($this->db->last_query());
@@ -1458,6 +1601,119 @@ class Kasbon_project extends Admin_Controller
             'status' => $valid,
             'pesan' => $pesan
         ]);
+    }
+
+    public function update_kasbon_subcont() {
+        $post = $this->input->post();
+
+        $config['upload_path'] = './uploads/kasbon_project/'; //path folder
+        $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
+        $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
+        $config['encrypt_name'] = FALSE; // Encrypt the uploaded file's name.
+        $config['remove_spaces'] = TRUE; // Remove spaces from the file name.
+
+        $this->load->library('upload', $config);
+        $this->upload->initialize($config);
+
+        $upload_po = '';
+
+        $files = $_FILES['kasbon_document'];
+        $file_count = count($files['name']);
+
+        $_FILES['kasbon_document']['name'] = $files['name'];
+        $_FILES['kasbon_document']['type'] = $files['type'];
+        $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
+        $_FILES['kasbon_document']['error'] = $files['error'];
+        $_FILES['kasbon_document']['size'] = $files['size'];
+
+        if (!$this->upload->do_upload('kasbon_document')) {
+            $upload_po = $post['dokument_link'];
+        } else {
+            $data_upload_po = $this->upload->data();
+            $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
+        }
+
+        $this->db->trans_begin();
+
+        $reset_kasbon_subcont = $this->db->delete('kons_tr_kasbon_project_subcont', ['id_header' => $post['id']]);
+
+        $update_header = $this->db->update('kons_tr_kasbon_project_header', [
+            'deskripsi' => $post['deskripsi'],
+            'tgl' => $post['tgl'],
+            'dokument_link' => $upload_po,
+            'bank' => $post['kasbon_bank'],
+            'bank_number' => $post['kasbon_bank_number'],
+            'bank_account' => $post['kasbon_bank_account'],
+            'updated_by' => $this->auth->user_id(),
+            'updated_date' => date('Y-m-d H:i:s')
+        ], [
+            'id' => $post['id']
+        ]);
+
+        if(!$update_header) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
+
+        $data_insert_detail = [];
+
+        if(isset($post['detail_subcont'])) {
+            foreach($post['detail_subcont'] as $item) {
+                $qty_pengajuan = str_replace(',', '', $item['qty_pengajuan']);
+                $nominal_pengajuan = str_replace(',', '', $item['nominal_pengajuan']);
+
+                $qty_estimasi = str_replace(',', '', $item['qty_estimasi']);
+                $price_unit_estimasi = str_replace(',', '', $item['price_unit_estimasi']);
+                $total_estimasi = str_replace(',', '', $item['total_estimasi']);
+
+                $data_insert_detail[] = [
+                    'id_header' => $post['id'],
+                    'id_spk_budgeting' => $post['id_spk_budgeting'],
+                    'id_spk_penawaran' => $post['id_spk_penawaran'],
+                    'id_penawaran' => $post['id_penawaran'],
+                    'id_aktifitas' => $item['id_aktifitas'],
+                    'nm_aktifitas' => $item['nm_aktifitas'],
+                    'qty_pengajuan' => $qty_pengajuan,
+                    'nominal_pengajuan' => $nominal_pengajuan,
+                    'total_pengajuan' => ($nominal_pengajuan * $qty_pengajuan),
+                    'qty_estimasi' => $qty_estimasi,
+                    'price_unit_estimasi' => $price_unit_estimasi,
+                    'total_budget_estimasi' => $total_estimasi,
+                    'aktual_terpakai' => $item['aktual_terpakai'],
+                    'sisa_budget' => $item['sisa_budget'],
+                    'created_by' => $this->auth->user_id(),
+                    'created_date' => date('Y-m-d H:i:s')
+                ];
+            }
+        }
+
+        $insert_detail = $this->db->insert_batch('kons_tr_kasbon_project_subcont', $data_insert_detail);
+        if(!$insert_detail) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
+
+        if($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $pesan = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $pesan = 'Data has been updated !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
+        
     }
 
     public function save_kasbon_akomodasi()
@@ -1496,13 +1752,45 @@ class Kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
+        $id = $this->Kasbon_project_model->generate_id_kasbon_project();
+
+        $grand_total = 0;
+        foreach ($post['detail_akomodasi'] as $item) {
+            $grand_total += (str_replace(',', '', $item['nominal_pengajuan']) *  str_replace(',', '', $item['qty_pengajuan']));
+        }
+
+        $data_header = [
+            'id' => $id,
+            'id_spk_budgeting' => $post['id_spk_budgeting'],
+            'id_spk_penawaran' => $post['id_spk_penawaran'],
+            'id_penawaran' => $post['id_penawaran'],
+            'tipe' => 2,
+            'deskripsi' => $post['deskripsi'],
+            'tgl' => $post['tgl'],
+            'grand_total' => $grand_total,
+            'dokument_link' => $upload_po,
+            'bank' => $post['kasbon_bank'],
+            'bank_number' => $post['kasbon_bank_number'],
+            'bank_account' => $post['kasbon_bank_account'],
+            'created_by' => $this->auth->user_id(),
+            'created_date' => date('Y-m-d H:i:s')
+        ];
+
+        $insert_header = $this->db->insert('kons_tr_kasbon_project_header', $data_header);
+        if(!$insert_header) {
+            $this->db->trans_rollback();
+
+            print($this->db->error($insert_header));
+            exit;
+        }
+
         $data_insert = [];
 
         $no = 1;
         foreach ($post['detail_akomodasi'] as $item) {
             if (str_replace(',', '', $item['qty_pengajuan']) > 0 && str_replace(',', '', $item['nominal_pengajuan'])) {
                 $data_insert[] = [
-                    'id_kasbon_akomodasi' => $this->Kasbon_project_model->generate_id_kasbon_akomodasi($no),
+                    'id_header' => $id,
                     'id_spk_budgeting' => $post['id_spk_budgeting'],
                     'id_spk_penawaran' => $post['id_spk_penawaran'],
                     'id_penawaran' => $post['id_penawaran'],
@@ -1517,10 +1805,6 @@ class Kasbon_project extends Admin_Controller
                     'total_budget_estimasi' => $item['total_estimasi'],
                     'aktual_terpakai' => $item['aktual_terpakai'],
                     'sisa_budget' => $item['sisa_budget'],
-                    'document_link' => $upload_po,
-                    'bank' => $post['kasbon_bank'],
-                    'bank_number' => $post['kasbon_bank_number'],
-                    'bank_account' => $post['kasbon_bank_account'],
                     'created_by' => $this->auth->user_id(),
                     'created_date' => date('Y-m-d H:i:s')
                 ];
@@ -1650,11 +1934,12 @@ class Kasbon_project extends Admin_Controller
 
     public function del_kasbon_subcont()
     {
-        $id_kasbon_subcont = $this->input->post('id_kasbon_subcont');
+        $id = $this->input->post('id');
 
         $this->db->trans_start();
 
-        $del_kasbon_subcont = $this->db->delete('kons_tr_kasbon_project_subcont', ['id_kasbon_subcont' => $id_kasbon_subcont]);
+        $del_header = $this->db->delete('kons_tr_kasbon_project_header', ['id' => $id]);
+        $del_kasbon_subcont = $this->db->delete('kons_tr_kasbon_project_subcont', ['id_header' => $id]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -1676,11 +1961,12 @@ class Kasbon_project extends Admin_Controller
 
     public function del_kasbon_akomodasi()
     {
-        $id_kasbon_akomodasi = $this->input->post('id_kasbon_akomodasi');
+        $id = $this->input->post('id');
 
         $this->db->trans_start();
 
-        $del_kasbon_subcont = $this->db->delete('kons_tr_kasbon_project_akomodasi', ['id_kasbon_akomodasi' => $id_kasbon_akomodasi]);
+        $del_header = $this->db->delete('kons_tr_kasbon_project_header', ['id' => $id]);
+        $del_kasbon_akomodasi = $this->db->delete('kons_tr_kasbon_project_akomodasi', ['id_header' => $id]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -1702,11 +1988,12 @@ class Kasbon_project extends Admin_Controller
 
     public function del_kasbon_others()
     {
-        $id_kasbon_others = $this->input->post('id_kasbon_others');
+        $id = $this->input->post('id');
 
         $this->db->trans_start();
 
-        $del_kasbon_subcont = $this->db->delete('kons_tr_kasbon_project_others', ['id_kasbon_others' => $id_kasbon_others]);
+        $del_header = $this->db->delete('kons_tr_kasbon_project_header', ['id' => $id]);
+        $del_kasbon_others = $this->db->delete('kons_tr_kasbon_project_others', ['id_header' => $id]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

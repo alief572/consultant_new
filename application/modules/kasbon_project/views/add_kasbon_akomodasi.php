@@ -109,6 +109,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="pd-5 valign-top" width="150"></th>
                     <td class="pd-5 valign-top" width="400"></td>
                 </tr>
+                <tr>
+                    <th class="pd-5 valign-top" width="150">Tgl</th>
+                    <td class="pd-5 valign-top" width="400">
+                        <input type="date" class="form-control form-control-sm" name="tgl" required>
+                    </td>
+                    <th class="pd-5 valign-top" width="150">Deskripsi</th>
+                    <td class="pd-5 valign-top" width="400">
+                        <textarea name="deskripsi" id="" class="form-control form-control-sm"></textarea>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>

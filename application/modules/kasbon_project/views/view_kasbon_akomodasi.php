@@ -139,6 +139,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <?php
                     $no = 0;
 
+                    $ttl_qty_peng = 0;
+                    $ttl_nominal_peng = 0;
+
                     $ttl_est_qty = 0;
                     $ttl_est_price_unit = 0;
                     $ttl_est_total_budget = 0;
@@ -146,39 +149,59 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_aktual_terpakai = 0;
                     $ttl_sisa_budget = 0;
 
-                    $budget_tambahan = ($list_budget_tambahan[$list_data_kasbon->id_item]) ? $list_budget_tambahan[$list_data_kasbon->id_item]['budget_tambahan'] : 0;
+                    $ttl_budget_tambahan = 0;
 
-                    // foreach ($list_data_kasbon as $item) {
-                    $no++;
+                    
+                    foreach ($list_data_kasbon as $item) {
+                        $no++;
+                        
+                        $budget_tambahan =  0;
 
-                    echo '<tr>';
+                        $qty_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['qty_pengajuan'] : 0;
+                        $nominal_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['nominal_pengajuan'] : 0;
 
-                    echo '<td class="text-center">' . $no . '</td>';
-                    echo '<td>' . $list_data_kasbon->nm_biaya . '</td>';
-                    echo '<td class="text-center">' . number_format($list_data_kasbon->qty_pengajuan) . '</td>';
-                    echo '<td class="text-right">' . number_format($list_data_kasbon->nominal_pengajuan, 2) . '</td>';
-                    echo '<td class="text-center">' . number_format($list_data_kasbon->qty_estimasi) . '</td>';
-                    echo '<td class="text-right">' . number_format($list_data_kasbon->price_unit_estimasi, 2) . '</td>';
-                    echo '<td class="text-right">' . number_format($list_data_kasbon->total_budget_estimasi, 2) . '</td>';
-                    echo '<td class="text-right">' . number_format($budget_tambahan, 2) . '</td>';
-                    echo '<td class="text-center">' . number_format($list_data_kasbon->aktual_terpakai) . '</td>';
-                    echo '<td class="text-right">' . number_format($list_data_kasbon->sisa_budget, 2) . '</td>';
+                        $aktual_terpakai = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['aktual_terpakai'] : 0;
+                        $sisa_budget = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['sisa_budget'] : 0;
 
-                    echo '</tr>';
-                    // }
+                        echo '<tr>';
+
+                        echo '<td class="text-center">' . $no . '</td>';
+                        echo '<td>' . $item->nm_biaya . '</td>';
+                        echo '<td class="text-center">' . number_format($qty_pengajuan) . '</td>';
+                        echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->total_estimasi, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($budget_tambahan, 2) . '</td>';
+                        echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
+                        echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_qty_peng += $qty_pengajuan;
+                        $ttl_nominal_peng += $nominal_pengajuan;
+
+                        $ttl_est_qty += $item->qty_estimasi;
+                        $ttl_est_price_unit += $item->price_unit_estimasi;
+                        $ttl_est_total_budget += $item->total_estimasi;
+                        $ttl_aktual_terpakai += $aktual_terpakai;
+                        $ttl_sisa_budget += $sisa_budget;
+
+                        $ttl_budget_tambahan += $budget_tambahan;
+                    }
                     ?>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="2" class="text-center">Total</td>
-                        <td class="text-center ttl_qty_pengajuan"><?= number_format($list_data_kasbon->qty_pengajuan) ?></td>
-                        <td class="text-right ttl_nominal_pengajuan"><?= number_format($list_data_kasbon->nominal_pengajuan, 2) ?></td>
-                        <td class="text-center"><?= number_format($list_data_kasbon->qty_estimasi) ?></td>
-                        <td class="text-right"><?= number_format($list_data_kasbon->price_unit_estimasi, 2) ?></td>
-                        <td class="text-right"><?= number_format($list_data_kasbon->total_budget_estimasi, 2) ?></td>
-                        <td class="text-right"><?= number_format($budget_tambahan, 2) ?></td>
-                        <td class="text-center"><?= number_format($list_data_kasbon->aktual_terpakai) ?></td>
-                        <td class="text-right"><?= number_format($list_data_kasbon->sisa_budget, 2) ?></td>
+                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_peng) ?></td>
+                        <td class="text-right ttl_nominal_pengajuan"><?= number_format($ttl_nominal_peng, 2) ?></td>
+                        <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
+                        <td class="text-right"><?= number_format($ttl_est_price_unit, 2) ?></td>
+                        <td class="text-right"><?= number_format($ttl_est_total_budget, 2) ?></td>
+                        <td class="text-right"><?= number_format($ttl_budget_tambahan, 2) ?></td>
+                        <td class="text-center"><?= number_format($ttl_aktual_terpakai) ?></td>
+                        <td class="text-right"><?= number_format($ttl_sisa_budget, 2) ?></td>
                     </tr>
                 </tfoot>
             </table>
@@ -191,31 +214,31 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th style="padding: 5px;">Document</th>
                         <td style="padding: 5px;">
                             <input type="file" name="kasbon_document" id="" class="form-control form-control-sm" disabled>
-                            <?php 
-                                if(file_exists('./'.$list_data_kasbon->document_link)) {
-                                    echo '<a href="'.base_url($list_data_kasbon->document_link).'" class="btn btn-sm btn-primary" target="_blank">
+                            <?php
+                            if (file_exists('./' . $header->dokument_link)) {
+                                echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-sm btn-primary" target="_blank">
                                         <i class="fa fa-download"></i> Download
                                     </a>';
-                                }
+                            }
                             ?>
                         </td>
                     </tr>
                     <tr>
                         <th style="padding: 5px;">Bank</th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $list_data_kasbon->bank ?>" readonly>
+                            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>" readonly>
                         </td>
                     </tr>
                     <tr>
                         <th style="padding: 5px;">Bank Number</th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $list_data_kasbon->bank_number ?>" reaodnly>
+                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>" readonly>
                         </td>
                     </tr>
                     <tr>
                         <th style="padding: 5px;">Account Name</th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $list_data_kasbon->bank_account ?>" readonly>
+                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>" readonly>
                         </td>
                     </tr>
                 </table>

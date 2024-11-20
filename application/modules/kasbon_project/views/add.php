@@ -168,8 +168,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
-                    <th class="text-center">Qty</th>
-                    <th class="text-center">Amount</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Option</th>
@@ -236,8 +234,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
-                    <th class="text-center">Qty</th>
-                    <th class="text-center">Amount</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Option</th>
@@ -381,12 +377,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'date'
                 },
                 {
-                    data: 'qty'
-                },
-                {
-                    data: 'amount'
-                },
-                {
                     data: 'total'
                 },
                 {
@@ -427,12 +417,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'date'
-                },
-                {
-                    data: 'qty'
-                },
-                {
-                    data: 'amount'
                 },
                 {
                     data: 'total'
@@ -578,7 +562,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     }
 
     $(document).on('click', '.del_kasbon_subcont', function() {
-        var id_kasbon_subcont = $(this).data('id_kasbon_subcont');
+        var id = $(this).data('id');
 
         swal({
             type: 'warning',
@@ -591,7 +575,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     type: 'post',
                     url: siteurl + active_controller + 'del_kasbon_subcont',
                     data: {
-                        'id_kasbon_subcont': id_kasbon_subcont
+                        'id': id
                     },
                     cache: false,
                     dataType: 'json',
@@ -626,7 +610,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     });
 
     $(document).on('click', '.del_kasbon_akomodasi', function() {
-        var id_kasbon_akomodasi = $(this).data('id_kasbon_akomodasi');
+        var id = $(this).data('id');
 
         swal({
             type: 'warning',
@@ -639,7 +623,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     type: 'post',
                     url: siteurl + active_controller + 'del_kasbon_akomodasi',
                     data: {
-                        'id_kasbon_akomodasi': id_kasbon_akomodasi
+                        'id': id
                     },
                     cache: false,
                     dataType: 'json',
