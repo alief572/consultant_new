@@ -84,7 +84,9 @@ class Approval_spk_level_1 extends Admin_Controller
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
-            $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
+            if(!empty($get_marketing_informasi_awal)) {
+                $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
+            }
         } else {
             $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
         }
@@ -163,7 +165,9 @@ class Approval_spk_level_1 extends Admin_Controller
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
-            $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
+            if(!empty($get_marketing_informasi_awal)) {
+                $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
+            }
         } else {
             $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
         }
