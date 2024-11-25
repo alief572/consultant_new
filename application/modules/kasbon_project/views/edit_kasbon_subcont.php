@@ -63,6 +63,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 </style>
 
 <form action="" method="post" id="frm-data" enctype="multipart/form-data">
+    <input type="hidden" name="id" value="<?= $header->id ?>">
     <input type="hidden" name="id_spk_budgeting" value="<?= $list_budgeting->id_spk_budgeting ?>">
     <input type="hidden" name="id_spk_penawaran" value="<?= $list_budgeting->id_spk_penawaran ?>">
     <input type="hidden" name="id_penawaran" value="<?= $list_budgeting->id_penawaran ?>">
@@ -114,11 +115,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 <tr>
                     <th class="pd-5 valign-top" width="150">Tanggal</th>
                     <td class="pd-5 valign-top" width="400">
-                        <input type="date" name="tgl" id="" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
+                        <input type="date" name="tgl" id="" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime($header->tgl)) ?>" required>
                     </td>
                     <th class="pd-5 valign-top" width="150">Description</th>
                     <td class="pd-5 valign-top" width="400">
-                        <textarea name="deskripsi" id="" class="form-control form-control-sm"></textarea>
+                        <textarea name="deskripsi" id="" class="form-control form-control-sm"><?= $header->deskripsi ?></textarea>
                     </td>
                 </tr>
             </table>
@@ -160,15 +161,24 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_aktual_terpakai = 0;
                     $ttl_sisa_budget = 0;
 
+                    $ttl_qty_pengajuan = 0;
+                    $ttl_nominal_pengajuan = 0;
+
                     foreach ($list_subcont as $item) {
 
-                        $aktual_terpakai = (isset($data_kasbon_subcont[$item->id_aktifitas]['ttl_qty_pengajuan'])) ? $data_kasbon_subcont[$item->id_aktifitas]['ttl_qty_pengajuan'] : 0;
-                        $sisa_budget = (isset($data_kasbon_subcont[$item->id_aktifitas]['ttl_total_pengajuan'])) ? (($item->mandays_rate_subcont_final * $item->mandays_subcont_final) - $data_kasbon_subcont[$item->id_aktifitas]['ttl_total_pengajuan']) : ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
+                        $aktual_terpakai = 0;
+                        $sisa_budget = ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
+
+                        $qty_pengajuan = (isset($data_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'])) ? $data_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'] : 0;
+
+                        $nominal_pengajuan = (isset($data_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'])) ? $data_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'] : 0;
 
                         $readonly = '';
-                        if ($sisa_budget <= 0) {
-                            $readonly = 'readonly';
-                        }
+                        // if ($sisa_budget <= 0) {
+                        //     $readonly = 'readonly';
+                        // }
+
+
 
                         echo '<tr>';
 
@@ -180,11 +190,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_subcont[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_subcont[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right auto_num" value="'.$qty_pengajuan.'" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" value="'.$nominal_pengajuan.'" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
                         echo '</td>';
 
                         echo '<td class="text-center">';
@@ -214,6 +224,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                         echo '</tr>';
 
+                        $ttl_qty_pengajuan += $qty_pengajuan;
+                        $ttl_nominal_pengajuan += $nominal_pengajuan;
+
                         $ttl_est_qty += $item->mandays_subcont_final;
                         $ttl_est_price_unit += $item->mandays_rate_subcont_final;
                         $ttl_est_total_budget += ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
@@ -228,8 +241,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 <tfoot>
                     <tr>
                         <td colspan="2" class="text-center">Total</td>
-                        <td class="text-center ttl_qty_pengajuan">0</td>
-                        <td class="text-center ttl_nominal_pengajuan">0.00</td>
+                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_pengajuan) ?></td>
+                        <td class="text-center ttl_nominal_pengajuan"><?= number_format($ttl_nominal_pengajuan, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_total_budget, 2) ?></td>
@@ -247,24 +260,32 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th style="padding: 5px;">Document</th>
                         <td style="padding: 5px;">
                             <input type="file" name="kasbon_document" id="" class="form-control form-control-sm">
+                            <input type="hidden" name="dokument_link" value="<?= $header->dokument_link ?>">
+                            <?php 
+                                if(file_exists('./'.$header->dokument_link)) {
+                                    echo '<a href="'.base_url($header->dokument_link).'" class="btn btn-sm btn-primary" target="_blank">
+                                        <i class="fa fa-download"></i> Download
+                                    </a>';
+                                }
+                            ?>
                         </td>
                     </tr>
                     <tr>
                         <th style="padding: 5px;">Bank</th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -">
+                            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>">
                         </td>
                     </tr>
                     <tr>
                         <th style="padding: 5px;">Bank Number</th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -">
+                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>">
                         </td>
                     </tr>
                     <tr>
                         <th style="padding: 5px;">Account Name</th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -">
+                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>">
                         </td>
                     </tr>
                 </table>
@@ -381,7 +402,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                     $.ajax({
                         type: 'post',
-                        url: siteurl + active_controller + 'save_kasbon_subcont',
+                        url: siteurl + active_controller + 'update_kasbon_subcont',
                         data: formData,
                         cache: false,
                         processData: false,

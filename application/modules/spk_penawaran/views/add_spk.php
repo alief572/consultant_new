@@ -435,29 +435,35 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top">Mandays Internal</td>
-                    <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right total_mandays_internal" value="<?= number_format($total_mandays - $total_mandays_subcont) ?>" readonly>
+                    <td class="pd-5 semi-bold" valign="top">Mandays Tandem</td>
+                    <td class="pd-5" valign="top">
+                        <input type="text" name="mandays_tandem" id="" class="form-control form-control-sm text-right " value="<?= number_format($total_mandays_tandem) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Tandem</td>
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_tandem" id="" class="form-control form-control-sm text-right biaya_tandem" value="<?= number_format($nilai_tandem, 2) ?>" readonly>
                     </td>
-
-
                 </tr>
                 <tr>
                     <?php
                     $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity);
                     ?>
-                    <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
-                    <td class="pd-5" valign="top">
-                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
+
+                    <td class="pd-5 semi-bold" valign="top">Mandays Internal</td>
+                    <td class="pd-5" width="400" valign="top">
+                        <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right total_mandays_internal" value="<?= number_format($total_mandays - $total_mandays_subcont) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Nilai Kontrak Bersih</td>
                     <td class="pd-5" valign="top">
                         <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right total_nilai_kontrak_bersih" value="<?= number_format($nilai_kontrak_bersih, 2) ?>" readonly>
                     </td>
+                </tr>
+                <tr>
+                    <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
+                    <td class="pd-5" valign="top">
+                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
+                    </td>
+                    <td colspan="2"></td>
                 </tr>
             </table>
         </div>
@@ -852,13 +858,13 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         var no = '<?= $no ?>';
 
         var ttl_grand_total = 0;
-        for(i = 1; i <= no; i++) {
-            var mandays = get_num($('input[name="dt['+i+'][mandays]"]').val());
-            var mandays_rate = get_num($('input[name="dt['+i+'][mandays_rate]"]').val());
-            var mandays_tandem = get_num($('input[name="dt['+i+'][mandays_tandem]"]').val());
-            var mandays_rate_tandem = get_num($('input[name="dt['+i+'][mandays_rate_tandem]"]').val());
-            var mandays_subcont = get_num($('input[name="dt['+i+'][mandays_subcont]"]').val());
-            var mandays_rate_subcont = get_num($('input[name="dt['+i+'][price_subcont]"]').val());
+        for (i = 1; i <= no; i++) {
+            var mandays = get_num($('input[name="dt[' + i + '][mandays]"]').val());
+            var mandays_rate = get_num($('input[name="dt[' + i + '][mandays_rate]"]').val());
+            var mandays_tandem = get_num($('input[name="dt[' + i + '][mandays_tandem]"]').val());
+            var mandays_rate_tandem = get_num($('input[name="dt[' + i + '][mandays_rate_tandem]"]').val());
+            var mandays_subcont = get_num($('input[name="dt[' + i + '][mandays_subcont]"]').val());
+            var mandays_rate_subcont = get_num($('input[name="dt[' + i + '][price_subcont]"]').val());
 
             var total_internal = (mandays * mandays_rate);
             var total_tandem = (mandays_tandem * mandays_rate_tandem);
@@ -868,7 +874,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
             ttl_grand_total += grand_total;
 
-            $('input[name="dt['+i+'][grand_total]"]').val(number_format(grand_total, 2));
+            $('input[name="dt[' + i + '][grand_total]"]').val(number_format(grand_total, 2));
         }
 
         $('input[name="nilai_kontrak"]').val(number_format(ttl_grand_total, 2));
