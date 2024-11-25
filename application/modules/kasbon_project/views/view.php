@@ -165,11 +165,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
-                    <th class="text-center">Qty</th>
-                    <th class="text-center">Amount</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -230,11 +227,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
-                    <th class="text-center">Qty</th>
-                    <th class="text-center">Amount</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -250,8 +244,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">No</th>
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -312,11 +304,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
-                    <th class="text-center">Qty</th>
-                    <th class="text-center">Amount</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -373,19 +362,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'date'
                 },
                 {
-                    data: 'qty'
-                },
-                {
-                    data: 'amount'
-                },
-                {
                     data: 'total'
                 },
                 {
                     data: 'status'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -421,19 +401,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'date'
                 },
                 {
-                    data: 'qty'
-                },
-                {
-                    data: 'amount'
-                },
-                {
                     data: 'total'
                 },
                 {
                     data: 'status'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -469,19 +440,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'date'
                 },
                 {
-                    data: 'qty'
-                },
-                {
-                    data: 'amount'
-                },
-                {
                     data: 'total'
                 },
                 {
                     data: 'status'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -512,12 +474,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'amount'
-                },
-                {
-                    data: 'sts'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });

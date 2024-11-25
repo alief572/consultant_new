@@ -229,16 +229,16 @@ class Kasbon_project extends Admin_Controller
                 $total_kasbon_nd += ($item_kasbon_nd->total_subcont + $item_kasbon_nd->total_akomodasi + $item_kasbon_nd->total_others);
             }
 
-            $this->db->select('a.budget_tambahan');
-            $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
-            $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_header b', 'b.id_request_ovb = a.id_request_ovb');
-            $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+            // $this->db->select('a.budget_tambahan');
+            // $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
+            // $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_header b', 'b.id_request_ovb = a.id_request_ovb');
+            // $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             
-            $get_ovb_akomodasi_nd = $this->db->get()->result();
+            // $get_ovb_akomodasi_nd = $this->db->get()->result();
 
-            foreach ($get_ovb_akomodasi_nd as $item_ovb_akomodasi_nd) {
-                $total_kasbon_nd += $item_ovb_akomodasi_nd->budget_tambahan;
-            }
+            // foreach ($get_ovb_akomodasi_nd as $item_ovb_akomodasi_nd) {
+            //     $total_kasbon_nd += $item_ovb_akomodasi_nd->budget_tambahan;
+            // }
 
             $valid_show = 1;
             if ($get_req->num_rows() > 0) {
@@ -272,7 +272,9 @@ class Kasbon_project extends Admin_Controller
 
                 $option = '<a href="' . base_url('kasbon_project/view_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info" title="View Kasbon"><i class="fa fa-eye"></i></a>';
 
-                $option .= '<a href="' . base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;" title="Process Kasbon"><i class="fa fa-pencil"></i></a>';
+                if($total_kasbon_nd > 0) {
+                    $option .= '<a href="' . base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;" title="Process Kasbon"><i class="fa fa-pencil"></i></a>';
+                }
 
                 if ($total_kasbon_nd > 0) {
                     $option .= '<button type="button" class="btn btn-sm btn-warning req_approval" data-id_spk_budgeting="' . $item->id_spk_budgeting . '" title="Request Approval" style="margin-left: 0.5rem;"><i class="fa fa-arrow-up"></i></button>';

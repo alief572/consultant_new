@@ -204,6 +204,14 @@ class Approval_kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
+        $update_req = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id_spk_budgeting' => $id_spk_budgeting]);
+        if (!$update_req) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->error($update_req));
+            exit;
+        }
+
         $update_req = $this->db->update('kons_tr_req_kasbon_project', ['sts' => 1], ['id_spk_budgeting' => $id_spk_budgeting]);
         if (!$update_req) {
             $this->db->trans_rollback();
