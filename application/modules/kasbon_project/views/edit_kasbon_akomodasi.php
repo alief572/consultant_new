@@ -63,9 +63,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 </style>
 
 <form action="" method="post" id="frm-data" enctype="multipart/form-data">
-    <input type="hidden" name="id_spk_budgeting" value="<?= $list_budgeting->id_spk_budgeting ?>">
-    <input type="hidden" name="id_spk_penawaran" value="<?= $list_budgeting->id_spk_penawaran ?>">
-    <input type="hidden" name="id_penawaran" value="<?= $list_budgeting->id_penawaran ?>">
+    <input type="hidden" name="id_header" value="<?= $header->id ?>">
+    <input type="hidden" name="id_spk_budgeting" value="<?= $header->id_spk_budgeting ?>">
+    <input type="hidden" name="id_spk_penawaran" value="<?= $header->id_spk_penawaran ?>">
+    <input type="hidden" name="id_penawaran" value="<?= $header->id_penawaran ?>">
     <div class="box">
         <div class="box-header">
 
@@ -109,16 +110,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="pd-5 valign-top" width="150"></th>
                     <td class="pd-5 valign-top" width="400"></td>
                 </tr>
-                <tr>
-                    <th class="pd-5 valign-top" width="150">Tgl</th>
-                    <td class="pd-5 valign-top" width="400">
-                        <input type="date" class="form-control form-control-sm" name="tgl" required>
-                    </td>
-                    <th class="pd-5 valign-top" width="150">Deskripsi</th>
-                    <td class="pd-5 valign-top" width="400">
-                        <textarea name="deskripsi" id="" class="form-control form-control-sm"></textarea>
-                    </td>
-                </tr>
             </table>
         </div>
     </div>
@@ -136,6 +127,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th rowspan="2" class="text-center valign-middle">Item</th>
                         <th colspan="2" class="text-center valign-middle">Pengajuan</th>
                         <th colspan="3" class="text-center valign-middle">Estimasi</th>
+                        <th rowspan="2" class="text-center valign-middle">Budget Tambahan</th>
                         <th rowspan="2" class="text-center valign-middle">Aktual Terpakai</th>
                         <th rowspan="2" class="text-center valign-middle">Sisa Budget</th>
                     </tr>
@@ -149,89 +141,84 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 </thead>
                 <tbody>
                     <?php
-                    $no = 1;
+                    $no = 0;
+
+                    $ttl_qty_peng = 0;
+                    $ttl_nominal_peng = 0;
 
                     $ttl_est_qty = 0;
                     $ttl_est_price_unit = 0;
                     $ttl_est_total_budget = 0;
-                    $ttl_aktual_pakai = 0;
+
+                    $ttl_aktual_terpakai = 0;
                     $ttl_sisa_budget = 0;
 
-                    foreach ($list_others as $item) {
+                    $ttl_budget_tambahan = 0;
 
-                        $aktual_terpakai = (isset($data_kasbon_others[$item->id_others]['ttl_qty_pengajuan'])) ? $data_kasbon_others[$item->id_others]['ttl_qty_pengajuan'] : 0;
-                        $sisa_budget = (isset($data_kasbon_others[$item->id_others]['ttl_total_pengajuan'])) ? (($item->price_unit_final * $item->qty_final) - $data_kasbon_others[$item->id_others]['ttl_total_pengajuan']) : ($item->price_unit_final * $item->qty_final);
 
-                        $readonly = '';
-                        if ($sisa_budget <= 0) {
-                            $readonly = 'readonly';
-                        }
+                    foreach ($list_data_kasbon as $item) {
+                        $no++;
+
+                        $budget_tambahan =  0;
+
+                        $qty_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['qty_pengajuan'] : 0;
+                        $nominal_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['nominal_pengajuan'] : 0;
+
+                        $aktual_terpakai = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['aktual_terpakai'] : 0;
+                        $sisa_budget = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['sisa_budget'] : 0;
 
                         echo '<tr>';
 
-                        echo '<td class="text-center">' . $no . '</td>';
-                        echo '<td>';
-                        echo $item->nm_biaya;
-                        echo '<input type="hidden" name="detail_others[' . $no . '][id_others]" value="' . $item->id_others . '">';
-                        echo '<input type="hidden" name="detail_others[' . $no . '][id_item]" value="' . $item->id_item . '">';
-                        echo '<input type="hidden" name="detail_others[' . $no . '][nm_item]" value="' . $item->nm_item . '">';
-                        echo '</td>';
-
-                        echo '<td>';
-                        echo '<input type="text" name="detail_others[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
-                        echo '</td>';
-
-                        echo '<td>';
-                        echo '<input type="text" name="detail_others[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
-                        echo '</td>';
-
                         echo '<td class="text-center">';
-                        echo number_format($item->qty_final);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][qty_estimasi]" value="' . $item->qty_final . '">';
+                        echo $no;
+                        echo '<input type="hidden" name="dt['.$no.'][id]" value="'.$item->id.'">';
                         echo '</td>';
-
+                        echo '<td>' . $item->nm_biaya . '</td>';
                         echo '<td class="text-center">';
-                        echo number_format($item->price_unit_final, 2);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][price_unit_estimasi]" value="' . $item->price_unit_final . '">';
+                        echo '<input type="number" class="form-control form-control-sm text-right" name="dt[' . $no . '][qty_pengajuan]" value="' . $qty_pengajuan . '">';
                         echo '</td>';
-
-                        echo '<td class="text-center">';
-                        echo number_format($item->total_final, 2);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][total_estimasi]" value="' . $item->total_final . '">';
+                        echo '<td class="text-right">';
+                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="dt[' . $no . '][nominal_pengajuan]" value="' . $nominal_pengajuan . '">';
                         echo '</td>';
-
+                        echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->total_estimasi, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($budget_tambahan, 2) . '</td>';
                         echo '<td class="text-center">';
                         echo number_format($aktual_terpakai);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
+                        echo '<input type="hidden" name="dt[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
                         echo '</td>';
-
-                        echo '<td class="text-center">';
+                        echo '<td class="text-right">';
                         echo number_format($sisa_budget, 2);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
+                        echo '<input type="hidden" name="dt[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
                         echo '</td>';
 
                         echo '</tr>';
 
-                        $ttl_est_qty += $item->qty_final;
-                        $ttl_est_price_unit += $item->price_unit_final;
-                        $ttl_est_total_budget += $item->total_final;
-                        $ttl_aktual_pakai += $aktual_terpakai;
+                        $ttl_qty_peng += $qty_pengajuan;
+                        $ttl_nominal_peng += $nominal_pengajuan;
+
+                        $ttl_est_qty += $item->qty_estimasi;
+                        $ttl_est_price_unit += $item->price_unit_estimasi;
+                        $ttl_est_total_budget += $item->total_estimasi;
+                        $ttl_aktual_terpakai += $aktual_terpakai;
                         $ttl_sisa_budget += $sisa_budget;
 
-                        $no++;
+                        $ttl_budget_tambahan += $budget_tambahan;
                     }
                     ?>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="2" class="text-center">Total</td>
-                        <td class="text-center ttl_qty_pengajuan">0</td>
-                        <td class="text-center ttl_nominal_pengajuan">0.00</td>
+                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_peng) ?></td>
+                        <td class="text-right ttl_nominal_pengajuan"><?= number_format($ttl_nominal_peng, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
-                        <td class="text-center"><?= number_format($ttl_est_price_unit, 2) ?></td>
-                        <td class="text-center"><?= number_format($ttl_est_total_budget, 2) ?></td>
-                        <td class="text-center"><?= number_format($ttl_aktual_pakai) ?></td>
-                        <td class="text-center"><?= number_format($ttl_sisa_budget, 2) ?></td>
+                        <td class="text-right"><?= number_format($ttl_est_price_unit, 2) ?></td>
+                        <td class="text-right"><?= number_format($ttl_est_total_budget, 2) ?></td>
+                        <td class="text-right"><?= number_format($ttl_budget_tambahan, 2) ?></td>
+                        <td class="text-center"><?= number_format($ttl_aktual_terpakai) ?></td>
+                        <td class="text-right"><?= number_format($ttl_sisa_budget, 2) ?></td>
                     </tr>
                 </tfoot>
             </table>
@@ -244,24 +231,31 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th style="padding: 5px;">Document</th>
                         <td style="padding: 5px;">
                             <input type="file" name="kasbon_document" id="" class="form-control form-control-sm">
+                            <?php
+                            if (file_exists('./' . $header->dokument_link)) {
+                                echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-sm btn-primary" target="_blank">
+                                        <i class="fa fa-download"></i> Download
+                                    </a>';
+                            }
+                            ?>
                         </td>
                     </tr>
                     <tr>
                         <th style="padding: 5px;">Bank</th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -">
+                            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>">
                         </td>
                     </tr>
                     <tr>
                         <th style="padding: 5px;">Bank Number</th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -">
+                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>">
                         </td>
                     </tr>
                     <tr>
                         <th style="padding: 5px;">Account Name</th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -">
+                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>">
                         </td>
                     </tr>
                 </table>
@@ -328,8 +322,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         var ttl_price = 0;
 
         for (i = 1; i <= no; i++) {
-            var qty_pengajuan = get_num($('input[name="detail_others[' + i + '][qty_pengajuan]"]').val());
-            var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
+            var qty_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][qty_pengajuan]"]').val());
+            var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
 
             ttl_qty += qty_pengajuan;
             ttl_price += nominal_pengajuan;
@@ -347,15 +341,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         var valid = 1;
 
         for (i = 1; i <= no; i++) {
-            var qty_pengajuan = get_num($('input[name="detail_others[' + i + '][qty_pengajuan]"]').val());
-            var qty_estimasi = get_num($('input[name="detail_others[' + i + '][qty_estimasi]"]').val());
-            var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
-            var price_unit_estimasi = get_num($('input[name="detail_others[' + i + '][price_unit_estimasi]"]').val());
+            var qty_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][qty_pengajuan]"]').val());
+            var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
+            var sisa_budget = get_num($('input[name="detail_akomodasi[' + i + '][sisa_budget]"]').val());
 
-            if (valid == '1' && qty_pengajuan > qty_estimasi) {
-                valid = 0;
-            }
-            if (valid == '1' && nominal_pengajuan > price_unit_estimasi) {
+            if (valid == '1' && (qty_pengajuan * nominal_pengajuan) > sisa_budget) {
                 valid = 0;
             }
         }
@@ -364,7 +354,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             swal({
                 type: 'warning',
                 title: 'Warning !',
-                text: 'Qty atau Nominal pengajuan melebihi estimasi !'
+                text: 'Nominal pengajuan melebihi Sisa Budget !'
             });
         } else {
             swal({
@@ -378,7 +368,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                     $.ajax({
                         type: 'post',
-                        url: siteurl + active_controller + 'save_kasbon_others',
+                        url: siteurl + active_controller + 'update_kasbon_akomodasi',
                         data: formData,
                         cache: false,
                         processData: false,

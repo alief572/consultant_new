@@ -166,8 +166,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                     foreach ($list_subcont as $item) {
 
-                        $aktual_terpakai = (isset($data_kasbon_subcont[$item->id_aktifitas]['ttl_qty_pengajuan'])) ? $data_ : 0;
-                        $sisa_budget = (isset($data_kasbon_subcont[$item->id_aktifitas]['ttl_total_pengajuan'])) ? (($item->mandays_rate_subcont_final * $item->mandays_subcont_final) - $data_kasbon_subcont[$item->id_aktifitas]['ttl_total_pengajuan']) : ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
+                        $aktual_terpakai = 0;
+                        $sisa_budget = ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
 
                         $qty_pengajuan = (isset($data_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'])) ? $data_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'] : 0;
 

@@ -207,7 +207,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<input type="hidden" name="detail_akomodasi[' . $no . '][total_estimasi]" value="' . $item->total_final . '">';
                         echo '</td>';
 
-                        echo '<td class="text-center">' . number_format($total_budget_tambahan, 2) . '</td>';
+                        echo '<td class="text-center">';
+                        echo number_format($total_budget_tambahan, 2);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][budget_tambahan]" value="' . $total_budget_tambahan . '">';
+                        echo '</td>';
 
                         echo '<td class="text-center">';
                         echo number_format($aktual_terpakai);
@@ -370,6 +373,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         for (i = 1; i <= no; i++) {
             var qty_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][qty_pengajuan]"]').val());
             var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
+            var budget_tambahan = get_num($('input[name="detail_akomodasi[' + i + '][budget_tamabahan]"]').val());
             var sisa_budget = get_num($('input[name="detail_akomodasi[' + i + '][sisa_budget]"]').val());
 
             if (valid == '1' && (qty_pengajuan * nominal_pengajuan) > sisa_budget) {

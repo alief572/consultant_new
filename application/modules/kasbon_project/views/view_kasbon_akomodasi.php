@@ -106,6 +106,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="pd-5 valign-top" width="150"></th>
                     <td class="pd-5 valign-top" width="400"></td>
                 </tr>
+                <tr>
+                    <th class="pd-5 valign-top" width="150">Tanggal</th>
+                    <td class="pd-5 valign-top" width="400"><?= date('d F Y', strtotime($header->tgl)) ?></td>
+                    <th class="pd-5 valign-top" width="150">Description</th>
+                    <td class="pd-5 valign-top" width="400"><?= $header->deskripsi ?></td>
+                </tr>
             </table>
         </div>
     </div>
@@ -154,14 +160,14 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     
                     foreach ($list_data_kasbon as $item) {
                         $no++;
-                        
-                        $budget_tambahan =  0;
 
                         $qty_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['qty_pengajuan'] : 0;
                         $nominal_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['nominal_pengajuan'] : 0;
 
                         $aktual_terpakai = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['aktual_terpakai'] : 0;
                         $sisa_budget = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['sisa_budget'] : 0;
+
+                        $budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['budget_tambahan'] : 0;
 
                         echo '<tr>';
 
