@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => '203.160.58.170',
+	'hostname' => 'localhost',
 	'username' => 'root',
 	'password' => 'sentral2022**',
-	'database' => 'db_consultant_new',
+	'database' => 'db_konsultant_new_dev',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -87,28 +87,6 @@ $db['default'] = array(
 	'cachedir' => '',
 	'char_set' => 'utf8',
 	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
-);
-
-$db['accounting'] = array(
-	'dsn'	=> '',
-	'hostname' => '203.160.58.170',
-	'username' => 'root',
-	'password' => 'sentral2022**',
-	'database' => 'gl_consultant_new',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'development'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8mb4',
-	'dbcollat' => 'utf8mb4_general_ci',
 	'swap_pre' => '',
 	'encrypt' => FALSE,
 	'compress' => FALSE,
