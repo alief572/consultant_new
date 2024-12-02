@@ -32,7 +32,7 @@ class Kasbon_project extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Project Budgeting');
+        $this->template->title('Kasbon Project');
         $this->template->render('index');
     }
 
