@@ -16,10 +16,10 @@ class Project_budgeting_model extends BF_Model
     function generate_id_spk_budgeting()
     {
         $Ym             = date('ym');
-        $srcMtr            = "SELECT MAX(id_spk_penawaran) as maxP FROM kons_tr_spk_penawaran WHERE id_spk_penawaran LIKE '%SPK-BUDGET/" . date('y') . "/" . date('m') . "%' ";
+        $srcMtr            = "SELECT MAX(id_spk_budgeting) as maxP FROM kons_tr_spk_budgeting WHERE id_spk_budgeting LIKE '%SPK-BUDGET/" . date('y') . "/" . date('m') . "%' ";
         $resultMtr        = $this->db->query($srcMtr)->result_array();
         $angkaUrut2        = $resultMtr[0]['maxP'];
-        $urutan2        = (int)substr($angkaUrut2, 0, 3);
+        $urutan2        = (int)substr($angkaUrut2, 17, 3);
         $urutan2++;
         $urut2            = sprintf('%03s', $urutan2);
         $kode_trans        = "SPK-BUDGET/" . date('y') . "/" . date('m') . "/" . $urut2;

@@ -184,6 +184,92 @@ class Expense_report_project extends Admin_Controller
         $this->template->render('add_expense_subcont');
     }
 
+    public function edit_expense_subcont($id_header)
+    {
+        $id_header = urldecode($id_header);
+        $id_header = str_replace('|', '/', $id_header);
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->where('a.id_header', $id_header);
+        $get_header = $this->db->get()->row();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_expense_report_bukti_pengembalian a');
+        $this->db->where('a.id_header_expense', $get_header->id);
+        $get_bukti_pengembalian = $this->db->get()->result();
+
+        $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header a', ['a.id' => $id_header])->row();
+
+        $datalist_item = [];
+        $datalist_item_expense = [];
+
+        if ($get_kasbon_header->tipe == 1) {
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_spk_budgeting_aktifitas a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $this->db->order_by('a.id_aktifitas', 'asc');
+            $get_list_subcont = $this->db->get()->result();
+
+            $no = 0;
+            foreach ($get_list_subcont as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_aktifitas', $item->id_aktifitas);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_aktifitas,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon
+                ];
+            }
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_expense_report_project_detail a');
+            $this->db->where('a.id_header_kasbon', $id_header);
+            $get_expense_detail = $this->db->get()->result();
+
+            $no = 1;
+            foreach($get_expense_detail as $item) {
+                $datalist_item_expense[$item->id_detail_kasbon] = [
+                    'id' => $item->id,
+                    'id_detail_kasbon' => $item->id_detail_kasbon,
+                    'tipe' => $item->tipe,
+                    'qty_expense' => $item->qty_expense,
+                    'nominal_expense' => $item->nominal_expense
+                ];
+            }
+        }
+
+        $data = [
+            'header' => $get_header,
+            'list_bukti_pengembalian' => $get_bukti_pengembalian,
+            'datalist_item' => $datalist_item,
+            'datalist_item_expense' => $datalist_item_expense,
+            'id_spk_budgeting' => $get_kasbon_header->id_spk_budgeting,
+            'id_header' => $id_header,
+            'id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran,
+            'id_penawaran' => $get_kasbon_header->id_penawaran
+        ];
+
+        $this->template->set($data);
+        $this->template->render('edit_expense_subcont');
+    }
+
+
     // End Page Function    
 
     // Get Data Function    
@@ -326,7 +412,7 @@ class Expense_report_project extends Admin_Controller
 
             $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
             if ($check_expense->num_rows() > 0) {
-                if ($check_expense->sts !== 1) {
+                if ($check_expense->row()->sts !== 1) {
                     $sts = '<button type="button" class="btn btn-sm btn-info">Waiting Approval</button>';
                 } else {
                     $sts = '<button type="button" class="btn btn-sm btn-primary">Approved</button>';
@@ -461,7 +547,7 @@ class Expense_report_project extends Admin_Controller
         $config['upload_path'] = './uploads/expense_report_project/'; //path folder
         $config['allowed_types'] = '*'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
-        $config['encrypt_name'] = FALSE; // Encrypt the uploaded file's name.
+        $config['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
         $config['remove_spaces'] = TRUE; // Remove spaces from the file name.
 
         $this->load->library('upload', $config);
@@ -491,7 +577,7 @@ class Expense_report_project extends Admin_Controller
         $config2['upload_path'] = './uploads/bukti_pengembalian_expense_report/'; //path folder
         $config2['allowed_types'] = '*'; //type yang dapat diakses bisa anda sesuaikan
         $config2['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
-        $config2['encrypt_name'] = FALSE; // Encrypt the uploaded file's name.
+        $config2['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
         $config2['remove_spaces'] = TRUE; // Remove spaces from the file name.
 
         // $this->load->library('upload', $config);
@@ -505,7 +591,7 @@ class Expense_report_project extends Admin_Controller
             $_FILES['bukti_pengembalian']['size'] = $files2['size'][$i];
 
             // Reinitialize the upload class for each file
-            if ($this->upload->do_upload()) {
+            if ($this->upload->do_upload('bukti_pengembalian')) {
                 // Handle success (save file information or any other action)
                 $data = $this->upload->data();
 

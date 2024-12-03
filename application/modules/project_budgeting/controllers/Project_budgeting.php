@@ -302,6 +302,11 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.id_quotation', $get_spk_penawaran->id_penawaran);
         $get_penawaran = $this->db->get()->row();
 
+        $this->db->delete('kons_tr_spk_budgeting', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
+        $this->db->delete('kons_tr_spk_budgeting_akomodasi', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
+        $this->db->delete('kons_tr_spk_budgeting_aktifitas', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
+        $this->db->delete('kons_tr_spk_budgeting_others', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
+
         $id_spk_budgeting = $this->Project_budgeting_model->generate_id_spk_budgeting();
 
         $data_insert = [

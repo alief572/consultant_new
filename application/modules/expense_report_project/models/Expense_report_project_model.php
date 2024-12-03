@@ -22,7 +22,7 @@ class Expense_report_project_model extends BF_Model
         $urutan2        = (int)substr($angkaUrut2, 0, 4);
         $urutan2++;
         $urut2            = sprintf('%04s', $urutan2);
-        $kode_trans        = $urut2 . '/EXP/H   /' . date('Y');
+        $kode_trans        = $urut2 . '/EXP/H/' . date('Y');
 
         return $kode_trans;
     }
