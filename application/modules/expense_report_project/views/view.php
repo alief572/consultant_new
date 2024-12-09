@@ -167,7 +167,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -230,7 +229,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -293,7 +291,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -309,7 +306,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
-<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<!-- <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script> -->
 
 <script>
     $(document).ready(function() {
@@ -353,9 +350,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 },
                 {
                     data: 'status'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -395,9 +389,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 },
                 {
                     data: 'status'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -437,9 +428,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 },
                 {
                     data: 'status'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -470,9 +458,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 },
                 {
                     data: 'amount'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });

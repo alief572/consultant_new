@@ -3,6 +3,14 @@ $ENABLE_ADD     = has_permission('Expense_Report_Project.Add');
 $ENABLE_MANAGE  = has_permission('Expense_Report_Project.Manage');
 $ENABLE_VIEW    = has_permission('Expense_Report_Project.View');
 $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
+
+$title_header = 'Subcont';
+if($tipe == '2') {
+    $title_header = 'Akomodasi';
+}
+if($tipe == '3') {
+    $title_header = 'Others';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -72,9 +80,10 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
     <input type="hidden" name="id_spk_budgeting" value="<?= $id_spk_budgeting ?>">
     <input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
     <input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
+    <input type="hidden" name="tipe" value="<?= $tipe ?>">
     <div class="box">
         <div class="box-header">
-            <h3>List Item Subcont</h3>
+            <h3>List Item <?= $title_header ?></h3>
         </div>
 
         <div class="box-body" style="z-index: 1 !important;">
@@ -228,6 +237,10 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
 
+        var tipe = "<?= $tipe; ?>";
+
+        var url_dest = 'save_expense_report';
+
         swal({
             type: 'warning',
             title: 'Are you sure ?',
@@ -239,7 +252,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
                 $.ajax({
                     type: 'post',
-                    url: siteurl + active_controller + 'save_expense_report_subcont',
+                    url: siteurl + active_controller + url_dest,
                     data: formData,
                     cache: false,
                     processData: false,

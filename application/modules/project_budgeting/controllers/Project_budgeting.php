@@ -135,7 +135,7 @@ class Project_budgeting extends Admin_Controller
                 if ($this->deletePermission && $check_spk_budgeting->sts !== '1') {
                     $option .= '
                         <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem;">
-                            <a href="javascript:void(0);" class="btn btn-sm btn-danger del_spk_budget" style="color: #000000" data-id="'.$check_spk_budgeting->id_spk_budgeting.'">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-danger del_spk_budget" style="color: #000000" data-id="' . $check_spk_budgeting->id_spk_budgeting . '">
                                 <div class="col-12 dropdown-item">
                                 <b>
                                     <i class="fa fa-trash"></i>
@@ -240,7 +240,8 @@ class Project_budgeting extends Admin_Controller
         $this->template->render('add');
     }
 
-    public function view_budget($id_spk_budgeting) {
+    public function view_budget($id_spk_budgeting)
+    {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
 
@@ -283,7 +284,6 @@ class Project_budgeting extends Admin_Controller
 
         $this->template->set($data);
         $this->template->render('view');
-
     }
 
     public function save_budgeting()
@@ -444,30 +444,36 @@ class Project_budgeting extends Admin_Controller
 
         $insert_spk_budgeting = $this->db->insert('kons_tr_spk_budgeting', $data_insert);
         if (!$insert_spk_budgeting) {
-            print_r($this->db->error($insert_spk_budgeting));
+            print_r('Error 1' . $this->db->error($insert_spk_budgeting));
             $this->db->trans_rollback();
             exit;
         }
 
-        $insert_spk_budgeting_aktifitas = $this->db->insert_batch('kons_tr_spk_budgeting_aktifitas', $data_insert_konsultasi);
-        if (!$insert_spk_budgeting_aktifitas) {
-            print_r($this->db->error($insert_spk_budgeting_aktifitas));
-            $this->db->trans_rollback();
-            exit;
+        if (!empty($data_insert_konsultasi)) {
+            $insert_spk_budgeting_aktifitas = $this->db->insert_batch('kons_tr_spk_budgeting_aktifitas', $data_insert_konsultasi);
+            if (!$insert_spk_budgeting_aktifitas) {
+                print_r('Error 2' . $this->db->error($insert_spk_budgeting_aktifitas));
+                $this->db->trans_rollback();
+                exit;
+            }
         }
 
-        $insert_spk_budgeting_akomodasi = $this->db->insert_batch('kons_tr_spk_budgeting_akomodasi', $data_insert_akomodasi);
-        if (!$insert_spk_budgeting_akomodasi) {
-            print_r($this->db->error($insert_spk_budgeting_akomodasi));
-            $this->db->trans_rollback();
-            exit;
+        if (!empty($data_insert_akomodasi)) {
+            $insert_spk_budgeting_akomodasi = $this->db->insert_batch('kons_tr_spk_budgeting_akomodasi', $data_insert_akomodasi);
+            if (!$insert_spk_budgeting_akomodasi) {
+                print_r('Error 3' . $this->db->error($insert_spk_budgeting_akomodasi));
+                $this->db->trans_rollback();
+                exit;
+            }
         }
 
-        $insert_spk_budgeting_others = $this->db->insert_batch('kons_tr_spk_budgeting_others', $data_insert_others);
-        if (!$insert_spk_budgeting_others) {
-            print_r($this->db->error($insert_spk_budgeting_others));
-            $this->db->trans_rollback();
-            exit;
+        if (!empty($data_insert_others)) {
+            $insert_spk_budgeting_others = $this->db->insert_batch('kons_tr_spk_budgeting_others', $data_insert_others);
+            if (!$insert_spk_budgeting_others) {
+                print_r('Error 4' . $this->db->error($insert_spk_budgeting_others));
+                $this->db->trans_rollback();
+                exit;
+            }
         }
 
         if ($this->db->trans_status() ===  false) {
@@ -486,7 +492,8 @@ class Project_budgeting extends Admin_Controller
         ]);
     }
 
-    public function del_spk_budgeting() {
+    public function del_spk_budgeting()
+    {
         $id = $this->input->post('id');
 
         $this->db->trans_begin();
@@ -496,7 +503,7 @@ class Project_budgeting extends Admin_Controller
         $this->db->delete('kons_tr_spk_budgeting_aktifitas', ['id_spk_budgeting' => $id]);
         $this->db->delete('kons_tr_spk_budgeting', ['id_spk_budgeting' => $id]);
 
-        if($this->db->trans_status() === false) {
+        if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
             $valid = 0;

@@ -11,13 +11,13 @@ if (!defined('BASEPATH')) {
  */
 
 $status = array();
-class Expense_report_project extends Admin_Controller
+class Approval_expense_report_project extends Admin_Controller
 {
     //Permission
-    protected $viewPermission     = 'Expense_Report_Project.View';
-    protected $addPermission      = 'Expense_Report_Project.Add';
-    protected $managePermission = 'Expense_Report_Project.Manage';
-    protected $deletePermission = 'Expense_Report_Project.Delete';
+    protected $viewPermission     = 'Approval_Expense_Report_Project.View';
+    protected $addPermission      = 'Approval_Expense_Report_Project.Add';
+    protected $managePermission = 'Approval_Expense_Report_Project.Manage';
+    protected $deletePermission = 'Approval_Expense_Report_Project.Delete';
 
     public function __construct()
     {
@@ -25,7 +25,7 @@ class Expense_report_project extends Admin_Controller
         $this->template->title('Expense Report Project');
         $this->template->page_icon('fa fa-cubes');
         $this->load->library('upload');
-        $this->load->model(array('Expense_report_project/Expense_report_project_model'));
+        $this->load->model(array('Approval_expense_report_project/Approval_expense_report_project_model'));
         date_default_timezone_set('Asia/Bangkok');
     }
 
@@ -34,11 +34,11 @@ class Expense_report_project extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Expense Report Project');
+        $this->template->title('Approval Expense Report Project');
         $this->template->render('index');
     }
 
-    public function add($id_spk_budgeting)
+    public function req_app($id_spk_budgeting)
     {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
@@ -81,7 +81,9 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_subcont a');
+        $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id_header', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts_req', 1);
         $get_kasbon_subcont = $this->db->get()->result();
 
         $nilai_kasbon_on_proses = 0;
@@ -93,7 +95,9 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_akomodasi a');
+        $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id_header', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts_req', 1);
         $get_kasbon_akomodasi = $this->db->get()->result();
 
         $nilai_kasbon_on_proses_akomodasi = 0;
@@ -105,7 +109,9 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_others a');
+        $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id_header', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts_req', 1);
         $get_kasbon_others = $this->db->get()->result();
 
         $nilai_kasbon_on_proses_others = 0;
@@ -115,7 +121,17 @@ class Expense_report_project extends Admin_Controller
             }
         }
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $get_expense = $this->db->get()->result();
+
+        // print_r($this->db->error($get_expense));
+        // exit;
+
         $data = [
+            'list_expense' => $get_expense,
             'list_budgeting' => $get_budgeting,
             'budget_subcont' => $budget_subcont,
             'budget_akomodasi' => $budget_akomodasi,
@@ -126,98 +142,7 @@ class Expense_report_project extends Admin_Controller
         ];
 
         $this->template->set($data);
-        $this->template->render('add');
-    }
-
-    public function view($id_spk_budgeting)
-    {
-        $id_spk_budgeting = urldecode($id_spk_budgeting);
-        $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
-
-        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
-        $this->db->from('kons_tr_spk_budgeting a');
-        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_budgeting = $this->db->get()->row();
-
-        $budget_subcont = 0;
-        $this->db->select('a.mandays_subcont_final, a.mandays_rate_subcont_final');
-        $this->db->from('kons_tr_spk_budgeting_aktifitas a');
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_budget_subcont = $this->db->get()->result();
-
-        foreach ($get_budget_subcont as $item) {
-            $budget_subcont += ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
-        }
-
-        $this->db->select('SUM(a.total_final) as budget_akomodasi');
-        $this->db->from('kons_tr_spk_budgeting_akomodasi a');
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_budget_akomodasi = $this->db->get()->row();
-        $budget_akomodasi = $get_budget_akomodasi->budget_akomodasi;
-
-        $this->db->select('SUM(b.budget_tambahan) as total_ovb_akomodasi');
-        $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_header a');
-        $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_detail b', 'b.id_request_ovb = a.id_request_ovb', 'left');
-        $this->db->where('a.tipe', 2);
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_budget_ovb_akomodasi = $this->db->get()->row();
-        $budget_akomodasi += $get_budget_ovb_akomodasi->total_ovb_akomodasi;
-
-        $this->db->select('SUM(a.total_final) as budget_others');
-        $this->db->from('kons_tr_spk_budgeting_others a');
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_budget_others = $this->db->get()->row();
-        $budget_others = $get_budget_others->budget_others;
-
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_kasbon_project_subcont a');
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_kasbon_subcont = $this->db->get()->result();
-
-        $nilai_kasbon_on_proses = 0;
-        foreach ($get_kasbon_subcont as $item) {
-            if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses += $item->total_pengajuan;
-            }
-        }
-
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_kasbon_project_akomodasi a');
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_kasbon_akomodasi = $this->db->get()->result();
-
-        $nilai_kasbon_on_proses_akomodasi = 0;
-        foreach ($get_kasbon_akomodasi as $item) {
-            if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses_akomodasi += $item->total_pengajuan;
-            }
-        }
-
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_kasbon_project_others a');
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_kasbon_others = $this->db->get()->result();
-
-        $nilai_kasbon_on_proses_others = 0;
-        foreach ($get_kasbon_others as $item) {
-            if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses_others += $item->total_pengajuan;
-            }
-        }
-
-        $data = [
-            'list_budgeting' => $get_budgeting,
-            'budget_subcont' => $budget_subcont,
-            'budget_akomodasi' => $budget_akomodasi,
-            'budget_others' => $budget_others,
-            'nilai_kasbon_on_proses' => $nilai_kasbon_on_proses,
-            'nilai_kasbon_on_proses_akomodasi' => $nilai_kasbon_on_proses_akomodasi,
-            'nilai_kasbon_on_proses_others' => $nilai_kasbon_on_proses_others
-        ];
-
-        $this->template->set($data);
-        $this->template->render('view');
+        $this->template->render('request_approval');
     }
 
     public function add_expense_subcont($id_header)
@@ -778,27 +703,27 @@ class Expense_report_project extends Admin_Controller
 
             $valid_show = 1;
 
-            // $check_app_kasbon_project = $this->db->get_where('kons_tr_req_kasbon_project', ['id_spk_budgeting' => $item->id_spk_budgeting, 'sts' => 1])->num_rows();
-            // if ($check_app_kasbon_project < 1) {
-            //     $valid_show = 0;
-            // }
+            $check_app_kasbon_project = $this->db->get_where('kons_tr_req_kasbon_project', ['id_spk_budgeting' => $item->id_spk_budgeting, 'sts' => 1])->num_rows();
+            if ($check_app_kasbon_project < 1) {
+                $valid_show = 0;
+            }
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_expense_report_project_header a');
+            $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+            $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+            $this->db->where('a.sts_req', 1);
+            $this->db->group_by('a.id');
+            $check_expense_req_app = $this->db->get()->row();
+
+            if(count($check_expense_req_app) < 1) {
+                $valid_show = 0;
+            }
 
             if ($valid_show == 1) {
                 $no++;
 
-                $option = '<a href="' . base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" title="Add Expense Report"><i class="fa fa-arrow-up"></i></a>';
-
-                $this->db->select('a.*');
-                $this->db->from('kons_tr_expense_report_project_header a');
-                $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
-                $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
-                $this->db->where('a.sts', 1);
-                $this->db->group_by('a.id');
-                $check_expense = $this->db->get()->result();
-
-                if(count($check_expense) > 0) {
-                    $option = '<a href="' . base_url('expense_report_project/view/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info" title="View Expense Report"><i class="fa fa-eye"></i></a>';
-                }
+                $option = '<a href="' . base_url('approval_expense_report_project/req_app/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" title="Add Expense Report"><i class="fa fa-arrow-up"></i></a>';
 
                 $hasil[] = [
                     'no' => $no,
@@ -831,8 +756,10 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 1);
+        $this->db->where('b.sts_req', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1028,8 +955,10 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 2);
+        $this->db->where('b.sts_req', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1223,8 +1152,10 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 3);
+        $this->db->where('b.sts_req', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1411,363 +1342,23 @@ class Expense_report_project extends Admin_Controller
 
     // Update Data Function
 
-    public function save_expense_report()
-    {
-        $post = $this->input->post();
-
-        $this->db->trans_start();
-
-        $id = $this->Expense_report_project_model->generate_id_expense_report_header();
-
-        $config['upload_path'] = './uploads/expense_report_project/'; //path folder
-        $config['allowed_types'] = '*'; //type yang dapat diakses bisa anda sesuaikan
-        $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
-        $config['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
-        $config['remove_spaces'] = TRUE; // Remove spaces from the file name.
-
-        $this->load->library('upload', $config);
-        $this->upload->initialize($config);
-
-        $upload_po = '';
-
-        $files = $_FILES['kasbon_document'];
-        $file_count = count($files['name']);
-
-        $_FILES['kasbon_document']['name'] = $files['name'];
-        $_FILES['kasbon_document']['type'] = $files['type'];
-        $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        $_FILES['kasbon_document']['error'] = $files['error'];
-        $_FILES['kasbon_document']['size'] = $files['size'];
-
-        if ($this->upload->do_upload('kasbon_document')) {
-            $data_upload_po = $this->upload->data();
-            $upload_po = 'uploads/expense_report_project/' . $data_upload_po['file_name'];
-        }
-
-        $data_bukti_pengembalian = [];
-
-        $files2 = $_FILES['bukti_pengembalian'];
-        $file_count2 = count($files2['name']);
-
-        $config2['upload_path'] = './uploads/bukti_pengembalian_expense_report/'; //path folder
-        $config2['allowed_types'] = '*'; //type yang dapat diakses bisa anda sesuaikan
-        $config2['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
-        $config2['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
-        $config2['remove_spaces'] = TRUE; // Remove spaces from the file name.
-
-        // $this->load->library('upload', $config);
-        $this->upload->initialize($config2);
-
-        for ($i = 0; $i < $file_count2; $i++) {
-            $_FILES['bukti_pengembalian']['name'] = $files2['name'][$i];
-            $_FILES['bukti_pengembalian']['type'] = $files2['type'][$i];
-            $_FILES['bukti_pengembalian']['tmp_name'] = $files2['tmp_name'][$i];
-            $_FILES['bukti_pengembalian']['error'] = $files2['error'][$i];
-            $_FILES['bukti_pengembalian']['size'] = $files2['size'][$i];
-
-            // Reinitialize the upload class for each file
-            if ($this->upload->do_upload('bukti_pengembalian')) {
-                // Handle success (save file information or any other action)
-                $data = $this->upload->data();
-
-                $data_bukti_pengembalian[] = [
-                    'id_header_expense' => $id,
-                    'document_link' => 'uploads/bukti_pengembalian_expense_report/' . $data['file_name'],
-                    'created_by' => $this->auth->user_id(),
-                    'created_date' => date('Y-m-d H:i:s')
-                ];
-            }
-        }
-
-        $data_insert_detail = [];
-
-        $ttl_kasbon = 0;
-        $ttl_expense_report = 0;
-
-        if (isset($post['detail_subcont'])) {
-            foreach ($post['detail_subcont'] as $item) {
-                $qty_kasbon = $item['qty_kasbon'];
-                $nominal_kasbon = $item['nominal_kasbon'];
-
-                $qty_expense = str_replace(',', '', $item['qty_expense']);
-                $nominal_expense = str_replace(',', '', $item['nominal_expense']);
-
-                if ($qty_expense > 0 && $nominal_expense > 0) {
-                    $data_insert_detail[] = [
-                        'id_header_expense' => $id,
-                        'id_header_kasbon' => $post['id_header'],
-                        'id_spk_budgeting' => $post['id_spk_budgeting'],
-                        'id_spk_penawaran' => $post['id_spk_penawaran'],
-                        'id_penawaran' => $post['id_penawaran'],
-                        'id_detail_kasbon' => $item['id_detail_kasbon'],
-                        'tipe' => 1,
-                        'qty_expense' => $qty_expense,
-                        'nominal_expense' => $nominal_expense,
-                        'created_by' => $this->auth->user_id(),
-                        'created_date' => date('Y-m-d H:i:s')
-                    ];
-                }
-
-                $ttl_kasbon += ($qty_kasbon * $nominal_kasbon);
-                $ttl_expense_report += ($qty_expense * $nominal_expense);
-            }
-        }
-
-        $data_insert_header = [
-            'id' => $id,
-            'id_header' => $post['id_header'],
-            'total_expense_report' => $ttl_expense_report,
-            'total_kasbon' => $ttl_kasbon,
-            'selisih' => ($ttl_kasbon - $ttl_expense_report),
-            'tipe' => $post['tipe'],
-            'document_link' => $upload_po,
-            'bank' => $post['kasbon_bank'],
-            'bank_number' => $post['kasbon_bank_number'],
-            'bank_account' => $post['kasbon_bank_account'],
-            'created_by' => $this->auth->user_id(),
-            'created_date' => date('Y-m-d H:i:s')
-        ];
-
-        $insert_header = $this->db->insert('kons_tr_expense_report_project_header', $data_insert_header);
-        if (!$insert_header) {
-            $this->db->trans_rollback();
-
-            print_r('error insert header : ' . $this->db->error($insert_header));
-            exit;
-        }
-
-        $insert_detail = $this->db->insert_batch('kons_tr_expense_report_project_detail', $data_insert_detail);
-        if (!$insert_detail) {
-            $this->db->trans_rollback();
-
-            print_r('error insert detail :' . $this->db->error($insert_detail));
-            exit;
-        }
-
-        if (!empty($data_bukti_pengembalian)) {
-            $insert_bukti_pengembalian = $this->db->insert_batch('kons_tr_expense_report_bukti_pengembalian', $data_bukti_pengembalian);
-            if (!$insert_bukti_pengembalian) {
-                $this->db->trans_rollback();
-
-                print_r('error insert bukti pengembalian : ' . $this->db->error($insert_bukti_pengembalian));
-                exit;
-            }
-        }
-
-        if ($this->db->trans_status() === false) {
-            $this->db->trans_rollback();
-
-            $valid = 0;
-            $pesan = 'Please try again later !';
-        } else {
-            $this->db->trans_commit();
-
-            $valid = 1;
-            $pesan = 'Expense data has been saved !';
-        }
-
-        echo json_encode([
-            'status' => $valid,
-            'pesan' => $pesan
-        ]);
-    }
-
-    public function update_expense_report_subcont()
-    {
-        $post = $this->input->post();
-
-        $this->db->trans_start();
-
-        $id = $post['id_expense'];
-
-        $config['upload_path'] = './uploads/expense_report_project/'; //path folder
-        $config['allowed_types'] = '*'; //type yang dapat diakses bisa anda sesuaikan
-        $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
-        $config['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
-        $config['remove_spaces'] = TRUE; // Remove spaces from the file name.
-
-        $this->load->library('upload', $config);
-        $this->upload->initialize($config);
-
-        $upload_po = '';
-
-        $files = $_FILES['kasbon_document'];
-        $file_count = count($files['name']);
-
-        $_FILES['kasbon_document']['name'] = $files['name'];
-        $_FILES['kasbon_document']['type'] = $files['type'];
-        $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        $_FILES['kasbon_document']['error'] = $files['error'];
-        $_FILES['kasbon_document']['size'] = $files['size'];
-
-        if ($this->upload->do_upload('kasbon_document')) {
-            $data_upload_po = $this->upload->data();
-            $upload_po = 'uploads/expense_report_project/' . $data_upload_po['file_name'];
-        }
-
-        $data_bukti_pengembalian = [];
-
-        $files2 = $_FILES['bukti_pengembalian'];
-        $file_count2 = count($files2['name']);
-
-        $config2['upload_path'] = './uploads/bukti_pengembalian_expense_report/'; //path folder
-        $config2['allowed_types'] = '*'; //type yang dapat diakses bisa anda sesuaikan
-        $config2['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
-        $config2['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
-        $config2['remove_spaces'] = TRUE; // Remove spaces from the file name.
-
-        // $this->load->library('upload', $config);
-        $this->upload->initialize($config2);
-
-        for ($i = 0; $i < $file_count2; $i++) {
-            $_FILES['bukti_pengembalian']['name'] = $files2['name'][$i];
-            $_FILES['bukti_pengembalian']['type'] = $files2['type'][$i];
-            $_FILES['bukti_pengembalian']['tmp_name'] = $files2['tmp_name'][$i];
-            $_FILES['bukti_pengembalian']['error'] = $files2['error'][$i];
-            $_FILES['bukti_pengembalian']['size'] = $files2['size'][$i];
-
-            // Reinitialize the upload class for each file
-            if ($this->upload->do_upload('bukti_pengembalian')) {
-                // Handle success (save file information or any other action)
-                $data = $this->upload->data();
-
-                $data_bukti_pengembalian[] = [
-                    'id_header_expense' => $id,
-                    'document_link' => 'uploads/bukti_pengembalian_expense_report/' . $data['file_name'],
-                    'created_by' => $this->auth->user_id(),
-                    'created_date' => date('Y-m-d H:i:s')
-                ];
-            }
-        }
-
-        $data_insert_detail = [];
-
-        $ttl_kasbon = 0;
-        $ttl_expense_report = 0;
-
-        if (isset($post['detail_subcont'])) {
-            foreach ($post['detail_subcont'] as $item) {
-                $qty_kasbon = $item['qty_kasbon'];
-                $nominal_kasbon = $item['nominal_kasbon'];
-
-                $qty_expense = str_replace(',', '', $item['qty_expense']);
-                $nominal_expense = str_replace(',', '', $item['nominal_expense']);
-
-                if ($qty_expense > 0 && $nominal_expense > 0) {
-                    $data_insert_detail[] = [
-                        'id_header_expense' => $id,
-                        'id_header_kasbon' => $post['id_header'],
-                        'id_spk_budgeting' => $post['id_spk_budgeting'],
-                        'id_spk_penawaran' => $post['id_spk_penawaran'],
-                        'id_penawaran' => $post['id_penawaran'],
-                        'id_detail_kasbon' => $item['id_detail_kasbon'],
-                        'tipe' => $post['tipe'],
-                        'qty_expense' => $qty_expense,
-                        'nominal_expense' => $nominal_expense,
-                        'created_by' => $this->auth->user_id(),
-                        'created_date' => date('Y-m-d H:i:s')
-                    ];
-                }
-
-                $ttl_kasbon += ($qty_kasbon * $nominal_kasbon);
-                $ttl_expense_report += ($qty_expense * $nominal_expense);
-            }
-        }
-
-        if (!empty($data_insert_detail)) {
-            $this->db->delete('kons_tr_expense_report_project_detail', ['id_header_expense' => $post['id_expense']]);
-        }
-        if (!empty($data_bukti_pengembalian)) {
-            $this->db->delete('kons_tr_expense_report_bukti_pengembalian', ['id_header_expense' => $post['id_expense']]);
-        }
-
-        $data_insert_header = [
-            'total_expense_report' => $ttl_expense_report,
-            'total_kasbon' => $ttl_kasbon,
-            'selisih' => ($ttl_kasbon - $ttl_expense_report),
-            'tipe' => $post['tipe'],
-            'document_link' => $upload_po,
-            'bank' => $post['kasbon_bank'],
-            'bank_number' => $post['kasbon_bank_number'],
-            'bank_account' => $post['kasbon_bank_account'],
-            'updated_by' => $this->auth->user_id(),
-            'updated_date' => date('Y-m-d H:i:s')
-        ];
-        if (empty($upload_po)) {
-            $data_insert_header = [
-                'total_expense_report' => $ttl_expense_report,
-                'total_kasbon' => $ttl_kasbon,
-                'selisih' => ($ttl_kasbon - $ttl_expense_report),
-                'tipe' => $post['tipe'],
-                'bank' => $post['kasbon_bank'],
-                'bank_number' => $post['kasbon_bank_number'],
-                'bank_account' => $post['kasbon_bank_account'],
-                'updated_by' => $this->auth->user_id(),
-                'updated_date' => date('Y-m-d H:i:s')
-            ];
-        }
-
-        $update_header = $this->db->update('kons_tr_expense_report_project_header', $data_insert_header, ['id' => $post['id_expense']]);
-        if (!$update_header) {
-            $this->db->trans_rollback();
-
-            print_r('error update header : ' . $this->db->error($update_header));
-            exit;
-        }
-
-        if (!empty($data_insert_detail)) {
-            $insert_detail = $this->db->insert_batch('kons_tr_expense_report_project_detail', $data_insert_detail);
-            if (!$insert_detail) {
-                $this->db->trans_rollback();
-
-                print_r('error insert detail :' . $this->db->error($insert_detail));
-                exit;
-            }
-        }
-
-        if (!empty($data_bukti_pengembalian)) {
-            $insert_bukti_pengembalian = $this->db->insert_batch('kons_tr_expense_report_bukti_pengembalian', $data_bukti_pengembalian);
-            if (!$insert_bukti_pengembalian) {
-                $this->db->trans_rollback();
-
-                print_r('error insert bukti pengembalian : ' . $this->db->error($insert_bukti_pengembalian));
-                exit;
-            }
-        }
-
-        if ($this->db->trans_status() === false) {
-            $this->db->trans_rollback();
-
-            $valid = 0;
-            $pesan = 'Please try again later !';
-        } else {
-            $this->db->trans_commit();
-
-            $valid = 1;
-            $pesan = 'Expense data has been updated !';
-        }
-
-        echo json_encode([
-            'status' => $valid,
-            'pesan' => $pesan
-        ]);
-    }
-
-    public function req_approval()
-    {
-        $id = $this->input->post('id');
+    public function approve_expense_report() {
+        $id_spk_budgeting = $this->input->post('id_spk_budgeting');
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.sts_req', 1);
+        $get_expense_report_req_app = $this->db->get()->result();
 
         $this->db->trans_begin();
 
-        $update_req_approval = $this->db->update('kons_tr_expense_report_project_header', ['sts_req' => 1], ['id_header' => $id]);
-        if (!$update_req_approval) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->error($update_req_approval));
-            exit;
+        foreach($get_expense_report_req_app as $item) {
+            $this->db->update('kons_tr_expense_report_project_header', ['sts' => 1, 'sts_req' => 0, 'reject_reason' => ''], ['id' => $item->id]);
         }
 
-        if ($this->db->trans_status() === false) {
+        if($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
             $valid = 0;
@@ -1776,7 +1367,42 @@ class Expense_report_project extends Admin_Controller
             $this->db->trans_commit();
 
             $valid = 1;
-            $pesan = 'Data status has been moved to requested approval !';
+            $pesan = 'Data has been approved !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
+    }
+
+    public function reject_expense_report() {
+        $id_spk_budgeting = $this->input->post('id_spk_budgeting');
+        $reject_reason = $this->input->post('reject_reason');
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.sts_req', 1);
+        $get_expense_report_req_app = $this->db->get()->result();
+
+        $this->db->trans_begin();
+
+        foreach($get_expense_report_req_app as $item) {
+            $this->db->update('kons_tr_expense_report_project_header', ['sts' => 0, 'sts_req' => 0, 'reject_reason' => $reject_reason], ['id' => $item->id]);
+        }
+
+        if($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $pesan = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $pesan = 'Data has been rejected !';
         }
 
         echo json_encode([
