@@ -1,16 +1,16 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Expense_report_project_model extends BF_Model
+class Approval_expense_report_project_model extends BF_Model
 {
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->ENABLE_ADD     = has_permission('Expense_Report_Project.Add');
-        $this->ENABLE_MANAGE  = has_permission('Expense_Report_Project.Manage');
-        $this->ENABLE_VIEW    = has_permission('Expense_Report_Project.View');
-        $this->ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
+        $this->ENABLE_ADD     = has_permission('Approval_expense_Report_Project.Add');
+        $this->ENABLE_MANAGE  = has_permission('Approval_expense_Report_Project.Manage');
+        $this->ENABLE_VIEW    = has_permission('Approval_expense_Report_Project.View');
+        $this->ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
     }
 
     function generate_id_expense_report_header()

@@ -241,8 +241,13 @@ class Kasbon_project extends Admin_Controller
             // }
 
             $valid_show = 1;
-            if ($get_req->num_rows() > 0) {
-                $valid_show = 0;
+            // if ($get_req->num_rows() > 0) {
+            //     $valid_show = 0;
+            // }
+            if($total_kasbon > 0 || $total_kasbon_nd > 0) {
+                if ($total_kasbon >= $total_budgeting) {
+                    $valid_show = 0;
+                }
             }
             // if ($total_kasbon >= $total_budgeting) {
             //     $valid_show = 0;
@@ -272,9 +277,9 @@ class Kasbon_project extends Admin_Controller
 
                 $option = '<a href="' . base_url('kasbon_project/view_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info" title="View Kasbon"><i class="fa fa-eye"></i></a>';
 
-                if($total_kasbon_nd > 0) {
+                // if($total_kasbon_nd > 0 && ($total_kasbon > $total_kasbon_nd)) {
                     $option .= '<a href="' . base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;" title="Process Kasbon"><i class="fa fa-pencil"></i></a>';
-                }
+                // }
 
                 if ($total_kasbon_nd > 0) {
                     $option .= '<button type="button" class="btn btn-sm btn-warning req_approval" data-id_spk_budgeting="' . $item->id_spk_budgeting . '" title="Request Approval" style="margin-left: 0.5rem;"><i class="fa fa-arrow-up"></i></button>';

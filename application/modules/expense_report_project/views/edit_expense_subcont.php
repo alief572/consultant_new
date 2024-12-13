@@ -76,6 +76,7 @@ if($tipe == '3') {
 </style>
 
 <form id="frm-data" enctype="multipart/form-data">
+    <input type="hidden" name="id_expense" value="<?= $header->id ?>">
     <input type="hidden" name="id_header" value="<?= $id_header ?>">
     <input type="hidden" name="id_spk_budgeting" value="<?= $id_spk_budgeting ?>">
     <input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
@@ -120,6 +121,9 @@ if($tipe == '3') {
                             $readonly_nominal = 'readonly';
                         }
 
+                        $qty_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['qty_expense'] : 0;
+                        $nominal_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['nominal_expense'] : 0;
+
                         echo '<tr>';
 
                         echo '<td class="text-center">';
@@ -140,17 +144,17 @@ if($tipe == '3') {
                         echo '</td>';
 
                         echo '<td width="200">';
-                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][qty_expense]" class="form-control form-control-sm auto_num text-right qty_expense" value="' . $item['qty_kasbon'] . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_qty . '>';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][qty_expense]" class="form-control form-control-sm auto_num text-right qty_expense" value="' . $qty_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_qty . '>';
                         echo '</td>';
 
                         echo '<td width="200">';
-                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $item['nominal_kasbon'] . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $nominal_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
                         echo '</td>';
 
                         echo '</tr>';
 
-                        $ttl_kasbon += ($item['qty_kasbon'] * $item['nominal_kasbon']);
-                        $ttl_expense_report += ($item['qty_kasbon'] * $item['nominal_kasbon']);
+                        $ttl_kasbon += ($qty_expense * $nominal_expense);
+                        $ttl_expense_report += ($qty_expense * $nominal_expense);
 
                         $count_no++;
                     }
@@ -167,7 +171,7 @@ if($tipe == '3') {
                     </tr>
                     <tr>
                         <td colspan="5" class="text-right">Selisih</td>
-                        <td class="text-right col_selisih">0.00</td>
+                        <td class="text-right col_selisih"><?= number_format($header->selisih, 2) ?></td>
                     </tr>
                 </tfoot>
             </table>
@@ -181,24 +185,29 @@ if($tipe == '3') {
                             <th style="padding: 5px;">Document</th>
                             <td style="padding: 5px;">
                                 <input type="file" name="kasbon_document" id="" class="form-control form-control-sm">
+                                <?php
+                                if (file_exists($header->document_link)) {
+                                    echo '<a href="' . base_url($header->document_link) . '" target="_blank" class="btn btn-sm btn-primary"><i class="fa fa-download"></i> Download</a>';
+                                }
+                                ?>
                             </td>
                         </tr>
                         <tr>
                             <th style="padding: 5px;">Bank</th>
                             <td style="padding: 5px;">
-                                <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -">
+                                <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>">
                             </td>
                         </tr>
                         <tr>
                             <th style="padding: 5px;">Bank Number</th>
                             <td style="padding: 5px;">
-                                <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -">
+                                <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>">
                             </td>
                         </tr>
                         <tr>
                             <th style="padding: 5px;">Account Name</th>
                             <td style="padding: 5px;">
-                                <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -">
+                                <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>">
                             </td>
                         </tr>
                     </table>
@@ -209,6 +218,13 @@ if($tipe == '3') {
                             <th style="padding: 5px;">Bukti Pengembalian</th>
                             <td style="padding: 5px;">
                                 <input type="file" name="bukti_pengembalian[]" id="" class="form-control form-control-sm" multiple>
+                                <?php
+                                if (count($list_bukti_pengembalian) > 0) {
+                                    echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup">';
+                                    echo '<i class="fa fa-list"></i> List Bukti Pengemblian';
+                                    echo '</button>';
+                                }
+                                ?>
                             </td>
                         </tr>
                     </table>
@@ -224,7 +240,39 @@ if($tipe == '3') {
     </div>
 </form>
 
+<div class="modal modal-default fade" id="dialog-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style='width:70%; '>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel"><span class="fa fa-users"></span>&nbsp;List Bukti Pengembalian</h4>
+            </div>
+            <div class="modal-body" id="ModalView">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Document Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $no = 1;
+                        foreach ($list_bukti_pengembalian as $item) {
+                            echo '<tr>';
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td><a href="' . base_url($item->document_link) . '" target="_blank">' . $item->document_link . '</a></td>';
+                            echo '</tr>';
 
+                            $no++;
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
@@ -237,10 +285,6 @@ if($tipe == '3') {
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
 
-        var tipe = "<?= $tipe; ?>";
-
-        var url_dest = 'save_expense_report';
-
         swal({
             type: 'warning',
             title: 'Are you sure ?',
@@ -252,7 +296,7 @@ if($tipe == '3') {
 
                 $.ajax({
                     type: 'post',
-                    url: siteurl + active_controller + url_dest,
+                    url: siteurl + active_controller + 'update_expense_report_subcont',
                     data: formData,
                     cache: false,
                     processData: false,

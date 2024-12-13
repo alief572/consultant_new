@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Expense_Report_Project.Add');
-$ENABLE_MANAGE  = has_permission('Expense_Report_Project.Manage');
-$ENABLE_VIEW    = has_permission('Expense_Report_Project.View');
-$ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
+$ENABLE_ADD     = has_permission('Approval_expense_Report_Project.Add');
+$ENABLE_MANAGE  = has_permission('Approval_expense_Report_Project.Manage');
+$ENABLE_VIEW    = has_permission('Approval_expense_Report_Project.View');
+$ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">

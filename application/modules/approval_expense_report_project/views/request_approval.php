@@ -67,6 +67,8 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
     }
 </style>
 
+<input type="hidden" name="id_spk_budgeting" class="id_spk_budgeting" value="<?= $list_budgeting->id_spk_budgeting ?>">
+
 <div class="box">
     <div class="box-header">
 
@@ -167,7 +169,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -230,7 +231,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -293,16 +293,28 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
 
             </tbody>
         </table>
-        <a href="<?= base_url('expense_report_project') ?>" class="btn btn-sm btn-danger">
-            <i class="fa fa-arrow-left"></i> Back
-        </a>
+
+        <div class="col-md-6">
+            <label for="">Reject Reason</label>
+            <textarea name="reject_reason" class="form-control form-control-sm reject_reason" id=""><?= $list_expense[0]->reject_reason ?></textarea>
+        </div>
+        <div class="col-md-12" style="margin-top: 2vh;">
+            <a href="<?= base_url('kasbon_project') ?>" class="btn btn-sm btn-danger">
+                <i class="fa fa-arrow-left"></i> Back
+            </a>
+            <button type="button" class="btn btn-sm btn-danger reject">
+                <i class="fa fa-close"></i> Reject
+            </button>
+            <button type="button" class="btn btn-sm btn-success approve">
+                <i class="fa fa-check"></i> Approve
+            </button>
+        </div>
     </div>
 </div>
 
@@ -353,9 +365,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 },
                 {
                     data: 'status'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -395,9 +404,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 },
                 {
                     data: 'status'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -437,9 +443,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 },
                 {
                     data: 'status'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -470,9 +473,6 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 },
                 {
                     data: 'amount'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -524,37 +524,37 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
         });
     }
 
-    $(document).on('click', '.req_approval', function() {
-        var id = $(this).data('id');
+    $(document).on('click', '.approve', function() {
+        var id_spk_budgeting = $('.id_spk_budgeting').val();
 
         swal({
             type: 'warning',
             title: 'Are you sure ?',
-            text: 'This data cannot be edited after this process !',
+            text: 'This data will be approved !',
             showCancelButton: true
-        }, function(lanjut) {
-            if (lanjut) {
+        }, function(next) {
+            if (next) {
                 $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'req_approval',
+                    type: 'POST',
+                    url: siteurl + active_controller + 'approve_expense_report',
                     data: {
-                        'id': id
+                        'id_spk_budgeting': id_spk_budgeting
                     },
                     cache: false,
                     dataType: 'json',
                     success: function(result) {
-                        if (result.status == '1') {
+                        if (result.status == 1) {
                             swal({
                                 type: 'success',
                                 title: 'Success !',
                                 text: result.pesan
                             }, function(lanjut) {
-                                location.reload(true);
+                                window.location.href = siteurl + 'approval_expense_report_project';
                             });
                         } else {
                             swal({
                                 type: 'warning',
-                                title: 'Warning !',
+                                title: 'Failed !',
                                 text: result.pesan
                             });
                         }
@@ -569,5 +569,64 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 });
             }
         });
+    });
+
+    $(document).on('click', '.reject', function() {
+        var id_spk_budgeting = $('.id_spk_budgeting').val();
+        var reject_reason = $('.reject_reason').val();
+
+        if (reject_reason == '' || reject_reason == null) {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: 'Please fill the reject reason first !'
+            });
+
+            return false;
+        } else {
+            swal({
+                type: 'warning',
+                title: 'Are you sure ?',
+                text: 'This data will be rejected !',
+                showCancelButton: true
+            }, function(next) {
+                if (next) {
+                    $.ajax({
+                        type: 'POST',
+                        url: siteurl + active_controller + 'reject_expense_report',
+                        data: {
+                            'id_spk_budgeting': id_spk_budgeting,
+                            'reject_reason': reject_reason
+                        },
+                        cache: false,
+                        dataType: 'json',
+                        success: function(result) {
+                            if (result.status == 1) {
+                                swal({
+                                    type: 'success',
+                                    title: 'Success !',
+                                    text: result.pesan
+                                }, function(lanjut) {
+                                    window.location.href = siteurl + 'approval_expense_report_project';
+                                });
+                            } else {
+                                swal({
+                                    type: 'warning',
+                                    title: 'Failed !',
+                                    text: result.pesan
+                                });
+                            }
+                        },
+                        error: function(result) {
+                            swal({
+                                type: 'error',
+                                title: 'Error !',
+                                text: 'Please try again later !'
+                            });
+                        }
+                    });
+                }
+            });
+        }
     });
 </script>
