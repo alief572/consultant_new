@@ -237,7 +237,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         echo '<td class="text-center">';
                         echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="subcont_final[' . $no_aktifitas . '][price_subcont]" value="' . $item->price_subcont . '" onchange="hitung_act_final()">';
                         echo '</td>';
-                        echo '<td class="text-center total_final_act_' . $no_aktifitas . '">' . number_format(($total_mandays_rate + $total_mandays_rate_tandem + $total_mandays_rate_subcont), 2) . '</td>';
+                        echo '<td class="text-center total_final_act_' . $no_aktifitas . '">' . number_format($total_mandays_rate_subcont, 2) . '</td>';
 
                         echo '</tr>';
 
@@ -254,11 +254,11 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
                         $ttl_activity += $total_mandays_rate;
                         $ttl_tandem += $total_mandays_rate_tandem;
-                        $ttl_mandays_rate_subcont += $total_mandays_rate_subcont;
+                        // $ttl_mandays_rate_subcont += $total_mandays_rate_subcont;
 
                         $ttl_total += ($total_mandays_rate_subcont);
 
-                        $ttl_subcont += ($item->mandays_subcont + $item->price_subcont);
+                        $ttl_subcont += ($item->mandays_subcont * $item->price_subcont);
 
                         $no_aktifitas++;
                     }
