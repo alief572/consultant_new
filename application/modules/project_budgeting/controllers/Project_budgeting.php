@@ -337,8 +337,8 @@ class Project_budgeting extends Admin_Controller
             'biaya_subcont' => $post['summary_biaya_subcont'],
             'biaya_akomodasi' => $post['summary_biaya_akomodasi'],
             'biaya_others' => $post['summary_biaya_others'],
-            'nilai_kontrak_bersih' => str_replace(',', '', $post['nilai_kontrak_bersih']),
-            'mandays_rate' => str_replace(',', '', $post['mandays_rate']),
+            'nilai_kontrak_bersih' => $get_spk_penawaran->nilai_kontrak_bersih,
+            'mandays_rate' => $get_spk_penawaran->mandays_rate,
             'ppn' => $get_penawaran->ppn,
             'grand_total' => $get_penawaran->grand_total,
             'create_by' => $this->auth->user_id(),
@@ -349,14 +349,14 @@ class Project_budgeting extends Admin_Controller
         if (isset($post['subcont_final'])) {
             foreach ($post['subcont_final'] as $item) {
 
-                $this->db->select('a.nm_aktifitas, a.mandays, a.mandays_rate, a.mandays_tandem, a.mandays_rate_tandem, a.mandays_subcont, a.price_subcont');
+                $this->db->select('a.nm_aktifitas, a.mandays, a.mandays_rate, a.mandays_tandem, a.mandays_rate_tandem, a.mandays_subcont, a.price_subcont, a.total_subcont');
                 $this->db->from('kons_tr_spk_penawaran_subcont a');
                 $this->db->where('a.id', $item['id']);
                 $get_data_subcont = $this->db->get()->row_array();
 
-                $total_aktifitas_estimasi = (($get_data_subcont['mandays_rate'] * $get_data_subcont['mandays']) + ($get_data_subcont['mandays_tandem'] * $get_data_subcont['mandays_rate_tandem']) + ($get_data_subcont['mandays_subcont'] * $get_data_subcont['price_subcont']));
+                $total_aktifitas_estimasi = $get_data_subcont['total_subcont'];
 
-                $total_aktifitas_final = ((str_replace(',', '', $item['mandays_rate']) * str_replace(',', '', $item['mandays'])) + (str_replace(',', '', $item['mandays_tandem']) * str_replace(',', '', $item['mandays_rate_tandem'])) + (str_replace(',', '', $item['mandays_subcont']) * str_replace(',', '', $item['price_subcont'])));
+                $total_aktifitas_final = (str_replace(',', '', $item['mandays_subcont']) * str_replace(',', '', $item['price_subcont']));
 
                 $data_insert_konsultasi[] = [
                     'id_spk_budgeting' => $id_spk_budgeting,
@@ -371,10 +371,10 @@ class Project_budgeting extends Admin_Controller
                     'mandays_subcont_estimasi' => $get_data_subcont['mandays_subcont'],
                     'mandays_rate_subcont_estimasi' => $get_data_subcont['price_subcont'],
                     'total_aktifitas_estimasi' => $total_aktifitas_estimasi,
-                    'mandays_final' => str_replace(',', '', $item['mandays']),
-                    'mandays_rate_final' => str_replace(',', '', $item['mandays_rate']),
-                    'mandays_tandem_final' => str_replace(',', '', $item['mandays_tandem']),
-                    'mandays_rate_tandem_final' => str_replace(',', '', $item['mandays_rate_tandem']),
+                    'mandays_final' => $get_data_subcont['mandays'],
+                    'mandays_rate_final' =>$get_data_subcont['mandays_rate'],
+                    'mandays_tandem_final' =>  $get_data_subcont['mandays_tandem'],
+                    'mandays_rate_tandem_final' => $get_data_subcont['mandays_rate_tandem'],
                     'mandays_subcont_final' => str_replace(',', '', $item['mandays_subcont']),
                     'mandays_rate_subcont_final' => str_replace(',', '', $item['price_subcont']),
                     'total_aktifitas_final' => $total_aktifitas_final,
@@ -470,7 +470,7 @@ class Project_budgeting extends Admin_Controller
         if (!empty($data_insert_others)) {
             $insert_spk_budgeting_others = $this->db->insert_batch('kons_tr_spk_budgeting_others', $data_insert_others);
             if (!$insert_spk_budgeting_others) {
-                print_r('Error 4' . $this->db->error($insert_spk_budgeting_others));
+                print_r($this->db->last_query());
                 $this->db->trans_rollback();
                 exit;
             }

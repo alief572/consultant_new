@@ -187,136 +187,17 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
     <div class="box">
         <div class="box-header">
-            <h4 style="font-weight: 600;">Activity List (Estimasi)</h4>
+            <h4 style="font-weight: 600;">Subcont</h4>
         </div>
         <div class="box-body">
             <table class="table custom-table-no" border="0">
                 <thead>
                     <tr>
-                        <th class="text-center" style="vertical-align: middle;" rowspan="2">No.</th>
-                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Activity Name</th>
-                        <th class="text-center" style="vertical-align: middle;" colspan="7">Estimasi</th>
-                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Total</th>
-                    </tr>
-                    <tr>
-                        <th class="text-center" style="vertical-align: middle;">Mandays</th>
-                        <th class="text-center" style="vertical-align: middle;">Mandays Internal</th>
-                        <th class="text-center" style="vertical-align: middle;">Mandays Rate Internal</th>
-                        <th class="text-center" style="vertical-align: middle;">Mandays Tandem</th>
-                        <th class="text-center" style="vertical-align: middle;">Mandays Rate Tandem</th>
+                        <th class="text-center" style="vertical-align: middle;">No.</th>
+                        <th class="text-center" style="vertical-align: middle;">Activity Name</th>
                         <th class="text-center" style="vertical-align: middle;">Mandays Subcont</th>
                         <th class="text-center" style="vertical-align: middle;">Mandays Rate Subcont</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $no_aktifitas = 1;
-
-                    $ttl_mandays = 0;
-
-                    $ttl_mandays_internal = 0;
-                    $ttl_mandays_rate_internal = 0;
-
-                    $ttl_mandays_tandem = 0;
-                    $ttl_mandays_rate_tandem = 0;
-
-                    $ttl_mandays_subcont = 0;
-                    $ttl_mandays_rate_subcont = 0;
-
-                    $ttl_total = 0;
-                    foreach ($list_aktifitas as $item) {
-
-                        $total_mandays_rate = ($item->mandays_rate * $item->mandays);
-                        $total_mandays_rate_tandem = ($item->mandays_rate_tandem * $item->mandays_tandem);
-                        $total_mandays_rate_subcont = ($item->price_subcont * $item->mandays_subcont);
-
-                        echo '<tr>';
-
-                        echo '<td class="text-center">' . $no_aktifitas . '</td>';
-                        echo '<td width="300">' . $item->nm_aktifitas . '</td>';
-
-                        echo '<td class="text-center">' . number_format($item->mandays_def) . '</td>';
-                        echo '<td class="text-center">' . number_format($item->mandays) . '</td>';
-                        echo '<td class="text-center">' . number_format($item->mandays_rate, 2) . '</td>';
-                        echo '<td class="text-center">' . number_format($item->mandays_tandem) . '</td>';
-                        echo '<td class="text-center">' . number_format($item->mandays_rate_tandem, 2) . '</td>';
-                        echo '<td class="text-center">' . number_format($item->mandays_subcont) . '</td>';
-                        echo '<td class="text-center">' . number_format($item->price_subcont, 2) . '</td>';
-                        echo '<td class="text-center">' . number_format(($total_mandays_rate + $total_mandays_rate_tandem + $total_mandays_rate_subcont), 2) . '</td>';
-
-                        echo '</tr>';
-
-                        $ttl_mandays += $item->mandays_def;
-
-                        $ttl_mandays_internal += $item->mandays;
-                        $ttl_mandays_rate_internal += $item->mandays_rate;
-
-                        $ttl_mandays_tandem += $item->mandays_tandem;
-                        $ttl_mandays_rate_tandem += $item->mandays_rate_tandem;
-
-                        $ttl_mandays_subcont += $item->mandays_subcont;
-                        $ttl_mandays_rate_subcont += $item->price_subcont;
-
-                        $ttl_total += ($total_mandays_rate + $total_mandays_rate_tandem + $total_mandays_rate_subcont);
-
-                        $no_aktifitas++;
-                    }
-                    ?>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="2"></th>
-                        <th class="text-center">
-                            <?= number_format($ttl_mandays) ?>
-                        </th>
-                        <th class="text-center">
-                            <?= number_format($ttl_mandays_internal) ?>
-                        </th>
-                        <th class="text-center">
-                            <?= number_format($ttl_mandays_rate_internal, 2) ?>
-                        </th>
-                        <th class="text-center">
-                            <?= number_format($ttl_mandays_tandem) ?>
-                        </th>
-                        <th class="text-center">
-                            <?= number_format($ttl_mandays_rate_tandem, 2) ?>
-                        </th>
-                        <th class="text-center">
-                            <?= number_format($ttl_mandays_subcont) ?>
-                        </th>
-                        <th class="text-center">
-                            <?= number_format($ttl_mandays_rate_subcont, 2) ?>
-                        </th>
-                        <th class="text-center">
-                            <?= number_format($ttl_total, 2) ?>
-                        </th>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
-
-    <div class="box">
-        <div class="box-header">
-            <h4 style="font-weight: 600;">Activity List (Final)</h4>
-        </div>
-        <div class="box-body">
-            <table class="table custom-table-no" border="0">
-                <thead>
-                    <tr>
-                        <th class="text-center" style="vertical-align: middle;" rowspan="2">No.</th>
-                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Activity Name</th>
-                        <th class="text-center" style="vertical-align: middle;" colspan="7">Final</th>
-                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Total</th>
-                    </tr>
-                    <tr>
-                        <th class="text-center" style="vertical-align: middle;">Mandays</th>
-                        <th class="text-center" style="vertical-align: middle;">Mandays Internal</th>
-                        <th class="text-center" style="vertical-align: middle;">Mandays Rate Internal</th>
-                        <th class="text-center" style="vertical-align: middle;">Mandays Tandem</th>
-                        <th class="text-center" style="vertical-align: middle;">Mandays Rate Tandem</th>
-                        <th class="text-center" style="vertical-align: middle;">Mandays Subcont</th>
-                        <th class="text-center" style="vertical-align: middle;">Mandays Rate Subcont</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -349,24 +230,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
                         echo '<td class="text-center">' . $no_aktifitas . ' <input type="hidden" name="subcont_final[' . $no_aktifitas . '][id]" value="' . $item->id . '"></td>';
                         echo '<td width="300">' . $item->nm_aktifitas . '</td>';
-
-                        echo '<td class="text-center">' . number_format($item->mandays_def) . '</td>';
-
-                        echo '<td class="text-center">';
-                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="subcont_final[' . $no_aktifitas . '][mandays]" value="' . $item->mandays . '" onchange="hitung_act_final()">';
-                        echo '</td>';
-
-                        echo '<td class="text-center">';
-                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="subcont_final[' . $no_aktifitas . '][mandays_rate]" value="' . $item->mandays_rate . '" onchange="hitung_act_final()">';
-                        echo '</td>';
-
-                        echo '<td class="text-center">';
-                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="subcont_final[' . $no_aktifitas . '][mandays_tandem]" value="' . $item->mandays_tandem . '" onchange="hitung_act_final()">';
-                        echo '</td>';
-
-                        echo '<td class="text-center">';
-                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="subcont_final[' . $no_aktifitas . '][mandays_rate_tandem]" value="' . $item->mandays_rate_tandem . '" onchange="hitung_act_final()">';
-                        echo '</td>';
+                        
                         echo '<td class="text-center">';
                         echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="subcont_final[' . $no_aktifitas . '][mandays_subcont]" value="' . $item->mandays_subcont . '" onchange="hitung_act_final()">';
                         echo '</td>';
@@ -392,7 +256,9 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         $ttl_tandem += $total_mandays_rate_tandem;
                         $ttl_mandays_rate_subcont += $total_mandays_rate_subcont;
 
-                        $ttl_total += ($total_mandays_rate + $total_mandays_rate_tandem + $total_mandays_rate_subcont);
+                        $ttl_total += ($total_mandays_rate_subcont);
+
+                        $ttl_subcont += ($item->mandays_subcont + $item->price_subcont);
 
                         $no_aktifitas++;
                     }
@@ -401,21 +267,6 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                 <tfoot>
                     <tr>
                         <th colspan="2"></th>
-                        <th class="text-center">
-                            <?= number_format($ttl_mandays) ?>
-                        </th>
-                        <th class="text-center ttl_final_mandays_internal">
-                            <?= number_format($ttl_mandays_internal) ?>
-                        </th>
-                        <th class="text-center ttl_final_mandays_rate_internal">
-                            <?= number_format($ttl_mandays_rate_internal, 2) ?>
-                        </th>
-                        <th class="text-center ttl_final_mandays_tandem">
-                            <?= number_format($ttl_mandays_tandem) ?>
-                        </th>
-                        <th class="text-center ttl_final_mandays_rate_tandem">
-                            <?= number_format($ttl_mandays_rate_tandem, 2) ?>
-                        </th>
                         <th class="text-center ttl_final_mandays_subcont">
                             <?= number_format($ttl_mandays_subcont) ?>
                         </th>
@@ -596,12 +447,12 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             <h4 class="semi-bold">
                 Summary
 
-                <div style="float: right;">
+                <!-- <div style="float: right;">
                     <div class="cbx-krajee">
                         <input id="input-id" type="checkbox" class="include_ppn" name="include_ppn" value="1" <?= ($list_penawaran->ppn == 1) ? 'checked' : '' ?>>
                         <label for="input-id" class="cbx-label">Include PPN</label>
                     </div>
-                </div>
+                </div> -->
             </h4>
         </div>
         <div class="box-body">
@@ -614,44 +465,9 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Total Mandays</td>
-                        <td class="text-right">
-                            <?= number_format(($ttl_mandays_internal + $ttl_mandays_tandem + $ttl_mandays_subcont)) ?>
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Mandays Internal</td>
-                        <td class="text-right summary_mandays_internal">
-                            <?= number_format($ttl_mandays_internal) ?>
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Mandays Tandem</td>
-                        <td class="text-right summary_mandays_tandem">
-                            <?= number_format($ttl_mandays_tandem) ?>
-
-                        </td>
-                    </tr>
-                    <tr>
                         <td>Mandays Subcont</td>
                         <td class="text-right summary_mandays_subcont">
                             <?= number_format($ttl_mandays_subcont) ?>
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Biaya Konsultasi</td>
-                        <td class="text-right summary_biaya_act">
-                            <?= number_format($ttl_activity, 2) ?>
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Biaya Tandem</td>
-                        <td class="text-right summary_biaya_tandem">
-                            <?= number_format($ttl_tandem, 2) ?>
 
                         </td>
                     </tr>
@@ -681,33 +497,33 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                     <tr>
                         <th>Grand Total Pengeluaran</th>
                         <th class="text-right summary_total_pengeluaran">
-                            <?= number_format(($ttl_activity + $ttl_tandem + $ttl_subcont + $ttl_total_akomodasi + $ttl_total_others), 2) ?>
+                            <?= number_format(($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others), 2) ?>
 
                         </th>
                     </tr>
                 </tfoot>
             </table>
             <br><br>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <table class="table custom-table-no" border="0">
                     <thead style="background-color: transparent;">
                         <tr>
                             <th>Nilai Kontrak Bersih</th>
                             <th>
-                                <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right nilai_kontrak_bersih" value="<?= number_format($list_penawaran->grand_total - $ttl_tandem - $ttl_subcont - $ttl_total_akomodasi - $ttl_total_others, 2) ?>" readonly>
+                                <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right nilai_kontrak_bersih" value="<?= number_format($ttl_subcont - $ttl_total_akomodasi - $ttl_total_others, 2) ?>" readonly>
                             </th>
                         </tr>
                         <tr>
                             <th>Mandays Rate</th>
                             <th>
-                                <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right mandays_rate" value="<?= number_format(($list_penawaran->grand_total - $ttl_tandem - $ttl_subcont - $ttl_total_akomodasi - $ttl_total_others) / $ttl_mandays_internal, 2) ?>" readonly>
+                                <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right mandays_rate" value="<?= number_format(($ttl_subcont - $ttl_total_akomodasi - $ttl_total_others) / $ttl_mandays_internal, 2) ?>" readonly>
                             </th>
                         </tr>
                     </thead>
                 </table>
-            </div>
+            </div> -->
 
-            <input type="hidden" class="grand_total" name="grand_total" value="<?= ($ttl_activity + $ttl_tandem + $ttl_subcont + $ttl_total_akomodasi + $ttl_total_others) ?>">
+            <input type="hidden" class="grand_total" name="grand_total" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others) ?>">
 
             <input type="hidden" name="summary_mandays" value="<?= ($ttl_mandays_internal + $ttl_mandays_tandem + $ttl_mandays_subcont) ?>">
             <input type="hidden" name="summary_mandays_internal" value="<?= $ttl_mandays_internal ?>">
@@ -718,7 +534,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             <input type="hidden" name="summary_biaya_subcont" value="<?= $ttl_subcont ?>">
             <input type="hidden" name="summary_biaya_akomodasi" value="<?= $ttl_total_akomodasi ?>">
             <input type="hidden" name="summary_biaya_others" value="<?= $ttl_total_others ?>">
-            <input type="hidden" name="summary_total_pengeluaran" value="<?= ($ttl_activity + $ttl_tandem + $ttl_subcont + $ttl_total_akomodasi + $ttl_total_others) ?>">
+            <input type="hidden" name="summary_total_pengeluaran" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others) ?>">
 
             <div style="float: right; margin-top: 1rem;">
                 <a href="<?= base_url('project_budgeting') ?>" class="btn btn-sm btn-danger">
