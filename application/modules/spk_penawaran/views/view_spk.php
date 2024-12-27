@@ -12,6 +12,8 @@ $status_sales = '';
 $status_project_leader = '';
 $status_konsultan_1 = '';
 $status_konsultan_2 = '';
+$status_manager_sales = '';
+$status_direktur = '';
 
 if ($list_spk_penawaran->approval_sales_sts == 1) {
     $status_sales = '<span class="btn btn-sm btn-success">Approved</span>';
@@ -39,6 +41,18 @@ if ($list_spk_penawaran->approval_konsultan_2_sts == 1) {
 }
 if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
     $status_konsultan_2 = '<span class="btn btn-sm btn-danger">Rejected</span>';
+}
+if($list_spk_penawaran->approval_manager_sales == 1) {
+    $status_manager_sales = '<span class="btn btn-sm btn-success">Approved</span>';
+}
+if($list_spk_penawaran->reject_manager_sales_sts == 1) {
+    $status_manager_sales = '<span class="btn btn-sm btn-danger">Rejected</span>';
+}
+if($list_spk_penawaran->approval_level2_sts == '1') {
+    $status_direktur = '<span class="btn btn-sm btn-success">Approved</span>';
+}
+if($list_spk_penawaran->reject_level2_by !== '' && $list_spk_penawaran->reject_level2_by !== null){
+    $status_direktur = '<span class="btn btn-sm btn-danger">Rejected</span>';
 }
 
 $date_sales = '';
@@ -73,6 +87,22 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
     $date_konsultan_2 = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_konsultan_2_date));
 }
 
+$date_manajer_sales = '';
+if($list_spk_penawaran->approval_manager_sales == '1') {
+    $date_manajer_sales = date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_manager_sales_date));
+}
+if($list_spk_penawaran->reject_manager_sales_sts == '1') {
+    $date_manajer_sales = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_manager_sales_date));
+}
+
+$date_direktur = '';
+if($list_spk_penawaran->approval_level2_sts == '1') {
+    $date_direktur = date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_level2_date));
+}
+if($list_spk_penawaran->reject_level2_by !== '' && $list_spk_penawaran->reject_level2_by !== null) {
+    $date_direktur = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_level2_date));
+}
+
 $reason_sales = '';
 if ($list_spk_penawaran->reject_sales_sts == 1) {
     $reason_sales = $list_spk_penawaran->reject_sales_reason;
@@ -91,6 +121,16 @@ if ($list_spk_penawaran->reject_konsultan_1_sts == 1) {
 $reason_konsultan_2 = '';
 if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
     $reason_konsultan_2 = $list_spk_penawaran->reject_konsultan_2_reason;
+}
+
+$reason_manager_sales = '';
+if ($list_spk_penawaran->reject_manager_sales_sts == 1) {
+    $reason_manager_sales = $list_spk_penawaran->reject_manager_sales_reason;
+}
+
+$reason_direktur = '';
+if($list_spk_penawaran->reject_level2_by !== '' && $list_spk_penawaran->reject_level2_by !== null) {
+    $reason_direktur = $list_spk_penawaran->reject_level2_reason;
 }
 
 ?>
@@ -766,6 +806,20 @@ if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
                     <td class="text-center"><?= $status_konsultan_2 ?></td>
                     <td class="text-center"><?= $date_konsultan_2 ?></td>
                     <td class="text-center"><?= $reason_konsultan_2 ?></td>
+                </tr>
+                <tr>
+                    <td class="text-center">Manager Sales Marketing</td>
+                    <td class="text-center">Sinta</td>
+                    <td class="text-center"><?= $status_manager_sales ?></td>
+                    <td class="text-center"><?= $date_manajer_sales ?></td>
+                    <td class="text-center"><?= $reason_manager_sales ?></td>
+                </tr>
+                <tr>
+                    <td class="text-center">Direktur</td>
+                    <td class="text-center">Iman</td>
+                    <td class="text-center"><?= $status_direktur ?></td>
+                    <td class="text-center"><?= $date_direktur ?></td>
+                    <td class="text-center"><?= $reason_direktur ?></td>
                 </tr>
             </tbody>
         </table>
