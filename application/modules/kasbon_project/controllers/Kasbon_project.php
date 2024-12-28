@@ -277,13 +277,22 @@ class Kasbon_project extends Admin_Controller
 
                 $option = '<a href="' . base_url('kasbon_project/view_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info" title="View Kasbon"><i class="fa fa-eye"></i></a>';
 
-                // if($total_kasbon_nd > 0 && ($total_kasbon > $total_kasbon_nd)) {
-                    $option .= '<a href="' . base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;" title="Process Kasbon"><i class="fa fa-pencil"></i></a>';
-                // }
+                $btn_edit = '<a href="' . base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;" title="Process Kasbon"><i class="fa fa-pencil"></i></a>';
 
+                $btn_req_app = '';
                 if ($total_kasbon_nd > 0) {
-                    $option .= '<button type="button" class="btn btn-sm btn-warning req_approval" data-id_spk_budgeting="' . $item->id_spk_budgeting . '" title="Request Approval" style="margin-left: 0.5rem;"><i class="fa fa-arrow-up"></i></button>';
+                    $btn_req_app = '<button type="button" class="btn btn-sm btn-warning req_approval" data-id_spk_budgeting="' . $item->id_spk_budgeting . '" title="Request Approval" style="margin-left: 0.5rem;"><i class="fa fa-arrow-up"></i></button>';
                 }
+
+                if (!empty($get_req_kasbon)) {
+                    if($get_req_kasbon->sts == 0) {
+                        $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+                        $btn_req_app = '';
+                        $btn_edit = '';
+                    }
+                }
+
+                $option .= $btn_edit.' '.$btn_req_app;
 
 
                 $hasil[] = [
