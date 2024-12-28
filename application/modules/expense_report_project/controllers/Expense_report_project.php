@@ -783,6 +783,99 @@ class Expense_report_project extends Admin_Controller
             //     $valid_show = 0;
             // }
 
+            $query_get_budgeting = '
+                SELECT
+                    (a.mandays_subcont_final * a.mandays_rate_subcont_final) as ttl_nilai_subcont,
+                    0 as ttl_nilai_akomodasi,
+                    0 as ttl_nilai_others
+                FROM
+                    kons_tr_spk_budgeting_aktifitas a
+                WHERE
+                    a.id_spk_budgeting = "'.$item->id_spk_budgeting.'"
+
+                UNION ALL
+
+                SELECT
+                    0 as ttl_nilai_subcont,
+                    a.total_final as ttl_nilai_akomodasi,
+                    0 as ttl_nilai_others
+                FROM
+                    kons_tr_spk_budgeting_akomodasi a
+                WHERE
+                    a.id_spk_budgeting = "'.$item->id_spk_budgeting.'"
+
+                UNION ALL
+
+                SELECT
+                    0 as ttl_nilai_subcont,
+                    0 as ttl_nilai_akomodasi,
+                    a.total_final as ttl_nilai_others
+                FROM
+                    kons_tr_spk_budgeting_others a
+                WHERE
+                    a.id_spk_budgeting = "'.$item->id_spk_budgeting.'"
+            ';
+            $get_budgeting = $this->db->query($query_get_budgeting)->result();
+
+            $nilai_budget = 0;
+            foreach($get_budgeting as $item_budgeting) {
+                $nilai_budget += ($item_budgeting->ttl_nilai_subcont + $item_budgeting->ttl_nilai_akomodasi + $item_budgeting->ttl_nilai_others);
+            }
+
+            $this->db->select('SUM(a.budget_tambahan) as nilai_ovb');
+            $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
+            $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_header b', 'b.id_request_ovb = a.id_request_ovb');
+            $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+            $get_ovb = $this->db->get()->row();
+
+            $nilai_budget += $get_ovb->nilai_ovb;
+
+            $query_get_kasbon = '
+                SELECT
+                    a.total_pengajuan as ttl_kasbon_subcont,
+                    0 as ttl_kasbon_akomodasi,
+                    0 as ttl_kasbon_others
+                FROM
+                    kons_tr_kasbon_project_subcont a
+                WHERE
+                    a.id_spk_budgeting = "'.$item->id_spk_budgeting.'" AND
+                    a.sts = "1"
+
+                UNION ALL
+
+                SELECT
+                    0 as ttl_kasbon_subcont,
+                    a.total_pengajuan as ttl_kasbon_akomodasi,
+                    0 as ttl_kasbon_others
+                FROM
+                    kons_tr_kasbon_project_akomodasi a
+                WHERE
+                    a.id_spk_budgeting = "'.$item->id_spk_budgeting.'" AND
+                    a.sts = "1"
+                UNION ALL
+
+                SELECT
+                    0 as ttl_kasbon_subcont,
+                    0 as ttl_kasbon_akomodasi,
+                    a.total_pengajuan as ttl_kasbon_others
+                FROM
+                    kons_tr_kasbon_project_others a
+                WHERE
+                    a.id_spk_budgeting = "'.$item->id_spk_budgeting.'" AND
+                    a.sts = "1"
+            ';
+
+            $get_data_kasbon = $this->db->query($query_get_kasbon)->result();
+
+            $nilai_kasbon = 0;
+            foreach($get_data_kasbon as $item_kasbon) {
+                $nilai_kasbon += ($item_kasbon->ttl_kasbon_subcont + $item_kasbon->ttl_kasbon_akomodasi + $item_kasbon->ttl_kasbon_others);
+            }
+
+            if($nilai_budget > $nilai_kasbon) {
+                $valid_show = 0;
+            }
+
             if ($valid_show == 1) {
                 $no++;
 
@@ -875,6 +968,7 @@ class Expense_report_project extends Admin_Controller
 
             $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
             if ($check_expense->num_rows() > 0) {
+                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
                 if ($check_expense->row()->sts_req == 1) {
                     $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
                 } else {
@@ -1072,6 +1166,7 @@ class Expense_report_project extends Admin_Controller
 
             $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
             if ($check_expense->num_rows() > 0) {
+                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
                 if ($check_expense->row()->sts_req == 1) {
                     $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
                 } else {
@@ -1267,6 +1362,7 @@ class Expense_report_project extends Admin_Controller
 
             $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
             if ($check_expense->num_rows() > 0) {
+                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
                 if ($check_expense->row()->sts_req == 1) {
                     $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
                 } else {
