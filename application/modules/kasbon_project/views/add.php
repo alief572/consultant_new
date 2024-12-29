@@ -244,7 +244,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             </tbody>
         </table>
 
-        <br><br>
+        <!-- <br><br>
 
         <table class="table custom-table mt-5" id="table_ovb_akomodasi" style="overflow: visible !important;">
             <thead>
@@ -258,7 +258,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             <tbody>
 
             </tbody>
-        </table>
+        </table> -->
     </div>
 </div>
 
@@ -341,7 +341,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         DataTables_kasbon_subcont();
         DataTables_kasbon_akomodasi();
         DataTables_kasbon_others();
-        DataTables_ovb_akomodasi();
+        // DataTables_ovb_akomodasi();
     });
 
     function DataTables_kasbon_subcont(view = null) {

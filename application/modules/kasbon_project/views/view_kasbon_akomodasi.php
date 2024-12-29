@@ -129,7 +129,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th rowspan="2" class="text-center valign-middle">Item</th>
                         <th colspan="2" class="text-center valign-middle">Pengajuan</th>
                         <th colspan="3" class="text-center valign-middle">Estimasi</th>
-                        <th rowspan="2" class="text-center valign-middle">Budget Tambahan</th>
+                        <!-- <th rowspan="2" class="text-center valign-middle">Budget Tambahan</th> -->
                         <th rowspan="2" class="text-center valign-middle">Aktual Terpakai</th>
                         <th rowspan="2" class="text-center valign-middle">Sisa Budget</th>
                     </tr>
@@ -178,7 +178,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
                         echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
                         echo '<td class="text-right">' . number_format($item->total_estimasi, 2) . '</td>';
-                        echo '<td class="text-right">' . number_format($budget_tambahan, 2) . '</td>';
+                        // echo '<td class="text-right">' . number_format($budget_tambahan, 2) . '</td>';
                         echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
                         echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
 
@@ -205,7 +205,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
                         <td class="text-right"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-right"><?= number_format($ttl_est_total_budget, 2) ?></td>
-                        <td class="text-right"><?= number_format($ttl_budget_tambahan, 2) ?></td>
+                        <!-- <td class="text-right"><?= number_format($ttl_budget_tambahan, 2) ?></td> -->
                         <td class="text-center"><?= number_format($ttl_aktual_terpakai) ?></td>
                         <td class="text-right"><?= number_format($ttl_sisa_budget, 2) ?></td>
                     </tr>

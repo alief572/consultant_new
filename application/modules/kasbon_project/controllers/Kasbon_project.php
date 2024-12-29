@@ -2001,7 +2001,7 @@ class Kasbon_project extends Admin_Controller
                     'qty_estimasi' => $item['qty_estimasi'],
                     'price_unit_estimasi' => $item['price_unit_estimasi'],
                     'total_budget_estimasi' => $item['total_estimasi'],
-                    'budget_tambahan' => $item['budget_tambahan'],
+                    // 'budget_tambahan' => $item['budget_tambahan'],
                     'aktual_terpakai' => $item['aktual_terpakai'],
                     'sisa_budget' => $item['sisa_budget'],
                     'created_by' => $this->auth->user_id(),
