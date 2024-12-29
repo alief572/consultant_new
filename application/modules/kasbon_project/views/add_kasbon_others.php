@@ -182,7 +182,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_others[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_others[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" value="'.$item->price_unit_final.'" readonly>';
                         echo '</td>';
 
                         echo '<td class="text-center">';
@@ -226,7 +226,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <tr>
                         <td colspan="2" class="text-center">Total</td>
                         <td class="text-center ttl_qty_pengajuan">0</td>
-                        <td class="text-center ttl_nominal_pengajuan">0.00</td>
+                        <td class="text-center ttl_nominal_pengajuan"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_total_budget, 2) ?></td>

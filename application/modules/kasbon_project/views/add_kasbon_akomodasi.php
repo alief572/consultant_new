@@ -136,7 +136,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th rowspan="2" class="text-center valign-middle">Item</th>
                         <th colspan="2" class="text-center valign-middle">Pengajuan</th>
                         <th colspan="3" class="text-center valign-middle">Estimasi</th>
-                        <th rowspan="2" class="text-center valign-middle">Budget Tambahan</th>
+                        <!-- <th rowspan="2" class="text-center valign-middle">Budget Tambahan</th> -->
                         <th rowspan="2" class="text-center valign-middle">Aktual Terpakai</th>
                         <th rowspan="2" class="text-center valign-middle">Sisa Budget</th>
                     </tr>
@@ -158,6 +158,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_budget_tambahan = 0;
                     $ttl_aktual_pakai = 0;
                     $ttl_sisa_budget = 0;
+
+                    $ttl_nominal_pengajuan = 0;
 
                     foreach ($list_akomodasi as $item) {
 
@@ -185,11 +187,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_akomodasi[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_akomodasi[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right auto_num qty_pengajuan qty_pengajuan_' . $no . '" onchange="hitung_all_pengajuan()" ' . $readonly . ' data-no_urut="' . $no . '" data-price_unit="' . $item->price_unit_final . '">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_akomodasi[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_akomodasi[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" value="'.$item->price_unit_final.'" readonly>';
                         echo '</td>';
 
                         echo '<td class="text-center">';
@@ -207,10 +209,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<input type="hidden" name="detail_akomodasi[' . $no . '][total_estimasi]" value="' . $item->total_final . '">';
                         echo '</td>';
 
-                        echo '<td class="text-center">';
-                        echo number_format($total_budget_tambahan, 2);
-                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][budget_tambahan]" value="' . $total_budget_tambahan . '">';
-                        echo '</td>';
+                        // echo '<td class="text-center">';
+                        // echo number_format($total_budget_tambahan, 2);
+                        // echo '<input type="hidden" name="detail_akomodasi[' . $no . '][budget_tambahan]" value="' . $total_budget_tambahan . '">';
+                        // echo '</td>';
 
                         echo '<td class="text-center">';
                         echo number_format($aktual_terpakai);
@@ -239,11 +241,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <tr>
                         <td colspan="2" class="text-center">Total</td>
                         <td class="text-center ttl_qty_pengajuan">0</td>
-                        <td class="text-center ttl_nominal_pengajuan">0.00</td>
+                        <td class="text-center ttl_nominal_pengajuan"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_total_budget, 2) ?></td>
-                        <td class="text-center"><?= number_format($ttl_budget_tambahan, 2) ?></td>
+                        <!-- <td class="text-center"><?= number_format($ttl_budget_tambahan, 2) ?></td> -->
                         <td class="text-center"><?= number_format($ttl_aktual_pakai) ?></td>
                         <td class="text-center"><?= number_format($ttl_sisa_budget, 2) ?></td>
                     </tr>
@@ -281,15 +283,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 </table>
             </div>
 
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <div class="row">
-                    <!-- <div class="col-md-6"> -->
                     <a href="<?= base_url('kasbon_project/add_request_budget_akomodasi/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
                         <i class="fa fa-plus"></i> Request Overbudget
                     </a>
-                    <!-- </div> -->
                 </div>
-            </div>
+            </div> -->
 
             <div class="col-md-12 mt-5">
                 <a href="<?= base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
@@ -309,6 +309,15 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
     });
+
+    // $(document).on('change', '.qty_pengajuan', function() {
+    //     var no_urut = $(this).data('no_urut');
+    //     var price_unit = $(this).data('price_unit');
+
+    //     $('input[name="detail_akomodasi[' + no_urut + '][nominal_pengajuan]"]').autoNumeric('set', price_unit);
+
+    //     hitung_all_pengajuan();
+    // });
 
     function number_format(number, decimals, dec_point, thousands_sep) {
         // Strip all characters but numerical ones.
