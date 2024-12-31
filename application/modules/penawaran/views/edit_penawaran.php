@@ -32,7 +32,7 @@ if (count($list_penawaran_others) > 0) {
         padding: 5px;
     }
 
-    .chosen-container-active{
+    .chosen-container-active {
         position: absolute;
     }
 </style>
@@ -190,7 +190,30 @@ if (count($list_penawaran_others) > 0) {
                     </td>
                     <td class="pd-5 semi-bold" valign="top"></td>
                     <td class="pd-5" width="390" valign="top">
-                        
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pd-5 semi-bold" valign="top">Divisi</td>
+                    <td class="pd-5" width="390" valign="top">
+                        <input type="hidden" name="nm_divisi" class="nm_divisi" value="<?= $list_penawaran->nm_divisi ?>">
+                        <select name="divisi" class="form-control form-control-sm change_divisi select_divisi" required>
+                            <option value="">- Select Divisi -</option>
+                            <?php
+                            foreach ($list_divisi as $item) {
+                                $selected = '';
+                                if ($item->id == $list_penawaran->id_divisi) {
+                                    $selected = 'selected';
+                                }
+
+                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </td>
+                    <td class="pd-5 semi-bold" valign="top"></td>
+                    <td class="pd-5" width="390" valign="top">
+
                     </td>
                 </tr>
             </table>
@@ -372,7 +395,7 @@ if (count($list_penawaran_others) > 0) {
                         echo '<tr class="tr_akomodasi_' . $no_akomodasi . '">';
 
                         echo '<td>';
-                        echo '<select class="form-control form-control-sm select_akomodasi_'.$no_akomodasi.'" name="dt_ako[' . $no_akomodasi . '][id_akomodasi]">';
+                        echo '<select class="form-control form-control-sm select_akomodasi_' . $no_akomodasi . '" name="dt_ako[' . $no_akomodasi . '][id_akomodasi]">';
                         echo '<option value="">- Select Akomodasi -</option>';
                         foreach ($list_def_akomodasi as $item_def_akomodasi) {
                             $selected = '';
@@ -470,7 +493,7 @@ if (count($list_penawaran_others) > 0) {
                         echo '<tr class="tr_others_' . $no_others . '">';
 
                         echo '<td>';
-                        echo '<select class="form-control form-control-sm select_others_'.$no_others.'" name="dt_oth[' . $no_others . '][id_others]">';
+                        echo '<select class="form-control form-control-sm select_others_' . $no_others . '" name="dt_oth[' . $no_others . '][id_others]">';
                         echo '<option value="">- Select Others -</option>';
                         foreach ($list_def_others as $item_def_others) {
                             $selected = '';
@@ -620,26 +643,36 @@ if (count($list_penawaran_others) > 0) {
 <script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
 <!-- page script -->
 <script type="text/javascript">
-    $('.select_customer').chosen();
+   $('.select_customer').chosen();
     $('.select_marketing').chosen();
     $('.select_package').chosen();
+    $('.select_divisi').chosen();
+    $('.informasi_awal_sales').chosen({
+        width: "300px"
+    });
+    $('.informasi_awal_medsos').chosen({
+        width: "300px"
+    });
+    $('.informasi_awal_others').chosen({
+        width: "300px"
+    });
 
     var no_activity = "<?= $no_activity ?>";
-    for(i = 1; i <= no_activity; i++) {
+    for (i = 1; i <= no_activity; i++) {
         $('.select_nm_aktifitas_' + i).chosen({
             width: '280px'
         });
     }
 
     var no_akomodasi = "<?= $no_akomodasi ?>";
-    for(i = 1; i <= no_akomodasi; i++) {
+    for (i = 1; i <= no_akomodasi; i++) {
         $('.select_akomodasi_' + i).chosen({
             width: '280px'
         });
     }
 
     var no_others = "<?= $no_others ?>";
-    for(i = 1; i <= no_others; i++) {
+    for (i = 1; i <= no_others; i++) {
         $('.select_others_' + i).chosen({
             width: '280px'
         });
@@ -978,7 +1011,7 @@ if (count($list_penawaran_others) > 0) {
         var hasil = '<tr class="tr_akomodasi_' + no_akomodasi + '">';
 
         hasil += '<td>';
-        hasil += '<select class="form-control form-control-sm select_akomodasi_'+no_akomodasi+'" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
+        hasil += '<select class="form-control form-control-sm select_akomodasi_' + no_akomodasi + '" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
         hasil += '<option value="">- Item Akomodasi -</option>';
         <?php
         foreach ($list_def_akomodasi as $item) {
@@ -1032,7 +1065,7 @@ if (count($list_penawaran_others) > 0) {
         var hasil = '<tr class="tr_others_' + no_others + '">';
 
         hasil += '<td>';
-        hasil += '<select class="form-control form-control-sm select_others_'+no_others+'" name="dt_oth[' + no_others + '][id_others]">';
+        hasil += '<select class="form-control form-control-sm select_others_' + no_others + '" name="dt_oth[' + no_others + '][id_others]">';
         hasil += '<option value="">- Item Others -</option>';
         <?php
         foreach ($list_def_others as $item) {
@@ -1249,6 +1282,30 @@ if (count($list_penawaran_others) > 0) {
 
     $(document).on('change', '.include_ppn', function() {
         hitung_summary();
+    });
+
+    $(document).on('change', '.change_divisi', function() {
+        var id_divisi = $(this).val();
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'get_nm_divisi',
+            data: {
+                'id_divisi': id_divisi
+            },
+            dataType: 'json',
+            cache: false,
+            success: function(result) {
+                $('.nm_divisi').val(result.nm_divisi);
+            },
+            error: function(result) {
+                swal({
+                    type: 'error',
+                    title: 'Error !',
+                    text: 'Please try again later !'
+                });
+            }
+        });
     });
 
     $(document).on('submit', '.form-data', function(e) {

@@ -92,6 +92,8 @@ class Penawaran extends Admin_Controller
         $this->db->where('a.deleted_by', null);
         $get_def_biaya_others = $this->db->get()->result();
 
+        $get_divisi = $this->db->get_where('ms_department a', ['a.deleted_by' => null])->result();
+
         $data = [
             'list_penawaran' => $get_penawaran,
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
@@ -102,7 +104,8 @@ class Penawaran extends Admin_Controller
             'list_package' => $get_package,
             'list_aktifitas' => $get_aktifitas,
             'list_def_akomodasi' => $get_def_biaya_akomodasi,
-            'list_def_others' => $get_def_biaya_others
+            'list_def_others' => $get_def_biaya_others,
+            'list_divisi' => $get_divisi
         ];
 
         $this->template->title('View Quotation');
@@ -441,13 +444,16 @@ class Penawaran extends Admin_Controller
         $this->db->where('a.deleted_by', null);
         $get_def_biaya_others = $this->db->get()->result();
 
+        $get_divisi = $this->db->get_where('ms_department a', ['a.deleted_by' => null])->result();
+
         $data = [
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
             'list_aktifitas' => $get_aktifitas,
             'list_def_akomodasi' => $get_def_biaya_akomodasi,
-            'list_def_others' => $get_def_biaya_others
+            'list_def_others' => $get_def_biaya_others,
+            'list_divisi' => $get_divisi
         ];
 
         $this->template->title('Create Quotation');
@@ -719,6 +725,8 @@ class Penawaran extends Admin_Controller
             'nilai_disc' => str_replace(',', '', $post['nilai_disc']),
             'tipe_informasi_awal' => $tipe_info_awal,
             'detail_informasi_awal' => $detail_info_awal,
+            'id_divisi' => $post['divisi'],
+            'nm_divisi' => $post['nm_divisi'],
             'input_by' => $this->auth->user_id(),
             'input_date' => date('Y-m-d H:i:s')
         ];
@@ -917,6 +925,8 @@ class Penawaran extends Admin_Controller
                 'grand_total' => $post['grand_total'],
                 'tipe_informasi_awal' => $tipe_info_awal,
                 'detail_informasi_awal' => $detail_info_awal,
+                'id_divisi' => $post['divisi'],
+                'nm_divisi' => $post['nm_divisi'],
                 'sts_quot' => 1,
                 'sts_deal' => null,
                 'updated_by' => $this->auth->user_id(),
@@ -1086,6 +1096,20 @@ class Penawaran extends Admin_Controller
 
         echo json_encode([
             'hasil' => $hasil
+        ]);
+    }
+
+    public function get_nm_divisi() {
+        $post = $this->input->post();
+
+        $id_divisi = $post['id_divisi'];
+
+        $get_divisi = $this->db->get_where('ms_department', ['id' => $id_divisi])->row();
+
+        $nm_divisi = (!empty($get_divisi)) ? $get_divisi->nama : '';
+
+        echo json_encode([
+            'nm_divisi' => $nm_divisi
         ]);
     }
 }
