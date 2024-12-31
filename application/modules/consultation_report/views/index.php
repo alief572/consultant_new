@@ -29,13 +29,12 @@ $ENABLE_DELETE  = has_permission('Consultation_Report.Delete');
             <thead>
                 <tr>
                     <th align="center">No</th>
-                    <th align="center">Nomor SPK</th>
-                    <th align="center">Marketing</th>
-                    <th align="center">Package</th>
+                    <th align="center">No. SPK</th>
                     <th align="center">Customer</th>
-                    <th align="center">Grand Total</th>
-                    <th align="center">Status</th>
-                    <th align="center">Status SPK</th>
+                    <th align="center">Consultation</th>
+                    <th align="center">Project Leader</th>
+                    <th align="center">Mandays</th>
+                    <th align="center">Actual</th>
                     <th align="center">Action</th>
                 </tr>
             </thead>
@@ -116,31 +115,30 @@ $ENABLE_DELETE  = has_permission('Consultation_Report.Delete');
 
                 }
             },
-            columns: [{
-                    data: 'no',
-                }, {
-                    data: 'id_spk_penawaran'
+            columns: [
+                {
+                    data: 'no'
                 },
                 {
-                    data: 'nm_marketing'
-                },
-                {
-                    data: 'nm_paket'
+                    data: 'no_spk'
                 },
                 {
                     data: 'nm_customer'
                 },
                 {
-                    data: 'grand_total'
+                    data: 'nm_project'
                 },
                 {
-                    data: 'status'
+                    data: 'project_leader'
                 },
                 {
-                    data: 'status_spk'
+                    data: 'mandays'
                 },
                 {
-                    data: 'option'
+                    data: 'actual'
+                },
+                {
+                    data: 'action'
                 }
             ],
             responsive: true,
