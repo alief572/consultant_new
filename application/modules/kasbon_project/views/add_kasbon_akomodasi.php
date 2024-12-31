@@ -136,7 +136,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th rowspan="2" class="text-center valign-middle">Item</th>
                         <th colspan="2" class="text-center valign-middle">Pengajuan</th>
                         <th colspan="3" class="text-center valign-middle">Estimasi</th>
-                        <!-- <th rowspan="2" class="text-center valign-middle">Budget Tambahan</th> -->
+                        <th rowspan="2" class="text-center valign-middle">Budget Tambahan</th>
                         <th rowspan="2" class="text-center valign-middle">Aktual Terpakai</th>
                         <th rowspan="2" class="text-center valign-middle">Sisa Budget</th>
                     </tr>
@@ -209,10 +209,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<input type="hidden" name="detail_akomodasi[' . $no . '][total_estimasi]" value="' . $item->total_final . '">';
                         echo '</td>';
 
-                        // echo '<td class="text-center">';
-                        // echo number_format($total_budget_tambahan, 2);
-                        // echo '<input type="hidden" name="detail_akomodasi[' . $no . '][budget_tambahan]" value="' . $total_budget_tambahan . '">';
-                        // echo '</td>';
+                        echo '<td class="text-center">';
+                        echo number_format($total_budget_tambahan, 2);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][budget_tambahan]" value="' . $total_budget_tambahan . '">';
+                        echo '</td>';
 
                         echo '<td class="text-center">';
                         echo number_format($aktual_terpakai);
@@ -245,7 +245,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_total_budget, 2) ?></td>
-                        <!-- <td class="text-center"><?= number_format($ttl_budget_tambahan, 2) ?></td> -->
+                        <td class="text-center"><?= number_format($ttl_budget_tambahan, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_aktual_pakai) ?></td>
                         <td class="text-center"><?= number_format($ttl_sisa_budget, 2) ?></td>
                     </tr>
@@ -283,13 +283,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 </table>
             </div>
 
-            <!-- <div class="col-md-6">
+            <div class="col-md-6">
                 <div class="row">
                     <a href="<?= base_url('kasbon_project/add_request_budget_akomodasi/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
                         <i class="fa fa-plus"></i> Request Overbudget
                     </a>
                 </div>
-            </div> -->
+            </div>
 
             <div class="col-md-12 mt-5">
                 <a href="<?= base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
