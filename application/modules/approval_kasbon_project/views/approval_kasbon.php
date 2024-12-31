@@ -184,7 +184,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           <th class="text-center valign-middle" rowspan="2">Item</th>
           <th class="text-center valign-middle" colspan="2">Pengajuan</th>
           <th class="text-center valign-middle" colspan="3">Estimasi</th>
-          <!-- <th class="text-center valign-middle" rowspan="2">Budget Tambahan</th> -->
+          <th class="text-center valign-middle" rowspan="2">Budget Tambahan</th>
           <th class="text-center valign-middle" rowspan="2">Aktual Terpakai</th>
           <th class="text-center valign-middle" rowspan="2">Sisa Budget</th>
         </tr>
@@ -211,7 +211,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
           echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
-          // echo '<td class="text-right">' . number_format($item->budget_tambahan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->budget_tambahan, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->aktual_terpakai) . '</td>';
           echo '<td class="text-right">' . number_format($item->sisa_budget, 2) . '</td>';
           echo '</tr>';

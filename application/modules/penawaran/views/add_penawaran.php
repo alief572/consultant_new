@@ -28,7 +28,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         /* Ensure the dropdown itself has a high z-index */
     }
 
-    .chosen-container-active{
+    .chosen-container-active {
         position: absolute;
     }
 
@@ -95,7 +95,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                     <input type="checkbox" name="check_info_awal_sales" id="" class="check_info_awal_sales"> Sales
                                 </td>
                                 <td style="padding: 0.2rem;">
-                                    <select name="informasi_awal_sales" id="" class="informasi_awal_sales">
+                                    <select name="informasi_awal_sales" id="" class="form-control form-control-sm informasi_awal_sales">
                                         <option value="">- Select Sales -</option>
                                         <?php
                                         foreach ($list_marketing as $item) {
@@ -110,7 +110,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                     <input type="checkbox" name="check_info_awal_medsos" id="" class="check_info_awal_medsos"> Medsos
                                 </td>
                                 <td style="padding: 0.2rem;">
-                                    <select name="informasi_awal_medsos" id="" class="informasi_awal_medsos">
+                                    <select name="informasi_awal_medsos" id="" class="form-control form-control-sm informasi_awal_medsos">
                                         <option value="">- Select Medsos -</option>
                                         <option value="Youtube">Youtube</option>
                                         <option value="Instagram">Instagram</option>
@@ -126,7 +126,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                     <input type="checkbox" name="check_info_awal_others" id="" class="check_info_awal_others"> Others
                                 </td>
                                 <td style="padding: 0.2rem;">
-                                    <select name="informasi_awal_others" id="" class="informasi_awal_others">
+                                    <select name="informasi_awal_others" id="" class="form-control form-control-sm informasi_awal_others">
                                         <option value="">- Select Employee -</option>
                                         <?php
                                         foreach ($list_marketing as $item) {
@@ -157,7 +157,25 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     </td>
                     <td class="pd-5 semi-bold" valign="top"></td>
                     <td class="pd-5" width="390" valign="top">
-                        
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pd-5 semi-bold" valign="top">Divisi</td>
+                    <td class="pd-5" width="390" valign="top">
+                        <input type="hidden" name="nm_divisi" class="nm_divisi" value="">
+                        <select name="divisi" class="form-control form-control-sm change_divisi select_divisi" required>
+                            <option value="">- Select Divisi -</option>
+                            <?php
+                            foreach ($list_divisi as $item) {
+                                echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </td>
+                    <td class="pd-5 semi-bold" valign="top"></td>
+                    <td class="pd-5" width="390" valign="top">
+
                     </td>
                 </tr>
             </table>
@@ -408,14 +426,15 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     $('.select_customer').chosen();
     $('.select_marketing').chosen();
     $('.select_package').chosen();
+    $('.select_divisi').chosen();
     $('.informasi_awal_sales').chosen({
-        width: "100%"
+        width: "300px"
     });
     $('.informasi_awal_medsos').chosen({
-        width: "100%"
+        width: "300px"
     });
     $('.informasi_awal_others').chosen({
-        width: "100%"
+        width: "300px"
     });
 
     // initialize with defaults
@@ -738,7 +757,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var hasil = '<tr class="tr_akomodasi_' + no_akomodasi + '">';
 
         hasil += '<td>';
-        hasil += '<select class="form-control form-control-sm select_akomodasi_'+no_akomodasi+'" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
+        hasil += '<select class="form-control form-control-sm select_akomodasi_' + no_akomodasi + '" name="dt_ako[' + no_akomodasi + '][id_akomodasi]">';
         hasil += '<option value="">- Item Akomodasi -</option>';
         <?php
         foreach ($list_def_akomodasi as $item) {
@@ -792,7 +811,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var hasil = '<tr class="tr_others_' + no_others + '">';
 
         hasil += '<td>';
-        hasil += '<select class="form-control form-control-sm select_others_'+no_others+'" name="dt_oth[' + no_others + '][id_others]">';
+        hasil += '<select class="form-control form-control-sm select_others_' + no_others + '" name="dt_oth[' + no_others + '][id_others]">';
         hasil += '<option value="">- Item Others -</option>';
         <?php
         foreach ($list_def_others as $item) {
@@ -1007,6 +1026,30 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
     $(document).on('change', '.include_ppn', function() {
         hitung_summary();
+    });
+
+    $(document).on('change', '.change_divisi', function() {
+        var id_divisi = $(this).val();
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'get_nm_divisi',
+            data: {
+                'id_divisi': id_divisi
+            },
+            dataType: 'json',
+            cache: false,
+            success: function(result) {
+                $('.nm_divisi').val(result.nm_divisi);
+            },
+            error: function(result) {
+                swal({
+                    type: 'error',
+                    title: 'Error !',
+                    text: 'Please try again later !'
+                });
+            }
+        });
     });
 
     $(document).on('submit', '.form-data', function(e) {

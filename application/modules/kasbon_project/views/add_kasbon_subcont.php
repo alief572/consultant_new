@@ -108,7 +108,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <td class="pd-5 valign-top" width="400"><?= $list_budgeting->nm_project ?></td>
                     <th class="pd-5 valign-top" width="150"></th>
                     <td class="pd-5 valign-top" width="400">
-                        
+
                     </td>
                 </tr>
                 <tr>
@@ -184,7 +184,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" value="'.$item->mandays_rate_subcont_final.'" readonly>';
+                        echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" value="' . $item->mandays_rate_subcont_final . '" ' . $readonly . '>';
                         echo '</td>';
 
                         echo '<td class="text-center">';
