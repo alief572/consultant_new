@@ -184,7 +184,7 @@ if (count($list_penawaran_others) > 0) {
                 </td>
                 <td class="pd-5 semi-bold" valign="top"></td>
                 <td class="pd-5" width="390" valign="top">
-                   
+
                 </td>
             </tr>
         </table>
@@ -470,11 +470,67 @@ if (count($list_penawaran_others) > 0) {
         </table>
 
         <input type="hidden" class="grand_total" name="grand_total">
+    </div>
+</div>
 
-        <div style="float: right; margin-top: 1rem;">
-            <a href="<?= base_url('penawaran') ?>" class="btn btn-sm btn-danger">
-                <i class="fa fa-arrow-left"></i> Back
-            </a>
+<div class="box">
+    <div class="box-header"></div>
+    <div class="box-body">
+        <div class="col-md-6">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th colspan="3">Detail Other Summary</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>Total Mandays</td>
+                    <td class="text-center">:</td>
+                    <td class="text-right">
+                        <input type="hidden" name="ttl_total_mandays" value="<?= $list_penawaran->total_mandays ?>">
+                        <span class="ttl_total_mandays"><?= number_format($list_penawaran->total_mandays) ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mandays Tandem</td>
+                    <td class="text-center">:</td>
+                    <td class="text-right">
+                        <input type="hidden" name="ttl_mandays_tandem" value="<?= $list_penawaran->mandays_tandem ?>">
+                        <span class="ttl_mandays_tandem"><?= number_format($list_penawaran->mandays_tandem) ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mandays Subcont</td>
+                    <td class="text-center">:</td>
+                    <td class="text-right">
+                        <input type="hidden" name="ttl_mandays_subcont" value="<?= $list_penawaran->mandays_subcont ?>">
+                        <span class="ttl_mandays_subcont"><?= number_format($list_penawaran->mandays_subcont) ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mandays Internal</td>
+                    <td class="text-center">:</td>
+                    <td class="text-right">
+                        <input type="hidden" name="ttl_mandays_internal" value="<?= $list_penawaran->mandays_internal ?>">
+                        <span class="ttl_mandays_internal"><?= number_format($list_penawaran->mandays_internal) ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mandays Rate</td>
+                    <td class="text-center">:</td>
+                    <td class="text-right ">
+                        <input type="hidden" name="ttl_mandays_rate" value="<?= $list_penawaran->mandays_rate ?>">
+                        <span class="ttl_mandays_rate">Rp. <?= number_format($list_penawaran->mandays_rate, 2) ?></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-12">
+            <div style="float: right; margin-top: 1rem;top: 0;">
+                <a href="<?= base_url('penawaran') ?>" class="btn btn-sm btn-danger">
+                    <i class="fa fa-arrow-left"></i> Back
+                </a>
+            </div>
         </div>
     </div>
 </div>

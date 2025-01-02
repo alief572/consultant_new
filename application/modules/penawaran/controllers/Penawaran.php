@@ -515,7 +515,7 @@ class Penawaran extends Admin_Controller
 
             $hasil .= '<tr class="tr_aktifitas_' . $no . '">';
 
-            $hasil .= '<td class="text-center">' . $no . '</td>';
+            $hasil .= '<td class="text-center tr_no">' . $no . '</td>';
 
             $hasil .= '<td class="text-left">';
             $hasil .= '<select class="form-control form-control-sm change_aktifitas select_nm_aktifitas_' . $no . '" name="dt_act[' . $no . '][nm_aktifitas]" style="max-width: 500px;" data-no="' . $no . '">';
@@ -695,13 +695,13 @@ class Penawaran extends Admin_Controller
         // <option value="STM/INT/">Internal</option>
 
         $tipe_penawaran = '';
-        if(isset($post['check_info_awal_sales'])){
+        if (isset($post['check_info_awal_sales'])) {
             $tipe_penawaran = 'STM/';
         }
-        if(isset($post['check_info_awal_medsos'])){
+        if (isset($post['check_info_awal_medsos'])) {
             $tipe_penawaran = 'STM/IC-MKT/';
         }
-        if(isset($post['check_info_awal_others'])){
+        if (isset($post['check_info_awal_others'])) {
             $tipe_penawaran = 'STM/INT/';
         }
 
@@ -727,6 +727,11 @@ class Penawaran extends Admin_Controller
             'detail_informasi_awal' => $detail_info_awal,
             'id_divisi' => $post['divisi'],
             'nm_divisi' => $post['nm_divisi'],
+            'total_mandays' => $post['ttl_total_mandays'],
+            'mandays_subcont' => $post['ttl_mandays_subcont'],
+            'mandays_tandem' => $post['ttl_mandays_tandem'],
+            'mandays_internal' => $post['ttl_mandays_internal'],
+            'mandays_rate' => $post['ttl_mandays_rate'],
             'input_by' => $this->auth->user_id(),
             'input_date' => date('Y-m-d H:i:s')
         ];
@@ -927,6 +932,11 @@ class Penawaran extends Admin_Controller
                 'detail_informasi_awal' => $detail_info_awal,
                 'id_divisi' => $post['divisi'],
                 'nm_divisi' => $post['nm_divisi'],
+                'total_mandays' => $post['ttl_total_mandays'],
+                'mandays_subcont' => $post['ttl_mandays_subcont'],
+                'mandays_tandem' => $post['ttl_mandays_tandem'],
+                'mandays_internal' => $post['ttl_mandays_internal'],
+                'mandays_rate' => $post['ttl_mandays_rate'],
                 'sts_quot' => 1,
                 'sts_deal' => null,
                 'updated_by' => $this->auth->user_id(),
@@ -1099,7 +1109,8 @@ class Penawaran extends Admin_Controller
         ]);
     }
 
-    public function get_nm_divisi() {
+    public function get_nm_divisi()
+    {
         $post = $this->input->post();
 
         $id_divisi = $post['id_divisi'];
