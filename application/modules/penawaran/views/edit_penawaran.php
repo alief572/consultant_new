@@ -266,7 +266,7 @@ if (count($list_penawaran_others) > 0) {
 
                         echo '<tr class="tr_aktifitas_' . $no_activity . '">';
 
-                        echo '<td class="text-center">' . $no_activity . '</td>';
+                        echo '<td class="text-center tr_no">' . $no_activity . '</td>';
 
                         echo '<td class="text-left">';
 
@@ -618,13 +618,70 @@ if (count($list_penawaran_others) > 0) {
 
             <input type="hidden" class="grand_total" name="grand_total" value="<?= $list_penawaran->grand_total ?>">
 
-            <div style="float: right; margin-top: 1rem;">
-                <a href="<?= base_url('penawaran') ?>" class="btn btn-sm btn-danger">
-                    <i class="fa fa-arrow-left"></i> Back
-                </a>
-                <button type="submit" class="btn btn-sm btn-success">
-                    <i class="fa fa-save"></i> Save
-                </button>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header"></div>
+        <div class="box-body">
+            <div class="col-md-6">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th colspan="3">Detail Other Summary</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td>Total Mandays</td>
+                        <td class="text-center">:</td>
+                        <td class="text-right">
+                            <input type="hidden" name="ttl_total_mandays" value="<?= $list_penawaran->total_mandays ?>">
+                            <span class="ttl_total_mandays"><?= number_format($list_penawaran->total_mandays) ?></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mandays Tandem</td>
+                        <td class="text-center">:</td>
+                        <td class="text-right">
+                            <input type="hidden" name="ttl_mandays_tandem" value="<?= $list_penawaran->mandays_tandem ?>">
+                            <span class="ttl_mandays_tandem"><?= number_format($list_penawaran->mandays_tandem) ?></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mandays Subcont</td>
+                        <td class="text-center">:</td>
+                        <td class="text-right">
+                            <input type="hidden" name="ttl_mandays_subcont" value="<?= $list_penawaran->mandays_subcont ?>">
+                            <span class="ttl_mandays_subcont"><?= number_format($list_penawaran->mandays_subcont) ?></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mandays Internal</td>
+                        <td class="text-center">:</td>
+                        <td class="text-right">
+                            <input type="hidden" name="ttl_mandays_internal" value="<?= $list_penawaran->mandays_internal ?>">
+                            <span class="ttl_mandays_internal"><?= number_format($list_penawaran->mandays_internal) ?></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mandays Rate</td>
+                        <td class="text-center">:</td>
+                        <td class="text-right ">
+                            <input type="hidden" name="ttl_mandays_rate" value="<?= $list_penawaran->mandays_rate ?>">
+                            <span class="ttl_mandays_rate">Rp. <?= number_format($list_penawaran->mandays_rate, 2) ?></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-12">
+                <div style="float: right; margin-top: 1rem;top: 0;">
+                    <a href="<?= base_url('penawaran') ?>" class="btn btn-sm btn-danger">
+                        <i class="fa fa-arrow-left"></i> Back
+                    </a>
+                    <button type="submit" class="btn btn-sm btn-success">
+                        <i class="fa fa-save"></i> Save
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -847,6 +904,7 @@ if (count($list_penawaran_others) > 0) {
         $('.ttl_act_price').html(number_format(ttl_price, 2));
 
         hitung_summary();
+        hitung_detail_other_summary();
     }
 
     function hitung_item_akomodasi(no) {
@@ -1113,6 +1171,77 @@ if (count($list_penawaran_others) > 0) {
         auto_num();
     }
 
+    function hitung_detail_other_summary() {
+        var max_no = 1;
+        $('.tr_no').each(function() {
+            var value = get_num($(this).text());
+
+            max_no = value;
+        });
+
+        var max_no_akomodasi = get_num($('.no_akomodasi').val());
+
+        var ttl_total_mandays = 0;
+        var ttl_mandays_subcont = 0;
+        var ttl_mandays_tandem = 0;
+        var ttl_mandays_internal = 0;
+
+        var ttl_nilai_project = 0;
+        var ttl_akomodasi = 0;
+        var ttl_others = 0;
+        var ttl_subcont = 0;
+        var ttl_tandem = 0;
+
+        for(i = 1; i <= max_no; i++) {
+            var mandays_internal = get_num($('input[name="dt_act['+i+'][mandays]"]').val());
+            var mandays_rate_internal = get_num($('input[name="dt_act['+i+'][mandays_rate]"]').val());
+            var mandays_subcont = get_num($('input[name="dt_act['+i+'][mandays_subcont]"]').val());
+            var mandays_rate_subcont = get_num($('input[name="dt_act['+i+'][mandays_rate_subcont]"]').val());
+            var mandays_tandem = get_num($('input[name="dt_act['+i+'][mandays_tandem]"]').val());
+            var mandays_rate_tandem = get_num($('input[name="dt_act['+i+'][mandays_rate_tandem]"]').val());
+
+            ttl_total_mandays += (mandays_internal + mandays_subcont + mandays_tandem);
+            ttl_mandays_subcont += (mandays_subcont);
+            ttl_mandays_tandem += (mandays_tandem);
+
+            ttl_nilai_project += ((mandays_internal * mandays_rate_internal) + (mandays_subcont * mandays_rate_subcont) + (mandays_tandem * mandays_rate_tandem));
+            ttl_subcont += (mandays_subcont * mandays_rate_subcont);
+            ttl_others += (mandays_tandem * mandays_rate_tandem);
+        }
+
+        var nilai_project = (ttl_nilai_project + ttl_subcont + ttl_others);
+
+        var ttl_mandays_internal = (ttl_total_mandays - ttl_mandays_subcont - ttl_mandays_tandem);
+
+        for(i = 1; i <= max_no_akomodasi; i++) {
+            total_akomodasi = get_num($('input[name="dt_ako['+i+'][total_akomodasi]"]').val());
+
+            ttl_akomodasi += total_akomodasi;
+        }
+
+        var max_no_others = get_num($('.no_others').val());
+        for(i = 1; i <= max_no_others; i++) {
+            total_others = get_num($('input[name="dt_oth['+i+'][total_others]"]').val());
+
+            ttl_others += total_others;
+        }
+
+        var mandays_rate = ((nilai_project - ttl_subcont - ttl_others - (mandays_subcont * mandays_rate_subcont) - (mandays_tandem * mandays_rate_tandem)) / ttl_total_mandays);
+
+
+        $('.ttl_total_mandays').html(number_format(ttl_total_mandays));
+        $('input[name="ttl_total_mandays"]').val(ttl_total_mandays);
+        $('.ttl_mandays_tandem').html(number_format(ttl_mandays_tandem));
+        $('input[name="ttl_mandays_tandem"]').val(ttl_mandays_tandem);
+        $('.ttl_mandays_subcont').html(number_format(ttl_mandays_subcont));
+        $('input[name="ttl_mandays_subcont"]').val(ttl_mandays_subcont);
+        $('.ttl_mandays_internal').html(number_format(ttl_mandays_internal));
+        $('input[name="ttl_mandays_internal"]').val(ttl_mandays_internal);
+        $('.ttl_mandays_rate').html('Rp. ' + number_format(mandays_rate));
+        $('input[name="ttl_mandays_rate"]').val(mandays_rate);
+
+    }
+
     $(document).on('change', '.input_diskon_persen', function() {
         var persen = get_num($(this).val());
         var subtotal = get_num($('.summary_subtotal').html());
@@ -1122,6 +1251,7 @@ if (count($list_penawaran_others) > 0) {
         $('.input_diskon_value').val(number_format(nilai_diskon, 2));
 
         hitung_summary();
+        hitung_detail_other_summary();
     });
 
     $(document).on('change', '.input_diskon_value', function() {
@@ -1133,6 +1263,7 @@ if (count($list_penawaran_others) > 0) {
         $('.input_diskon_persen').val(persen_disc.toFixed(2));
 
         hitung_summary();
+        hitung_detail_other_summary();
     });
 
     $(document).on('click', '#switch_akomodasi', function() {
@@ -1212,6 +1343,7 @@ if (count($list_penawaran_others) > 0) {
                 }
 
                 hitung_summary();
+                hitung_detail_other_summary();
             },
             error: function(result) {
                 swal({
@@ -1262,6 +1394,7 @@ if (count($list_penawaran_others) > 0) {
 
 
         hitung_total_activity();
+        hitung_detail_other_summary();
     });
 
     $(document).on('click', '.del_akomodasi', function() {
@@ -1282,6 +1415,7 @@ if (count($list_penawaran_others) > 0) {
 
     $(document).on('change', '.include_ppn', function() {
         hitung_summary();
+        hitung_detail_other_summary();
     });
 
     $(document).on('change', '.change_divisi', function() {
