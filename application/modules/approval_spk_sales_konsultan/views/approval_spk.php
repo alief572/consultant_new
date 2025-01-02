@@ -640,7 +640,7 @@ if($data_user->employee_id == '168') {
     </div>
 </div>
 
-<a href="<?= base_url('approval_spk_level_1'); ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
+<a href="<?= base_url('approval_spk_sales_konsultan'); ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
 <button type="button" class="btn btn-sm btn-danger reject_spk"><i class="fa fa-close"></i> Reject</button>
 <button type="button" class="btn btn-sm btn-success approve_spk"><i class="fa fa-check"></i> Approve</button>
 
