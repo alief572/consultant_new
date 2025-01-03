@@ -1,17 +1,12 @@
 <?php
-$ENABLE_ADD     = has_permission('Project_Leader.Add');
-$ENABLE_MANAGE  = has_permission('Project_Leader.Manage');
-$ENABLE_VIEW    = has_permission('Project_Leader.View');
-$ENABLE_DELETE  = has_permission('Project_Leader.Delete');
+$ENABLE_ADD     = has_permission('Direktur.Add');
+$ENABLE_MANAGE  = has_permission('Direktur.Manage');
+$ENABLE_VIEW    = has_permission('Direktur.View');
+$ENABLE_DELETE  = has_permission('Direktur.Delete');
 
 $ttl_persen_komisi = ($list_spk_penawaran->persen_pemberi_informasi_1_komisi + $list_spk_penawaran->persen_pemberi_informasi_2_komisi + $list_spk_penawaran->persen_sales_1_komisi + $list_spk_penawaran->persen_sales_2_komisi);
 
 $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi + $list_spk_penawaran->nominal_pemberi_informasi_2_komisi + $list_spk_penawaran->nominal_sales_1_komisi + $list_spk_penawaran->nominal_sales_2_komisi);
-
-$readonly_isu = 'readonly';
-if($data_user->employee_id == '168') {
-    $readonly_isu = '';
-}
 
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
@@ -417,7 +412,7 @@ if($data_user->employee_id == '168') {
                             if ($list_spk_penawaran->id_divisi == $item->id) {
                                 $selected = 'selected';
                             }
-                            echo '<option value="' . $item->id . '" '.$selected.'>' . ucfirst($item->nama) . '</option>';
+                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nama) . '</option>';
                             // echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
                         }
                         ?>
@@ -627,10 +622,10 @@ if($data_user->employee_id == '168') {
     <div class="box-body">
         <div class="form-group">
             <label for="">Isu Khusus / Permintaan khusus dari customer / Tujuan Program / 3 objective utama (khusus konsultasi)</label>
-            <textarea name="isu_khusus" id="" class="form-control form-control-sm isu_khusus" rows="10" <?= $readonly_isu ?>><?= $list_spk_penawaran->isu_khusus ?></textarea>
+            <textarea name="isu_khusus" id="" class="form-control form-control-sm" rows="10" readonly><?= $list_spk_penawaran->isu_khusus ?></textarea>
         </div>
         <br><br>
-    
+
         <div class="col-md-6">
             <div class="form-group">
                 <label for="">Reject Reason</label>
@@ -640,7 +635,7 @@ if($data_user->employee_id == '168') {
     </div>
 </div>
 
-<a href="<?= base_url('approval_spk_manager_sales'); ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
+<a href="<?= base_url('approval_spk_level_1'); ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
 <button type="button" class="btn btn-sm btn-danger reject_spk"><i class="fa fa-close"></i> Reject</button>
 <button type="button" class="btn btn-sm btn-success approve_spk"><i class="fa fa-check"></i> Approve</button>
 
@@ -722,7 +717,6 @@ if($data_user->employee_id == '168') {
 
     $(document).on('click', '.approve_spk', function() {
         var id_spk_penawaran = $('.id_spk_penawaran').val();
-        var isu_khusus = $('.isu_khusus').val();
 
         swal({
             type: 'warning',
@@ -735,8 +729,7 @@ if($data_user->employee_id == '168') {
                     type: "POST",
                     url: siteurl + active_controller + 'approve_spk',
                     data: {
-                        'id_spk_penawaran': id_spk_penawaran,
-                        'isu_khusus': isu_khusus
+                        'id_spk_penawaran': id_spk_penawaran
                     },
                     cache: false,
                     dataType: "JSON",
@@ -746,7 +739,7 @@ if($data_user->employee_id == '168') {
                                 type: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+                            }, function(aftter) {
                                 window.location.href = siteurl + active_controller;
                             });
                         } else {
