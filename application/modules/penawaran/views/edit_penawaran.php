@@ -700,7 +700,7 @@ if (count($list_penawaran_others) > 0) {
 <script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
 <!-- page script -->
 <script type="text/javascript">
-   $('.select_customer').chosen();
+    $('.select_customer').chosen();
     $('.select_marketing').chosen();
     $('.select_package').chosen();
     $('.select_divisi').chosen();
@@ -1192,13 +1192,13 @@ if (count($list_penawaran_others) > 0) {
         var ttl_subcont = 0;
         var ttl_tandem = 0;
 
-        for(i = 1; i <= max_no; i++) {
-            var mandays_internal = get_num($('input[name="dt_act['+i+'][mandays]"]').val());
-            var mandays_rate_internal = get_num($('input[name="dt_act['+i+'][mandays_rate]"]').val());
-            var mandays_subcont = get_num($('input[name="dt_act['+i+'][mandays_subcont]"]').val());
-            var mandays_rate_subcont = get_num($('input[name="dt_act['+i+'][mandays_rate_subcont]"]').val());
-            var mandays_tandem = get_num($('input[name="dt_act['+i+'][mandays_tandem]"]').val());
-            var mandays_rate_tandem = get_num($('input[name="dt_act['+i+'][mandays_rate_tandem]"]').val());
+        for (i = 1; i <= max_no; i++) {
+            var mandays_internal = get_num($('input[name="dt_act[' + i + '][mandays]"]').val());
+            var mandays_rate_internal = get_num($('input[name="dt_act[' + i + '][mandays_rate]"]').val());
+            var mandays_subcont = get_num($('input[name="dt_act[' + i + '][mandays_subcont]"]').val());
+            var mandays_rate_subcont = get_num($('input[name="dt_act[' + i + '][mandays_rate_subcont]"]').val());
+            var mandays_tandem = get_num($('input[name="dt_act[' + i + '][mandays_tandem]"]').val());
+            var mandays_rate_tandem = get_num($('input[name="dt_act[' + i + '][mandays_rate_tandem]"]').val());
 
             ttl_total_mandays += (mandays_internal + mandays_subcont + mandays_tandem);
             ttl_mandays_subcont += (mandays_subcont);
@@ -1206,28 +1206,36 @@ if (count($list_penawaran_others) > 0) {
 
             ttl_nilai_project += ((mandays_internal * mandays_rate_internal) + (mandays_subcont * mandays_rate_subcont) + (mandays_tandem * mandays_rate_tandem));
             ttl_subcont += (mandays_subcont * mandays_rate_subcont);
-            ttl_others += (mandays_tandem * mandays_rate_tandem);
+            ttl_tandem += (mandays_tandem * mandays_rate_tandem);
         }
 
-        var nilai_project = (ttl_nilai_project + ttl_subcont + ttl_others);
+
 
         var ttl_mandays_internal = (ttl_total_mandays - ttl_mandays_subcont - ttl_mandays_tandem);
 
-        for(i = 1; i <= max_no_akomodasi; i++) {
-            total_akomodasi = get_num($('input[name="dt_ako['+i+'][total_akomodasi]"]').val());
+        for (i = 1; i <= max_no_akomodasi; i++) {
+            total_akomodasi = get_num($('input[name="dt_ako[' + i + '][total_akomodasi]"]').val());
 
             ttl_akomodasi += total_akomodasi;
         }
 
+
+
         var max_no_others = get_num($('.no_others').val());
-        for(i = 1; i <= max_no_others; i++) {
-            total_others = get_num($('input[name="dt_oth['+i+'][total_others]"]').val());
+        for (i = 1; i <= max_no_others; i++) {
+            total_others = get_num($('input[name="dt_oth[' + i + '][total_others]"]').val());
 
             ttl_others += total_others;
         }
 
-        var mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others) / ttl_total_mandays);
+        var disc_nilai = get_num($('.input_diskon_value').val());
 
+        var nilai_project = (ttl_nilai_project + ttl_akomodasi + ttl_others);
+        nilai_project = (nilai_project - disc_nilai);
+        
+        var mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others) / ttl_total_mandays);
+        
+        // alert(mandays_rate);
 
         $('.ttl_total_mandays').html(number_format(ttl_total_mandays));
         $('input[name="ttl_total_mandays"]').val(ttl_total_mandays);
