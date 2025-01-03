@@ -4,13 +4,13 @@ if (!defined('BASEPATH')) {
 }
 
 $status = array();
-class Approval_spk_sales_konsultan extends Admin_Controller
+class Approval_spk_project_leader extends Admin_Controller
 {
     //Permission
-    protected $viewPermission     = 'Sales_&_Konsultan.View';
-    protected $addPermission      = 'Sales_&_Konsultan.Add';
-    protected $managePermission = 'Sales_&_Konsultan.Manage';
-    protected $deletePermission = 'Sales_&_Konsultan.Delete';
+    protected $viewPermission     = 'Project_Leader.View';
+    protected $addPermission      = 'Project_Leader.Add';
+    protected $managePermission = 'Project_Leader.Manage';
+    protected $deletePermission = 'Project_Leader.Delete';
 
     public function __construct()
     {
@@ -27,7 +27,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Approval SPK Sales & Konsultan');
+        $this->template->title('Approval SPK Project Leader');
         $this->template->render('index');
     }
 
@@ -209,32 +209,16 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $this->db->where('a.id_user', $this->auth->user_id());
         $get_user = $this->db->get()->row();
 
-        // print_r($get_user);
-        // exit;
-
-        // print_r($get_user);
-        // exit;
-
         $this->db->select('a.*, b.grand_total');
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->where('a.id_project_leader', $get_user->employee_id);
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', null);
-
-        $this->db->group_start();
-        $this->db->where('a.approval_konsultan_1_sts', null);
-        $this->db->or_where('a.approval_konsultan_2_sts', null);
-        $this->db->or_where('a.approval_sales_sts', null);
-        $this->db->group_end();
-
-        // if ($get_user->id_user !== '27' && $get_user->employee_id !== '168') {
-        //     $this->db->group_start();
-        //     $this->db->where('a.approval_sales_sts', null);
-        //     $this->db->or_where('a.approval_project_leader_sts', null);
-        //     $this->db->or_where('IF(a.id_konsultan_1 IS NULL, "1", a.approval_konsultan_1_sts) IS NULL');
-        //     $this->db->or_where('IF(a.id_konsultan_2 IS NULL, "1", a.approval_konsultan_2_sts) IS NULL');
-        //     $this->db->group_end();
-        // }
+        $this->db->where('a.approval_project_leader_sts', null);
+        $this->db->where('a.approval_sales_sts <>', null);
+        $this->db->where('a.approval_konsultan_1_sts <>', null);
+        $this->db->where('IF(a.id_konsultan_2 IS NULL, null, 1) <>', null);
 
         if (!empty($search['value'])) {
             $this->db->group_start();
@@ -246,13 +230,6 @@ class Approval_spk_sales_konsultan extends Admin_Controller
             $this->db->group_end();
         }
 
-        if ($get_user->id_user !== '27' && $get_user->employee_id !== '168') {
-            $this->db->group_start();
-            $this->db->where('a.id_konsultan_1', $get_user->employee_id);
-            $this->db->or_where('a.id_konsultan_2', $get_user->employee_id);
-            $this->db->or_where('a.id_sales', $get_user->employee_id);
-            $this->db->group_end();
-        }
         $this->db->order_by('a.input_date', 'desc');
         $this->db->limit($length, $start);
 
@@ -261,23 +238,13 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $this->db->select('a.*, b.grand_total');
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->where('a.id_project_leader', $get_user->employee_id);
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', null);
-
-        $this->db->group_start();
-        $this->db->where('a.approval_konsultan_1_sts', null);
-        $this->db->or_where('a.approval_konsultan_2_sts', null);
-        $this->db->or_where('a.approval_sales_sts', null);
-        $this->db->group_end();
-
-        // if ($get_user->id_user !== '27' && $get_user->employee_id !== '168') {
-        //     $this->db->group_start();
-        //     $this->db->where('a.approval_sales_sts', null);
-        //     $this->db->or_where('a.approval_project_leader_sts', null);
-        //     $this->db->or_where('IF(a.id_konsultan_1 IS NULL, "1", a.approval_konsultan_1_sts) IS NULL');
-        //     $this->db->or_where('IF(a.id_konsultan_2 IS NULL, "1", a.approval_konsultan_2_sts) IS NULL');
-        //     $this->db->group_end();
-        // }
+        $this->db->where('a.approval_project_leader_sts', null);
+        $this->db->where('a.approval_sales_sts <>', null);
+        $this->db->where('a.approval_konsultan_1_sts <>', null);
+        $this->db->where('a.approval_konsultan_2_sts <>', null);
 
         if (!empty($search['value'])) {
             $this->db->group_start();
@@ -286,14 +253,6 @@ class Approval_spk_sales_konsultan extends Admin_Controller
             $this->db->or_like('a.nm_project', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
             $this->db->or_like('b.grand_total', $search['value'], 'both');
-            $this->db->group_end();
-        }
-
-        if ($get_user->id_user !== '27' && $get_user->employee_id !== '168') {
-            $this->db->group_start();
-            $this->db->where('a.id_konsultan_1', $get_user->employee_id);
-            $this->db->or_where('a.id_konsultan_2', $get_user->employee_id);
-            $this->db->or_where('a.id_sales', $get_user->employee_id);
             $this->db->group_end();
         }
         $this->db->order_by('a.input_date', 'desc');
@@ -351,7 +310,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
             if ($this->viewPermission) {
                 $option .= '
                     <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('approval_spk_sales_konsultan/view_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-info" style="color: #000000">
+                        <a href="' . base_url('approval_spk_project_leader/view_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-info" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-file"></i>
@@ -381,7 +340,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
                 if ($valid == 1) {
                     $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('approval_spk_sales_konsultan/approval_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-success" style="color: #000000">
+                        <a href="' . base_url('approval_spk_project_leader/approval_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-success" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-check"></i>
@@ -537,35 +496,14 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $this->db->trans_begin();
 
         $data_arr = [];
-        if ($get_spk->id_sales == $get_user->employee_id && ($get_user->employee_id !== '' && $get_user->employee_id !== null)) {
+        if ($get_spk->id_project_leader == $get_user->employee_id && ($get_user->employee_id !== '' && $get_user->employee_id !== null)) {
             $data_arr = [
-                'approval_sales_sts' => 1,
-                'approval_sales_date' => date('Y-m-d H:i:s'),
-                'reject_sales_sts' => null,
-                'reject_sales_date' => null,
-                'reject_sales_reason' => null
+                'approval_project_leader_sts' => 1,
+                'approval_project_leader_date' => date('Y-m-d H:i:s'),
+                'reject_project_leader_sts' => null,
+                'reject_project_leader_date' => null,
+                'reject_project_leader_reason' => null
             ];
-
-            
-        }
-        if ($get_spk->id_konsultan_1 == $get_user->employee_id && ($get_user->employee_id !== '' && $get_user->employee_id !== null)) {
-            $data_arr = [
-                'approval_konsultan_1_sts' => 1,
-                'approval_konsultan_1_date' => date('Y-m-d H:i:s'),
-                'reject_konsultan_1_sts' => null,
-                'reject_konsultan_1_date' => null,
-                'reject_konsultan_1_reason' => null
-            ];
-        }
-        if ($get_spk->id_konsultan_2 == $get_user->employee_id && ($get_user->employee_id !== '' && $get_user->employee_id !== null)) {
-            $data_arr = [
-                'approval_konsultan_2_sts' => 1,
-                'approval_konsultan_2_date' => date('Y-m-d H:i:s'),
-                'reject_konsultan_2_sts' => null,
-                'reject_konsultan_2_date' => null,
-                'reject_konsultan_2_reason' => null
-            ];
-
         }
 
         if(!empty($data_arr)) {
