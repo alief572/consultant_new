@@ -976,7 +976,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             ttl_others += total_others;
         }
 
-        var mandays_rate = ((nilai_project - ttl_subcont - ttl_others - (mandays_subcont * mandays_rate_subcont) - (mandays_tandem * mandays_rate_tandem)) / ttl_total_mandays);
+        var mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others) / ttl_total_mandays);
 
 
         $('.ttl_total_mandays').html(number_format(ttl_total_mandays));

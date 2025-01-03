@@ -4,18 +4,18 @@ if (!defined('BASEPATH')) {
 }
 
 $status = array();
-class Approval_spk_project_leader extends Admin_Controller
+class Approval_spk_manager_sales extends Admin_Controller
 {
     //Permission
-    protected $viewPermission     = 'Project_Leader.View';
-    protected $addPermission      = 'Project_Leader.Add';
-    protected $managePermission = 'Project_Leader.Manage';
-    protected $deletePermission = 'Project_Leader.Delete';
+    protected $viewPermission     = 'Manager_Sales.View';
+    protected $addPermission      = 'Manager_Sales.Add';
+    protected $managePermission = 'Manager_Sales.Manage';
+    protected $deletePermission = 'Manager_Sales.Delete';
 
     public function __construct()
     {
         parent::__construct();
-        $this->template->title('Approval SPK Project Leader');
+        $this->template->title('Approval SPK Manager Sales');
         $this->template->page_icon('fa fa-cubes');
         $this->load->library('upload');
         // $this->load->model(array('Approval_spk_penawaran/Approval_spk_penawaran_model'));
@@ -27,7 +27,7 @@ class Approval_spk_project_leader extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Approval SPK Project Leader');
+        $this->template->title('Approval SPK Manager Sales');
         $this->template->render('index');
     }
 
@@ -212,10 +212,10 @@ class Approval_spk_project_leader extends Admin_Controller
         $this->db->select('a.*, b.grand_total');
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
-        $this->db->where('a.id_project_leader', $get_user->employee_id);
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', null);
-        $this->db->where('a.approval_project_leader_sts', null);
+        $this->db->where('a.approval_manager_sales', null);
+        $this->db->where('a.approval_project_leader_sts <>', null);
         $this->db->where('a.approval_sales_sts <>', null);
         $this->db->where('a.approval_konsultan_1_sts <>', null);
         $this->db->where('IF(a.id_konsultan_2 IS NULL, null, 1) <>', null);
@@ -241,10 +241,11 @@ class Approval_spk_project_leader extends Admin_Controller
         $this->db->where('a.id_project_leader', $get_user->employee_id);
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', null);
-        $this->db->where('a.approval_project_leader_sts', null);
+        $this->db->where('a.approval_manager_sales', null);
+        $this->db->where('a.approval_project_leader_sts <>', null);
         $this->db->where('a.approval_sales_sts <>', null);
         $this->db->where('a.approval_konsultan_1_sts <>', null);
-        $this->db->where('a.approval_konsultan_2_sts <>', null);
+        $this->db->where('IF(a.id_konsultan_2 IS NULL, null, 1) <>', null);
 
         if (!empty($search['value'])) {
             $this->db->group_start();
@@ -310,7 +311,7 @@ class Approval_spk_project_leader extends Admin_Controller
             if ($this->viewPermission) {
                 $option .= '
                     <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('approval_spk_project_leader/view_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-info" style="color: #000000">
+                        <a href="' . base_url('approval_spk_manager_sales/view_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-info" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-file"></i>
@@ -340,7 +341,7 @@ class Approval_spk_project_leader extends Admin_Controller
                 if ($valid == 1) {
                     $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('approval_spk_project_leader/approval_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-success" style="color: #000000">
+                        <a href="' . base_url('approval_spk_manager_sales/approval_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-success" style="color: #000000">
                             <div class="col-12 dropdown-item">
                             <b>
                                 <i class="fa fa-check"></i>
