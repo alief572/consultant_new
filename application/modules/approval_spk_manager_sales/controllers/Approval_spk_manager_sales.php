@@ -411,61 +411,16 @@ class Approval_spk_manager_sales extends Admin_Controller
         $this->db->trans_begin();
 
         $data_arr = [];
-        if ($get_spk->id_sales == $get_user->employee_id) {
-            $data_arr = [
-                'approval_sales_sts' => null,
-                'approval_sales_date' => null,
-                'reject_sales_sts' => 1,
-                'reject_sales_date' => date('Y-m-d H:i:s'),
-                'reject_sales_reason' => $reject_reason
-            ];
+        
+        $data_arr = [
+            'approval_manager_sales_sts' => null,
+            'approval_manager_sales_date' => null,
+            'reject_manager_sales_sts' => 1,
+            'reject_manager_sales_date' => date('Y-m-d H:i:s'),
+            'reject_manager_sales_reason' => $reject_reason
+        ];
 
-            $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
-        }
-        if ($get_spk->id_project_leader == $get_user->employee_id) {
-            $data_arr = [
-                'approval_project_leader_sts' => null,
-                'approval_project_leader_date' => null,
-                'reject_project_leader_sts' => 1,
-                'reject_project_leader_date' => date('Y-m-d H:i:s'),
-                'reject_project_leader_reason' => $reject_reason
-            ];
-
-            $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
-        }
-        if ($get_spk->id_konsultan_1 == $get_user->employee_id) {
-            $data_arr = [
-                'approval_konsultan_1_sts' => null,
-                'approval_konsultan_1_date' => null,
-                'reject_konsultan_1_sts' => 1,
-                'reject_konsultan_1_date' => date('Y-m-d H:i:s'),
-                'reject_konsultan_1_reason' => $reject_reason
-            ];
-
-            $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
-        }
-        if ($get_spk->id_konsultan_2 == $get_user->employee_id) {
-            $data_arr = [
-                'approval_konsultan_2_sts' => null,
-                'approval_konsultan_2_date' => null,
-                'reject_konsultan_2_sts' => 1,
-                'reject_konsultan_2_date' => date('Y-m-d H:i:s'),
-                'reject_konsultan_2_reason' => $reject_reason
-            ];
-
-            $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
-        }
-        if ($get_user->employee_id == '168') {
-            $data_arr = [
-                'reject_manager_sales_sts' => 1,
-                'reject_manager_sales_date' => date('Y-m-d H:i:s'),
-                'reject_manager_sales_reason' => $reject_reason,
-                'approval_manager_sales_sts' => null,
-                'approval_manager_sales_date' => null
-            ];
-
-            $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
-        }
+        $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
 
         if ($this->db->trans_status() === false || empty($data_arr)) {
             $this->db->trans_rollback();
@@ -496,16 +451,13 @@ class Approval_spk_manager_sales extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $data_arr = [];
-        if ($get_spk->id_project_leader == $get_user->employee_id && ($get_user->employee_id !== '' && $get_user->employee_id !== null)) {
-            $data_arr = [
-                'approval_project_leader_sts' => 1,
-                'approval_project_leader_date' => date('Y-m-d H:i:s'),
-                'reject_project_leader_sts' => null,
-                'reject_project_leader_date' => null,
-                'reject_project_leader_reason' => null
-            ];
-        }
+        $data_arr = [
+            'approval_manager_sales_sts' => 1,
+            'approval_manager_sales_date' => date('Y-m-d H:i:s'),
+            'reject_manager_sales_sts' => null,
+            'reject_manager_sales_date' => null,
+            'reject_manager_sales_reason' => null
+        ];
 
         if(!empty($data_arr)) {
             $update_approve_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);

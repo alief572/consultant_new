@@ -950,7 +950,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             var mandays_tandem = get_num($('input[name="dt_act[' + i + '][mandays_tandem]"]').val());
             var mandays_rate_tandem = get_num($('input[name="dt_act[' + i + '][mandays_rate_tandem]"]').val());
 
-            ttl_total_mandays += (mandays_internal + mandays_subcont + mandays_tandem);
+            // ttl_total_mandays += (mandays_internal + mandays_subcont + mandays_tandem);
+            ttl_total_mandays += (mandays_internal);
             ttl_mandays_subcont += (mandays_subcont);
             ttl_mandays_tandem += (mandays_tandem);
 

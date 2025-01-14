@@ -1,16 +1,96 @@
 <?php
-$ENABLE_ADD     = has_permission('Project_Leader.Add');
-$ENABLE_MANAGE  = has_permission('Project_Leader.Manage');
-$ENABLE_VIEW    = has_permission('Project_Leader.View');
-$ENABLE_DELETE  = has_permission('Project_Leader.Delete');
+$ENABLE_ADD     = has_permission('SPK.Add');
+$ENABLE_MANAGE  = has_permission('SPK.Manage');
+$ENABLE_VIEW    = has_permission('SPK.View');
+$ENABLE_DELETE  = has_permission('SPK.Delete');
 
 $ttl_persen_komisi = ($list_spk_penawaran->persen_pemberi_informasi_1_komisi + $list_spk_penawaran->persen_pemberi_informasi_2_komisi + $list_spk_penawaran->persen_sales_1_komisi + $list_spk_penawaran->persen_sales_2_komisi);
 
 $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi + $list_spk_penawaran->nominal_pemberi_informasi_2_komisi + $list_spk_penawaran->nominal_sales_1_komisi + $list_spk_penawaran->nominal_sales_2_komisi);
 
-$readonly_isu = 'readonly';
-if($data_user->employee_id == '168') {
-    $readonly_isu = '';
+$status_sales = '';
+$status_project_leader = '';
+$status_konsultan_1 = '';
+$status_konsultan_2 = '';
+
+if ($list_spk_penawaran->approval_sales_sts == 1) {
+    $status_sales = '<span class="btn btn-sm btn-success">Approved</span>';
+}
+if ($list_spk_penawaran->reject_sales_sts == 1) {
+    $status_sales = '<span class="btn btn-sm btn-danger">Rejected</span>';
+}
+
+if ($list_spk_penawaran->approval_project_leader_sts == 1) {
+    $status_project_leader = '<span class="btn btn-sm btn-success">Approved</span>';
+}
+if ($list_spk_penawaran->reject_project_leader_sts == 1) {
+    $status_project_leader = '<span class="btn btn-sm btn-danger">Rejected</span>';
+}
+
+if ($list_spk_penawaran->approval_konsultan_1_sts == 1) {
+    $status_konsultan_1 = '<span class="btn btn-sm btn-success">Approved</span>';
+}
+if ($list_spk_penawaran->reject_konsultan_1_sts == 1) {
+    $status_konsultan_1 = '<span class="btn btn-sm btn-danger">Rejected</span>';
+}
+
+if ($list_spk_penawaran->approval_konsultan_2_sts == 1) {
+    $status_konsultan_2 = '<span class="btn btn-sm btn-success">Approved</span>';
+}
+if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
+    $status_konsultan_2 = '<span class="btn btn-sm btn-danger">Rejected</span>';
+}
+
+$date_sales = '';
+if ($list_spk_penawaran->approval_sales_sts == 1) {
+    $date_sales = date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_sales_date));
+}
+if ($list_spk_penawaran->reject_sales_sts == 1) {
+    $date_sales = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_sales_date));
+}
+
+$date_project_leader = '';
+if ($list_spk_penawaran->approval_project_leader_sts == 1) {
+    $date_project_leader = date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_project_leader_date));
+}
+if ($list_spk_penawaran->reject_project_leader_sts == 1) {
+    $date_project_leader = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_project_leader_date));
+}
+
+$date_konsultan_1 = '';
+if ($list_spk_penawaran->approval_konsultan_1_sts == 1) {
+    $date_konsultan_1 = date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_konsultan_1_date));
+}
+if ($list_spk_penawaran->reject_konsultan_1_sts == 1) {
+    $date_konsultan_1 = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_konsultan_1_date));
+}
+
+$date_konsultan_2 = '';
+if ($list_spk_penawaran->approval_konsultan_2_sts == 1) {
+    $date_konsultan_2 = date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_konsultan_2_date));
+}
+if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
+    $date_konsultan_2 = date('d F Y H:i:s', strtotime($list_spk_penawaran->reject_konsultan_2_date));
+}
+
+$reason_sales = '';
+if ($list_spk_penawaran->reject_sales_sts == 1) {
+    $reason_sales = $list_spk_penawaran->reject_sales_reason;
+}
+
+$reason_project_leader = '';
+if ($list_spk_penawaran->reject_project_leader_sts == 1) {
+    $reason_project_leader = $list_spk_penawaran->reject_project_leader_reason;
+}
+
+$reason_konsultan_1 = '';
+if ($list_spk_penawaran->reject_konsultan_1_sts == 1) {
+    $reason_konsultan_1 = $list_spk_penawaran->reject_konsultan_1_reason;
+}
+
+$reason_konsultan_2 = '';
+if ($list_spk_penawaran->reject_konsultan_2_sts == 1) {
+    $reason_konsultan_2 = $list_spk_penawaran->reject_konsultan_2_reason;
 }
 
 ?>
@@ -73,7 +153,7 @@ if($data_user->employee_id == '168') {
                 <!-- <td width="100"></td> -->
                 <td class="pd-5 semi-bold" valign="top" width="110">No. SPK</td>
                 <td class="pd-5" width="500" valign="top">
-                    <input type="text" name="id_spk_penawaran" id="" class="form-control form-control-sm id_spk_penawaran text-center" value="<?= $list_spk_penawaran->id_spk_penawaran ?>" readonly>
+                    <input type="text" name="id_quotation" id="" class="form-control form-control-sm text-center" value="<?= $list_spk_penawaran->id_spk_penawaran ?>" readonly>
                 </td>
             </tr>
             <tr>
@@ -417,7 +497,7 @@ if($data_user->employee_id == '168') {
                             if ($list_spk_penawaran->id_divisi == $item->id) {
                                 $selected = 'selected';
                             }
-                            echo '<option value="' . $item->id . '" '.$selected.'>' . ucfirst($item->nama) . '</option>';
+                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nama) . '</option>';
                             // echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
                         }
                         ?>
@@ -627,22 +707,71 @@ if($data_user->employee_id == '168') {
     <div class="box-body">
         <div class="form-group">
             <label for="">Isu Khusus / Permintaan khusus dari customer / Tujuan Program / 3 objective utama (khusus konsultasi)</label>
-            <textarea name="isu_khusus" id="" class="form-control form-control-sm isu_khusus" rows="10" <?= $readonly_isu ?>><?= $list_spk_penawaran->isu_khusus ?></textarea>
-        </div>
-        <br><br>
-    
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="">Reject Reason</label>
-                <textarea name="" id="" class="form-control form-control-sm reject_reason"><?= $list_spk_penawaran->reject_reason ?></textarea>
-            </div>
+            <textarea name="isu_khusus" id="" class="form-control form-control-sm" rows="10" readonly><?= $list_spk_penawaran->isu_khusus ?></textarea>
         </div>
     </div>
 </div>
 
-<a href="<?= base_url('approval_spk_manager_sales'); ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
-<button type="button" class="btn btn-sm btn-danger reject_spk"><i class="fa fa-close"></i> Reject</button>
-<button type="button" class="btn btn-sm btn-success approve_spk"><i class="fa fa-check"></i> Approve</button>
+<div class="box">
+    <div class="box-header">
+        <table style="width: 100%;" border="0">
+            <tr>
+                <th valign="top">
+                    <h4 style="font-weight: 600;">Approval History</h4>
+                </th>
+                <th class="text-right" valign="top">
+
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center">Posisi</th>
+                    <th class="text-center">Nama</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Reason</th>
+                </tr>
+            </thead>
+            <tbody class="list_payment_term">
+                <tr>
+                    <td class="text-center">Sales</td>
+                    <td class="text-center"><?= $list_spk_penawaran->nm_sales ?></td>
+                    <td class="text-center"><?= $status_sales ?></td>
+                    <td class="text-center"><?= $date_sales ?></td>
+                    <td class="text-center"><?= $reason_sales ?></td>
+                </tr>
+                <tr>
+                    <td class="text-center">Project Leader</td>
+                    <td class="text-center"><?= $list_spk_penawaran->nm_project_leader ?></td>
+                    <td class="text-center"><?= $status_project_leader ?></td>
+                    <td class="text-center"><?= $date_project_leader ?></td>
+                    <td class="text-center"><?= $reason_project_leader ?></td>
+                </tr>
+                <tr>
+                    <td class="text-center">Konsultan 1</td>
+                    <td class="text-center"><?= $list_spk_penawaran->nm_konsultan_1 ?></td>
+                    <td class="text-center"><?= $status_konsultan_1 ?></td>
+                    <td class="text-center"><?= $date_konsultan_1 ?></td>
+                    <td class="text-center"><?= $reason_konsultan_1 ?></td>
+                </tr>
+                <tr>
+                    <td class="text-center">Konsultan 2</td>
+                    <td class="text-center"><?= $list_spk_penawaran->nm_konsultan_2 ?></td>
+                    <td class="text-center"><?= $status_konsultan_2 ?></td>
+                    <td class="text-center"><?= $date_konsultan_2 ?></td>
+                    <td class="text-center"><?= $reason_konsultan_2 ?></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a href="<?= base_url('approval_spk_level_1'); ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
 
 
 
@@ -661,111 +790,5 @@ if($data_user->employee_id == '168') {
         $('.select_konsultan_2').chosen();
 
         $('.auto_num').autoNumeric();
-    });
-
-    $(document).on('click', '.reject_spk', function() {
-        var id_spk_penawaran = $('.id_spk_penawaran').val();
-        var reject_reason = $('.reject_reason').val();
-
-        if (reject_reason == '') {
-            swal({
-                type: 'warning',
-                title: 'Warning !',
-                text: 'Please input the reject reason first !'
-            });
-        } else {
-            swal({
-                type: 'warning',
-                title: 'Are you sure ?',
-                text: 'You will reject this SPK !',
-                showCancelButton: true
-            }, function(next) {
-                if (next) {
-                    $.ajax({
-                        type: "POST",
-                        url: siteurl + active_controller + 'reject_spk',
-                        data: {
-                            'id_spk_penawaran': id_spk_penawaran,
-                            'reject_reason': reject_reason
-                        },
-                        cache: false,
-                        dataType: "JSON",
-                        success: function(result) {
-                            if (result.status == 1) {
-                                swal({
-                                    type: 'success',
-                                    title: 'Success !',
-                                    text: result.pesan
-                                }, function(aftter) {
-                                    window.location.href = siteurl + active_controller;
-                                });
-                            } else {
-                                swal({
-                                    type: 'warning',
-                                    title: 'Failed !',
-                                    text: result.pesan
-                                });
-                            }
-                        },
-                        error: function(result) {
-                            swal({
-                                type: 'error',
-                                title: 'Error !',
-                                text: 'Please try again later !'
-                            });
-                        }
-                    });
-                }
-            });
-        }
-    });
-
-    $(document).on('click', '.approve_spk', function() {
-        var id_spk_penawaran = $('.id_spk_penawaran').val();
-        var isu_khusus = $('.isu_khusus').val();
-
-        swal({
-            type: 'warning',
-            title: 'Are you sure ?',
-            text: 'You will Approve this SPK !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
-                $.ajax({
-                    type: "POST",
-                    url: siteurl + active_controller + 'approve_spk',
-                    data: {
-                        'id_spk_penawaran': id_spk_penawaran,
-                        'isu_khusus': isu_khusus
-                    },
-                    cache: false,
-                    dataType: "JSON",
-                    success: function(result) {
-                        if (result.status == 1) {
-                            swal({
-                                type: 'success',
-                                title: 'Success !',
-                                text: result.pesan
-                            }, function(lanjut) {
-                                window.location.href = siteurl + active_controller;
-                            });
-                        } else {
-                            swal({
-                                type: 'warning',
-                                title: 'Failed !',
-                                text: result.pesan
-                            });
-                        }
-                    },
-                    error: function(result) {
-                        swal({
-                            type: 'error',
-                            title: 'Error !',
-                            text: 'Please try again later !'
-                        });
-                    }
-                });
-            }
-        });
     });
 </script>
