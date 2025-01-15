@@ -955,7 +955,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             ttl_mandays_subcont += (mandays_subcont);
             ttl_mandays_tandem += (mandays_tandem);
 
-            ttl_nilai_project += ((mandays_internal * mandays_rate_internal) + (mandays_subcont * mandays_rate_subcont) + (mandays_tandem * mandays_rate_tandem));
+            // ttl_nilai_project += ((mandays_internal * mandays_rate_internal) + (mandays_subcont * mandays_rate_subcont) + (mandays_tandem * mandays_rate_tandem));
+            ttl_nilai_project += ((mandays_internal * mandays_rate_internal));
             ttl_subcont += (mandays_subcont * mandays_rate_subcont);
             ttl_tandem += (mandays_tandem * mandays_rate_tandem);
         }
@@ -982,7 +983,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var disc_nilai = get_num($('.input_diskon_value').val());
 
         var nilai_project = (ttl_nilai_project + ttl_akomodasi + ttl_others);
-        nilai_project = (nilai_project - disc_nilai);
+        // nilai_project = (nilai_project - disc_nilai);
         
         var mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others) / ttl_total_mandays);
         
