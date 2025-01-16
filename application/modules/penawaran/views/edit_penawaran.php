@@ -497,7 +497,7 @@ if (count($list_penawaran_others) > 0) {
                         echo '<option value="">- Select Others -</option>';
                         foreach ($list_def_others as $item_def_others) {
                             $selected = '';
-                            if ($item_def_others->id = $item_others->id_item) {
+                            if ($item_def_others->id == $item_others->id_item) {
                                 $selected = 'selected';
                             }
                             echo '<option value="' . $item_def_others->id . '" ' . $selected . '>' . $item_def_others->nm_biaya . '</option>';
