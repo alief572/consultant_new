@@ -57,8 +57,6 @@ class Penawaran extends Admin_Controller
         $get_penawaran_akomodasi = $this->db->get_where('kons_tr_penawaran_akomodasi', ['id_penawaran' => $id_penawaran])->result();
         $get_penawaran_others = $this->db->get_where('kons_tr_penawaran_others', ['id_penawaran' => $id_penawaran])->result();
 
-
-
         $this->db->select('a.*');
         $this->db->from('customer a');
         $this->db->where('a.nm_customer <>', '');
