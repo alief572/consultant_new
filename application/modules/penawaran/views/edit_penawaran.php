@@ -1233,7 +1233,7 @@ if (count($list_penawaran_others) > 0) {
         var disc_nilai = get_num($('.input_diskon_value').val());
 
         var nilai_project = (ttl_nilai_project + ttl_akomodasi + ttl_others);
-        // nilai_project = (nilai_project - disc_nilai);
+        nilai_project = (nilai_project - disc_nilai);
         
         var mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others) / ttl_total_mandays);
         
