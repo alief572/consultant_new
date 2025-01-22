@@ -452,7 +452,7 @@ class Approval_spk_manager_sales extends Admin_Controller
         $this->db->trans_begin();
 
         $data_arr = [
-            'approval_manager_sales_sts' => 1,
+            'approval_manager_sales' => 1,
             'approval_manager_sales_date' => date('Y-m-d H:i:s'),
             'reject_manager_sales_sts' => null,
             'reject_manager_sales_date' => null,
