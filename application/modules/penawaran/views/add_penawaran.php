@@ -138,7 +138,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             </tr>
                         </table>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Upload Proposal</td>
+                    <td class="pd-5 semi-bold" valign="top" valign="top">Upload Proposal</td>
                     <td class="pd-5" width="390" valign="top">
                         <input type="file" name="upload_proposal" id="" class="form-control form-control-sm">
                     </td>
@@ -155,9 +155,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top"></td>
+                    <td class="pd-5 semi-bold" valign="top" valign="top">Upload Tahapan</td>
                     <td class="pd-5" width="390" valign="top">
-
+                        <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm">
                     </td>
                 </tr>
                 <tr>
@@ -173,9 +173,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top"></td>
+                    <td class="pd-5 semi-bold" valign="top" valign="top">Upload PO</td>
                     <td class="pd-5" width="390" valign="top">
-
+                        <input type="file" name="upload_po" id="" class="form-control form-control-sm">
                     </td>
                 </tr>
             </table>

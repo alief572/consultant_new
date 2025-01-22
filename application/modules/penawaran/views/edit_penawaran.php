@@ -156,7 +156,7 @@ if (count($list_penawaran_others) > 0) {
                             </tr>
                         </table>
                     </td>
-                    <td class="pd-5 semi-bold">Upload Proposal</td>
+                    <td class="pd-5 semi-bold" valign="top">Upload Proposal</td>
                     <td class="pd-5" width="390">
                         <input type="file" name="upload_proposal" id="" class="form-control form-control-sm">
                         <?php
@@ -188,9 +188,20 @@ if (count($list_penawaran_others) > 0) {
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top"></td>
-                    <td class="pd-5" width="390" valign="top">
-
+                    <td class="pd-5 semi-bold" valign="top">Upload Tahapan</td>
+                    <td class="pd-5" width="390">
+                        <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm">
+                        <?php
+                        if (
+                            $list_penawaran->upload_tahapan !== '' &&
+                            $list_penawaran->upload_tahapan !== null &&
+                            file_exists('./uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan)
+                        ) {
+                            echo '<a href="' . base_url('uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                            <i class="fa fa-download"></i> Download Tahapan
+                        </a>';
+                        }
+                        ?>
                     </td>
                 </tr>
                 <tr>
@@ -211,9 +222,20 @@ if (count($list_penawaran_others) > 0) {
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top"></td>
-                    <td class="pd-5" width="390" valign="top">
-
+                    <td class="pd-5 semi-bold" valign="top">Upload PO</td>
+                    <td class="pd-5" width="390">
+                        <input type="file" name="upload_po" id="" class="form-control form-control-sm">
+                        <?php
+                        if (
+                            $list_penawaran->upload_po !== '' &&
+                            $list_penawaran->upload_po !== null &&
+                            file_exists('./uploads/po_penawaran/' . $list_penawaran->upload_po)
+                        ) {
+                            echo '<a href="' . base_url('uploads/po_penawaran/' . $list_penawaran->upload_po) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                            <i class="fa fa-download"></i> Download PO
+                        </a>';
+                        }
+                        ?>
                     </td>
                 </tr>
             </table>
