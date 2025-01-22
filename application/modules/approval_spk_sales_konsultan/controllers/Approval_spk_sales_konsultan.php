@@ -61,9 +61,8 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
-        $this->db->select('b.nm_paket');
+        $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
@@ -142,9 +141,8 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
-        $this->db->select('b.nm_paket');
+        $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 

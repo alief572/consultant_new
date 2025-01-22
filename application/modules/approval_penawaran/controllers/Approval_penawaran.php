@@ -77,9 +77,8 @@ class Approval_penawaran extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_marketing = $this->db->get()->result();
 
-        $this->db->select('a.*, b.nm_paket');
+        $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $get_package = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -143,9 +142,8 @@ class Approval_penawaran extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_marketing = $this->db->get()->result();
 
-        $this->db->select('a.*, b.nm_paket');
+        $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $get_package = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -180,7 +178,6 @@ class Approval_penawaran extends Admin_Controller
         $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
         $this->db->join('members c', 'c.id = a.id_marketing', 'left');
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
-        $this->db->join('kons_master_paket e', 'e.id_paket = d.id_paket', 'left');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
         $this->db->where_in('a.sts_quot', [0, 1]);
@@ -188,7 +185,7 @@ class Approval_penawaran extends Admin_Controller
             $this->db->group_start();
             $this->db->like('a.tgl_quotation', $search['value'], 'both');
             $this->db->or_like('c.nama', $search['value'], 'both');
-            $this->db->or_like('e.nm_paket', $search['value'], 'both');
+            $this->db->or_like('d.nm_paket', $search['value'], 'both');
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
             $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
             $this->db->group_end();
@@ -203,7 +200,6 @@ class Approval_penawaran extends Admin_Controller
         $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
         $this->db->join('members c', 'c.id = a.id_marketing', 'left');
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
-        $this->db->join('kons_master_paket e', 'e.id_paket = d.id_paket', 'left');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
         $this->db->where_in('a.sts_quot', [0, 1]);
@@ -211,7 +207,7 @@ class Approval_penawaran extends Admin_Controller
             $this->db->group_start();
             $this->db->like('a.tgl_quotation', $search['value'], 'both');
             $this->db->or_like('c.nama', $search['value'], 'both');
-            $this->db->or_like('e.nm_paket', $search['value'], 'both');
+            $this->db->or_like('d.nm_paket', $search['value'], 'both');
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
             $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
             $this->db->group_end();

@@ -79,9 +79,8 @@ class SPK_penawaran extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
-        $this->db->select('b.nm_paket');
+        $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
@@ -166,9 +165,8 @@ class SPK_penawaran extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
-        $this->db->select('b.nm_paket');
+        $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
@@ -287,9 +285,8 @@ class SPK_penawaran extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
-        $this->db->select('b.nm_paket');
+        $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
@@ -331,7 +328,7 @@ class SPK_penawaran extends Admin_Controller
 
         $ttl_mandays_subcont = 0;
         $ttl_tandem = 0;
-        foreach($get_spk_penawaran_subcont as $item) {
+        foreach ($get_spk_penawaran_subcont as $item) {
             $ttl_mandays_subcont += $item->mandays_subcont;
             $ttl_tandem += ($item->mandays_tandem * $item->mandays_rate_tandem);
         }
@@ -525,7 +522,7 @@ class SPK_penawaran extends Admin_Controller
                 'status_spk' => $status_spk,
                 'option' => $option
             ];
-
+            
             $no++;
         }
 
@@ -679,9 +676,8 @@ class SPK_penawaran extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
-        $this->db->select('b.nm_paket');
+        $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 

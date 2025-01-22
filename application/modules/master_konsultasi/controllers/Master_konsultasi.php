@@ -131,7 +131,7 @@ class Master_konsultasi extends Admin_Controller
                 DATE_FORMAT(a.input_date, '%d-%m-%Y %H:%i') AS datetimes,
                 a.*,
                 c.kategori_paket,
-                b.nm_paket 
+                a.nm_paket 
             FROM 
                 kons_master_konsultasi_header AS a
                 LEFT JOIN kons_master_paket AS b ON a.id_paket = b.id_paket
@@ -236,7 +236,7 @@ class Master_konsultasi extends Admin_Controller
                         $kode = 'KONS-' . date('Y') . '-' . sprintf('%05d', $nilai);
 
                         $head['id_konsultasi_h'] = $kode;
-                        $head['id_paket']        = $post['konsultasi'];
+                        $head['nm_paket']        = $post['konsultasi'];
                         $head['datet']           = date('Y-m-d');
                         $head['input_date']      = date('Y-m-d H:i:s');
                         $head['input_by']        = $this->session->userdata('usr_username');
@@ -432,6 +432,7 @@ class Master_konsultasi extends Admin_Controller
 
                     $terinput  = 0;
                     $tahapan   = 1;
+                    $head['nm_paket'] = $post['konsultasi'];
                     $head['update_date'] = date('Y-m-d H:i:s');
                     $head['update_by']   = $this->session->userdata('usr_username');
                     $this->db->where('id_konsultasi_h', $id_konsultasi)->update('kons_master_konsultasi_header', $head);

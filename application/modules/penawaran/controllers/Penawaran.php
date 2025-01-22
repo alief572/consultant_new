@@ -69,9 +69,8 @@ class Penawaran extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_marketing = $this->db->get()->result();
 
-        $this->db->select('a.*, b.nm_paket');
+        $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $get_package = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -152,9 +151,8 @@ class Penawaran extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_marketing = $this->db->get()->result();
 
-        $this->db->select('a.*, b.nm_paket');
+        $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $get_package = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -421,9 +419,8 @@ class Penawaran extends Admin_Controller
         $this->db->order_by('a.nm_karyawan', 'asc');
         $get_marketing = $this->db->get()->result();
 
-        $this->db->select('a.*, b.nm_paket');
+        $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
         $get_package = $this->db->get()->result();
 
         $this->db->select('a.*');

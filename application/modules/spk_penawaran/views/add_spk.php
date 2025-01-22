@@ -589,13 +589,13 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <tr>
                         <td>Pemberi Informasi 1</td>
                         <td>
-                            <input type="text" name="nm_pemberi_informasi_1_komisi" id="" class="form-control form-control-sm">
+                            <input type="text" name="nm_pemberi_informasi_1_komisi" id="" class="form-control form-control-sm" value="<?= ucfirst($detail_informasi_awal) ?>">
                         </td>
                         <td>
-                            <input type="text" name="persentase_pemberi_informasi_1_komisi" id="" class="form-control form-control-sm text-right" onchange="persen_komisi('pemberi_informasi_1')">
+                            <input type="text" name="persentase_pemberi_informasi_1_komisi" id="" class="form-control form-control-sm text-right" onchange="persen_komisi('pemberi_informasi_1')" value="2">
                         </td>
                         <td>
-                            <input type="text" name="nominal_pemberi_informasi_1_komisi" id="" class="form-control form-control-sm text-right" readonly>
+                            <input type="text" name="nominal_pemberi_informasi_1_komisi" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_kontrak_bersih * 2 / 100, 2) ?>" readonly>
                         </td>
                     </tr>
                     <tr>
@@ -613,13 +613,13 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <tr>
                         <td>Sales 1</td>
                         <td>
-                            <input type="text" name="nm_sales_1_komisi" id="" class="form-control form-control-sm">
+                            <input type="text" name="nm_sales_1_komisi" id="" class="form-control form-control-sm" value="<?= ucfirst($list_marketing->nm_karyawan) ?>">
                         </td>
                         <td>
-                            <input type="text" name="persentase_sales_1_komisi" id="" class="form-control form-control-sm text-right" onchange="persen_komisi('sales_1')">
+                            <input type="text" name="persentase_sales_1_komisi" id="" class="form-control form-control-sm text-right" value="2" onchange="persen_komisi('sales_1')">
                         </td>
                         <td>
-                            <input type="text" name="nominal_sales_1_komisi" id="" class="form-control form-control-sm text-right" readonly>
+                            <input type="text" name="nominal_sales_1_komisi" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_kontrak_bersih * 2 / 100, 2) ?>" readonly>
                         </td>
                     </tr>
                     <tr>
@@ -639,8 +639,8 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <tr>
                         <th></th>
                         <th></th>
-                        <th class="text-right ttl_persen_komisi">0</th>
-                        <th class="text-right ttl_nilai_komisi">0</th>
+                        <th class="text-right ttl_persen_komisi"><?= number_format(4, 2) ?></th>
+                        <th class="text-right ttl_nilai_komisi"><?= number_format($nilai_kontrak_bersih * 4 / 100, 2) ?></th>
                     </tr>
                 </tfoot>
             </table>
