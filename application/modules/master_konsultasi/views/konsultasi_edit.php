@@ -27,15 +27,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Nama Paket <span style="color:#f00;">*</span></label>
-                                                <select class="form-control" name="konsultasi" id="konsultasi">
-                                                    <?php
-                                                    if (empty($paket)) {
-                                                        echo '';
-                                                    } else {
-                                                        echo '<option value="' . $paket->row()->id_paket . '">' . $paket->row()->nm_paket . '</option>';
-                                                    }
-                                                    ?>
-                                                </select>
+                                                <input type="text" name="konsultasi" id="konsultasi" class="form-control form-control-sm" value="<?= $header->nm_paket ?>">
                                             </div>
                                         </div>
                                         <div class="col-md-12">

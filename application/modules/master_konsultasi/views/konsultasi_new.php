@@ -27,7 +27,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Nama Paket <span style="color:#f00;">*</span></label>
-                                                <select class="form-control select2" name="konsultasi" id="konsultasi">
+                                                <input type="text" name="konsultasi" id="konsultasi" class="form-control form-control-sm">
+                                                <!-- <select class="form-control select2" name="konsultasi" id="konsultasi">
                                                     <option value="">-Pilih Paket-</option>
                                                     <?php
                                                     if ($paket->num_rows() > 0) {
@@ -36,7 +37,7 @@
                                                         }
                                                     }
                                                     ?>
-                                                </select>
+                                                </select> -->
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -280,7 +281,7 @@
         Baris += "              <?php if ($all_aktifitas->num_rows() > 0) { ?>";
         Baris += "                  <?php foreach ($all_aktifitas->result() as $d) { ?>";
         // if (!arr_akt.includes("<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>")) {
-            Baris += "<option value='<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>'><?php echo $d->nm_aktifitas; ?></option>";
+        Baris += "<option value='<?php echo $d->id_aktifitas . '*_*' . $d->nm_aktifitas; ?>'><?php echo $d->nm_aktifitas; ?></option>";
         // }
         Baris += "                  <?php } ?>";
         Baris += "              <?php } ?>";
