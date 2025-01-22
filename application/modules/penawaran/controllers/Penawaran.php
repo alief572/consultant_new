@@ -159,6 +159,8 @@ class Penawaran extends Admin_Controller
         $this->db->from('kons_master_aktifitas a');
         $get_aktifitas = $this->db->get()->result();
 
+        $get_divisi = $this->db->get_where('ms_department a', ['a.deleted_by' => null])->result();
+
         $data = [
             'list_penawaran' => $get_penawaran,
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
@@ -167,7 +169,8 @@ class Penawaran extends Admin_Controller
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
-            'list_aktifitas' => $get_aktifitas
+            'list_aktifitas' => $get_aktifitas,
+            'list_divisi' => $get_divisi
         ];
 
         $this->template->title('View Quotation');
@@ -633,19 +636,41 @@ class Penawaran extends Admin_Controller
 
         $this->db->trans_begin();
 
+        $filenames = '';
+        $filenames_tahapan = '';
+        $filenames_po = '';
+
         $config['upload_path'] = './uploads/proposal_penawaran/';
         $config['allowed_types'] = '*';
         $config['remove_spaces'] = TRUE;
         $config['encrypt_name'] = TRUE;
 
-        $filenames = '';
         $this->upload->initialize($config);
         if ($this->upload->do_upload('upload_proposal')) {
             $uploadData = $this->upload->data();
             $filenames = $uploadData['file_name'];
-        } else {
-            print_r($this->upload->display_errors());
-            exit;
+        }
+
+        $config_tahapan['upload_path'] = './uploads/tahapan_penawaran/';
+        $config_tahapan['allowed_types'] = '*';
+        $config_tahapan['remove_spaces'] = TRUE;
+        $config_tahapan['encrypt_name'] = TRUE;
+
+        $this->upload->initialize($config_tahapan);
+        if ($this->upload->do_upload('upload_tahapan')) {
+            $uploadData_tahapan = $this->upload->data();
+            $filenames_tahapan = $uploadData_tahapan['file_name'];
+        }
+
+        $config_po['upload_path'] = './uploads/po_penawaran/';
+        $config_po['allowed_types'] = '*';
+        $config_po['remove_spaces'] = TRUE;
+        $config_po['encrypt_name'] = TRUE;
+
+        $this->upload->initialize($config_po);
+        if ($this->upload->do_upload('upload_po')) {
+            $uploadData_po = $this->upload->data();
+            $filenames_po = $uploadData_po['file_name'];
         }
 
         $check_order = $this->db->get_where('kons_tr_penawaran', ['id_customer' => $post['customer']])->num_rows();
@@ -712,6 +737,8 @@ class Penawaran extends Admin_Controller
             'address' => $post['address'],
             'id_paket' => $post['consultation_package'],
             'upload_proposal' => $filenames,
+            'upload_tahapan' => $filenames_tahapan,
+            'upload_po' => $filenames_po,
             'sts_cust' => $sts_cust,
             'sts_quot' => 1,
             'grand_total' => $grand_total,

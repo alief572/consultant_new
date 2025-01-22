@@ -85,6 +85,8 @@ class Approval_penawaran extends Admin_Controller
         $this->db->from('kons_master_aktifitas a');
         $get_aktifitas = $this->db->get()->result();
 
+        $get_divisi = $this->db->get_where('ms_department a', ['a.deleted_by' => null])->result();
+
         $data = [
             'list_penawaran' => $get_penawaran,
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
@@ -93,7 +95,8 @@ class Approval_penawaran extends Admin_Controller
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
-            'list_aktifitas' => $get_aktifitas
+            'list_aktifitas' => $get_aktifitas,
+            'list_divisi' => $get_divisi
         ];
 
         $this->template->title('View Quotation');
@@ -150,6 +153,8 @@ class Approval_penawaran extends Admin_Controller
         $this->db->from('kons_master_aktifitas a');
         $get_aktifitas = $this->db->get()->result();
 
+        $get_divisi = $this->db->get_where('ms_department a', ['a.deleted_by' => null])->result();
+
         $data = [
             'list_penawaran' => $get_penawaran,
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
@@ -158,7 +163,8 @@ class Approval_penawaran extends Admin_Controller
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
-            'list_aktifitas' => $get_aktifitas
+            'list_aktifitas' => $get_aktifitas,
+            'list_divisi' => $get_divisi
         ];
 
         $this->template->title('Approval Quotation');

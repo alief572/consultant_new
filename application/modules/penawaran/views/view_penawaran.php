@@ -182,9 +182,50 @@ if (count($list_penawaran_others) > 0) {
                         ?>
                     </select>
                 </td>
-                <td class="pd-5 semi-bold" valign="top"></td>
+                <td class="pd-5 semi-bold" valign="top">Upload Tahapan</td>
+                <td class="pd-5" width="390">
+                    <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm">
+                    <?php
+                    if (
+                        $list_penawaran->upload_tahapan !== '' &&
+                        $list_penawaran->upload_tahapan !== null &&
+                        file_exists('./uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan)
+                    ) {
+                        echo '<a href="' . base_url('uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                            <i class="fa fa-download"></i> Download Tahapan
+                        </a>';
+                    }
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="pd-5 semi-bold" valign="top">Divisi</td>
                 <td class="pd-5" width="390" valign="top">
-
+                    <input type="hidden" name="nm_divisi" class="nm_divisi" value="<?= $list_penawaran->nm_divisi ?>">
+                    <select name="divisi" class="form-control form-control-sm change_divisi select_divisi" required>
+                        <?php
+                        foreach ($list_divisi as $item) {
+                            if ($item->id == $list_penawaran->id_divisi) {
+                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                </td>
+                <td class="pd-5 semi-bold" valign="top">Upload PO</td>
+                <td class="pd-5" width="390">
+                    <input type="file" name="upload_po" id="" class="form-control form-control-sm">
+                    <?php
+                    if (
+                        $list_penawaran->upload_po !== '' &&
+                        $list_penawaran->upload_po !== null &&
+                        file_exists('./uploads/po_penawaran/' . $list_penawaran->upload_po)
+                    ) {
+                        echo '<a href="' . base_url('uploads/po_penawaran/' . $list_penawaran->upload_po) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                            <i class="fa fa-download"></i> Download PO
+                        </a>';
+                    }
+                    ?>
                 </td>
             </tr>
         </table>
@@ -551,6 +592,7 @@ if (count($list_penawaran_others) > 0) {
     $('.select_customer').chosen();
     $('.select_marketing').chosen();
     $('.select_package').chosen();
+    $('.select_divisi').chosen();
 
     $('.informasi_awal_sales').chosen({
         width: "100%"
