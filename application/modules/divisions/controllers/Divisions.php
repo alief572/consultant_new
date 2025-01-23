@@ -3,6 +3,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Divisions extends Admin_Controller
 {
+	protected $viewPermission   = 'Master_Department.View';
+	protected $addPermission    = 'Master_Department.Add';
+	protected $managePermission = 'Master_Department.Manage';
+	protected $deletePermission = 'Master_Department.Delete';
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -12,6 +17,7 @@ class Divisions extends Admin_Controller
 
 	public function index()
 	{
+		$this->auth->restrict($this->viewPermission);
 		$data = array(
 			'title'			=> 'Indeks Of Divisions',
 			'action'		=> 'index'
@@ -120,7 +126,9 @@ class Divisions extends Admin_Controller
 		}
 	}
 
-	public function view($id = '') {
+	public function view($id = '')
+	{
+		$this->auth->restrict($this->viewPermission);
 		$arr_Where			= '';
 		$get_Data			= $this->master_model->getCompanies($arr_Where);
 		$detail				= $this->master_model->getData('hr_sentral.divisions', 'id', $id);
