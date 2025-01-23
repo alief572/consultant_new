@@ -2603,3 +2603,22 @@ function generateNoPenawaran($employee_code, $tipe_penawaran)
 
 	return $kode_trans;
 }
+
+function Dekripsi_base64($sData)
+{
+	$sBase64 = strtr($sData, '-_', '+/');
+	return base64_decode($sBase64);
+}
+
+function Dekripsi($sData, $sKey = '200881173_limchaemoo')
+{
+	$sResult = '';
+	$sData   = Dekripsi_base64($sData);
+	for ($i = 0; $i < strlen($sData); $i++) {
+		$sChar    = substr($sData, $i, 1);
+		$sKeyChar = substr($sKey, ($i % strlen($sKey)) - 1, 1);
+		$sChar    = chr(ord($sChar) - ord($sKeyChar));
+		$sResult .= $sChar;
+	}
+	return $sResult;
+}
