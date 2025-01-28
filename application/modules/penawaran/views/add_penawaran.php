@@ -6,6 +6,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
     .btn {
@@ -23,12 +24,12 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     }
 
 
-    .chosen-container .chosen-drop {
+    .select2-container .select2-drop {
         z-index: 9999;
         /* Ensure the dropdown itself has a high z-index */
     }
 
-    .chosen-container-active {
+    .select2-container-active {
         position: absolute;
     }
 
@@ -476,22 +477,24 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <!-- <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
 <script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
 <!-- page script -->
 <script type="text/javascript">
-    $('.select_customer').chosen();
-    $('.select_marketing').chosen();
-    $('.select_package').chosen();
-    $('.select_divisi').chosen();
-    $('.informasi_awal_sales').chosen({
-        width: "300px"
+    $('.select_customer').select2();
+    $('.select_marketing').select2();
+    $('.select_package').select2();
+    $('.select_divisi').select2();
+    $('.informasi_awal_sales').select2({
+        width: "100%"
     });
-    $('.informasi_awal_medsos').chosen({
-        width: "300px"
+    $('.informasi_awal_medsos').select2({
+        width: "100%"
     });
-    $('.informasi_awal_others').chosen({
-        width: "300px"
+    $('.informasi_awal_others').select2({
+        width: "100%"
     });
 
     // initialize with defaults
@@ -803,7 +806,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         $('.list_activity').append(hasil);
 
-        $('.select_nm_aktifitas_' + no_activity).chosen({
+        $('.select_nm_aktifitas_' + no_activity).select2({
             width: '280px'
         });
 
@@ -857,7 +860,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         $('.list_akomodasi').append(hasil);
 
-        $('.select_akomodasi_' + no_akomodasi).chosen({
+        $('.select_akomodasi_' + no_akomodasi).select2({
             width: '280px'
         });
 
@@ -911,7 +914,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         $('.list_others').append(hasil);
 
-        $('.select_others_' + no_others).chosen({
+        $('.select_others_' + no_others).select2({
             width: '280px'
         });
 
@@ -1095,7 +1098,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 $('.no').val(result.no);
 
                 for (i = 1; i <= result.no; i++) {
-                    $('.select_nm_aktifitas_' + i).chosen({
+                    $('.select_nm_aktifitas_' + i).select2({
                         width: '280px'
                     });
                 }

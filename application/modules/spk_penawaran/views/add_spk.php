@@ -6,6 +6,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
     .btn {
@@ -250,23 +251,19 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
     <div class="box">
         <div class="box-header">
-            <h4 style="font-weight: 600;">Subcont</h4>
+            <h4 style="font-weight: 600;">Biaya Konsultan</h4>
         </div>
         <div class="box-body">
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th class="text-center">No.</th>
-                        <th class="text-center">Activity Name</th>
-                        <th class="text-center">Mandays Internal</th>
-                        <th class="text-center">Mandays Rate Internal</th>
-                        <th class="text-center">Mandays Tandem</th>
-                        <th class="text-center">Mandays Rate Tandem</th>
-                        <th class="text-center">Mandays Subcont</th>
-                        <th class="text-center">Price Subcont</th>
-                        <th class="text-center">Total</th>
-                        <th class="text-center">Grand Total</th>
-                        <th class="text-center">Opsi</th>
+                        <th class="text-center" width="20">No.</th>
+                        <th class="text-center" width="200">Activity Name</th>
+                        <th class="text-center" width="10">Mandays Internal</th>
+                        <th class="text-center" width="50">Mandays Rate Internal</th>
+                        <th class="text-center" width="10">Mandays Tandem</th>
+                        <th class="text-center" width="50">Mandays Rate Tandem</th>
+                        <th class="text-center" width="50">Grand Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -295,35 +292,15 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                         echo '<tr class="subcont_' . $no . '">';
                         echo '<td class="text-center">' . $no . '</td>';
                         echo '<td>';
-                        echo '<select class="form-control form-control-sm chosen_select" name="dt[' . $no . '][id_aktifitas]">';
-                        foreach ($list_all_aktifitas as $item_aktifitas) {
-                            $selected = '';
-                            if ($item_aktifitas->id_aktifitas == $item->id_aktifitas) {
-                                $selected = 'selected';
-                            }
-
-                            echo '<option value="' . $item_aktifitas->id_aktifitas . '" ' . $selected . '>' . $item_aktifitas->nm_aktifitas . '</option>';
-                        }
-                        echo '</select>';
+                        echo $item->nm_aktifitas;
                         echo '</td>';
                         echo '<td class="text-center">' . $item->mandays . ' <input type="hidden" name="dt[' . $no . '][mandays]" value="' . $item->mandays . '"></td>';
                         echo '<td class="text-center">' . number_format($item->mandays_rate, 2) . ' <input type="hidden" name="dt[' . $no . '][mandays_rate]" value="' . $item->mandays_rate . '"></td>';
                         echo '<td class="text-center">' . $item->mandays_tandem . ' <input type="hidden" name="dt[' . $no . '][mandays_tandem]" value="' . $item->mandays_tandem . '"></td>';
                         echo '<td class="text-center">' . number_format($item->mandays_rate_tandem, 2) . ' <input type="hidden" name="dt[' . $no . '][mandays_rate_tandem]" value="' . $item->mandays_rate_tandem . '"></td>';
-                        echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm edit_mandays_subcont mandays_subcont_' . $item->id . '" name="dt[' . $no . '][mandays_subcont]" value="' . $item->mandays_subcont . '" data-id="' . $item->id . '">';
-                        echo '</td>';
-                        echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm text-right edit_price_subcont price_subcont_' . $item->id . ' auto_num" name="dt[' . $no . '][price_subcont]" value="' . $item->mandays_rate_subcont . '" data-id="' . $item->id . '">';
-                        echo '</td>';
-                        echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm total_subcont_' . $item->id . ' auto_num text-right" name="dt[' . $no . '][total_subcont]" value="' . ($item->mandays_rate_subcont * $item->mandays_subcont) . '" readonly>';
-                        echo '</td>';
+
                         echo '<td class="text-center">';
-                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="dt[' . $no . '][grand_total]" value="' . $nilai_grand_total . '" readonly>';
-                        echo '</td>';
-                        echo '<td class="text-center">';
-                        echo '<button type="button" class="btn btn-sm btn-danger del_subcont" data-no="' . $no . '" ><i class="fa fa-trash"></i></button>';
+                        echo number_format($nilai_grand_total, 2);
                         echo '</td>';
                         echo '</tr>';
 
@@ -344,18 +321,65 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     ?>
                 </tbody>
                 <tfoot>
-                    <tr>Subcont
+                    <tr>
                         <th colspan="2">Total</th>
                         <th class="text-center ttl_mandays"><?= $total_mandays ?></th>
                         <th class="text-center ttl_mandays_rate"><?= number_format($total_mandays_rate, 2) ?></th>
                         <th class="text-center ttl_mandays_tandem"><?= $total_mandays_tandem ?></th>
                         <th class="text-center ttl_mandays_rate_tandem"><?= number_format($total_mandays_rate_tandem, 2) ?></th>
-                        <th class="text-center ttl_mandays_subcont"><?= $total_mandays_subcont ?></th>
-                        <th class="text-center"></th>
-                        <th class="text-center ttl_total_subcont"><?= number_format($total_activity, 2) ?></th>
                         <th class="text-center ttl_grand_total"><?= number_format($ttl_grand_total, 2) ?></th>
                     </tr>
                 </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <h4 style="font-weight: 600;">Subcont</h4>
+        </div>
+        <div class="box-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-center" width="20">No.</th>
+                        <th class="text-center" width="200">Activity Name</th>
+                        <th class="text-center" width="150">Mandays Subcont</th>
+                        <th class="text-center" width="150">Mandays Rate Subcont</th>
+                        <th class="text-center" width="200">Price</th>
+                        <th class="text-center" width="100">Option</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="text" name="subcont_new" id="" class="form-control form-control-sm">
+                        </td>
+                        <td>
+                            <input type="number" name="subcont_new_mandays" id="" class="form-control form-control-sm text-right" min="0" onchange="hitung_subcont()">
+                        </td>
+                        <td>
+                            <input type="text" name="subcont_new_rate" id="" class="form-control form-control-sm text-right auto_num" onchange="hitung_subcont()">
+                        </td>
+                        <td>
+                            <input type="text" name="subcont_new_price" id="" class="form-control form-control-sm text-right auto_num" readonly>
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-success add_new_subcont">
+                                <i class="fa fa-plus"></i> Add
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody class="list_subcont"></tbody>
+                <tbody>
+                    <tr>
+                        <td colspan="4" class="text-right">Grand Total</td>
+                        <td class="text-right td_grand_total_subcont">0.00</td>
+                        <td></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -668,23 +692,24 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
 <input type="hidden" name="no_payment" value="1">
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
-        $('.chosen_select').chosen({
-            width: "250px"
+        $('.chosen_select').select2({
+            width: "100%"
         });
 
-        $('.select_divisi').chosen({
+        $('.select_divisi').select2({
             width: '100%'
         });
-        $('.select_project_leader').chosen({
+        $('.select_project_leader').select2({
             width: '100%'
         });
-        $('.select_konsultan_1').chosen({
+        $('.select_konsultan_1').select2({
             width: '100%'
         });
-        $('.select_konsultan_2').chosen({
+        $('.select_konsultan_2').select2({
             width: '100%'
         });
 
@@ -709,7 +734,11 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
     function get_num(nilai = null) {
         if (nilai !== '' && nilai !== null) {
             nilai = nilai.split(',').join('');
-            nilai = parseFloat(nilai);
+            if(isNaN(nilai)) {
+                nilai = 0;
+            } else {
+                nilai = parseFloat(nilai);
+            }
         } else {
             nilai = 0;
         }
@@ -772,7 +801,6 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
     }
 
     function hitung_total_subcont() {
-        var no = "<?= $no ?>";
 
         var nilai_kontrak = get_num($('input[name="nilai_kontrak"]').val());
         var biaya_akomodasi = get_num($('input[name="biaya_akomodasi"]').val());
@@ -781,8 +809,10 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         var total_mandays = "<?= $total_mandays ?>";
 
         var ttl_subcont = 0;
+
+        var no = $('.tr_list_subcont').length;
         for (i = 1; i <= no; i++) {
-            var total_subcont = get_num($('input[name="dt[' + i + '][total_subcont]"]').val());
+            var total_subcont = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
 
             ttl_subcont += parseFloat(total_subcont);
         }
@@ -890,6 +920,101 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
         $('input[name="nilai_kontrak_bersih"]').val(number_format(nilai_kontrak_bersih, 2));
     }
+
+    function hitung_subcont() {
+        var subcont_mandays = get_num($('input[name="subcont_new_mandays"]').val());
+        var subcont_rate = get_num($('input[name="subcont_new_rate"]').val());
+
+        var subcont_price = (subcont_rate * subcont_mandays);
+
+        $('input[name="subcont_new_price"]').autoNumeric('set', subcont_price);
+    }
+
+    function hitung_subcont_af_add() {
+        var no_subcont = $('.tr_list_subcont').length;
+
+        var ttl_subcont = 0;
+        for (i = 1; i <= no_subcont; i++) {
+            var subcont_price = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
+
+            ttl_subcont += subcont_price;
+        }
+
+        $('.td_grand_total_subcont').html(number_format(ttl_subcont, 2));
+
+        hitung_total_subcont();
+    }
+
+    $(document).on('click', '.add_new_subcont', function() {
+        var subcont_new = $('input[name="subcont_new"]').val();
+        var subcont_mandays = get_num($('input[name="subcont_new_mandays"]').val());
+        var subcont_rate = get_num($('input[name="subcont_new_rate"]').val());
+        var subcont_price = get_num($('input[name="subcont_new_price"]').val());
+
+        if (subcont_price <= 0) {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: "Price Subcont can't be zero !"
+            });
+        } else if (subcont_new == '') {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: "Subcont Activity must be filled first !"
+            });
+        } else {
+
+            var no_subcont = ($('.tr_list_subcont').length + 1);
+
+            var hasil = '<tr class="tr_list_subcont tr_list_subcont_' + no_subcont + '">';
+
+            hasil += '<td class="text-center">' + no_subcont + '</td>';
+
+            hasil += '<td class="text-left">';
+            hasil += subcont_new;
+            hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new]" value="' + subcont_new + '">';
+            hasil += '</td>';
+
+            hasil += '<td class="text-center">';
+            hasil += number_format(subcont_mandays);
+            hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new_mandays]" value="' + subcont_mandays + '">';
+            hasil += '</td>';
+
+            hasil += '<td class="text-right">';
+            hasil += number_format(subcont_rate, 2);
+            hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new_rate]" value="' + subcont_rate + '">';
+            hasil += '</td>';
+
+            hasil += '<td class="text-right">';
+            hasil += number_format(subcont_price, 2);
+            hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new_price]" value="' + subcont_price + '">';
+            hasil += '</td>';
+
+            hasil += '<td class="text-center">';
+            hasil += '<button type="button" class="btn btn-sm btn-danger del_subcont" data-no="' + no_subcont + '" title="Delete Subcont"><i class="fa fa-trash"></i></button>';
+            hasil += '</td>';
+
+            hasil += '</tr>'
+
+            $('.list_subcont').append(hasil);
+
+            $('input[name="subcont_new"]').val('');
+            $('input[name="subcont_new_mandays"]').val('');
+            $('input[name="subcont_new_rate"]').val('');
+            $('input[name="subcont_new_price"]').val('');
+
+            hitung_subcont_af_add();
+        }
+    });
+
+    $(document).on('click', '.del_subcont', function() {
+        var no = $(this).data('no');
+
+        $('.tr_list_subcont_' + no).remove();
+
+        hitung_subcont_af_add();
+    });
 
     $(document).on('change', '.edit_mandays_subcont', function() {
         var id = $(this).data('id');
@@ -1042,15 +1167,6 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                 }
             });
         }
-    });
-
-    $(document).on('click', '.del_subcont', function() {
-        var no = $(this).data('no');
-
-        $('.subcont_' + no).remove();
-
-        hitung_total_subcont();
-        hitung_mandays_subcont();
     });
 
     $(document).on('change', '.persen_payment', function() {
