@@ -623,7 +623,7 @@
 			<div class='box-footer'>
 				<?php
 				// echo form_button(array('type' => 'button', 'class' => 'btn btn-md btn-primary', 'value' => 'save', 'content' => 'Save', 'id' => 'simpan-com')) . ' ';
-				echo form_button(array('type' => 'button', 'class' => 'btn btn-md btn-danger', 'value' => 'back', 'content' => 'Back', 'onClick' => 'javascript:back()'));
+				echo '<a href="'.base_url('employees').'" class="btn btn-md btn-danger">Back</a>';
 				?>
 			</div>
 			<!-- /.box-body -->
