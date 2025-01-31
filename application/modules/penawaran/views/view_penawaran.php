@@ -16,7 +16,7 @@ if (count($list_penawaran_others) > 0) {
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
     .btn {
         border-radius: 10px;
@@ -585,22 +585,32 @@ if (count($list_penawaran_others) > 0) {
 <!-- <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
 <script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
 <!-- page script -->
 <script type="text/javascript">
-    $('.select_customer').chosen();
-    $('.select_marketing').chosen();
-    $('.select_package').chosen();
-    $('.select_divisi').chosen();
+    $('.select_customer').select2({
+        width: "100%"
+    });
+    $('.select_marketing').select2({
+        width: "100%"
+    });
+    $('.select_package').select2({
+        width: "100%"
+    });
+    $('.select_divisi').select2({
+        width: "100%"
+    });
 
-    $('.informasi_awal_sales').chosen({
+    $('.informasi_awal_sales').select2({
         width: "100%"
     });
-    $('.informasi_awal_medsos').chosen({
+    $('.informasi_awal_medsos').select2({
         width: "100%"
     });
-    $('.informasi_awal_others').chosen({
+    $('.informasi_awal_others').select2({
         width: "100%"
     });
 
@@ -845,7 +855,7 @@ if (count($list_penawaran_others) > 0) {
 
         $('.list_activity').append(hasil);
 
-        // $('.select_nm_aktifitas_' + no_activity).chosen();
+        // $('.select_nm_aktifitas_' + no_activity).select2();
 
         no_activity = parseFloat(no_activity + 1);
         $('.no').val(no_activity);
@@ -886,7 +896,7 @@ if (count($list_penawaran_others) > 0) {
 
         $('.list_akomodasi').append(hasil);
 
-        // $('.select_nm_aktifitas_' + no_activity).chosen();
+        // $('.select_nm_aktifitas_' + no_activity).select2();
 
         no_akomodasi = parseFloat(no_akomodasi + 1);
         $('.no_akomodasi').val(no_akomodasi);
@@ -927,7 +937,7 @@ if (count($list_penawaran_others) > 0) {
 
         $('.list_others').append(hasil);
 
-        // $('.select_nm_aktifitas_' + no_activity).chosen();
+        // $('.select_nm_aktifitas_' + no_activity).select2();
 
         no_others = parseFloat(no_others + 1);
         $('.no_others').val(no_others);
