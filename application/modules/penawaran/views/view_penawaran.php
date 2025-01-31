@@ -142,7 +142,7 @@ if (count($list_penawaran_others) > 0) {
                             <td style="padding: 0.2rem;">
                                 <select name="informasi_awal_others" id="" class="informasi_awal_others" disabled>
                                     <?php
-                                    foreach ($list_marketing as $item) {
+                                    foreach ($list_employees as $item) {
                                         if ($list_penawaran->tipe_informasi_awal == 'Others' && $item->id == $list_penawaran->detail_informasi_awal) {
                                             echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
                                         }
@@ -155,7 +155,7 @@ if (count($list_penawaran_others) > 0) {
                 </td>
                 <td class="pd-5 semi-bold">Upload Proposal</td>
                 <td class="pd-5" width="390">
-                    <input type="file" name="upload_proposal" id="" class="form-control form-control-sm">
+                    <input type="file" name="upload_proposal" id="" class="form-control form-control-sm" disabled>
                     <?php
                     if (
                         $list_penawaran->upload_proposal !== '' &&
@@ -184,7 +184,7 @@ if (count($list_penawaran_others) > 0) {
                 </td>
                 <td class="pd-5 semi-bold" valign="top">Upload Tahapan</td>
                 <td class="pd-5" width="390">
-                    <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm">
+                    <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm" disabled>
                     <?php
                     if (
                         $list_penawaran->upload_tahapan !== '' &&
@@ -214,7 +214,7 @@ if (count($list_penawaran_others) > 0) {
                 </td>
                 <td class="pd-5 semi-bold" valign="top">Upload PO</td>
                 <td class="pd-5" width="390">
-                    <input type="file" name="upload_po" id="" class="form-control form-control-sm">
+                    <input type="file" name="upload_po" id="" class="form-control form-control-sm" disabled>
                     <?php
                     if (
                         $list_penawaran->upload_po !== '' &&

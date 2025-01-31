@@ -88,7 +88,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                 title: 'Success !',
                                 text: result.msg
                             }, function(after) {
-                                location.reload(true);
+                                DataTables();
                             });
                         } else {
                             swal({

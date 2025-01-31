@@ -63,11 +63,22 @@ class Penawaran extends Admin_Controller
         $this->db->group_by('a.nm_customer');
         $get_customer = $this->db->get()->result();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
+        // $this->db->select('a.*');
+        // $this->db->from('employee a');
+        // $this->db->where('a.deleted', 'N');
+        // $this->db->order_by('a.nm_karyawan', 'asc');
+        // $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035']);
         $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where('a.company_id', 'COM003');
+        $this->db->where('a.flag_active', 'Y');
+        $get_employees = $this->db->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
@@ -102,7 +113,8 @@ class Penawaran extends Admin_Controller
             'list_aktifitas' => $get_aktifitas,
             'list_def_akomodasi' => $get_def_biaya_akomodasi,
             'list_def_others' => $get_def_biaya_others,
-            'list_divisi' => $get_divisi
+            'list_divisi' => $get_divisi,
+            'list_employees' => $get_employees
         ];
 
         $this->template->title('View Quotation');
@@ -145,11 +157,22 @@ class Penawaran extends Admin_Controller
         $this->db->group_by('a.nm_customer');
         $get_customer = $this->db->get()->result();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
+        // $this->db->select('a.*');
+        // $this->db->from('employee a');
+        // $this->db->where('a.deleted', 'N');
+        // $this->db->order_by('a.nm_karyawan', 'asc');
+        // $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035']);
         $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where('a.company_id', 'COM003');
+        $this->db->where('a.flag_active', 'Y');
+        $get_employees = $this->db->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
@@ -170,7 +193,8 @@ class Penawaran extends Admin_Controller
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
             'list_aktifitas' => $get_aktifitas,
-            'list_divisi' => $get_divisi
+            'list_divisi' => $get_divisi,
+            'list_employees' => $get_employees
         ];
 
         $this->template->title('View Quotation');
@@ -185,7 +209,7 @@ class Penawaran extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, c.nama');
         $this->db->from('kons_tr_penawaran a');
         $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
         $this->db->join('members c', 'c.id = a.id_marketing', 'left');
@@ -209,7 +233,7 @@ class Penawaran extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, c.nama');
         $this->db->from('kons_tr_penawaran a');
         $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
         $this->db->join('members c', 'c.id = a.id_marketing', 'left');
@@ -364,8 +388,8 @@ class Penawaran extends Admin_Controller
             $option .= '</div>';
 
 
-            $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
-            $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nm_karyawan : '';
+            // $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
+            $nm_marketing = $item->nama;
 
             $this->db->select('a.*, b.nm_paket');
             $this->db->from('kons_master_konsultasi_header a');
@@ -416,11 +440,22 @@ class Penawaran extends Admin_Controller
         $this->db->group_by('a.nm_customer');
         $get_customer = $this->db->get()->result();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
+        // $this->db->select('a.*');
+        // $this->db->from('employee a');
+        // $this->db->where('a.deleted', 'N');
+        // $this->db->order_by('a.nm_karyawan', 'asc');
+        // $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035']);
         $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where('a.company_id', 'COM003');
+        $this->db->where('a.flag_active', 'Y');
+        $get_employees = $this->db->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
@@ -451,7 +486,8 @@ class Penawaran extends Admin_Controller
             'list_aktifitas' => $get_aktifitas,
             'list_def_akomodasi' => $get_def_biaya_akomodasi,
             'list_def_others' => $get_def_biaya_others,
-            'list_divisi' => $get_divisi
+            'list_divisi' => $get_divisi,
+            'list_employees' => $get_employees
         ];
 
         $this->template->title('Create Quotation');
@@ -703,11 +739,11 @@ class Penawaran extends Admin_Controller
             $detail_info_awal = $post['informasi_awal_others'];
         }
 
-        $get_sales = $this->db->get_where('employee', ['id' => $post['marketing']])->row();
+        $get_sales = $this->db->get_where(DBHR . '.employees', ['id' => $post['marketing']])->row();
 
         $employee_code = '';
         if (!empty($get_sales)) {
-            $employee_code = $get_sales->employee_code;
+            $employee_code = get_initials($get_sales->name);
         }
 
         // <option value="STM/">Normal</option>

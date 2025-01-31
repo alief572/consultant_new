@@ -144,7 +144,7 @@ if (count($list_penawaran_others) > 0) {
                                     <select name="informasi_awal_others" id="" class="informasi_awal_others">
                                         <option value="">- Select Employee -</option>
                                         <?php
-                                        foreach ($list_marketing as $item) {
+                                        foreach ($list_employees as $item) {
                                             $selected = '';
                                             if ($list_penawaran->tipe_informasi_awal == 'Others' && $item->detail_informasi_awal == $item->id) {
                                                 $selected = 'selected';
