@@ -1,15 +1,15 @@
 <?php
-$ENABLE_ADD     = has_permission('Project_Leader.Add');
-$ENABLE_MANAGE  = has_permission('Project_Leader.Manage');
-$ENABLE_VIEW    = has_permission('Project_Leader.View');
-$ENABLE_DELETE  = has_permission('Project_Leader.Delete');
+$ENABLE_ADD     = has_permission('Approval_SPK_Level_1.Add');
+$ENABLE_MANAGE  = has_permission('Approval_SPK_Level_1.Manage');
+$ENABLE_VIEW    = has_permission('Approval_SPK_Level_1.View');
+$ENABLE_DELETE  = has_permission('Approval_SPK_Level_1.Delete');
 
 $ttl_persen_komisi = ($list_spk_penawaran->persen_pemberi_informasi_1_komisi + $list_spk_penawaran->persen_pemberi_informasi_2_komisi + $list_spk_penawaran->persen_sales_1_komisi + $list_spk_penawaran->persen_sales_2_komisi);
 
 $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi + $list_spk_penawaran->nominal_pemberi_informasi_2_komisi + $list_spk_penawaran->nominal_sales_1_komisi + $list_spk_penawaran->nominal_sales_2_komisi);
 
 $readonly_isu = 'readonly';
-if($data_user->employee_id == '168') {
+if ($data_user->employee_id == '168') {
     $readonly_isu = '';
 }
 
@@ -73,13 +73,13 @@ if($data_user->employee_id == '168') {
                 <!-- <td width="100"></td> -->
                 <td class="pd-5 semi-bold" valign="top" width="110">No. SPK</td>
                 <td class="pd-5" width="500" valign="top">
-                    <input type="text" name="id_spk_penawaran" id="" class="form-control form-control-sm id_spk_penawaran text-center" value="<?= $list_spk_penawaran->id_spk_penawaran ?>" readonly>
+                    <input type="text" name="id_spk_penawaran" id="" class="form-control form-control-sm text-center" value="<?= $list_spk_penawaran->id_spk_penawaran ?>" readonly>
                 </td>
             </tr>
             <tr>
                 <td class="pd-5 semi-bold" valign="top" rowspan="2">Alamat</td>
                 <td class="pd-5" width="400" valign="top" rowspan="2">
-                    <textarea name="alamat" id="" class="form-control form-control-sm" rows="4" readonly><?= $list_customer->alamat ?></textarea>
+                    <textarea name="address" id="" class="form-control form-control-sm" rows="4" readonly><?= $list_customer->alamat ?></textarea>
                 </td>
                 <!-- <td width="100"></td> -->
                 <td class="pd-5 semi-bold" valign="top">No. NPWP</td>
@@ -213,14 +213,11 @@ if($data_user->employee_id == '168') {
                 <td class="pd-5 semi-bold" valign="top" width="120">Project Leader</td>
                 <td class="pd-5" width="390" valign="top">
                     <select name="project_leader" id="" class="form-control form-control-sm select_project_leader" disabled>
-                        <option value="">- Select Project Leader -</option>
                         <?php
                         foreach ($list_all_marketing as $item) {
-                            $selected = '';
                             if ($item->id == $list_spk_penawaran->id_project_leader) {
-                                $selected = 'selected';
+                                echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
                             }
-                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
                         }
                         ?>
                     </select>
@@ -232,14 +229,11 @@ if($data_user->employee_id == '168') {
                 <td class="pd-5 semi-bold" valign="top" width="120">Konsultan 1</td>
                 <td class="pd-5" width="390" valign="top">
                     <select name="konsultan_1" id="" class="form-control form-control-sm select_konsultan_1" disabled>
-                        <option value="">- Select Konsultan 1 -</option>
                         <?php
                         foreach ($list_all_marketing as $item) {
-                            $selected = '';
                             if ($item->id == $list_spk_penawaran->id_konsultan_1) {
-                                $selected = 'selected';
+                                echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
                             }
-                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
                         }
                         ?>
                     </select>
@@ -251,14 +245,11 @@ if($data_user->employee_id == '168') {
                 <td class="pd-5 semi-bold" valign="top" width="120">Konsultan 2</td>
                 <td class="pd-5" width="390" valign="top">
                     <select name="konsultan_2" id="" class="form-control form-control-sm select_konsultan_2" disabled>
-                        <option value="">- Select Konsultan 2 -</option>
                         <?php
                         foreach ($list_all_marketing as $item) {
-                            $selected = '';
                             if ($item->id == $list_spk_penawaran->id_konsultan_2) {
-                                $selected = 'selected';
+                                echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
                             }
-                            echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
                         }
                         ?>
                     </select>
@@ -272,81 +263,64 @@ if($data_user->employee_id == '168') {
 
 <div class="box">
     <div class="box-header">
-        <h4 style="font-weight: 600;">Subcont</h4>
+        <h4 style="font-weight: 600;">Biaya Konsultan</h4>
     </div>
     <div class="box-body">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th class="text-center">Activity Name</th>
-                    <th class="text-center">Mandays Internal</th>
-                    <th class="text-center">Mandays Rate Internal</th>
-                    <th class="text-center">Mandays Tandem</th>
-                    <th class="text-center">Mandays Rate Tandem</th>
-                    <th class="text-center">Mandays Subcont</th>
-                    <th class="text-center">Price Subcont</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Grand Total</th>
+                    <th class="text-center" width="20">No.</th>
+                    <th class="text-center" width="200">Activity Name</th>
+                    <th class="text-center" width="10">Mandays Internal</th>
+                    <th class="text-center" width="50">Mandays Rate Internal</th>
+                    <th class="text-center" width="10">Mandays Tandem</th>
+                    <th class="text-center" width="50">Mandays Rate Tandem</th>
+                    <th class="text-center" width="50">Grand Total</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 $no = 1;
+
                 $total_mandays = 0;
                 $total_mandays_rate = 0;
-
                 $total_mandays_tandem = 0;
                 $total_mandays_rate_tandem = 0;
+                $total_mandays_subcont = 0;
+                $total_mandays_rate_subcont = 0;
+                $total_activity = 0;
 
                 $ttl_grand_total = 0;
 
-                $ttl_mandays_subcont = 0;
-                $ttl_subcont = 0;
-                foreach ($list_spk_penawaran_subcont as $item) {
+                $nilai_tandem = 0;
+
+                foreach ($list_spk_aktifitas as $item) {
                     $total_internal = ($item->mandays * $item->mandays_rate);
                     $total_tandem = ($item->mandays_tandem * $item->mandays_rate_tandem);
-                    $total_subcont = ($item->mandays_subcont * $item->price_subcont);
 
-                    $nilai_grand_total = ($total_internal + $total_tandem + $total_subcont);
+                    $nilai_grand_total = ($total_internal + $total_tandem);
 
-                    echo '<tr class="subcont_' . $no . '">';
+                    echo '<tr class="subcontawd_' . $no . '">';
+                    echo '<td class="text-center">' . $no . '</td>';
                     echo '<td>';
-                    echo '<select class="form-control form-control-sm chosen_select" name="dt[' . $no . '][id_aktifitas]" disabled>';
-                    foreach ($list_all_aktifitas as $item_aktifitas) {
-                        if ($item_aktifitas->id_aktifitas == $item->id_aktifitas) {
-                            echo '<option value="' . $item_aktifitas->id_aktifitas . '" ' . $selected . '>' . $item_aktifitas->nm_aktifitas . '</option>';
-                        }
-                    }
-                    echo '</select>';
+                    echo $item->nm_aktifitas;
                     echo '</td>';
                     echo '<td class="text-center">' . $item->mandays . ' <input type="hidden" name="dt[' . $no . '][mandays]" value="' . $item->mandays . '"></td>';
                     echo '<td class="text-center">' . number_format($item->mandays_rate, 2) . ' <input type="hidden" name="dt[' . $no . '][mandays_rate]" value="' . $item->mandays_rate . '"></td>';
-                    echo '</td>';
                     echo '<td class="text-center">' . $item->mandays_tandem . ' <input type="hidden" name="dt[' . $no . '][mandays_tandem]" value="' . $item->mandays_tandem . '"></td>';
                     echo '<td class="text-center">' . number_format($item->mandays_rate_tandem, 2) . ' <input type="hidden" name="dt[' . $no . '][mandays_rate_tandem]" value="' . $item->mandays_rate_tandem . '"></td>';
-                    echo '<td>';
-                    echo '<input type="text" class="form-control form-control-sm edit_mandays_subcont mandays_subcont_' . $item->id . '" name="dt[' . $no . '][mandays_subcont]" data-id="' . $item->id . '" value="' . $item->mandays_subcont . '" readonly>';
-                    echo '</td>';
-                    echo '<td>';
-                    echo '<input type="text" class="form-control form-control-sm text-right edit_price_subcont price_subcont_' . $item->id . ' auto_num" name="dt[' . $no . '][price_subcont]" value="' . $item->price_subcont . '" data-id="' . $item->id . '" readonly>';
-                    echo '</td>';
-                    echo '<td>';
-                    echo '<input type="text" class="form-control form-control-sm total_subcont_' . $item->id . ' auto_num text-right" name="dt[' . $no . '][total_subcont]" value="' . $item->total_subcont . '" readonly>';
-                    echo '</td>';
+
                     echo '<td class="text-center">';
-                    echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="dt[' . $no . '][grand_total]" value="' . $nilai_grand_total . '" readonly>';
+                    echo number_format($nilai_grand_total, 2);
                     echo '</td>';
                     echo '</tr>';
 
                     $total_mandays += $item->mandays;
                     $total_mandays_rate += $item->mandays_rate;
-
                     $total_mandays_tandem += $item->mandays_tandem;
                     $total_mandays_rate_tandem += $item->mandays_rate_tandem;
 
-                    $ttl_mandays_subcont += $item->mandays_subcont;
-
-                    $ttl_subcont += $item->total_subcont;
+                    $nilai_tandem += ($item->mandays_rate_tandem * $item->mandays_tandem);
 
                     $ttl_grand_total += $nilai_grand_total;
 
@@ -355,18 +329,61 @@ if($data_user->employee_id == '168') {
                 ?>
             </tbody>
             <tfoot>
-                <tr>
-                    <th>Total</th>
-                    <th class="text-center ttl_mandays"><?= $total_mandays ?></th>
-                    <th class="text-center ttl_mandays"><?= number_format($total_mandays_rate, 2) ?></th>
-                    <th class="text-center ttl_mandays_tandem"><?= $total_mandays_tandem ?></th>
-                    <th class="text-center ttl_mandays_rate_tandem"><?= number_format($total_mandays_rate_tandem, 2) ?></th>
-                    <th class="text-center ttl_mandays_subcont"><?= $ttl_mandays_subcont ?></th>
-                    <th class="text-center"></th>
-                    <th class="text-center ttl_total_subcont"><?= number_format($ttl_subcont, 2) ?></th>
-                    <th class="text-center ttl_grand_total"><?= number_format($ttl_grand_total, 2) ?></th>
-                </tr>
+                <th> </th>
+                <th>Total</th>
+                <th class="text-center ttl_mandays"><?= $total_mandays ?></th>
+                <th class="text-center ttl_mandays_rate"><?= number_format($total_mandays_rate, 2) ?></th>
+                <th class="text-center ttl_mandays_tandem"><?= $total_mandays_tandem ?></th>
+                <th class="text-center ttl_mandays_rate_tandem"><?= number_format($total_mandays_rate_tandem, 2) ?></th>
+                <th class="text-center ttl_grand_total"><?= number_format($ttl_grand_total, 2) ?></th>
             </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <h4 style="font-weight: 600;">Subcont</h4>
+    </div>
+    <div class="box-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center" width="20">No.</th>
+                    <th class="text-center" width="200">Activity Name</th>
+                    <th class="text-center" width="150">Mandays Subcont</th>
+                    <th class="text-center" width="150">Mandays Rate Subcont</th>
+                    <th class="text-center" width="200">Price</th>
+                </tr>
+            </thead>
+            <tbody class="list_subcont">
+                <?php
+                $total_activity = 0;
+                $total_mandays_subcont = 0;
+                if (!empty($list_spk_penawaran_subcont)) {
+                    $no_subcont = 0;
+                    foreach ($list_spk_penawaran_subcont as $item) {
+                        $no_subcont++;
+                        echo '<tr class="tr_list_subcont tr_list_subcont_' . $no_subcont . '">';
+                        echo '<td class="text-center">' . $no_subcont . '</td>';
+                        echo '<td>' . $item->nm_aktifitas . '</td>';
+                        echo '<td class="text-center">' . number_format($item->mandays_subcont) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->price_subcont, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->total_subcont, 2) . '</td>';
+                        echo '</tr>';
+
+                        $total_mandays_subcont += $item->mandays_subcont;
+                        $total_activity += $item->total_subcont;
+                    }
+                }
+                ?>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td colspan="4" class="text-right">Grand Total</td>
+                    <td class="text-right td_grand_total_subcont"><?= number_format($total_activity, 2) ?></td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </div>
@@ -397,7 +414,7 @@ if($data_user->employee_id == '168') {
                 <td class="pd-5" width="400" valign="top">
                     <div class="form-inline">
                         <div class="form-group text-center">
-                            <input type="text" name="nilai_kontrak" id="" class="form-control form-control-sm text-right" value="<?= number_format($list_spk_penawaran->nilai_kontrak, 2) ?>" readonly>
+                            <input type="text" name="nilai_kontrak" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_project, 2) ?>" readonly>
                         </div>
                         <div class="form-group text-center" style="width: auto;">
                             <input type="checkbox" name="" id="" style="margin-left: 1rem;" <?= ($list_penawaran->ppn == '1') ? 'checked' : null ?> disabled> Include PPN
@@ -410,62 +427,65 @@ if($data_user->employee_id == '168') {
                 <td class="pd-5 semi-bold" valign="top">Divisi</td>
                 <td class="pd-5" width="400" valign="top">
                     <select name="divisi" id="" class="form-control form-control-sm select_divisi" disabled>
-                        <option value="">- Select Divisi -</option>
                         <?php
                         foreach ($list_divisi as $item) {
-                            $selected = '';
-                            if ($list_spk_penawaran->id_divisi == $item->id) {
-                                $selected = 'selected';
+                            if ($item->id == $list_spk_penawaran->id_divisi) {
+                                echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
                             }
-                            echo '<option value="' . $item->id . '" '.$selected.'>' . ucfirst($item->nama) . '</option>';
-                            // echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
                         }
                         ?>
                     </select>
                 </td>
                 <td class="pd-5 semi-bold" valign="top">Biaya Akomodasi</td>
                 <td class="pd-5" valign="top">
-                    <input type="text" name="biaya_akomodasi" id="" class="form-control form-control-sm text-right" value="<?= number_format($list_spk_penawaran->biaya_akomodasi, 2) ?>" readonly>
+                    <input type="text" name="biaya_akomodasi" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_akomodasi, 2) ?>" readonly>
                 </td>
 
             </tr>
             <tr>
                 <td class="pd-5 semi-bold" valign="top">Total Mandays</td>
                 <td class="pd-5" width="400" valign="top">
-                    <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($list_spk_penawaran->total_mandays) ?>" readonly>
+                    <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays) ?>" readonly>
                 </td>
                 <td class="pd-5 semi-bold" valign="top">Biaya Subcont</td>
                 <td class="pd-5" valign="top">
-                    <input type="text" name="biaya_subcont" id="" class="form-control form-control-sm text-right biaya_subcont" value="<?= number_format($list_spk_penawaran->biaya_subcont, 2) ?>" readonly>
+                    <input type="text" name="biaya_subcont" id="" class="form-control form-control-sm text-right biaya_subcont" value="<?= number_format($total_activity, 2) ?>" readonly>
                 </td>
             </tr>
             <tr>
                 <td class="pd-5 semi-bold" valign="top">Mandays Subcont</td>
                 <td class="pd-5" width="400" valign="top">
-                    <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right total_mandays_subcont" value="<?= number_format($ttl_mandays_subcont) ?>" readonly>
+                    <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right total_mandays_subcont" value="<?= $total_mandays_subcont ?>" readonly>
                 </td>
                 <td class="pd-5 semi-bold" valign="top">Biaya Others</td>
                 <td class="pd-5" valign="top">
-                    <input type="text" name="biaya_others" id="" class="form-control form-control-sm text-right" value="<?= number_format($list_spk_penawaran->biaya_others, 2) ?>" readonly>
+                    <input type="text" name="biaya_others" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_others, 2) ?>" readonly>
                 </td>
 
             </tr>
             <tr>
                 <td class="pd-5 semi-bold" valign="top">Mandays Internal</td>
                 <td class="pd-5" width="400" valign="top">
-                    <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right total_mandays_internal" value="<?= number_format($list_spk_penawaran->mandays_internal) ?>" readonly>
+                    <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right total_mandays_internal" value="<?= number_format($total_mandays - $total_mandays_subcont) ?>" readonly>
                 </td>
-                <td class="pd-5 semi-bold" valign="top">Nilai Kontrak Bersih</td>
+                <td class="pd-5 semi-bold" valign="top">Biaya Tandem</td>
                 <td class="pd-5" valign="top">
-                    <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right total_nilai_kontrak_bersih" value="<?= number_format($list_spk_penawaran->nilai_kontrak_bersih, 2) ?>" readonly>
+                    <input type="text" name="biaya_tandem" id="" class="form-control form-control-sm text-right biaya_tandem" value="<?= number_format($nilai_tandem, 2) ?>" readonly>
                 </td>
+
 
             </tr>
             <tr>
-
+                <?php
+                $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity);
+                ?>
                 <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                 <td class="pd-5" valign="top">
-                    <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($list_spk_penawaran->mandays_rate, 2) ?>" readonly>
+                    <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
+                </td>
+                <td class="pd-5 semi-bold" valign="top">Nilai Kontrak Bersih</td>
+                <td class="pd-5" valign="top">
+                    <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right total_nilai_kontrak_bersih" value="<?= number_format($nilai_kontrak_bersih, 2) ?>" readonly>
                 </td>
             </tr>
         </table>
@@ -481,8 +501,8 @@ if($data_user->employee_id == '168') {
                     <div class="top-total-project">
                         <span style="font-weight: 400">Grand Total Project</span> <br>
                         <div class="text-left">
-                            &nbsp;&nbsp;&nbsp;<span style="font-weight: bold; font-size: 20px;">Rp. <?= number_format($list_penawaran->grand_total, 2) ?></span>
-                            <input type="hidden" name="" id="" class="form-control form-control-sm text-right auto_num nilai_project" value="<?= $list_penawaran->grand_total ?>">
+                            &nbsp;&nbsp;&nbsp;<span style="font-weight: bold; font-size: 20px;">Rp. <?= number_format($nilai_project, 2) ?></span>
+                            <input type="hidden" name="" id="" class="form-control form-control-sm text-right auto_num nilai_project" value="<?= $nilai_project ?>">
                         </div>
                     </div>
                     <!-- <table style="width: 250px; border:1px solid #ccc; border-radius: 100%;" border="0">
@@ -512,30 +532,43 @@ if($data_user->employee_id == '168') {
             </thead>
             <tbody class="list_payment_term">
                 <?php
+                $no_payment = 1;
+
                 $ttl_persen_payment = 0;
                 $ttl_nominal_payment = 0;
                 foreach ($list_spk_penawaran_payment as $item) {
-                    echo '<tr>';
+                    echo '<tr class="payment_' . $no_payment . '">';
+                    echo '<td>';
+                    echo $item->term_payment;
+                    echo '</td>';
 
-                    echo '<td class="text-center">' . $item->term_payment . '</td>';
-                    echo '<td class="text-center">' . number_format($item->persen_payment, 2) . '</td>';
-                    echo '<td class="text-center">' . number_format($item->nominal_payment, 2) . '</td>';
-                    echo '<td class>' . $item->desc_payment . '</td>';
+                    echo '<td class="text-center">';
+                    echo number_format($item->persen_payment);
+                    echo '</td>';
+
+                    echo '<td class="text-right">';
+                    echo number_format($item->nominal_payment, 2);
+                    echo '</td>';
+
+                    echo '<td>';
+                    echo $item->desc_payment;
+                    echo '</td>';
+
+                    echo '</tr>';
 
                     $ttl_persen_payment += $item->persen_payment;
                     $ttl_nominal_payment += $item->nominal_payment;
 
-                    echo '</tr>';
+                    $no_payment++;
                 }
                 ?>
             </tbody>
             <tfoot>
                 <tr>
                     <th></th>
-                    <th class="text-center ttl_persentase_payment"><?= number_format($ttl_persen_payment, 2) ?></th>
-                    <th class="text-center ttl_nominal_payment"><?= number_format($ttl_nominal_payment, 2) ?></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
+                    <th class="text-center ttl_persentase_payment"><?= number_format($ttl_persen_payment) ?></th>
+                    <th class="text-right ttl_nominal_payment"><?= number_format($ttl_nominal_payment, 2) ?></th>
+                    <th class="text-right"></th>
                 </tr>
             </tfoot>
         </table>
@@ -630,7 +663,7 @@ if($data_user->employee_id == '168') {
             <textarea name="isu_khusus" id="" class="form-control form-control-sm isu_khusus" rows="10" <?= $readonly_isu ?>><?= $list_spk_penawaran->isu_khusus ?></textarea>
         </div>
         <br><br>
-    
+
         <div class="col-md-6">
             <div class="form-group">
                 <label for="">Reject Reason</label>
@@ -640,7 +673,7 @@ if($data_user->employee_id == '168') {
     </div>
 </div>
 
-<a href="<?= base_url('approval_spk_sales_konsultan'); ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
+<a href="<?= base_url('approval_spk_project_leader'); ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
 <button type="button" class="btn btn-sm btn-danger reject_spk"><i class="fa fa-close"></i> Reject</button>
 <button type="button" class="btn btn-sm btn-success approve_spk"><i class="fa fa-check"></i> Approve</button>
 
@@ -651,14 +684,22 @@ if($data_user->employee_id == '168') {
 <script>
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
-        $('.chosen_select').chosen({
-            width: "400px"
+        $('.chosen_select').select2({
+            width: "100%"
         });
 
-        $('.select_divisi').chosen();
-        $('.select_project_leader').chosen();
-        $('.select_konsultan_1').chosen();
-        $('.select_konsultan_2').chosen();
+        $('.select_divisi').select2({
+            width: '100%'
+        });
+        $('.select_project_leader').select2({
+            width: '100%'
+        });
+        $('.select_konsultan_1').select2({
+            width: '100%'
+        });
+        $('.select_konsultan_2').select2({
+            width: '100%'
+        });
 
         $('.auto_num').autoNumeric();
     });
@@ -721,7 +762,7 @@ if($data_user->employee_id == '168') {
     });
 
     $(document).on('click', '.approve_spk', function() {
-        var id_spk_penawaran = $('.id_spk_penawaran').val();
+        var id_spk_penawaran = $('input[name="id_spk_penawaran"]').val();
         var isu_khusus = $('.isu_khusus').val();
 
         swal({

@@ -1,17 +1,17 @@
 <table style="width: 100%">
     <tr>
-        <!-- <th align="left">
+        <th align="left">
             <img src="<?= base_url('assets/images/logo_ssc.jpg'); ?>" alt="" width="150px" height="60px">
-        </th> -->
+        </th>
         <td align="center">
             <span style="font-size: 16px; font-weight: bold;">SENTRAL SISTEM CONSULTING</span> <br>
             <span style="font-size: 11px">Jalan Letnan Jendral M.T. Haryono KAV.10 MTH Square Lt.3A No.2, <br>Cawang, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13330</span> <br>
             <span style="font-size: 11px">Telp (021 2906 7201-3) Fax (021 2906 7204)</span> <br>
             <span style="font-size: 11px">info@sentralsistem.com</span>
         </td>
-        <!-- <th align="right">
+        <th align="right">
             <img src="<?= base_url('assets/images/logo_kemnaker.jpg') ?>" alt="" width="150px" height="60px">
-        </th> -->
+        </th>
     </tr>
 </table>
 <hr style="border: 1px solid black;">

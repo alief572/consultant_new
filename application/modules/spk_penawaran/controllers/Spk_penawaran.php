@@ -52,97 +52,18 @@ class SPK_penawaran extends Admin_Controller
         // $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
 
+        $this->db->select('a.id, a.id_spk_penawaran, a.id_aktifitas, a.nm_aktifitas, a.mandays, a.mandays_rate, a.mandays_tandem, a.mandays_rate_tandem, a.harga_aktifitas, a.total_aktifitas');
+        $this->db->from('kons_tr_spk_aktifitas a');
+        $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
+        $get_list_spk_aktifitas = $this->db->get()->result();
+
         $this->db->select('a.*');
         $this->db->from('kons_tr_spk_penawaran_subcont a');
         $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
         $this->db->order_by('a.id', 'asc');
         $get_spk_penawaran_subcont = $this->db->get()->result();
 
-        $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
-
-        $this->db->select('a.*, b.nm_pic, b.divisi as jabatan_pic, b.hp as no_hp_pic');
-        $this->db->from('customer a');
-        $this->db->join('customer_pic b', 'b.id_pic = a.id_pic', 'left');
-        $this->db->where('a.nm_customer <>', '');
-        $this->db->where('a.id_customer', $get_penawaran->id_customer);
-        $get_customer = $this->db->get()->row();
-
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->where('a.id', $get_penawaran->id_marketing);
-        $get_marketing = $this->db->get()->row();
-
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
-        $get_all_marketing = $this->db->get()->result();
-
-        $this->db->select('a.nm_paket');
-        $this->db->from('kons_master_konsultasi_header a');
-        $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
-        $get_konsultasi = $this->db->get()->row();
-
-        $this->db->select('a.id, a.nama');
-        $this->db->from('ms_department a');
-        $this->db->where('a.deleted_by', null);
-        $get_divisi = $this->db->get()->result();
-
-        $this->db->select('a.*');
-        $this->db->from('kons_master_aktifitas a');
-        $get_all_aktifitas = $this->db->get()->result();
-
-        $detail_informasi_awal = '';
-        if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
-            $this->db->select('a.*');
-            $this->db->from('employee a');
-            $this->db->where('a.deleted', 'N');
-            $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
-            $get_marketing_informasi_awal = $this->db->get()->row();
-
-            if (!empty($get_marketing_informasi_awal)) {
-                $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
-            }
-        } else {
-            $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
-        }
-
-
-
-        $data = [
-            'list_spk_penawaran' => $get_spk_penawaran,
-            'list_spk_penawaran_subcont' => $get_spk_penawaran_subcont,
-            'list_spk_penawaran_payment' => $get_spk_penawaran_payment,
-            'list_penawaran' => $get_penawaran,
-            'list_customer' => $get_customer,
-            'list_marketing' => $get_marketing,
-            'list_all_marketing' => $get_all_marketing,
-            'list_divisi' => $get_divisi,
-            'list_all_aktifitas' => $get_all_aktifitas,
-            'detail_informasi_awal' => $detail_informasi_awal
-        ];
-
-        $this->auth->restrict($this->viewPermission);
-        $this->template->title('View SPK');
-        $this->template->set($data);
-        $this->template->render('view_spk');
-    }
-
-    public function edit_spk($id_spk_penawaran)
-    {
-        $id_spk_penawaran = urldecode($id_spk_penawaran);
-        $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
-
-        $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
-        // $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
-        $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
-
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_spk_penawaran_subcont a');
-        $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
-        $this->db->order_by('a.id', 'asc');
-        $get_spk_penawaran_subcont = $this->db->get()->result();
+        // $this->db->select('a.id, a.id_penawaran, a.id_spk_penawaran, a.');
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
 
@@ -227,6 +148,135 @@ class SPK_penawaran extends Admin_Controller
         }
 
         $data = [
+            'list_spk_aktifitas' => $get_list_spk_aktifitas,
+            'list_spk_penawaran' => $get_spk_penawaran,
+            'list_spk_penawaran_subcont' => $get_spk_penawaran_subcont,
+            'list_spk_penawaran_payment' => $get_spk_penawaran_payment,
+            'list_penawaran' => $get_penawaran,
+            'list_customer' => $get_customer,
+            'list_marketing' => $get_marketing,
+            'list_all_marketing' => $get_all_marketing,
+            'list_divisi' => $get_divisi,
+            'list_all_aktifitas' => $get_all_aktifitas,
+            'detail_informasi_awal' => $detail_informasi_awal,
+            'nilai_project' => $get_penawaran->grand_total,
+            'nilai_akomodasi' => $nilai_akomodasi,
+            'nilai_others' => $nilai_others,
+            'nilai_kontrak' => $nilai_kontrak
+        ];
+
+        $this->auth->restrict($this->viewPermission);
+        $this->template->title('View SPK');
+        $this->template->set($data);
+        $this->template->render('view_spk');
+    }
+
+    public function edit_spk($id_spk_penawaran)
+    {
+        $id_spk_penawaran = urldecode($id_spk_penawaran);
+        $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
+
+        $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
+        // $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
+        $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
+
+        $this->db->select('a.id, a.id_spk_penawaran, a.id_aktifitas, a.nm_aktifitas, a.mandays, a.mandays_rate, a.mandays_tandem, a.mandays_rate_tandem, a.harga_aktifitas, a.total_aktifitas');
+        $this->db->from('kons_tr_spk_aktifitas a');
+        $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
+        $get_list_spk_aktifitas = $this->db->get()->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_spk_penawaran_subcont a');
+        $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
+        $this->db->order_by('a.id', 'asc');
+        $get_spk_penawaran_subcont = $this->db->get()->result();
+
+        // $this->db->select('a.id, a.id_penawaran, a.id_spk_penawaran, a.');
+
+        $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
+
+        $this->db->select('a.*, b.nm_pic, b.divisi as jabatan_pic, b.hp as no_hp_pic');
+        $this->db->from('customer a');
+        $this->db->join('customer_pic b', 'b.id_pic = a.id_pic', 'left');
+        $this->db->where('a.nm_customer <>', '');
+        $this->db->where('a.id_customer', $get_penawaran->id_customer);
+        $get_customer = $this->db->get()->row();
+
+        $this->db->select('a.*');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $this->db->where('a.id', $get_penawaran->id_marketing);
+        $get_marketing = $this->db->get()->row();
+
+        $this->db->select('a.*');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
+        $this->db->order_by('a.nm_karyawan', 'asc');
+        $get_all_marketing = $this->db->get()->result();
+
+        $this->db->select('a.nm_paket');
+        $this->db->from('kons_master_konsultasi_header a');
+        $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
+        $get_konsultasi = $this->db->get()->row();
+
+        $this->db->select('a.id, a.nama');
+        $this->db->from('ms_department a');
+        $this->db->where('a.deleted_by', null);
+        $get_divisi = $this->db->get()->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_master_aktifitas a');
+        $get_all_aktifitas = $this->db->get()->result();
+
+        $detail_informasi_awal = '';
+        if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
+            $this->db->select('a.*');
+            $this->db->from('employee a');
+            $this->db->where('a.deleted', 'N');
+            $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
+            $get_marketing_informasi_awal = $this->db->get()->row();
+
+            if (!empty($get_marketing_informasi_awal)) {
+                $detail_informasi_awal = $get_marketing_informasi_awal->nm_karyawan;
+            }
+        } else {
+            $detail_informasi_awal = $get_penawaran->detail_informasi_awal;
+        }
+
+        $this->db->select('a.*, b.nm_aktifitas');
+        $this->db->from('kons_tr_penawaran_aktifitas a');
+        $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $this->db->order_by('a.id', 'asc');
+        $get_aktifitas = $this->db->get()->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_akomodasi a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_akomodasi = $this->db->get()->result();
+
+        $nilai_akomodasi = 0;
+        foreach ($get_akomodasi as $item_akomodasi) {
+            $nilai_akomodasi += $item_akomodasi->total;
+        }
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_others a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_others = $this->db->get()->result();
+
+        $nilai_others = 0;
+        foreach ($get_others as $item_others) {
+            $nilai_others += $item_others->total;
+        }
+
+        $nilai_kontrak = 0;
+        foreach ($get_aktifitas as $item_aktifitas) {
+            $nilai_kontrak += $item_aktifitas->harga_aktifitas;
+        }
+
+        $data = [
+            'list_spk_aktifitas' => $get_list_spk_aktifitas,
             'list_spk_penawaran' => $get_spk_penawaran,
             'list_spk_penawaran_subcont' => $get_spk_penawaran_subcont,
             'list_spk_penawaran_payment' => $get_spk_penawaran_payment,
@@ -350,8 +400,18 @@ class SPK_penawaran extends Admin_Controller
             'ttl_tandem' => $ttl_tandem
         ];
 
-        $this->auth->restrict($this->viewPermission);
-        $this->load->view('print_spk', $data);
+        ob_clean();
+		ob_start();
+		$this->auth->restrict($this->managePermission);
+		$this->load->view('print_spk', $data);
+		$html = ob_get_contents();
+
+		require_once('./assets/html2pdf/html2pdf/html2pdf.class.php');
+		$html2pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8', array(0, 0, 0, 0));
+		$html2pdf->pdf->SetDisplayMode('fullpage');
+		$html2pdf->WriteHTML($html);
+		ob_end_clean();
+		$html2pdf->Output('Penawaran.pdf', 'I');
     }
 
     public function get_data_spk()
@@ -522,7 +582,7 @@ class SPK_penawaran extends Admin_Controller
                 'status_spk' => $status_spk,
                 'option' => $option
             ];
-            
+
             $no++;
         }
 
@@ -768,6 +828,12 @@ class SPK_penawaran extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $post['id_quotation']])->row();
 
+        $this->db->select('a.id, a.id_aktifitas, a.mandays, a.mandays_rate, a.mandays_tandem, a.mandays_rate_tandem, a.harga_aktifitas, a.total_aktifitas, b.nm_aktifitas as aktifitas_nm');
+        $this->db->from('kons_tr_penawaran_aktifitas a');
+        $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
+        $this->db->where('a.id_penawaran', $post['id_quotation']);
+        $get_penawaran_aktifitas = $this->db->get()->result();
+
         $this->db->select('a.id_customer, a.nm_customer');
         $this->db->from('customer a');
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
@@ -885,27 +951,37 @@ class SPK_penawaran extends Admin_Controller
             'input_date' => date('Y-m-d H:i:s')
         ];
 
+        $data_insert_aktifitas = [];
+        if (!empty($get_penawaran_aktifitas)) {
+            foreach ($get_penawaran_aktifitas as $item) {
+
+                $data_insert_aktifitas[] = [
+                    'id_penawaran' => $post['id_quotation'],
+                    'id_spk_penawaran' => $id_spk_penawaran,
+                    'id_aktifitas' => $item->id_aktifitas,
+                    'nm_aktifitas' => $item->aktifitas_nm,
+                    'mandays' => $item->mandays,
+                    'mandays_rate' => $item->mandays_rate,
+                    'mandays_tandem' => $item->mandays_tandem,
+                    'mandays_rate_tandem' => $item->mandays_rate_tandem,
+                    'harga_aktifitas' => $item->harga_aktifitas,
+                    'total_aktifitas' => $item->total_aktifitas,
+                    'input_by' => $this->auth->user_id(),
+                    'input_date' => date('Y-m-d H:i:s')
+                ];
+            }
+        }
+
         $data_insert_subcont = [];
 
-        if (isset($post['dt'])) {
-            foreach ($post['dt'] as $item) {
-
-                $get_aktifitas = $this->db->get_where('kons_master_aktifitas', ['id_aktifitas' => $item['id_aktifitas']])->row();
-
-                $nm_aktifitas = (!empty($get_aktifitas)) ? $get_aktifitas->nm_aktifitas : '';
-
+        if (isset($post['subcont'])) {
+            foreach ($post['subcont'] as $item) {
                 $data_insert_subcont[] = [
                     'id_spk_penawaran' => $id_spk_penawaran,
-                    'id_aktifitas' => $item['id_aktifitas'],
-                    'nm_aktifitas' => $nm_aktifitas,
-                    'mandays' => ($item['mandays'] !== '') ? str_replace(',', '', $item['mandays']) : 0,
-                    'mandays_rate' => ($item['mandays_rate'] !== '') ? str_replace(',', '', $item['mandays_rate']) : 0,
-                    'mandays_tandem' => ($item['mandays_tandem'] !== '') ? str_replace(',', '', $item['mandays_tandem']) : 0,
-                    'mandays_rate_tandem' => ($item['mandays_rate_tandem'] !== '') ? str_replace(',', '', $item['mandays_rate_tandem']) : 0,
-                    'mandays_subcont' => ($item['mandays_subcont'] !== '') ? str_replace(',', '', $item['mandays_subcont']) : 0,
-                    'price_subcont' => ($item['price_subcont'] !== '') ? str_replace(',', '', $item['price_subcont']) : 0,
-                    'total_subcont' => ($item['total_subcont'] !== '') ? str_replace(',', '', $item['total_subcont']) : 0,
-                    'grand_total' => ($item['grand_total'] !== '') ? str_replace(',', '', $item['grand_total']) : 0,
+                    'nm_aktifitas' => $item['subcont_new'],
+                    'mandays_subcont' => $item['subcont_new_mandays'],
+                    'price_subcont' => $item['subcont_new_rate'],
+                    'total_subcont' => $item['subcont_new_price'],
                     'dibuat_oleh' => $this->auth->user_id(),
                     'dibuat_tgl' => date('Y-m-d H:i:s')
                 ];
@@ -940,6 +1016,15 @@ class SPK_penawaran extends Admin_Controller
             $this->db->trans_rollback();
             print_r($this->db->error($update_penawaran) . ' ' . $this->db->last_query());
             exit;
+        }
+
+        if (!empty($data_insert_aktifitas)) {
+            $insert_aktifitas = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert_aktifitas);
+            if (!$insert_aktifitas) {
+                $this->db->trans_rollback();
+                print_r($this->db->error($insert_aktifitas) . ' ' . $this->db->last_query());
+                exit;
+            }
         }
 
         // print_r($data_insert_subcont);
@@ -984,6 +1069,12 @@ class SPK_penawaran extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
 
+        $this->db->select('a.id, a.id_aktifitas, a.mandays, a.mandays_rate, a.mandays_tandem, a.mandays_rate_tandem, a.harga_aktifitas, a.total_aktifitas, b.nm_aktifitas as aktifitas_nm');
+        $this->db->from('kons_tr_penawaran_aktifitas a');
+        $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
+        $this->db->where('a.id_penawaran', $get_spk_penawaran->id_penawaran);
+        $get_penawaran_aktifitas = $this->db->get()->result();
+
         $this->db->select('a.id_customer, a.nm_customer');
         $this->db->from('customer a');
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
@@ -1027,6 +1118,7 @@ class SPK_penawaran extends Admin_Controller
 
         $this->db->trans_begin();
 
+        $this->db->delete('kons_tr_spk_aktifitas', ['id_spk_penawaran' => $id_spk_penawaran]);
         $this->db->delete('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran]);
         $this->db->delete('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran]);
 
@@ -1094,26 +1186,37 @@ class SPK_penawaran extends Admin_Controller
             'edited_date' => date('Y-m-d H:i:s')
         ];
 
+        $data_insert_aktifitas = [];
+        if (!empty($get_penawaran_aktifitas)) {
+            foreach ($get_penawaran_aktifitas as $item) {
+
+                $data_insert_aktifitas[] = [
+                    'id_penawaran' => $get_spk_penawaran->id_penawaran,
+                    'id_spk_penawaran' => $id_spk_penawaran,
+                    'id_aktifitas' => $item->id_aktifitas,
+                    'nm_aktifitas' => $item->aktifitas_nm,
+                    'mandays' => $item->mandays,
+                    'mandays_rate' => $item->mandays_rate,
+                    'mandays_tandem' => $item->mandays_tandem,
+                    'mandays_rate_tandem' => $item->mandays_rate_tandem,
+                    'harga_aktifitas' => $item->harga_aktifitas,
+                    'total_aktifitas' => $item->total_aktifitas,
+                    'input_by' => $this->auth->user_id(),
+                    'input_date' => date('Y-m-d H:i:s')
+                ];
+            }
+        }
+
         $data_insert_subcont = [];
 
-        if (isset($post['dt'])) {
-            foreach ($post['dt'] as $item) {
-
-                $get_aktifitas = $this->db->get_where('kons_master_aktifitas', ['id_aktifitas' => $item['id_aktifitas']])->row();
-
-                $nm_aktifitas = (!empty($get_aktifitas)) ? $get_aktifitas->nm_aktifitas : '';
-
+        if (isset($post['subcont'])) {
+            foreach ($post['subcont'] as $item) {
                 $data_insert_subcont[] = [
                     'id_spk_penawaran' => $id_spk_penawaran,
-                    'id_aktifitas' => $item['id_aktifitas'],
-                    'nm_aktifitas' => $nm_aktifitas,
-                    'mandays' => ($item['mandays'] !== '') ? str_replace(',', '', $item['mandays']) : 0,
-                    'mandays_rate' => ($item['mandays_rate'] !== '') ? str_replace(',', '', $item['mandays_rate']) : 0,
-                    'mandays_tandem' => ($item['mandays_tandem'] !== '') ? str_replace(',', '', $item['mandays_tandem']) : 0,
-                    'mandays_rate_tandem' => ($item['mandays_rate_tandem'] !== '') ? str_replace(',', '', $item['mandays_rate_tandem']) : 0,
-                    'mandays_subcont' => ($item['mandays_subcont'] !== '') ? str_replace(',', '', $item['mandays_subcont']) : 0,
-                    'price_subcont' => ($item['price_subcont'] !== '') ? str_replace(',', '', $item['price_subcont']) : 0,
-                    'total_subcont' => ($item['total_subcont'] !== '') ? str_replace(',', '', $item['total_subcont']) : 0,
+                    'nm_aktifitas' => $item['subcont_new'],
+                    'mandays_subcont' => $item['subcont_new_mandays'],
+                    'price_subcont' => $item['subcont_new_rate'],
+                    'total_subcont' => $item['subcont_new_price'],
                     'dibuat_oleh' => $this->auth->user_id(),
                     'dibuat_tgl' => date('Y-m-d H:i:s')
                 ];
@@ -1140,6 +1243,13 @@ class SPK_penawaran extends Admin_Controller
         if (!$update_spk_penawaran) {
             $this->db->trans_rollback();
             print_r($this->db->error($update_spk_penawaran) . ' ' . $this->db->last_query());
+            exit;
+        }
+
+        $insert_aktifitas = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert_aktifitas);
+        if (!$insert_aktifitas) {
+            $this->db->trans_rollback();
+            print_r($this->db->error($insert_aktifitas) . ' ' . $this->db->last_query());
             exit;
         }
 
@@ -1183,6 +1293,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->delete('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran]);
         $this->db->delete('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran]);
         $this->db->delete('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran]);
+        $this->db->delete('kons_tr_spk_aktifitas', ['id_spk_penawaran' => $id_spk_penawaran]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
