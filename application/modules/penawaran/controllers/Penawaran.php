@@ -124,7 +124,6 @@ class Penawaran extends Admin_Controller
 
     public function view_penawaran($id_penawaran)
     {
-
         $id_penawaran = urldecode($id_penawaran);
         $id_penawaran = str_replace('|', '/', $id_penawaran);
 

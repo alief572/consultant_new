@@ -38,7 +38,6 @@ class Approval_penawaran extends Admin_Controller
 
     public function view_penawaran($id_penawaran)
     {
-
         $id_penawaran = urldecode($id_penawaran);
         $id_penawaran = str_replace('|', '/', $id_penawaran);
 
@@ -71,11 +70,22 @@ class Approval_penawaran extends Admin_Controller
         $this->db->group_by('a.nm_customer');
         $get_customer = $this->db->get()->result();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
+        // $this->db->select('a.*');
+        // $this->db->from('employee a');
+        // $this->db->where('a.deleted', 'N');
+        // $this->db->order_by('a.nm_karyawan', 'asc');
+        // $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035']);
         $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where('a.company_id', 'COM003');
+        $this->db->where('a.flag_active', 'Y');
+        $get_employees = $this->db->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
@@ -96,7 +106,8 @@ class Approval_penawaran extends Admin_Controller
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
             'list_aktifitas' => $get_aktifitas,
-            'list_divisi' => $get_divisi
+            'list_divisi' => $get_divisi,
+            'list_employees' => $get_employees
         ];
 
         $this->template->title('View Quotation');
@@ -106,7 +117,6 @@ class Approval_penawaran extends Admin_Controller
 
     public function approval($id_penawaran)
     {
-
         $id_penawaran = urldecode($id_penawaran);
         $id_penawaran = str_replace('|', '/', $id_penawaran);
 
@@ -139,11 +149,22 @@ class Approval_penawaran extends Admin_Controller
         $this->db->group_by('a.nm_customer');
         $get_customer = $this->db->get()->result();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
+        // $this->db->select('a.*');
+        // $this->db->from('employee a');
+        // $this->db->where('a.deleted', 'N');
+        // $this->db->order_by('a.nm_karyawan', 'asc');
+        // $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035']);
         $get_marketing = $this->db->get()->result();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where('a.company_id', 'COM003');
+        $this->db->where('a.flag_active', 'Y');
+        $get_employees = $this->db->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
@@ -164,7 +185,8 @@ class Approval_penawaran extends Admin_Controller
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
             'list_aktifitas' => $get_aktifitas,
-            'list_divisi' => $get_divisi
+            'list_divisi' => $get_divisi,
+            'list_employees' => $get_employees
         ];
 
         $this->template->title('Approval Quotation');

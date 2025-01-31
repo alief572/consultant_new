@@ -724,9 +724,14 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
+        // $this->db->select('a.*');
+        // $this->db->from('employee a');
+        // $this->db->where('a.deleted', 'N');
+        // $this->db->where('a.id', $get_penawaran->id_marketing);
+        // $get_marketing = $this->db->get()->row();
+
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR.'.employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
