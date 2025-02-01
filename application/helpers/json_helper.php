@@ -2622,3 +2622,8 @@ function Dekripsi($sData, $sKey = '200881173_limchaemoo')
 	}
 	return $sResult;
 }
+
+function get_initials($full_name) {
+    preg_match_all('/\b\w/', $full_name, $matches);
+    return strtoupper(implode('', $matches[0]));
+}

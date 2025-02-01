@@ -130,7 +130,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                     <select name="informasi_awal_others" id="" class="form-control form-control-sm informasi_awal_others">
                                         <option value="">- Select Employee -</option>
                                         <?php
-                                        foreach ($list_marketing as $item) {
+                                        foreach ($list_employees as $item) {
                                             echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
                                         }
                                         ?>
@@ -1209,15 +1209,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             showCancelButton: true
         }, function(next) {
             if (next) {
-                var formData = new FormData($('.form-data')[0]);
+                // var formData = new FormData($('.form-data')[0]);
+                var formData = $('.form-data').serialize();
 
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'save_penawaran',
                     data: formData,
                     cache: false,
-                    contentType: false,
-                    processData: false,
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
