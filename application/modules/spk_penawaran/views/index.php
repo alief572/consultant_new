@@ -26,6 +26,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <a class="btn btn-sm btn-success" href="<?= base_url('spk_penawaran/create_spk') ?>">
                     Create SPK
                 </a>
+                <button type="button" class="btn btn-sm btn-danger" id="one_time">Update!</button>
             </div>
         <?php endif; ?>
     </div>
@@ -105,6 +106,48 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         });
                     }
                 })
+            }
+        });
+    });
+
+    $(document).on('click', '#one_time', function() {
+        swal({
+            type: 'warning',
+            title: 'Warning !',
+            text: 'Are you sure ?',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'one_time',
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == 1) {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.msg
+                            }, function(after) {
+                                DataTables();
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: result.msg
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
             }
         });
     });

@@ -74,16 +74,16 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . 'employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where('a.flag_active', 'Y');
+        $this->db->where('a.company_id', 'COM003');
+        $this->db->order_by('a.name', 'ASC');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('a.nm_paket');
@@ -91,9 +91,9 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('ms_department a');
-        $this->db->where('a.deleted_by', null);
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -102,8 +102,8 @@ class SPK_penawaran extends Admin_Controller
 
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
-            $this->db->select('a.*');
-            $this->db->from('employee a');
+            $this->db->select('a.name as nm_karyawan');
+            $this->db->from(DBHR . 'employees a');
             $this->db->where('a.deleted', 'N');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
@@ -202,16 +202,16 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where('a.flag_active', 'Y');
+        $this->db->where('a.company_id', 'COM003');
+        $this->db->order_by('a.name', 'ASC');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('a.nm_paket');
@@ -219,9 +219,9 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('ms_department a');
-        $this->db->where('a.deleted_by', null);
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -230,9 +230,8 @@ class SPK_penawaran extends Admin_Controller
 
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
-            $this->db->select('a.*');
-            $this->db->from('employee a');
-            $this->db->where('a.deleted', 'N');
+            $this->db->select('a.name as nm_karyawan');
+            $this->db->from(DBHR.'.employees a');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
@@ -323,16 +322,16 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . 'employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where('a.flag_active', 'Y');
+        $this->db->where('a.company_id', 'COM003');
+        $this->db->order_by('a.name', 'ASC');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('a.nm_paket');
@@ -340,9 +339,9 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('ms_department a');
-        $this->db->where('a.deleted_by', null);
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -351,9 +350,8 @@ class SPK_penawaran extends Admin_Controller
 
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
-            $this->db->select('a.*');
-            $this->db->from('employee a');
-            $this->db->where('a.deleted', 'N');
+            $this->db->select('a.name as nm_karyawan');
+            $this->db->from(DBHR.'.employees a');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
@@ -401,17 +399,17 @@ class SPK_penawaran extends Admin_Controller
         ];
 
         ob_clean();
-		ob_start();
-		$this->auth->restrict($this->managePermission);
-		$this->load->view('print_spk', $data);
-		$html = ob_get_contents();
+        ob_start();
+        $this->auth->restrict($this->managePermission);
+        $this->load->view('print_spk', $data);
+        $html = ob_get_contents();
 
-		require_once('./assets/html2pdf/html2pdf/html2pdf.class.php');
-		$html2pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8', array(0, 0, 0, 0));
-		$html2pdf->pdf->SetDisplayMode('fullpage');
-		$html2pdf->WriteHTML($html);
-		ob_end_clean();
-		$html2pdf->Output('Penawaran.pdf', 'I');
+        require_once('./assets/html2pdf/html2pdf/html2pdf.class.php');
+        $html2pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8', array(0, 0, 0, 0));
+        $html2pdf->pdf->SetDisplayMode('fullpage');
+        $html2pdf->WriteHTML($html);
+        ob_end_clean();
+        $html2pdf->Output('Penawaran.pdf', 'I');
     }
 
     public function get_data_spk()
@@ -601,7 +599,7 @@ class SPK_penawaran extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, c.nama');
         $this->db->from('kons_tr_penawaran a');
         $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
         $this->db->join('members c', 'c.id = a.id_marketing', 'left');
@@ -691,7 +689,7 @@ class SPK_penawaran extends Admin_Controller
                 'no' => $no,
                 'id_quotation' => $item->id_quotation,
                 'tgl_quotation' => $item->tgl_quotation,
-                'nm_marketing' => ucfirst($nm_marketing),
+                'nm_marketing' => ucfirst($item->nama),
                 'nm_paket' => $nm_paket,
                 'nm_customer' => $nm_customer,
                 'grand_total' => number_format($item->grand_total),
@@ -731,14 +729,15 @@ class SPK_penawaran extends Admin_Controller
         // $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR.'.employees a');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where('a.flag_active', 'Y');
+        $this->db->where('a.company_id', 'COM003');
+        $this->db->order_by('a.name', 'ASC');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('a.nm_paket');
@@ -746,16 +745,15 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('ms_department a');
-        $this->db->where('a.deleted_by', null);
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
         $get_divisi = $this->db->get()->result();
 
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
-            $this->db->select('a.*');
-            $this->db->from('employee a');
-            $this->db->where('a.deleted', 'N');
+            $this->db->select('a.name as nm_karyawan');
+            $this->db->from(DBHR . '.employees a');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
@@ -1308,6 +1306,70 @@ class SPK_penawaran extends Admin_Controller
             $this->db->trans_commit();
             $valid = 1;
             $msg = 'Data has been successfully deleted !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'msg' => $msg
+        ]);
+    }
+
+    public function one_time() {
+
+        $get_spk = $this->db->get_where('kons_tr_spk_penawaran', array('deleted_by' => null))->result();
+
+        $data_insert = [];
+        if(!empty($get_spk)) {
+            foreach($get_spk as $item) {
+                $get_penawaran_aktifitas = $this->db->get_where('kons_tr_penawaran_aktifitas', array('id_penawaran' => $item->id_penawaran))->result();
+                if(!empty($get_penawaran_aktifitas)) {
+                    foreach($get_penawaran_aktifitas as $item2) {
+                        $get_aktifitas = $this->db->get_where('kons_master_aktifitas', array('id_aktifitas' => $item2->id_aktifitas))->row();
+
+                        $nm_aktifitas = (!empty($get_aktifitas)) ? $get_aktifitas->nm_aktifitas : '';
+
+                        $data_insert[] = [
+                            'id_penawaran' => $item2->id_penawaran,
+                            'id_spk_penawaran' => $item->id_spk_penawaran,
+                            'id_aktifitas' => $item2->id_aktifitas,
+                            'nm_aktifitas' => $nm_aktifitas,
+                            'bobot' => $item2->bobot,
+                            'mandays' => $item2->mandays,
+                            'mandays_rate' => $item2->mandays_rate,
+                            'mandays_tandem' => $item2->mandays_tandem,
+                            'mandays_rate_tandem' => $item2->mandays_rate_tandem,
+                            'harga_aktifitas' => $item2->harga_aktifitas,
+                            'total_aktifitas' => $item2->total_aktifitas,
+                            'input_by' => $this->auth->user_id(),
+                            'input_date' => date('Y-m-d H:i:s')
+                        ];
+                    }
+                }
+            }
+        }
+
+        $this->db->trans_begin();
+
+        if(!empty($data_insert)) {
+            $insert_query = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert);
+            if(!$insert_query) {
+                $this->db->trans_rollback();
+
+                print_r($this->db->last_query());
+                exit;
+            }
+        }
+
+        if($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $msg = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $msg = 'One time query has been successful !';
         }
 
         echo json_encode([
