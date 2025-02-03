@@ -398,18 +398,18 @@ class SPK_penawaran extends Admin_Controller
             'ttl_tandem' => $ttl_tandem
         ];
 
-        ob_clean();
-        ob_start();
+        // ob_clean();
+        // ob_start();
         $this->auth->restrict($this->managePermission);
         $this->load->view('print_spk', $data);
-        $html = ob_get_contents();
+        // $html = ob_get_contents();
 
-        require_once('./assets/html2pdf/html2pdf/html2pdf.class.php');
-        $html2pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8', array(0, 0, 0, 0));
-        $html2pdf->pdf->SetDisplayMode('fullpage');
-        $html2pdf->WriteHTML($html);
-        ob_end_clean();
-        $html2pdf->Output('Penawaran.pdf', 'I');
+        // require_once('./assets/html2pdf/html2pdf/html2pdf.class.php');
+        // $html2pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8', array(0, 0, 0, 0));
+        // $html2pdf->pdf->SetDisplayMode('fullpage');
+        // $html2pdf->WriteHTML($html);
+        // ob_end_clean();
+        // $html2pdf->Output('Penawaran.pdf', 'I');
     }
 
     public function get_data_spk()
