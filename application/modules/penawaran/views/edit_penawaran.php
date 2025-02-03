@@ -287,6 +287,8 @@ if (count($list_penawaran_others) > 0) {
                     $no_activity = 1;
                     foreach ($list_penawaran_aktifitas as $item_aktifitas) {
 
+                        $get_aktifitas = $this->db->get_where('kons_master_aktifitas', array('id_aktifitas' => $item_aktifitas->id_aktifitas))->row();
+
                         echo '<tr class="tr_aktifitas_' . $no_activity . '">';
 
                         echo '<td class="text-center tr_no">' . $no_activity . '</td>';
@@ -310,7 +312,10 @@ if (count($list_penawaran_others) > 0) {
                         echo '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' . $no_activity . '" name="dt_act[' . $no_activity . '][mandays]" value="' . $item_aktifitas->mandays . '" onchange="hitung_total_activity()">';
                         echo '</td>';
 
+                        $min_mandays_rate = ($get_aktifitas->mandays >= 1) ? ($get_aktifitas->harga_aktifitas / $get_aktifitas->mandays) : ($get_aktifitas->harga_aktifitas);
+
                         echo '<td class="text-center">';
+                        echo '<input type="hidden" name="dt_act[' . $no_activity . '][min_mandays_rate]" value="' . $min_mandays_rate . '">';
                         echo '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_' . $no_activity . '" name="dt_act[' . $no_activity . '][mandays_rate]" value="' . $item_aktifitas->mandays_rate . '" onchange="hitung_total_activity()">';
                         echo '</td>';
 
@@ -889,6 +894,18 @@ if (count($list_penawaran_others) > 0) {
                 var mandays_tandem = get_num($('input[name="dt_act[' + i + '][mandays_tandem]"]').val());
                 var mandays_rate_tandem = get_num($('input[name="dt_act[' + i + '][mandays_rate_tandem]"]').val());
 
+                var min_mandays_rate = get_num($('input[name="dt_act[' + i + '][min_mandays_rate]"]').val());
+                if (mandays_rate < min_mandays_rate) {
+                    swal({
+                        type: 'warning',
+                        title: 'Warning !',
+                        text: "Mandays Rate Price can't below the minimum price !"
+                    });
+
+                    $('input[name="dt_act[' + i + '][mandays_rate]"]').autoNumeric('set', min_mandays_rate);
+                    mandays_rate = min_mandays_rate;
+                }
+
                 ttl_mandays += mandays;
                 ttl_mandays_rate += mandays_rate;
                 ttl_mandays_subcont += mandays_subcont;
@@ -1259,9 +1276,9 @@ if (count($list_penawaran_others) > 0) {
 
         var nilai_project = (ttl_nilai_project + ttl_akomodasi + ttl_others);
         nilai_project = (nilai_project - disc_nilai);
-        
+
         var mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others) / ttl_total_mandays);
-        
+
         // alert(mandays_rate);
 
         $('.ttl_total_mandays').html(number_format(ttl_total_mandays));
