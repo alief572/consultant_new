@@ -207,19 +207,22 @@ class Master_konsultasi extends Admin_Controller
                     //     $msg = 'Gagal !';
                     // }
 
-                    $cek_paket = "SELECT id_paket FROM kons_master_konsultasi_header WHERE id_paket = '" . $post['konsultasi'] . "'";
-                    $cek_paket = $this->db->query($cek_paket);
-                    if ($cek_paket->num_rows() > 0) {
-                        $valid = 0;
-                        $msg = 'Maaf, paket sudah ada silahkan pilih yg lain atau update Activity.';
-                    } else {
-                        $terinput  = 0;
-                        $tahapan   = 1;
+                    // $cek_paket = "SELECT id_paket FROM kons_master_konsultasi_header WHERE id_paket = '" . $post['konsultasi'] . "'";
+                    // $cek_paket = $this->db->query($cek_paket);
+                    // if ($cek_paket->num_rows() > 0) {
+                    //     $valid = 0;
+                    //     $msg = 'Maaf, paket sudah ada silahkan pilih yg lain atau update Activity.';
+                    // } else {
 
-                        ### .............................................................................
-                        ### GET UNIQUE CODE FOR PRIMARY KEY
-                        ### .............................................................................
-                        $Max = "
+                    // }
+
+                    $terinput  = 0;
+                    $tahapan   = 1;
+
+                    ### .............................................................................
+                    ### GET UNIQUE CODE FOR PRIMARY KEY
+                    ### .............................................................................
+                    $Max = "
                             SELECT 
                                 id_konsultasi_h 
                             FROM 
@@ -228,48 +231,48 @@ class Master_konsultasi extends Admin_Controller
                                 datet LIKE '" . DATE('Y-') . "%' ORDER BY id_konsultasi_h DESC 
                             LIMIT 1
                         ";
-                        $Max   = $this->db->query($Max);
-                        $nilai = 1;
-                        if ($Max->num_rows() > 0) {
-                            $nilai = intval(substr($Max->row()->id_konsultasi_h, -5)) + 1;
-                        }
-                        $kode = 'KONS-' . date('Y') . '-' . sprintf('%05d', $nilai);
+                    $Max   = $this->db->query($Max);
+                    $nilai = 1;
+                    if ($Max->num_rows() > 0) {
+                        $nilai = intval(substr($Max->row()->id_konsultasi_h, -5)) + 1;
+                    }
+                    $kode = 'KONS-' . date('Y') . '-' . sprintf('%05d', $nilai);
 
-                        $head['id_konsultasi_h'] = $kode;
-                        $head['nm_paket']        = $post['konsultasi'];
-                        $head['datet']           = date('Y-m-d');
-                        $head['input_date']      = date('Y-m-d H:i:s');
-                        $head['input_by']        = $this->session->userdata('usr_username');
-                        $this->db->insert('kons_master_konsultasi_header', $head);
+                    $head['id_konsultasi_h'] = $kode;
+                    $head['nm_paket']        = $post['konsultasi'];
+                    $head['datet']           = date('Y-m-d');
+                    $head['input_date']      = date('Y-m-d H:i:s');
+                    $head['input_by']        = $this->session->userdata('usr_username');
+                    $this->db->insert('kons_master_konsultasi_header', $head);
 
-                        foreach ($post['id_aktifitas'] as $key => $value) {
-                            $explode          = explode("*_*", $value);
-                            $id_aktifitas     = $explode[0];
-                            $nm_aktifitas     = $post['nm_aktifitas'][$key];
-                            $harga_aktifitas  = str_replace(',', '', $post['hrg_aktifitas'][$key]);
-                            $bobot            = $post['bobot'][$key];
-                            $mandays          = $post['mandays'][$key];
+                    foreach ($post['id_aktifitas'] as $key => $value) {
+                        $explode          = explode("*_*", $value);
+                        $id_aktifitas     = $explode[0];
+                        $nm_aktifitas     = $post['nm_aktifitas'][$key];
+                        $harga_aktifitas  = str_replace(',', '', $post['hrg_aktifitas'][$key]);
+                        $bobot            = $post['bobot'][$key];
+                        $mandays          = $post['mandays'][$key];
 
-                            if (! empty($value)) {
-                                $detail['id_konsultasi_h']  = $kode;
-                                $detail['id_aktifitas']     = $id_aktifitas;
-                                $detail['nm_aktifitas']     = $nm_aktifitas;
-                                $detail['harga_aktifitas']  = $harga_aktifitas;
-                                $detail['bobot']            = $bobot;
-                                $detail['mandays']          = $mandays;
-                                $detail['tahapan']          = $tahapan;
-                                $detail['input_date']       = date('Y-m-d H:i:s');
-                                $detail['input_by']         = $this->session->userdata('usr_username');
-                                $detail_input = $this->db->insert('kons_master_konsultasi_detail', $detail);
-                                if ($detail_input) {
-                                    $terinput++;
-                                } else {
-                                    print_r($this->db->error($detail_input));
-                                    $this->db->trans_rollback();
-                                    exit;
-                                }
+                        if (! empty($value)) {
+                            $detail['id_konsultasi_h']  = $kode;
+                            $detail['id_aktifitas']     = $id_aktifitas;
+                            $detail['nm_aktifitas']     = $nm_aktifitas;
+                            $detail['harga_aktifitas']  = $harga_aktifitas;
+                            $detail['bobot']            = $bobot;
+                            $detail['mandays']          = $mandays;
+                            $detail['tahapan']          = $tahapan;
+                            $detail['input_date']       = date('Y-m-d H:i:s');
+                            $detail['input_by']         = $this->session->userdata('usr_username');
+                            $detail_input = $this->db->insert('kons_master_konsultasi_detail', $detail);
+                            if ($detail_input) {
+                                $terinput++;
+                            } else {
+                                print_r($this->db->error($detail_input));
+                                $this->db->trans_rollback();
+                                exit;
+                            }
 
-                                /*$cek_id = $this->db->select('id_aktifitas')->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas');
+                            /*$cek_id = $this->db->select('id_aktifitas')->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas');
                                 if(! empty($unik_id) OR ($cek_id->num_rows() > 0))
                                 {
                                     ## I. UPDATE AKTIFITAS
@@ -329,27 +332,26 @@ class Master_konsultasi extends Admin_Controller
                                         }
                                     }
                                 }*/
-                            }
-
-                            $tahapan++;
                         }
 
-                        // if ($terinput > 0) {
-                        //     $pesan  = "Data Successfully Saved";
-                        //     $params['redirect_page'] = "YES";
-                        //     $params['redirect_page_URL'] = site_url('master_konsultasi');
-                        //     echo $this->query_success($pesan, $params);
-                        // } else {
-                        //     echo $this->query_error('Terjadi kesalahan, coba lagi');
-                        // }
+                        $tahapan++;
+                    }
 
-                        if ($this->db->trans_status() === false) {
-                            $valid = 0;
-                            $msg = 'Please try again later !';
-                        } else {
-                            $valid = 1;
-                            $msg = 'Data Successfully Saved';
-                        }
+                    // if ($terinput > 0) {
+                    //     $pesan  = "Data Successfully Saved";
+                    //     $params['redirect_page'] = "YES";
+                    //     $params['redirect_page_URL'] = site_url('master_konsultasi');
+                    //     echo $this->query_success($pesan, $params);
+                    // } else {
+                    //     echo $this->query_error('Terjadi kesalahan, coba lagi');
+                    // }
+
+                    if ($this->db->trans_status() === false) {
+                        $valid = 0;
+                        $msg = 'Please try again later !';
+                    } else {
+                        $valid = 1;
+                        $msg = 'Data Successfully Saved';
                     }
                 } else {
                     $valid = 0;

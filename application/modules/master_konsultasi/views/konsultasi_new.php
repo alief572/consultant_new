@@ -28,16 +28,6 @@
                                             <div class="form-group">
                                                 <label>Nama Paket <span style="color:#f00;">*</span></label>
                                                 <input type="text" name="konsultasi" id="konsultasi" class="form-control form-control-sm">
-                                                <!-- <select class="form-control select2" name="konsultasi" id="konsultasi">
-                                                    <option value="">-Pilih Paket-</option>
-                                                    <?php
-                                                    if ($paket->num_rows() > 0) {
-                                                        foreach ($paket->result() as $d) {
-                                                            echo "<option value='" . $d->id_paket . "'>" . $d->nm_paket . "</option>";
-                                                        }
-                                                    }
-                                                    ?>
-                                                </select> -->
                                             </div>
                                         </div>
                                         <div class="col-md-12">
