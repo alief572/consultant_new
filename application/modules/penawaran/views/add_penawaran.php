@@ -540,8 +540,75 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         $('.check_info_awal_medsos').attr('checked', false);
     });
 
-    $(document).on('click', '.add_activity', function() {
-        addActivity();
+    $(document).on('click', '.add_activity', function(e) {
+        e.preventDefault();
+
+        var no_activity = parseFloat($('.no').val());
+
+        var hasil = '<tr class="tr_aktifitas_' + no_activity + '">';
+
+        hasil += '<td class="text-center">' + no_activity + '</td>';
+
+        hasil += '<td class="text-left">';
+
+        hasil += '<select class="form-control form-control-sm change_aktifitas select_nm_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][nm_aktifitas]" style="max-width: 500px;" data-no="' + no_activity + '">';
+        hasil += '<option value="">- Select Activity Name -</option>';
+        <?php
+        foreach ($list_aktifitas as $item) {
+        ?>
+
+            hasil += '<option value="<?= $item->id_aktifitas ?>"><?= str_replace("'", "", $item->nm_aktifitas) ?></option>';
+
+        <?php
+        }
+        ?>
+        hasil += '</select>';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' + no_activity + '" name="dt_act[' + no_activity + '][mandays]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_subcont_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_subcont]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_subcont_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate_subcont]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_tandem_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_tandem]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_tandem_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate_tandem]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][harga_aktifitas]" value="" onchange="hitung_total_activity()">';
+        hasil += '</td>';
+
+        hasil += '<td class="text-center">';
+        hasil += '<button type="button" class="btn btn-sm btn-danger del_aktifitas" data-no="' + no_activity + '"><i class="fa fa-trash"></i></button>';
+        hasil += '</td>';
+
+        hasil += '</tr>';
+
+        $('.list_activity').append(hasil);
+
+        $('.select_nm_aktifitas_' + no_activity).select2({
+            width: '100%'
+        });
+
+        no_activity = parseFloat(no_activity + 1);
+        $('.no').val(no_activity);
+
+        auto_num();
     });
 
     $(document).on('click', '.add_akomodasi', function() {
@@ -612,6 +679,18 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 var mandays_rate_subcont = get_num($('input[name="dt_act[' + i + '][mandays_rate_subcont]"]').val());
                 var mandays_tandem = get_num($('input[name="dt_act[' + i + '][mandays_tandem]"]').val());
                 var mandays_rate_tandem = get_num($('input[name="dt_act[' + i + '][mandays_rate_tandem]"]').val());
+
+                var min_mandays_rate = get_num($('input[name="dt_act[' + i + '][min_mandays_rate]"]').val());
+                if (mandays_rate < min_mandays_rate) {
+                    swal({
+                        type: 'warning',
+                        title: 'Warning !',
+                        text: "Mandays Rate Price can't below the minimum price !"
+                    });
+
+                    $('input[name="dt_act[' + i + '][mandays_rate]"]').autoNumeric('set', min_mandays_rate);
+                    mandays_rate = min_mandays_rate;
+                }
 
                 ttl_mandays += mandays;
                 ttl_mandays_rate += mandays_rate;
@@ -747,74 +826,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         $('.grand_total').val((subtotal + nilai_ppn));
     }
 
-    function addActivity() {
-        var no_activity = parseFloat($('.no').val());
 
-        var hasil = '<tr class="tr_aktifitas_' + no_activity + '">';
-
-        hasil += '<td class="text-center">' + no_activity + '</td>';
-
-        hasil += '<td class="text-left">';
-
-        hasil += '<select class="form-control form-control-sm change_aktifitas select_nm_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][nm_aktifitas]" style="max-width: 500px;" data-no="' + no_activity + '">';
-        hasil += '<option value="">- Select Activity Name -</option>';
-        <?php
-        foreach ($list_aktifitas as $item) {
-        ?>
-
-            hasil += '<option value="<?= $item->id_aktifitas ?>"><?= str_replace("'", "", $item->nm_aktifitas) ?></option>';
-
-        <?php
-        }
-        ?>
-        hasil += '</select>';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center">';
-        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' + no_activity + '" name="dt_act[' + no_activity + '][mandays]" value="" onchange="hitung_total_activity()">';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center">';
-        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate]" value="" onchange="hitung_total_activity()">';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center">';
-        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_subcont_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_subcont]" value="" onchange="hitung_total_activity()">';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center">';
-        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_subcont_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate_subcont]" value="" onchange="hitung_total_activity()">';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center">';
-        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_tandem_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_tandem]" value="" onchange="hitung_total_activity()">';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center">';
-        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_tandem_' + no_activity + '" name="dt_act[' + no_activity + '][mandays_rate_tandem]" value="" onchange="hitung_total_activity()">';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center">';
-        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' + no_activity + '" name="dt_act[' + no_activity + '][harga_aktifitas]" value="" onchange="hitung_total_activity()">';
-        hasil += '</td>';
-
-        hasil += '<td class="text-center">';
-        hasil += '<button type="button" class="btn btn-sm btn-danger del_aktifitas" data-no="' + no_activity + '"><i class="fa fa-trash"></i></button>';
-        hasil += '</td>';
-
-        hasil += '</tr>';
-
-        $('.list_activity').append(hasil);
-
-        $('.select_nm_aktifitas_' + no_activity).select2({
-            width: '280px'
-        });
-
-        no_activity = parseFloat(no_activity + 1);
-        $('.no').val(no_activity);
-
-        auto_num();
-    }
 
     function addAkomodasi() {
         var no_akomodasi = parseFloat($('.no_akomodasi').val());
@@ -987,9 +999,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         var nilai_project = (ttl_nilai_project + ttl_akomodasi + ttl_others);
         nilai_project = (nilai_project - disc_nilai);
-        
+
         var mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others) / ttl_total_mandays);
-        
+
         // alert(mandays_rate);
 
         $('.ttl_total_mandays').html(number_format(ttl_total_mandays));

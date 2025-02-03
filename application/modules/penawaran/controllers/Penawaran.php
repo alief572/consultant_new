@@ -568,6 +568,9 @@ class Penawaran extends Admin_Controller
                 $hasil .= '<option value="' . $item_aktifitas->id_aktifitas . '" ' . $selected . '>' . $item_aktifitas->nm_aktifitas . '</option>';
             }
 
+            $mandays = ($item->mandays > 0) ? $item->mandays : 1;
+            $mandays_rate = ($item->mandays >= 1) ? ($item->harga_aktifitas / $item->mandays) : ($item->harga_aktifitas);
+            $total = ($item->mandays >= 1) ? $mandays_rate : ($item->harga_aktifitas * $item->mandays);
 
             $hasil .= '</select>';
             $hasil .= '</td>';
@@ -577,7 +580,8 @@ class Penawaran extends Admin_Controller
             $hasil .= '</td>';
 
             $hasil .= '<td class="text-center">';
-            $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_' . $no . '" name="dt_act[' . $no . '][mandays_rate]" value="' . $item->harga_aktifitas . '" onchange="hitung_total_activity()">';
+            $hasil .= '<input type="hidden" name="dt_act[' . $no . '][min_mandays_rate]" value="' . $mandays_rate . '">';
+            $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_rate_' . $no . '" name="dt_act[' . $no . '][mandays_rate]" value="' . $mandays_rate . '" onchange="hitung_total_activity()">';
             $hasil .= '</td>';
 
             $hasil .= '<td class="text-center">';
@@ -598,7 +602,7 @@ class Penawaran extends Admin_Controller
 
 
             $hasil .= '<td class="text-right">';
-            $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' . $no . '" name="dt_act[' . $no . '][harga_aktifitas]" value="' . ($item->harga_aktifitas * $item->mandays) . '" onchange="hitung_total_activity()" readonly>';
+            $hasil .= '<input type="text" class="form-control form-control-sm auto_num text-right input_harga_aktifitas_' . $no . '" name="dt_act[' . $no . '][harga_aktifitas]" value="' . $total . '" onchange="hitung_total_activity()" readonly>';
             $hasil .= '</td>';
 
             $hasil .= '<td class="text-center">';
@@ -609,9 +613,9 @@ class Penawaran extends Admin_Controller
 
             $no++;
 
-            $ttl_mandays += $item->mandays;
-            $ttl_mandays_rate += $item->harga_aktifitas;
-            $ttl_price += ($item->harga_aktifitas * $item->mandays);
+            $ttl_mandays += $mandays;
+            $ttl_mandays_rate += $mandays_rate;
+            $ttl_price += $total;
         }
 
         echo json_encode([
