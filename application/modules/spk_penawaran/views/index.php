@@ -26,7 +26,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <a class="btn btn-sm btn-success" href="<?= base_url('spk_penawaran/create_spk') ?>">
                     Create SPK
                 </a>
-                <button type="button" class="btn btn-sm btn-danger" id="one_time">Update!</button>
+                <!-- <button type="button" class="btn btn-sm btn-danger" id="one_time">Update!</button> -->
             </div>
         <?php endif; ?>
     </div>
