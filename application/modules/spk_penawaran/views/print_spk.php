@@ -348,3 +348,7 @@
         </th>
     </tr>
 </table>
+
+<script>
+    window.print();
+</script>
