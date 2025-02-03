@@ -417,7 +417,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                             </div>
                         </div>
                     </td>
-
+                    <td></td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Divisi</td>
@@ -435,7 +435,9 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_akomodasi" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_akomodasi, 2) ?>" readonly>
                     </td>
-
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="akomodasi" data-id_quotation="<?= $list_penawaran->id_quotation ?>"><i class="fa fa-eye"></i> Detail</button>
+                    </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Total Mandays</td>
@@ -446,6 +448,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_subcont" id="" class="form-control form-control-sm text-right biaya_subcont" value="<?= number_format($total_activity, 2) ?>" readonly>
                     </td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Subcont</td>
@@ -456,7 +459,9 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_others" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_others, 2) ?>" readonly>
                     </td>
-
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="others" data-id_quotation="<?= $list_penawaran->id_quotation ?>"><i class="fa fa-eye"></i> Detail</button>
+                    </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Tandem</td>
@@ -481,6 +486,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <td class="pd-5" valign="top">
                         <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right total_nilai_kontrak_bersih" value="<?= number_format($nilai_kontrak_bersih, 2) ?>" readonly>
                     </td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
@@ -690,6 +696,24 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
     </button>
 </form>
 
+<div class="modal" id="dialog-rekap" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body" id="MyModalBody">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <input type="hidden" name="no_payment" value="1">
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -734,7 +758,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
     function get_num(nilai = null) {
         if (nilai !== '' && nilai !== null) {
             nilai = nilai.split(',').join('');
-            if(isNaN(nilai)) {
+            if (isNaN(nilai)) {
                 nilai = 0;
             } else {
                 nilai = parseFloat(nilai);
@@ -1191,5 +1215,37 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         $('input[name="pt[' + no + '][persen_payment]"]').val(number_format(persen_payment, 2));
 
         hitung_ttl_payment();
+    });
+
+    $(document).on('click', '.btn_detail', function() {
+        var id_penawaran = $(this).data('id_quotation');
+        var type = $(this).data('type');
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'detail_sum',
+            data: {
+                'id_penawaran': id_penawaran,
+                'type': type
+            },
+            cache: false,
+            success: function(result) {
+                if (type == 'akomodasi') {
+                    $('#myModalLabel').html('Detail Akomodasi');
+                }
+                if (type == 'others') {
+                    $('#myModalLabel').html('Detail Others');
+                }
+                $('#MyModalBody').html(result);
+                $('#dialog-rekap').modal('show');
+            },
+            error: function(result) {
+                swal({
+                    type: 'error',
+                    title: 'Error !',
+                    text: 'Please try again later !'
+                });
+            }
+        });
     });
 </script>
