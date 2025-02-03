@@ -88,6 +88,7 @@ class Master_aktifitas extends Admin_Controller
             $nestedData[]   = $row['nm_aktifitas'];
             $nestedData[]   = number_format($row['harga_aktifitas']);
             $nestedData[]   = $row['mandays'];
+            $nestedData[]   = $row['keterangan'];
             $nestedData[]   = "
                 <div class='btn-group'>
                     " . $edit_btn . "
