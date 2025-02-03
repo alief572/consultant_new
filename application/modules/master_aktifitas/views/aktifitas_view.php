@@ -28,6 +28,7 @@
                                                     <th>Nama Aktifitas</th>
                                                     <th class="no-sort">Harga</th>
                                                     <th>Mandays</th>
+                                                    <th>Keterangan</th>
                                                     <th class="no-sort" width="">Option</th>
                                                 </tr>
                                             </thead>
