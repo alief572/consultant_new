@@ -30,6 +30,7 @@
                                                             <th>Aktifitas</th>
                                                             <th width="15%">Harga</th>
                                                             <th width="10%">Mandays</th>
+                                                            <th>Keterangan</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -48,6 +49,9 @@
                                                                     </td>
                                                                     <td>
                                                                         <input type='number' class='form-control' name='mandays[]' value="<?php echo @$d->mandays; ?>">
+                                                                    </td>
+                                                                    <td>
+                                                                        <textarea name="keterangan[]" class="form-control"><?= $d->keterangan ?></textarea>
                                                                     </td>
                                                                     
                                                                 </tr>

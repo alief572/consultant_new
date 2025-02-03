@@ -222,6 +222,7 @@ class Master_aktifitas extends Admin_Controller
                             // $bobot            = $post['bobot'][$key];
                             $mandays          = $post['mandays'][$key];
                             $unik_id          = $post['aktifitas_unique_id'][$key];
+                            $keterangan = $post['keterangan'][$key];
 
                             if (! empty($value)) {
                                 $cek_id = $this->db->select('id_aktifitas')->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas');
@@ -233,7 +234,7 @@ class Master_aktifitas extends Admin_Controller
                                         'harga_aktifitas' => $harga_aktifitas,
                                         'mandays'         => $mandays,
                                         'tahapan'         => $tahapan,
-                                        'keterangan'      => '',
+                                        'keterangan'      => $keterangan,
                                         'id_kompetensi'   => '0',
                                         'input_date'      => date('Y-m-d H:i:s'),
                                         'input_by'        => $this->session->userdata('usr_username')
@@ -266,7 +267,7 @@ class Master_aktifitas extends Admin_Controller
                                             'harga_aktifitas' => $harga_aktifitas,
                                             'mandays'         => $mandays,
                                             'tahapan'         => $tahapan,
-                                            'keterangan'      => '',
+                                            'keterangan'      => $keterangan,
                                             'id_kompetensi'   => '0',
                                             'unique_id'       => $unique_id,
                                             'input_date'      => date('Y-m-d H:i:s'),
@@ -410,6 +411,7 @@ class Master_aktifitas extends Admin_Controller
                         // $bobot            = $_POST['bobot'][$key];
                         $mandays          = $_POST['mandays'][$key];
                         $unik_id          = $_POST['aktifitas_unique_id'][$key];
+                        $keterangan = $_POST['keterangan'][$key];
 
                         if (! empty($value)) {
                             $cek_id = $this->db->select('id_aktifitas')->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas');
@@ -419,6 +421,7 @@ class Master_aktifitas extends Admin_Controller
                                     'nm_aktifitas'    => $nm_aktifitas,
                                     'harga_aktifitas' => $harga_aktifitas,
                                     'mandays'         => $mandays,
+                                    'keterangan' => $keterangan,
                                     'update_date'     => date('Y-m-d H:i:s'),
                                     'update_by'       => $this->session->userdata('usr_username')
                                 );

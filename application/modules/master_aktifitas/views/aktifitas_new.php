@@ -34,6 +34,7 @@
                                                             <th>Aktifitas</th>
                                                             <th width="15%">Harga</th>
                                                             <th width="10%">Mandays</th>
+                                                            <th>Keterangan</th>
                                                             <th width="6%">Hapus</th>
                                                         </tr>
                                                     </thead>
@@ -222,6 +223,9 @@
         Baris += "    </td>";
         Baris += "    <td>";
         Baris += "        <input type='number' class='form-control' name='mandays[]' id='mandays' min='0'>";
+        Baris += "    </td>";
+        Baris += "    <td>";
+        Baris += "    <textarea name='keterangan[]' class='form-control'></textarea>";
         Baris += "    </td>";
         Baris += "    <td align='center' style='padding-top:13px'>" + Hapus;
         Baris += "    </td>";
