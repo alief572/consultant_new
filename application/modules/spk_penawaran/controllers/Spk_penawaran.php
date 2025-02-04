@@ -830,7 +830,7 @@ class SPK_penawaran extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $post['id_quotation']])->row();
 
-        $this->db->select('a.id, a.id_aktifitas, a.mandays, a.mandays_rate, a.mandays_tandem, a.mandays_rate_tandem, a.harga_aktifitas, a.total_aktifitas, b.nm_aktifitas as aktifitas_nm');
+        $this->db->select('a.id, a.id_aktifitas, a.mandays, a.mandays_rate, a.bobot, a.mandays_tandem, a.mandays_rate_tandem, a.harga_aktifitas, a.total_aktifitas, b.nm_aktifitas as aktifitas_nm');
         $this->db->from('kons_tr_penawaran_aktifitas a');
         $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $post['id_quotation']);
@@ -844,8 +844,8 @@ class SPK_penawaran extends Admin_Controller
         $id_customer = (!empty($get_customer)) ? $get_customer->id_customer : '';
         $nm_customer = (!empty($get_customer)) ? $get_customer->nm_customer : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
@@ -863,24 +863,24 @@ class SPK_penawaran extends Admin_Controller
         $id_divisi = (!empty($get_divisi)) ? $get_divisi->id : '';
         $nm_divisi = (!empty($get_divisi)) ? $get_divisi->nama : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['project_leader']);
         $get_project_leader = $this->db->get()->row();
 
         $id_project_leader = (!empty($get_project_leader)) ? $get_project_leader->id : '';
         $nm_project_leader = (!empty($get_project_leader)) ? $get_project_leader->nm_karyawan : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['konsultan_1']);
         $get_konsultan_1 = $this->db->get()->row();
 
         $id_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->id : '';
         $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nm_karyawan : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['konsultan_2']);
         $get_konsultan_2 = $this->db->get()->row();
 
@@ -962,6 +962,7 @@ class SPK_penawaran extends Admin_Controller
                     'id_spk_penawaran' => $id_spk_penawaran,
                     'id_aktifitas' => $item->id_aktifitas,
                     'nm_aktifitas' => $item->aktifitas_nm,
+                    'bobot' => $item->bobot,
                     'mandays' => $item->mandays,
                     'mandays_rate' => $item->mandays_rate,
                     'mandays_tandem' => $item->mandays_tandem,
@@ -1024,6 +1025,7 @@ class SPK_penawaran extends Admin_Controller
             $insert_aktifitas = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert_aktifitas);
             if (!$insert_aktifitas) {
                 $this->db->trans_rollback();
+
                 print_r($this->db->error($insert_aktifitas) . ' ' . $this->db->last_query());
                 exit;
             }
@@ -1031,11 +1033,13 @@ class SPK_penawaran extends Admin_Controller
 
         // print_r($data_insert_subcont);
 
-        $insert_spk_penawaran_subcont = $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_insert_subcont);
-        if (!$insert_spk_penawaran_subcont) {
-            $this->db->trans_rollback();
-            print_r($this->db->last_query());
-            exit;
+        if (!empty($data_insert_subcont)) {
+            $insert_spk_penawaran_subcont = $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_insert_subcont);
+            if (!$insert_spk_penawaran_subcont) {
+                $this->db->trans_rollback();
+                print_r($this->db->last_query());
+                exit;
+            }
         }
 
         $insert_spk_penawaran_payment = $this->db->insert_batch('kons_tr_spk_penawaran_payment', $data_insert_payment);
@@ -1082,8 +1086,8 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
@@ -1097,22 +1101,22 @@ class SPK_penawaran extends Admin_Controller
 
         $nm_divisi = (!empty($get_divisi)) ? $get_divisi->nama : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['project_leader']);
         $get_project_leader = $this->db->get()->row();
 
         $nm_project_leader = (!empty($get_project_leader)) ? $get_project_leader->nm_karyawan : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['konsultan_1']);
         $get_konsultan_1 = $this->db->get()->row();
 
         $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nm_karyawan : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['konsultan_2']);
         $get_konsultan_2 = $this->db->get()->row();
 
@@ -1255,11 +1259,13 @@ class SPK_penawaran extends Admin_Controller
             exit;
         }
 
-        $insert_spk_penawaran_subcont = $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_insert_subcont);
-        if (!$insert_spk_penawaran_subcont) {
-            $this->db->trans_rollback();
-            print_r($this->db->error($insert_spk_penawaran_subcont) . ' ' . $this->db->last_query());
-            exit;
+        if (!empty($data_insert_subcont)) {
+            $insert_spk_penawaran_subcont = $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_insert_subcont);
+            if (!$insert_spk_penawaran_subcont) {
+                $this->db->trans_rollback();
+                print_r($this->db->error($insert_spk_penawaran_subcont) . ' ' . $this->db->last_query());
+                exit;
+            }
         }
 
         $insert_spk_penawaran_payment = $this->db->insert_batch('kons_tr_spk_penawaran_payment', $data_insert_payment);

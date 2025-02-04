@@ -52,6 +52,21 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
         border: 1px solid #ccc;
         border-radius: 15px;
     }
+
+    .select2-container {
+        width: 100% !important;
+    }
+
+    table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    td,
+    th {
+        word-wrap: break-word;
+        overflow: hidden;
+    }
 </style>
 
 <form action="" method="post" id="frm-data">
@@ -273,14 +288,14 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
             <h4 style="font-weight: 600;">Biaya Konsultan</h4>
         </div>
         <div class="box-body">
-            <table class="table table-striped">
+            <table class="table table-striped" width="100%" style="">
                 <thead>
                     <tr>
                         <th class="text-center" width="20">No.</th>
-                        <th class="text-center" width="200">Activity Name</th>
-                        <th class="text-center" width="10">Mandays Internal</th>
+                        <th class="text-center" width="150">Activity Name</th>
+                        <th class="text-center" width="50">Mandays Internal</th>
                         <th class="text-center" width="50">Mandays Rate Internal</th>
-                        <th class="text-center" width="10">Mandays Tandem</th>
+                        <th class="text-center" width="50">Mandays Tandem</th>
                         <th class="text-center" width="50">Mandays Rate Tandem</th>
                         <th class="text-center" width="50">Grand Total</th>
                     </tr>
@@ -309,7 +324,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
 
                         echo '<tr class="subcontawd_' . $no . '">';
                         echo '<td class="text-center">' . $no . '</td>';
-                        echo '<td>';
+                        echo '<td width="150">';
                         echo '<select class="form-control form-control-sm chosen_select" name="dt[' . $no . '][id_aktifitas]">';
                         foreach ($list_all_aktifitas as $item_aktifitas) {
                             $selected = '';
@@ -743,21 +758,21 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
 </form>
 
 <div class="modal" id="dialog-rekap" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<h4 class="modal-title" id="myModalLabel"></h4>
-			</div>
-			<div class="modal-body" id="MyModalBody">
-				...
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" data-dismiss="modal">
-					<span class="glyphicon glyphicon-remove"></span> Close</button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body" id="MyModalBody">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span> Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <input type="hidden" name="no_payment" value="<?= $no_payment ?>">
@@ -1274,10 +1289,10 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
             },
             cache: false,
             success: function(result) {
-                if(type == 'akomodasi') {
+                if (type == 'akomodasi') {
                     $('#myModalLabel').html('Detail Akomodasi');
-                } 
-                if(type == 'others') {
+                }
+                if (type == 'others') {
                     $('#myModalLabel').html('Detail Others');
                 }
                 $('#MyModalBody').html(result);
