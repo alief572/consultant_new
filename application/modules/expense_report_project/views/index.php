@@ -101,7 +101,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
         });
     });
 
-    $(document).on('click', '.req_approval', function(e) {
+    $(document).on('click', '.req_app', function(e) {
         e.preventDefault();
 
         var id_spk_budgeting = $(this).data('id_spk_budgeting');
@@ -115,7 +115,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
             if (next) {
                 $.ajax({
                     type: 'post',
-                    url: siteurl + active_controller + 'req_approval_kasbon',
+                    url: siteurl + active_controller + 'req_app',
                     data: {
                         'id_spk_budgeting': id_spk_budgeting
                     },
