@@ -957,7 +957,22 @@ class SPK_penawaran extends Admin_Controller
         if (!empty($get_penawaran_aktifitas)) {
             foreach ($get_penawaran_aktifitas as $item) {
 
-                $data_insert_aktifitas[] = [
+                // $data_insert_aktifitas[] = [
+                //     'id_penawaran' => $post['id_quotation'],
+                //     'id_spk_penawaran' => $id_spk_penawaran,
+                //     'id_aktifitas' => $item->id_aktifitas,
+                //     'nm_aktifitas' => $item->aktifitas_nm,
+                //     'mandays' => $item->mandays,
+                //     'mandays_rate' => $item->mandays_rate,
+                //     'mandays_tandem' => $item->mandays_tandem,
+                //     'mandays_rate_tandem' => $item->mandays_rate_tandem,
+                //     'harga_aktifitas' => $item->harga_aktifitas,
+                //     'total_aktifitas' => $item->total_aktifitas,
+                //     'input_by' => $this->auth->user_id(),
+                //     'input_date' => date('Y-m-d H:i:s')
+                // ];
+
+                $this->db->insert('kons_tr_spk_aktifitas', [
                     'id_penawaran' => $post['id_quotation'],
                     'id_spk_penawaran' => $id_spk_penawaran,
                     'id_aktifitas' => $item->id_aktifitas,
@@ -970,7 +985,7 @@ class SPK_penawaran extends Admin_Controller
                     'total_aktifitas' => $item->total_aktifitas,
                     'input_by' => $this->auth->user_id(),
                     'input_date' => date('Y-m-d H:i:s')
-                ];
+                ]);
             }
         }
 
@@ -1020,14 +1035,14 @@ class SPK_penawaran extends Admin_Controller
             exit;
         }
 
-        if (!empty($data_insert_aktifitas)) {
-            $insert_aktifitas = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert_aktifitas);
-            if (!$insert_aktifitas) {
-                $this->db->trans_rollback();
-                print_r($this->db->error($insert_aktifitas) . ' ' . $this->db->last_query());
-                exit;
-            }
-        }
+        // if (!empty($data_insert_aktifitas)) {
+        //     $insert_aktifitas = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert_aktifitas);
+        //     if (!$insert_aktifitas) {
+        //         $this->db->trans_rollback();
+        //         print_r($this->db->error($insert_aktifitas) . ' ' . $this->db->last_query());
+        //         exit;
+        //     }
+        // }
 
         // print_r($data_insert_subcont);
 
