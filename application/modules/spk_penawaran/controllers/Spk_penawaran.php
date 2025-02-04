@@ -1025,6 +1025,7 @@ class SPK_penawaran extends Admin_Controller
             $insert_aktifitas = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert_aktifitas);
             if (!$insert_aktifitas) {
                 $this->db->trans_rollback();
+
                 print_r($this->db->error($insert_aktifitas) . ' ' . $this->db->last_query());
                 exit;
             }
@@ -1032,11 +1033,13 @@ class SPK_penawaran extends Admin_Controller
 
         // print_r($data_insert_subcont);
 
-        $insert_spk_penawaran_subcont = $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_insert_subcont);
-        if (!$insert_spk_penawaran_subcont) {
-            $this->db->trans_rollback();
-            print_r($this->db->last_query());
-            exit;
+        if (!empty($data_insert_subcont)) {
+            $insert_spk_penawaran_subcont = $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_insert_subcont);
+            if (!$insert_spk_penawaran_subcont) {
+                $this->db->trans_rollback();
+                print_r($this->db->last_query());
+                exit;
+            }
         }
 
         $insert_spk_penawaran_payment = $this->db->insert_batch('kons_tr_spk_penawaran_payment', $data_insert_payment);
