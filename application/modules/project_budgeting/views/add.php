@@ -295,7 +295,6 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         <th class="text-center" style="vertical-align: middle;" rowspan="2">Keterangan</th>
                         <th class="text-center" style="vertical-align: middle;" colspan="3">Estimasi</th>
                         <th class="text-center" style="vertical-align: middle;" colspan="3">Final</th>
-                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Opsi</th>
                     </tr>
                     <tr>
                         <th class="text-center" style="vertical-align: middle;">Qty</th>
@@ -324,16 +323,13 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         echo '<td class="text-center">' . number_format($item->price_unit) . '</td>';
                         echo '<td class="text-center">' . number_format($item->total) . '</td>';
                         echo '<td>';
-                        echo '<input type="text" name="akomodasi_final[' . $no_akomodasi . '][qty]" class="form-control form-control-sm text-right auto_num" value="' . $item->qty . '" onchange="hitung_total_akomodasi();">';
+                        echo '<input type="text" name="akomodasi_final[' . $no_akomodasi . '][qty]" class="form-control form-control-sm text-right auto_num" value="' . $item->qty . '" onchange="hitung_total_akomodasi();" readonly>';
                         echo '</td>';
                         echo '<td>';
-                        echo '<input type="text" name="akomodasi_final[' . $no_akomodasi . '][price_unit]" class="form-control form-control-sm text-right auto_num" value="' . $item->price_unit . '" onchange="hitung_total_akomodasi();">';
+                        echo '<input type="text" name="akomodasi_final[' . $no_akomodasi . '][price_unit]" class="form-control form-control-sm text-right auto_num" value="' . $item->price_unit . '" onchange="hitung_total_akomodasi();" readonly>';
                         echo '</td>';
                         echo '<td>';
-                        echo '<input type="text" name="akomodasi_final[' . $no_akomodasi . '][total]" class="form-control form-control-sm text-right auto_num" value="' . $item->total . '" onchange="hitung_total_akomodasi();">';
-                        echo '</td>';
-                        echo '<td class="text-center">';
-                        echo '<button type="button" class="btn btn-sm btn-danger del_akomodasi" data-no="' . $no_akomodasi . '"><i class="fa fa-trash"></i></button>';
+                        echo '<input type="text" name="akomodasi_final[' . $no_akomodasi . '][total]" class="form-control form-control-sm text-right auto_num" value="' . $item->total . '" onchange="hitung_total_akomodasi();" readonly>';
                         echo '</td>';
 
                         echo '</tr>';
@@ -355,7 +351,6 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         <th class="text-right ttl_qty_akomodasi"><?= number_format($ttl_qty_akomodasi) ?></th>
                         <th class="text-right ttl_price_akomodasi"><?= number_format($ttl_price_akomodasi, 2) ?></th>
                         <th class="text-right ttl_total_akomodasi"><?= number_format($ttl_total_akomodasi, 2) ?></th>
-                        <th></th>
                     </tr>
                 </tfoot>
             </table>
@@ -375,7 +370,6 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         <th class="text-center" style="vertical-align: middle;" rowspan="2">Keterangan</th>
                         <th class="text-center" style="vertical-align: middle;" colspan="3">Estimasi</th>
                         <th class="text-center" style="vertical-align: middle;" colspan="3">Final</th>
-                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Opsi</th>
                     </tr>
                     <tr>
                         <th class="text-center" style="vertical-align: middle;">Qty</th>
@@ -404,16 +398,13 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         echo '<td class="text-center">' . number_format($item->price_unit) . '</td>';
                         echo '<td class="text-center">' . number_format($item->total) . '</td>';
                         echo '<td>';
-                        echo '<input type="text" name="others_final[' . $no_others . '][qty]" class="form-control form-control-sm text-right auto_num" value="' . $item->qty . '" onchange="hitung_total_others();">';
+                        echo '<input type="text" name="others_final[' . $no_others . '][qty]" class="form-control form-control-sm text-right auto_num" value="' . $item->qty . '" onchange="hitung_total_others();" readonly>';
                         echo '</td>';
                         echo '<td>';
-                        echo '<input type="text" name="others_final[' . $no_others . '][price_unit]" class="form-control form-control-sm text-right auto_num" value="' . $item->price_unit . '" onchange="hitung_total_others();">';
+                        echo '<input type="text" name="others_final[' . $no_others . '][price_unit]" class="form-control form-control-sm text-right auto_num" value="' . $item->price_unit . '" onchange="hitung_total_others();" readonly>';
                         echo '</td>';
                         echo '<td>';
-                        echo '<input type="text" name="others_final[' . $no_others . '][total]" class="form-control form-control-sm text-right auto_num" value="' . $item->total . '" onchange="hitung_total_others();">';
-                        echo '</td>';
-                        echo '<td class="text-center">';
-                        echo '<button type="button" class="btn btn-sm btn-danger del_others" data-no="' . $no_others . '"><i class="fa fa-trash"></i></button>';
+                        echo '<input type="text" name="others_final[' . $no_others . '][total]" class="form-control form-control-sm text-right auto_num" value="' . $item->total . '" onchange="hitung_total_others();" readonly>';
                         echo '</td>';
 
                         echo '</tr>';
@@ -435,7 +426,6 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         <th class="text-right ttl_qty_others"><?= number_format($ttl_qty_others) ?></th>
                         <th class="text-right ttl_price_others"><?= number_format($ttl_price_others, 2) ?></th>
                         <th class="text-right ttl_total_others"><?= number_format($ttl_total_others, 2) ?></th>
-                        <th></th>
                     </tr>
                 </tfoot>
             </table>
