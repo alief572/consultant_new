@@ -390,9 +390,8 @@ class Penawaran extends Admin_Controller
             // $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
             $nm_marketing = $item->nama;
 
-            $this->db->select('a.*, b.nm_paket');
+            $this->db->select('a.*');
             $this->db->from('kons_master_konsultasi_header a');
-            $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
             $this->db->where('a.id_konsultasi_h', $item->id_paket);
             $get_package = $this->db->get()->row();
 
