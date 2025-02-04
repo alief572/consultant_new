@@ -146,7 +146,8 @@ class Setting extends Admin_Controller
 
         $cabang = $this->Cabang_model->find_all();
         $department = $this->db->get_where('ms_department', array('deleted_date' => NULL))->result_array();
-        $employee = $this->db->get_where('employee', array('deleted' => 'N'))->result();
+        $department = $this->db->select('a.id, a.name as nama')->from(DBHR . '.divisions a')->where('a.company_id', 'COM003')->get()->result_array();
+        $employee = $this->db->select('a.id, a.name as nm_karyawan')->from(DBHR . '.employees a')->where('a.flag_active', 'Y')->get()->result();
         $this->template->set('cabang', $cabang);
         $this->template->set('department', $department);
         $this->template->set('employee', $employee);
