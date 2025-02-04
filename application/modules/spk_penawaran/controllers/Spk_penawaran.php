@@ -830,7 +830,7 @@ class SPK_penawaran extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $post['id_quotation']])->row();
 
-        $this->db->select('a.id, a.id_aktifitas, a.mandays, a.mandays_rate, a.mandays_tandem, a.mandays_rate_tandem, a.harga_aktifitas, a.total_aktifitas, b.nm_aktifitas as aktifitas_nm');
+        $this->db->select('a.id, a.id_aktifitas, a.mandays, a.mandays_rate, a.bobot, a.mandays_tandem, a.mandays_rate_tandem, a.harga_aktifitas, a.total_aktifitas, b.nm_aktifitas as aktifitas_nm');
         $this->db->from('kons_tr_penawaran_aktifitas a');
         $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->where('a.id_penawaran', $post['id_quotation']);
