@@ -100,7 +100,10 @@ class Penawaran extends Admin_Controller
         $this->db->where('a.deleted_by', null);
         $get_def_biaya_others = $this->db->get()->result();
 
-        $get_divisi = $this->db->get_where('ms_department a', ['a.deleted_by' => null])->result();
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
+        $get_divisi = $this->db->get()->result();
 
         $data = [
             'list_penawaran' => $get_penawaran,
@@ -181,7 +184,10 @@ class Penawaran extends Admin_Controller
         $this->db->from('kons_master_aktifitas a');
         $get_aktifitas = $this->db->get()->result();
 
-        $get_divisi = $this->db->get_where('ms_department a', ['a.deleted_by' => null])->result();
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
+        $get_divisi = $this->db->get()->result();
 
         $data = [
             'list_penawaran' => $get_penawaran,
@@ -475,7 +481,10 @@ class Penawaran extends Admin_Controller
         $this->db->where('a.deleted_by', null);
         $get_def_biaya_others = $this->db->get()->result();
 
-        $get_divisi = $this->db->get_where('ms_department a', ['a.deleted_by' => null])->result();
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
+        $get_divisi = $this->db->get()->result();
 
         $data = [
             'list_customers' => $get_customer,

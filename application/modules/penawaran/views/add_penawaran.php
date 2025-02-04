@@ -172,6 +172,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                 echo '<option value="' . $item->id . '">' . $item->nama . '</option>';
                             }
                             ?>
+                            <option value="5">Kalibrasi</option>
                         </select>
                     </td>
                     <td class="pd-5 semi-bold" valign="top" valign="top">Upload PO</td>
