@@ -418,6 +418,9 @@ class Master_aktifitas extends Admin_Controller
                             $cek_id = $this->db->select('id_aktifitas')->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas');
                             if (! empty($unik_id) or ($cek_id->num_rows() > 0)) {
                                 ## I. UPDATE AKTIFITAS
+
+                                $update_detail_konsultasi_detail = $this->db->where('id_aktifitas', $id_aktifitas)->update('kons_master_konsultasi_detail', array('harga_aktifitas' => $harga_aktifitas, 'mandays' => $mandays));
+
                                 $aktifitas = array(
                                     'nm_aktifitas'    => $nm_aktifitas,
                                     'harga_aktifitas' => $harga_aktifitas,
