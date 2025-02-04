@@ -622,8 +622,8 @@ if (count($list_penawaran_others) > 0) {
                         <td class="text-left"><b>Discount</b></td>
                         <td class="text-right">
                             <div class="form-inline">
-                                <input type="text" name="persen_disc" id="" class="form-control form-control-sm text-right input_diskon_persen" placeholder="Discount (%)" style="max-width: 30%;" value="<?= $list_penawaran->persen_disc ?>">
-                                <input type="text" name="nilai_disc" id="" class="form-control form-control-sm text-right auto_num input_diskon_value" placeholder="Discount (Rp)" style="max-width: 30%;" value="<?= $list_penawaran->nilai_disc ?>">
+                                <input type="text" name="persen_disc" id="" class="form-control form-control-sm text-right input_diskon_persen" placeholder="Discount (%)" onchange="hitung_total_activity()" style="max-width: 30%;" value="<?= $list_penawaran->persen_disc ?>">
+                                <input type="text" name="nilai_disc" id="" class="form-control form-control-sm text-right auto_num input_diskon_value" placeholder="Discount (Rp)" onchange="hitung_total_activity()" style="max-width: 30%;" value="<?= $list_penawaran->nilai_disc ?>">
                             </div>
                         </td>
                     </tr>
