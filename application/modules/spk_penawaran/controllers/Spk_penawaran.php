@@ -844,8 +844,8 @@ class SPK_penawaran extends Admin_Controller
         $id_customer = (!empty($get_customer)) ? $get_customer->id_customer : '';
         $nm_customer = (!empty($get_customer)) ? $get_customer->nm_customer : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
@@ -863,24 +863,24 @@ class SPK_penawaran extends Admin_Controller
         $id_divisi = (!empty($get_divisi)) ? $get_divisi->id : '';
         $nm_divisi = (!empty($get_divisi)) ? $get_divisi->nama : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['project_leader']);
         $get_project_leader = $this->db->get()->row();
 
         $id_project_leader = (!empty($get_project_leader)) ? $get_project_leader->id : '';
         $nm_project_leader = (!empty($get_project_leader)) ? $get_project_leader->nm_karyawan : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['konsultan_1']);
         $get_konsultan_1 = $this->db->get()->row();
 
         $id_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->id : '';
         $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nm_karyawan : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['konsultan_2']);
         $get_konsultan_2 = $this->db->get()->row();
 
@@ -1082,8 +1082,8 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_customer', $get_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
@@ -1097,22 +1097,22 @@ class SPK_penawaran extends Admin_Controller
 
         $nm_divisi = (!empty($get_divisi)) ? $get_divisi->nama : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['project_leader']);
         $get_project_leader = $this->db->get()->row();
 
         $nm_project_leader = (!empty($get_project_leader)) ? $get_project_leader->nm_karyawan : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['konsultan_1']);
         $get_konsultan_1 = $this->db->get()->row();
 
         $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nm_karyawan : '';
 
-        $this->db->select('a.id, a.nm_karyawan');
-        $this->db->from('employee a');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $post['konsultan_2']);
         $get_konsultan_2 = $this->db->get()->row();
 

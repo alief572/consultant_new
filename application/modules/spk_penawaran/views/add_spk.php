@@ -45,6 +45,21 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         border: 1px solid #ccc;
         border-radius: 15px;
     }
+
+    .select2-container {
+        width: 100% !important;
+    }
+
+    table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    td,
+    th {
+        word-wrap: break-word;
+        overflow: hidden;
+    }
 </style>
 
 <form action="" method="post" id="frm-data">
