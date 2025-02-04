@@ -312,7 +312,13 @@ if (count($list_penawaran_others) > 0) {
                         echo '<input type="text" class="form-control form-control-sm auto_num text-right input_mandays_' . $no_activity . '" name="dt_act[' . $no_activity . '][mandays]" value="' . $item_aktifitas->mandays . '" onchange="hitung_total_activity()">';
                         echo '</td>';
 
-                        $min_mandays_rate = ($get_aktifitas->mandays >= 1) ? ($get_aktifitas->harga_aktifitas / $get_aktifitas->mandays) : ($get_aktifitas->harga_aktifitas);
+                        $aktifitas_mandays = ($get_aktifitas->mandays < 1) ? 1 : $get_aktifitas->mandays;
+
+                        if($get_aktifitas->harga_aktifitas < 1 || $item_aktifitas->mandays_rate < 1) {
+                            $min_mandays_rate = 0;
+                        } else {
+                            $min_mandays_rate = ($get_aktifitas->harga_aktifitas / $aktifitas_mandays);
+                        }
 
                         echo '<td class="text-center">';
                         echo '<input type="hidden" name="dt_act[' . $no_activity . '][min_mandays_rate]" value="' . $min_mandays_rate . '">';
