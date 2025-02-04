@@ -63,12 +63,12 @@ class Approval_spk_manager_sales extends Admin_Controller
         $get_customer = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR.'.employees a');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR.'.employees a');
+        $this->db->from(DBHR . '.employees a');
         $this->db->order_by('a.name', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
@@ -89,7 +89,7 @@ class Approval_spk_manager_sales extends Admin_Controller
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
             $this->db->select('a.id, a.name as nm_karyawan');
-            $this->db->from(DBHR.'.employees a');
+            $this->db->from(DBHR . '.employees a');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
@@ -188,12 +188,12 @@ class Approval_spk_manager_sales extends Admin_Controller
         $get_customer = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR.'.employees a');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR.'.employees a');
+        $this->db->from(DBHR . '.employees a');
         $this->db->order_by('a.name', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
@@ -213,9 +213,8 @@ class Approval_spk_manager_sales extends Admin_Controller
 
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
-            $this->db->select('a.*');
-            $this->db->from('employee a');
-            $this->db->where('a.deleted', 'N');
+            $this->db->select('a.id, a.name as nm_karyawan');
+            $this->db->from(DBHR . '.employees a');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
