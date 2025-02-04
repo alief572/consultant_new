@@ -221,6 +221,7 @@ if (count($list_penawaran_others) > 0) {
                                 echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
                             }
                             ?>
+                            <option value="5" <?= ($list_penawaran->id_divisi == 5) ? 'selected' : '' ?>>Kalibrasi</option>
                         </select>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Upload PO</td>

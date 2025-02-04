@@ -210,6 +210,13 @@ if (count($list_penawaran_others) > 0) {
                             }
                         }
                         ?>
+                        <?php 
+                            if($list_penawaran->id_divisi == 5) {
+                                ?>
+                                    <option value="5">Kalibrasi</option>
+                                <?php
+                            }
+                        ?>
                     </select>
                 </td>
                 <td class="pd-5 semi-bold" valign="top">Upload PO</td>
