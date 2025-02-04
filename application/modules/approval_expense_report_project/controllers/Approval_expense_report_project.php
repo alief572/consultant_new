@@ -663,8 +663,9 @@ class Approval_expense_report_project extends Admin_Controller
         $this->db->select('a.*, b.nm_sales');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
-
-        $this->db->where('a.sts', 1);
+        $this->db->join('kons_tr_kasbon_project_header c', 'c.id_spk_budgeting = a.id_spk_budgeting', 'left');
+        $this->db->join('kons_tr_expense_report_project_header d', 'd.id_header = c.id', 'left');
+        $this->db->where('d.sts_req', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
@@ -674,6 +675,7 @@ class Approval_expense_report_project extends Admin_Controller
             $this->db->or_like('a.nm_project', $search['value'], 'both');
             $this->db->group_end();
         }
+        $this->db->group_by('a.id_spk_budgeting');
         $this->db->order_by('a.create_date', 'desc');
         $this->db->limit($length, $start);
 
@@ -682,7 +684,9 @@ class Approval_expense_report_project extends Admin_Controller
         $this->db->select('a.*, b.nm_sales');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
-        $this->db->where('a.sts', 1);
+        $this->db->join('kons_tr_kasbon_project_header c', 'c.id_spk_budgeting = a.id_spk_budgeting', 'left');
+        $this->db->join('kons_tr_expense_report_project_header d', 'd.id_header = c.id', 'left');
+        $this->db->where('d.sts_req', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
@@ -692,6 +696,7 @@ class Approval_expense_report_project extends Admin_Controller
             $this->db->or_like('a.nm_project', $search['value'], 'both');
             $this->db->group_end();
         }
+        $this->db->group_by('a.id_spk_budgeting');
         $this->db->order_by('a.create_date', 'desc');
 
         $get_data_all = $this->db->get();
@@ -1355,7 +1360,7 @@ class Approval_expense_report_project extends Admin_Controller
         $this->db->trans_begin();
 
         foreach($get_expense_report_req_app as $item) {
-            $this->db->update('kons_tr_expense_report_project_header', ['sts' => 1, 'sts_req' => 0, 'reject_reason' => ''], ['id' => $item->id]);
+            $this->db->update('kons_tr_expense_report_project_header', ['sts' => 1, 'sts_req' => null, 'reject_reason' => ''], ['id' => $item->id]);
         }
 
         if($this->db->trans_status() === false) {
@@ -1390,7 +1395,7 @@ class Approval_expense_report_project extends Admin_Controller
         $this->db->trans_begin();
 
         foreach($get_expense_report_req_app as $item) {
-            $this->db->update('kons_tr_expense_report_project_header', ['sts' => 0, 'sts_req' => 0, 'reject_reason' => $reject_reason], ['id' => $item->id]);
+            $this->db->update('kons_tr_expense_report_project_header', ['sts' => null, 'sts_req' => null, 'reject_reason' => $reject_reason], ['id' => $item->id]);
         }
 
         if($this->db->trans_status() === false) {
