@@ -373,11 +373,11 @@ if (count($list_penawaran_others) > 0) {
                         <th class="text-center"></th>
                         <th class="text-center">Total</th>
                         <th class="text-center ttl_act_mandays"><?= number_format($ttl_mandays, 2) ?></th>
-                        <th class="text-center ttl_act_mandays_rate"><?= number_format($ttl_mandays_rate, 2) ?></th>
+                        <th class="text-center "></th>
                         <th class="text-center ttl_act_mandays_subcont"><?= number_format($ttl_mandays_subcont, 2) ?></th>
-                        <th class="text-center ttl_act_mandays_rate_subcont"><?= number_format($ttl_mandays_rate_subcont, 2) ?></th>
+                        <th class="text-center "></th>
                         <th class="text-center ttl_act_mandays_tandem"><?= number_format($ttl_mandays_tandem, 2) ?></th>
-                        <th class="text-center ttl_act_mandays_rate_tandem"><?= number_format($ttl_mandays_rate_tandem, 2) ?></th>
+                        <th class="text-center "></th>
                         <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
                         <th class="text-center"></th>
                     </tr>
@@ -945,11 +945,11 @@ if (count($list_penawaran_others) > 0) {
         // }
 
         $('.ttl_act_mandays').html(number_format(ttl_mandays, 2));
-        $('.ttl_act_mandays_rate').html(number_format(ttl_mandays_rate, 2));
+        // $('.ttl_act_mandays_rate').html(number_format(ttl_mandays_rate, 2));
         $('.ttl_act_mandays_subcont').html(number_format(ttl_mandays_subcont, 2));
-        $('.ttl_act_mandays_rate_subcont').html(number_format(ttl_mandays_rate_subcont, 2));
+        // $('.ttl_act_mandays_rate_subcont').html(number_format(ttl_mandays_rate_subcont, 2));
         $('.ttl_act_mandays_tandem').html(number_format(ttl_mandays_tandem, 2));
-        $('.ttl_act_mandays_rate_tandem').html(number_format(ttl_mandays_rate_tandem, 2));
+        // $('.ttl_act_mandays_rate_tandem').html(number_format(ttl_mandays_rate_tandem, 2));
         $('.ttl_act_price').html(number_format(ttl_price, 2));
 
         hitung_summary();

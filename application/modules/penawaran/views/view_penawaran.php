@@ -31,6 +31,21 @@ if (count($list_penawaran_others) > 0) {
     .pd-5 {
         padding: 5px;
     }
+
+    .select2-container {
+        width: 100% !important;
+    }
+
+    table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    td,
+    th {
+        word-wrap: break-word;
+        overflow: hidden;
+    }
 </style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 
@@ -210,12 +225,12 @@ if (count($list_penawaran_others) > 0) {
                             }
                         }
                         ?>
-                        <?php 
-                            if($list_penawaran->id_divisi == 5) {
-                                ?>
-                                    <option value="5">Kalibrasi</option>
-                                <?php
-                            }
+                        <?php
+                        if ($list_penawaran->id_divisi == 5) {
+                        ?>
+                            <option value="5">Kalibrasi</option>
+                        <?php
+                        }
                         ?>
                     </select>
                 </td>
@@ -314,11 +329,11 @@ if (count($list_penawaran_others) > 0) {
                     <th class=""></th>
                     <th class="text-center">Total</th>
                     <th class="text-center ttl_act_mandays"><?= number_format($ttl_mandays, 2) ?></th>
-                    <th class="text-center ttl_act_mandays_rate"><?= number_format($ttl_mandays_rate, 2) ?></th>
+                    <th class="text-center "></th>
                     <th class="text-center ttl_act_mandays_subcont"><?= number_format($ttl_mandays_subcont, 2) ?></th>
-                    <th class="text-center ttl_act_mandays_rate_subcont"><?= number_format($ttl_mandays_rate_subcont, 2) ?></th>
+                    <th class="text-center "></th>
                     <th class="text-center ttl_act_mandays_tandem"><?= number_format($ttl_mandays_tandem, 2) ?></th>
-                    <th class="text-center ttl_act_mandays_rate_tandem"><?= number_format($ttl_mandays_rate_tandem, 2) ?></th>
+                    <th class="text-center "></th>
                     <th class="text-center ttl_act_price"><?= number_format($ttl_price, 2) ?></th>
                 </tr>
             </tfoot>

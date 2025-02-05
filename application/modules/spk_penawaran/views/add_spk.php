@@ -273,10 +273,10 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                 <thead>
                     <tr>
                         <th class="text-center" width="20">No.</th>
-                        <th class="text-center" width="200">Activity Name</th>
-                        <th class="text-center" width="10">Mandays Internal</th>
+                        <th class="text-center" width="180">Activity Name</th>
+                        <th class="text-center" width="50">Mandays Internal</th>
                         <th class="text-center" width="50">Mandays Rate Internal</th>
-                        <th class="text-center" width="10">Mandays Tandem</th>
+                        <th class="text-center" width="50">Mandays Tandem</th>
                         <th class="text-center" width="50">Mandays Rate Tandem</th>
                         <th class="text-center" width="50">Grand Total</th>
                     </tr>
@@ -339,9 +339,9 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <tr>
                         <th colspan="2">Total</th>
                         <th class="text-center ttl_mandays"><?= $total_mandays ?></th>
-                        <th class="text-center ttl_mandays_rate"><?= number_format($total_mandays_rate, 2) ?></th>
+                        <th class="text-center "></th>
                         <th class="text-center ttl_mandays_tandem"><?= $total_mandays_tandem ?></th>
-                        <th class="text-center ttl_mandays_rate_tandem"><?= number_format($total_mandays_rate_tandem, 2) ?></th>
+                        <th class="text-center "></th>
                         <th class="text-center ttl_grand_total"><?= number_format($ttl_grand_total, 2) ?></th>
                     </tr>
                 </tfoot>

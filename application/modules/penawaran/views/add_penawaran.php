@@ -221,11 +221,11 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th class="text-center"></th>
                         <th class="text-center">Total</th>
                         <th class="text-center ttl_act_mandays">00,0</th>
-                        <th class="text-center ttl_act_mandays_rate">00,0</th>
+                        <th class="text-center "></th>
                         <th class="text-center ttl_act_mandays_subcont">00,0</th>
-                        <th class="text-center ttl_act_mandays_rate_subcont">00,0</th>
+                        <th class="text-center"></th>
                         <th class="text-center ttl_act_mandays_tandem">00,0</th>
-                        <th class="text-center ttl_act_mandays_rate_tandem">00,0</th>
+                        <th class="text-center "></th>
                         <th class="text-center ttl_act_price">00,0</th>
                         <th class="text-center"></th>
                     </tr>
@@ -725,11 +725,11 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         // }
 
         $('.ttl_act_mandays').html(number_format(ttl_mandays, 2));
-        $('.ttl_act_mandays_rate').html(number_format(ttl_mandays_rate, 2));
+        // $('.ttl_act_mandays_rate').html(number_format(ttl_mandays_rate, 2));
         $('.ttl_act_mandays_subcont').html(number_format(ttl_mandays_subcont, 2));
-        $('.ttl_act_mandays_rate_subcont').html(number_format(ttl_mandays_rate_subcont, 2));
+        // $('.ttl_act_mandays_rate_subcont').html(number_format(ttl_mandays_rate_subcont, 2));
         $('.ttl_act_mandays_tandem').html(number_format(ttl_mandays_tandem, 2));
-        $('.ttl_act_mandays_rate_tandem').html(number_format(ttl_mandays_rate_tandem, 2));
+        // $('.ttl_act_mandays_rate_tandem').html(number_format(ttl_mandays_rate_tandem, 2));
         $('.ttl_act_price').html(number_format(ttl_price, 2));
 
         hitung_summary();
