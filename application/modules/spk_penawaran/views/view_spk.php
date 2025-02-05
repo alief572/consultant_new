@@ -656,6 +656,63 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
 
     <div class="box">
         <div class="box-header">
+            <h4 style="font-weight: 600;">Approval History</h4>
+        </div>
+
+        <div class="box-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-center">Approval</th>
+                        <th class="text-center">PIC</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Approval Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">Sales</td>
+                        <td class="text-center"><?= ucfirst($list_spk_penawaran->nm_sales) ?></td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_sales_sts == '1') ? '<button type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i></button>' : '' ?></td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_sales_sts == '1') ? date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_sales_date)) : '' ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">Konsultan 1</td>
+                        <td class="text-center"><?= ucfirst($list_spk_penawaran->nm_konsultan_1) ?></td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_konsultan_1_sts == '1') ? '<button type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i></button>' : '' ?></td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_konsultan_1_sts == '1') ? date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_konsultan_1_date)) : '' ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">Konsultan 2</td>
+                        <td class="text-center"><?= ucfirst($list_spk_penawaran->nm_konsultan_2) ?></td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_konsultan_2_sts == '1') ? '<button type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i></button>' : '' ?></td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_konsultan_2_sts == '1') ? date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_konsultan_2_date)) : '' ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">Project Leader</td>
+                        <td class="text-center"><?= ucfirst($list_spk_penawaran->nm_project_leader) ?></td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_project_leader_sts == '1') ? '<button type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i></button>' : '' ?></td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_project_leader_sts == '1') ? date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_project_leader_date)) : '' ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">Manager Sales</td>
+                        <td class="text-center">Sinta</td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_manager_sales == '1') ? '<button type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i></button>' : '' ?></td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_manager_sales == '1') ? date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_manager_sales_date)) : '' ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">Direktur</td>
+                        <td class="text-center">Imanuel Iman</td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_level2_sts == '1') ? '<button type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i></button>' : '' ?></td>
+                        <td class="text-center"><?= ($list_spk_penawaran->approval_level2_sts == '1') ? date('d F Y H:i:s', strtotime($list_spk_penawaran->approval_level2_date)) : '' ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
             <h4 style="font-weight: 600;">Isu Khusus dan Komitmen</h4>
         </div>
 

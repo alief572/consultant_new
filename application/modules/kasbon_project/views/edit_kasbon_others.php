@@ -172,7 +172,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['nominal_pengajuan'] : 0;
                         $total_pengajuan = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['total_pengajuan'] : 0;
                         $aktual_terpakai = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['aktual_terpakai'] : 0;
+                        if($aktual_terpakai <= 0) {
+                            $aktual_terpakai = $item->qty_final;
+                        }
                         $sisa_budget = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['sisa_budget'] : 0;
+                        if($sisa_budget <= 0) {
+                            $sisa_budget = $item->total_final;
+                        }
 
                         echo '<tr>';
 
@@ -206,7 +212,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
                         echo '<td class="text-center">';
                         echo number_format($aktual_terpakai);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
+                        echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . ($aktual_terpakai) . '">';
                         echo '</td>';
                         echo '<td class="text-right">';
                         echo number_format($sisa_budget, 2);
