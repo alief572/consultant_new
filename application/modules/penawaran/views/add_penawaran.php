@@ -326,7 +326,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th colspan="4" class="text-right">
                             Total
                         </th>
-                        <th></th>
                         <th class="text-right ttl_oth_grand_total">000,00</th>
                         <th></th>
                         <th></th>
