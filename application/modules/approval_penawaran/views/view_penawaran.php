@@ -395,7 +395,8 @@ if (count($list_penawaran_others) > 0) {
                 <tr>
                     <th class="text-center">Item</th>
                     <th class="text-center">Qty</th>
-                    <th class="text-center">Price/Unit</th>
+                    <th class="text-center">Price/Unit Customer</th>
+                    <th class="text-center">Price/Unit Budget</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Keterangan</th>
                 </tr>
@@ -410,6 +411,7 @@ if (count($list_penawaran_others) > 0) {
                     echo '<td>' . $item_others->nm_biaya . '</td>';
                     echo '<td class="text-center">' . number_format($item_others->qty, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_others->price_unit, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_others->price_unit_budget, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_others->total, 2) . '</td>';
                     echo '<td>' . $item_others->keterangan . '</td>';
                     echo '</tr>';
@@ -419,11 +421,11 @@ if (count($list_penawaran_others) > 0) {
                 ?>
             </tbody>
             <tfoot>
-                <tr>
-                    <th colspan="3">
+            <tr>
+                    <th colspan="4" class="text-right">
                         Total
                     </th>
-                    <th class="text-center ttl_oth_grand_total"><?= number_format($ttl_others, 2) ?></th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_others, 2) ?></th>
                     <th></th>
                 </tr>
             </tfoot>
