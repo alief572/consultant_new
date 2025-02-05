@@ -851,6 +851,8 @@ class Penawaran extends Admin_Controller
                     'qty' => str_replace(',', '', $item_oth['qty_others']),
                     'price_unit' => str_replace(',', '', $item_oth['harga_others']),
                     'total' => str_replace(',', '', $item_oth['total_others']),
+                    'price_unit_budget' => str_replace(',', '', $item_oth['harga_others_budget']),
+                    'total_budget' => (str_replace(',', '', $item_oth['harga_others_budget']) * str_replace(',', '', $item_oth['qty_others'])),
                     'keterangan' => $item_oth['keterangan_others'],
                     'input_by' => $this->auth->user_id(),
                     'input_date' => date('Y-m-d H:i:s')

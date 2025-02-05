@@ -125,7 +125,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
     <div class="box">
         <div class="box-header">
-            <h4 style="font-weight: 800;">List Item Akomodasi</h4>
+            <h4 style="font-weight: 800;">List Item Others</h4>
         </div>
 
         <div class="box-body">
