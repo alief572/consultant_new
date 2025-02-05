@@ -513,7 +513,8 @@ if (count($list_penawaran_others) > 0) {
                     <tr>
                         <th class="text-center">Item</th>
                         <th class="text-center">Qty</th>
-                        <th class="text-center">Price/Unit</th>
+                        <th class="text-center">Price/Unit Customer</th>
+                        <th class="text-center">Price/Unit Budget</th>
                         <th class="text-center">Total</th>
                         <th class="text-center">Keterangan</th>
                         <th class="text-center">Opsi</th>
@@ -549,6 +550,10 @@ if (count($list_penawaran_others) > 0) {
                         echo '</td>';
 
                         echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' . $no_others . '][harga_others_budget]" value="' . $item_others->price_unit_budget . '" onchange="hitung_item_others(' . $no_others . ')">';
+                        echo '</td>';
+
+                        echo '<td>';
                         echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' . $no_others . '][total_others]" value="' . $item_others->total . '" readonly>';
                         echo '</td>';
 
@@ -569,10 +574,10 @@ if (count($list_penawaran_others) > 0) {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="3">
+                        <th colspan="4" class="text-right">
                             Total
                         </th>
-                        <th class="text-center ttl_oth_grand_total"><?= number_format($ttl_others, 2) ?></th>
+                        <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_others, 2) ?></th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -1192,6 +1197,10 @@ if (count($list_penawaran_others) > 0) {
 
         hasil += '<td>';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' + no_others + '][harga_others]" onchange="hitung_item_others(' + no_others + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' + no_others + '][harga_others_budget]" onchange="hitung_item_others(' + no_others + ')">';
         hasil += '</td>';
 
         hasil += '<td>';

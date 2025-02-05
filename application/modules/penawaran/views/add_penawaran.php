@@ -313,7 +313,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <tr>
                         <th class="text-center">Item</th>
                         <th class="text-center">Qty</th>
-                        <th class="text-center">Price/Unit</th>
+                        <th class="text-center">Price/Unit Customer</th>
+                        <th class="text-center">Price/Unit Budget</th>
                         <th class="text-center">Total</th>
                         <th class="text-center">Keterangan</th>
                         <th class="text-center">Opsi</th>
@@ -322,10 +323,11 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <tbody class="list_others"></tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="3">
+                        <th colspan="4" class="text-right">
                             Total
                         </th>
-                        <th class="text-center ttl_oth_grand_total">000,00</th>
+                        <th></th>
+                        <th class="text-right ttl_oth_grand_total">000,00</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -909,6 +911,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         hasil += '<td>';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' + no_others + '][harga_others]" onchange="hitung_item_others(' + no_others + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' + no_others + '][harga_others_budget]" onchange="hitung_item_others(' + no_others + ')">';
         hasil += '</td>';
 
         hasil += '<td>';
