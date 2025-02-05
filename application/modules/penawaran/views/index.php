@@ -70,7 +70,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             type: 'warning',
             title: 'Are you sure?',
             text: 'This data will be deleted !',
-            cancelShowButton: true
+            showCancelButton: true
         }, function(next) {
             if (next) {
                 $.ajax({

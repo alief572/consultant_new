@@ -1324,128 +1324,135 @@ class SPK_penawaran extends Admin_Controller
     public function one_time()
     {
 
-        $get_spk_project_leader = $this->db->select('a.id_project_leader, a.nm_project_leader')->from('kons_tr_spk_penawaran a')->where('a.id_project_leader <>', '')->not_like('a.id_project_leader', 'EMP', 'both')->get()->result();
+        $get_spk_divisi = $this->db->select('a.id_divisi, a.nm_divisi')->from('kons_tr_spk_penawaran a')->where('a.id_divisi <>', '')->where('a.id_divisi <>', null)->get()->result();
 
-        foreach($get_spk_project_leader as $item) {
-            $id_employees_hris = '';
+        // foreach($get_spk_divisi as $item) {
+        //     $id_divisi_hris = '';
+        //     if($item->id_divisi == '')
+        // }
 
-            if($item->id_project_leader == '166') {
-                $id_employees_hris = 'EMP0213';
-            }
-            if($item->id_project_leader == '169') {
-                $id_employees_hris = 'EMP0187';
-            }
-            if($item->id_project_leader == '170') {
-                $id_employees_hris = 'EMP0121';
-            }
-            if($item->id_project_leader == '172') {
-                $id_employees_hris = 'EMP0011';
-            }
-            if($item->id_project_leader == '173') {
-                $id_employees_hris = 'EMP0018';
-            }
-            if($item->id_project_leader == '174') {
-                $id_employees_hris = 'EMP0005';
-            }
-            if($item->id_project_leader == '175') {
-                $id_employees_hris = 'EMP0090';
-            }
-            if($item->id_project_leader == '176') {
-                $id_employees_hris = 'EMP0001';
-            }
-            if($item->id_project_leader == '183') {
-                $id_employees_hris = 'EMP0207';
-            }
+        // $get_spk_project_leader = $this->db->select('a.id_project_leader, a.nm_project_leader')->from('kons_tr_spk_penawaran a')->where('a.id_project_leader <>', '')->not_like('a.id_project_leader', 'EMP', 'both')->get()->result();
 
-            if($id_employees_hris !== '') {
-                $get_hris_employees = $this->db->get_where(DBHR.'.employees', ['id' => $id_employees_hris])->row();
-                if(!empty($get_hris_employees)) {
-                    $this->db->update('kons_tr_spk_penawaran', ['id_project_leader' => $id_employees_hris, 'nm_project_leader' => $get_hris_employees->name], ['id_project_leader' => $item->id_project_leader]);
-                }
-            }
-        }
+        // foreach($get_spk_project_leader as $item) {
+        //     $id_employees_hris = '';
 
-        $get_spk_konsultan_1 = $this->db->select('a.id_konsultan_1, a.nm_konsultan_1')->from('kons_tr_spk_penawaran a')->where('a.id_konsultan_1 <>', '')->not_like('a.id_konsultan_1', 'EMP', 'both')->get()->result();
+        //     if($item->id_project_leader == '166') {
+        //         $id_employees_hris = 'EMP0213';
+        //     }
+        //     if($item->id_project_leader == '169') {
+        //         $id_employees_hris = 'EMP0187';
+        //     }
+        //     if($item->id_project_leader == '170') {
+        //         $id_employees_hris = 'EMP0121';
+        //     }
+        //     if($item->id_project_leader == '172') {
+        //         $id_employees_hris = 'EMP0011';
+        //     }
+        //     if($item->id_project_leader == '173') {
+        //         $id_employees_hris = 'EMP0018';
+        //     }
+        //     if($item->id_project_leader == '174') {
+        //         $id_employees_hris = 'EMP0005';
+        //     }
+        //     if($item->id_project_leader == '175') {
+        //         $id_employees_hris = 'EMP0090';
+        //     }
+        //     if($item->id_project_leader == '176') {
+        //         $id_employees_hris = 'EMP0001';
+        //     }
+        //     if($item->id_project_leader == '183') {
+        //         $id_employees_hris = 'EMP0207';
+        //     }
 
-        foreach($get_spk_konsultan_1 as $item) {
-            $id_employees_hris = '';
+        //     if($id_employees_hris !== '') {
+        //         $get_hris_employees = $this->db->get_where(DBHR.'.employees', ['id' => $id_employees_hris])->row();
+        //         if(!empty($get_hris_employees)) {
+        //             $this->db->update('kons_tr_spk_penawaran', ['id_project_leader' => $id_employees_hris, 'nm_project_leader' => $get_hris_employees->name], ['id_project_leader' => $item->id_project_leader]);
+        //         }
+        //     }
+        // }
 
-            if($item->id_konsultan_1 == '166') {
-                $id_employees_hris = 'EMP0213';
-            }
-            if($item->id_konsultan_1 == '169') {
-                $id_employees_hris = 'EMP0187';
-            }
-            if($item->id_konsultan_1 == '170') {
-                $id_employees_hris = 'EMP0121';
-            }
-            if($item->id_konsultan_1 == '172') {
-                $id_employees_hris = 'EMP0011';
-            }
-            if($item->id_konsultan_1 == '173') {
-                $id_employees_hris = 'EMP0018';
-            }
-            if($item->id_konsultan_1 == '174') {
-                $id_employees_hris = 'EMP0005';
-            }
-            if($item->id_konsultan_1 == '175') {
-                $id_employees_hris = 'EMP0090';
-            }
-            if($item->id_konsultan_1 == '176') {
-                $id_employees_hris = 'EMP0001';
-            }
-            if($item->id_konsultan_1 == '183') {
-                $id_employees_hris = 'EMP0207';
-            }
+        // $get_spk_konsultan_1 = $this->db->select('a.id_konsultan_1, a.nm_konsultan_1')->from('kons_tr_spk_penawaran a')->where('a.id_konsultan_1 <>', '')->not_like('a.id_konsultan_1', 'EMP', 'both')->get()->result();
 
-            if($id_employees_hris !== '') {
-                $get_hris_employees = $this->db->get_where(DBHR.'.employees', ['id' => $id_employees_hris])->row();
-                if(!empty($get_hris_employees)) {
-                    $this->db->update('kons_tr_spk_penawaran', ['id_konsultan_1' => $id_employees_hris, 'nm_konsultan_1' => $get_hris_employees->name], ['id_konsultan_1' => $item->id_konsultan_1]);
-                }
-            }
-        }
+        // foreach($get_spk_konsultan_1 as $item) {
+        //     $id_employees_hris = '';
 
-        $get_spk_konsultan_2 = $this->db->select('a.id_konsultan_2, a.nm_konsultan_2')->from('kons_tr_spk_penawaran a')->where('a.id_konsultan_2 <>', '')->not_like('a.id_konsultan_2', 'EMP', 'both')->get()->result();
+        //     if($item->id_konsultan_1 == '166') {
+        //         $id_employees_hris = 'EMP0213';
+        //     }
+        //     if($item->id_konsultan_1 == '169') {
+        //         $id_employees_hris = 'EMP0187';
+        //     }
+        //     if($item->id_konsultan_1 == '170') {
+        //         $id_employees_hris = 'EMP0121';
+        //     }
+        //     if($item->id_konsultan_1 == '172') {
+        //         $id_employees_hris = 'EMP0011';
+        //     }
+        //     if($item->id_konsultan_1 == '173') {
+        //         $id_employees_hris = 'EMP0018';
+        //     }
+        //     if($item->id_konsultan_1 == '174') {
+        //         $id_employees_hris = 'EMP0005';
+        //     }
+        //     if($item->id_konsultan_1 == '175') {
+        //         $id_employees_hris = 'EMP0090';
+        //     }
+        //     if($item->id_konsultan_1 == '176') {
+        //         $id_employees_hris = 'EMP0001';
+        //     }
+        //     if($item->id_konsultan_1 == '183') {
+        //         $id_employees_hris = 'EMP0207';
+        //     }
 
-        foreach($get_spk_konsultan_2 as $item) {
-            $id_employees_hris = '';
+        //     if($id_employees_hris !== '') {
+        //         $get_hris_employees = $this->db->get_where(DBHR.'.employees', ['id' => $id_employees_hris])->row();
+        //         if(!empty($get_hris_employees)) {
+        //             $this->db->update('kons_tr_spk_penawaran', ['id_konsultan_1' => $id_employees_hris, 'nm_konsultan_1' => $get_hris_employees->name], ['id_konsultan_1' => $item->id_konsultan_1]);
+        //         }
+        //     }
+        // }
 
-            if($item->id_konsultan_2 == '166') {
-                $id_employees_hris = 'EMP0213';
-            }
-            if($item->id_konsultan_2 == '169') {
-                $id_employees_hris = 'EMP0187';
-            }
-            if($item->id_konsultan_2 == '170') {
-                $id_employees_hris = 'EMP0121';
-            }
-            if($item->id_konsultan_2 == '172') {
-                $id_employees_hris = 'EMP0011';
-            }
-            if($item->id_konsultan_2 == '173') {
-                $id_employees_hris = 'EMP0018';
-            }
-            if($item->id_konsultan_2 == '174') {
-                $id_employees_hris = 'EMP0005';
-            }
-            if($item->id_konsultan_2 == '175') {
-                $id_employees_hris = 'EMP0090';
-            }
-            if($item->id_konsultan_2 == '176') {
-                $id_employees_hris = 'EMP0001';
-            }
-            if($item->id_konsultan_2 == '183') {
-                $id_employees_hris = 'EMP0207';
-            }
+        // $get_spk_konsultan_2 = $this->db->select('a.id_konsultan_2, a.nm_konsultan_2')->from('kons_tr_spk_penawaran a')->where('a.id_konsultan_2 <>', '')->not_like('a.id_konsultan_2', 'EMP', 'both')->get()->result();
 
-            if($id_employees_hris !== '') {
-                $get_hris_employees = $this->db->get_where(DBHR.'.employees', ['id' => $id_employees_hris])->row();
-                if(!empty($get_hris_employees)) {
-                    $this->db->update('kons_tr_spk_penawaran', ['id_konsultan_2' => $id_employees_hris, 'nm_konsultan_2' => $get_hris_employees->name], ['id_konsultan_2' => $item->id_konsultan_2]);
-                }
-            }
-        }
+        // foreach($get_spk_konsultan_2 as $item) {
+        //     $id_employees_hris = '';
+
+        //     if($item->id_konsultan_2 == '166') {
+        //         $id_employees_hris = 'EMP0213';
+        //     }
+        //     if($item->id_konsultan_2 == '169') {
+        //         $id_employees_hris = 'EMP0187';
+        //     }
+        //     if($item->id_konsultan_2 == '170') {
+        //         $id_employees_hris = 'EMP0121';
+        //     }
+        //     if($item->id_konsultan_2 == '172') {
+        //         $id_employees_hris = 'EMP0011';
+        //     }
+        //     if($item->id_konsultan_2 == '173') {
+        //         $id_employees_hris = 'EMP0018';
+        //     }
+        //     if($item->id_konsultan_2 == '174') {
+        //         $id_employees_hris = 'EMP0005';
+        //     }
+        //     if($item->id_konsultan_2 == '175') {
+        //         $id_employees_hris = 'EMP0090';
+        //     }
+        //     if($item->id_konsultan_2 == '176') {
+        //         $id_employees_hris = 'EMP0001';
+        //     }
+        //     if($item->id_konsultan_2 == '183') {
+        //         $id_employees_hris = 'EMP0207';
+        //     }
+
+        //     if($id_employees_hris !== '') {
+        //         $get_hris_employees = $this->db->get_where(DBHR.'.employees', ['id' => $id_employees_hris])->row();
+        //         if(!empty($get_hris_employees)) {
+        //             $this->db->update('kons_tr_spk_penawaran', ['id_konsultan_2' => $id_employees_hris, 'nm_konsultan_2' => $get_hris_employees->name], ['id_konsultan_2' => $item->id_konsultan_2]);
+        //         }
+        //     }
+        // }
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
