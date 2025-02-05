@@ -157,39 +157,42 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_sisa_budget = 0;
 
                     foreach ($list_data_others as $item) {
-                        $no++;
+                        if(isset($list_arr_kasbon[$item->id_item])) {
+                            $no++;
+    
+                            $qty_pengajuan = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['total_pengajuan'] : 0;
+                            $aktual_terpakai = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['aktual_terpakai'] : 0;
+                            $sisa_budget = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['sisa_budget'] : 0;
+    
+                            echo '<tr>';
+    
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td>' . $item->nm_biaya . '</td>';
+                            echo '<td class="text-center">' . number_format($item->qty_final) . '</td>';
+                            echo '<td class="text-right">' . number_format($item->price_unit_final, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($item->total_final, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_pengajuan) . '</td>';
+                            echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
+                            echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
+    
+                            echo '</tr>';
+    
+                            $ttl_qty_peng += $qty_pengajuan;
+                            $ttl_nominal_peng += $nominal_pengajuan;
+                            $ttl_total_peng += $total_pengajuan;
+    
+                            $ttl_est_qty += $item->qty_final;
+                            $ttl_est_price_unit += $item->price_unit_final;
+                            $ttl_est_total_budget += $item->total_final;
+    
+                            $ttl_aktual_terpakai += $aktual_terpakai;
+                            $ttl_sisa_budget += $sisa_budget;
 
-                        $qty_pengajuan = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['qty_pengajuan'] : 0;
-                        $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['nominal_pengajuan'] : 0;
-                        $total_pengajuan = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['total_pengajuan'] : 0;
-                        $aktual_terpakai = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['aktual_terpakai'] : 0;
-                        $sisa_budget = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['sisa_budget'] : 0;
-
-                        echo '<tr>';
-
-                        echo '<td class="text-center">' . $no . '</td>';
-                        echo '<td>' . $item->nm_biaya . '</td>';
-                        echo '<td class="text-center">' . number_format($item->qty_final) . '</td>';
-                        echo '<td class="text-right">' . number_format($item->price_unit_final, 2) . '</td>';
-                        echo '<td class="text-right">' . number_format($item->total_final, 2) . '</td>';
-                        echo '<td class="text-center">' . number_format($qty_pengajuan) . '</td>';
-                        echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
-                        echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
-                        echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
-                        echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
-
-                        echo '</tr>';
-
-                        $ttl_qty_peng += $qty_pengajuan;
-                        $ttl_nominal_peng += $nominal_pengajuan;
-                        $ttl_total_peng += $total_pengajuan;
-
-                        $ttl_est_qty += $item->qty_final;
-                        $ttl_est_price_unit += $item->price_unit_final;
-                        $ttl_est_total_budget += $item->total_final;
-
-                        $ttl_aktual_terpakai += $aktual_terpakai;
-                        $ttl_sisa_budget += $sisa_budget;
+                        }
                     }
                     ?>
                 </tbody>
