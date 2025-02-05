@@ -160,41 +160,44 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_sisa_budget = 0;
 
                     foreach ($list_data_kasbon as $item) {
-                        $no++;
+                        if(isset($data_list_kasbon_subcont[$item->id_aktifitas])) {
+                            $no++;
+    
+                            $qty_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_pengajuan'] : 0;
+                            $qty_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_estimasi'] : 0;
+                            $price_unit_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['price_unit_estimasi'] : 0;
+                            $total_budgeting_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_budgeting_estimasi'] : 0;
+                            $aktual_terpakai = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['aktual_terpakai'] : 0;
+                            $sisa_budget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['sisa_budget'] : 0;
+    
+                            echo '<tr>';
+    
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td>' . $item->nm_aktifitas . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_estimasi) . '</td>';
+                            echo '<td class="text-right">' . number_format($price_unit_estimasi, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($total_budgeting_estimasi, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_pengajuan) . '</td>';
+                            echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
+                            echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
+    
+                            echo '</tr>';
+    
+                            $ttl_qty_peng += $qty_pengajuan;
+                            $ttl_nominal_peng += $nominal_pengajuan;
+                            $ttl_total_peng += $total_pengajuan;
+    
+                            $ttl_est_qty += $qty_estimasi;
+                            $ttl_est_price_unit += $price_unit_estimasi;
+                            $ttl_est_total_budget += $total_budgeting_estimasi;
+                            $ttl_aktual_terpakai += $aktual_terpakai;
+                            $ttl_sisa_budget += $sisa_budget;
 
-                        $qty_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'] : 0;
-                        $nominal_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'] : 0;
-                        $total_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_pengajuan'] : 0;
-                        $qty_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_estimasi'] : 0;
-                        $price_unit_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['price_unit_estimasi'] : 0;
-                        $total_budgeting_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_budgeting_estimasi'] : 0;
-                        $aktual_terpakai = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['aktual_terpakai'] : 0;
-                        $sisa_budget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['sisa_budget'] : 0;
-
-                        echo '<tr>';
-
-                        echo '<td class="text-center">' . $no . '</td>';
-                        echo '<td>' . $item->nm_aktifitas . '</td>';
-                        echo '<td class="text-center">' . number_format($qty_estimasi) . '</td>';
-                        echo '<td class="text-right">' . number_format($price_unit_estimasi, 2) . '</td>';
-                        echo '<td class="text-right">' . number_format($total_budgeting_estimasi, 2) . '</td>';
-                        echo '<td class="text-center">' . number_format($qty_pengajuan) . '</td>';
-                        echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
-                        echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
-                        echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
-                        echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
-
-                        echo '</tr>';
-
-                        $ttl_qty_peng += $qty_pengajuan;
-                        $ttl_nominal_peng += $nominal_pengajuan;
-                        $ttl_total_peng += $total_pengajuan;
-
-                        $ttl_est_qty += $qty_estimasi;
-                        $ttl_est_price_unit += $price_unit_estimasi;
-                        $ttl_est_total_budget += $total_budgeting_estimasi;
-                        $ttl_aktual_terpakai += $aktual_terpakai;
-                        $ttl_sisa_budget += $sisa_budget;
+                        }
                     }
                     ?>
                 </tbody>

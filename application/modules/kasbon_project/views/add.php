@@ -540,7 +540,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             dataType: 'json',
             success: function(result) {
                 $('.budget_subcont_on_process').html('Rp. ' + number_format(result.nilai_budget_subcont));
-                $('.budget_akomodasi_on_process').html(number_format(result.nilai_budget_akomodasi));
+                $('.budget_akomodasi_on_process').html('Rp. ' + number_format(result.nilai_budget_akomodasi));
                 $('.budget_others_on_process').html('Rp. ' + number_format(result.nilai_budget_others));
             },
             error: function(result) {

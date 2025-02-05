@@ -161,44 +161,47 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                     
                     foreach ($list_data_kasbon as $item) {
-                        $no++;
+                        if(isset($data_list_kasbon_akomodasi[$item->id_item])) {
+                            $no++;
+    
+                            $qty_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['total_pengajuan'] : 0;
+    
+                            $aktual_terpakai = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['aktual_terpakai'] : 0;
+                            $sisa_budget = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['sisa_budget'] : 0;
+    
+                            $budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['budget_tambahan'] : 0;
+    
+                            echo '<tr>';
+    
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td>' . $item->nm_biaya . '</td>';
+                            echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+                            echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($item->total_estimasi, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_pengajuan) . '</td>';
+                            echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($budget_tambahan, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
+                            echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
+    
+                            echo '</tr>';
+    
+                            $ttl_qty_peng += $qty_pengajuan;
+                            $ttl_nominal_peng += $nominal_pengajuan;
+                            $ttl_total_peng += $total_pengajuan;
+    
+                            $ttl_est_qty += $item->qty_estimasi;
+                            $ttl_est_price_unit += $item->price_unit_estimasi;
+                            $ttl_est_total_budget += $item->total_estimasi;
+                            $ttl_aktual_terpakai += $aktual_terpakai;
+                            $ttl_sisa_budget += $sisa_budget;
+    
+                            $ttl_budget_tambahan += $budget_tambahan;
 
-                        $qty_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['qty_pengajuan'] : 0;
-                        $nominal_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['nominal_pengajuan'] : 0;
-                        $total_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['total_pengajuan'] : 0;
-
-                        $aktual_terpakai = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['aktual_terpakai'] : 0;
-                        $sisa_budget = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['sisa_budget'] : 0;
-
-                        $budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id_item])) ? $data_list_kasbon_akomodasi[$item->id_item]['budget_tambahan'] : 0;
-
-                        echo '<tr>';
-
-                        echo '<td class="text-center">' . $no . '</td>';
-                        echo '<td>' . $item->nm_biaya . '</td>';
-                        echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
-                        echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
-                        echo '<td class="text-right">' . number_format($item->total_estimasi, 2) . '</td>';
-                        echo '<td class="text-center">' . number_format($qty_pengajuan) . '</td>';
-                        echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
-                        echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
-                        echo '<td class="text-right">' . number_format($budget_tambahan, 2) . '</td>';
-                        echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
-                        echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
-
-                        echo '</tr>';
-
-                        $ttl_qty_peng += $qty_pengajuan;
-                        $ttl_nominal_peng += $nominal_pengajuan;
-                        $ttl_total_peng += $total_pengajuan;
-
-                        $ttl_est_qty += $item->qty_estimasi;
-                        $ttl_est_price_unit += $item->price_unit_estimasi;
-                        $ttl_est_total_budget += $item->total_estimasi;
-                        $ttl_aktual_terpakai += $aktual_terpakai;
-                        $ttl_sisa_budget += $sisa_budget;
-
-                        $ttl_budget_tambahan += $budget_tambahan;
+                        }
                     }
                     ?>
                 </tbody>

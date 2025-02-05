@@ -132,7 +132,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         <div class="box-body">
             <table class="table custom-table">
-            <thead>
+                <thead>
                     <tr>
                         <th rowspan="2" class="text-center" valign="middle">No.</th>
                         <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
@@ -166,71 +166,74 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_sisa_budget = 0;
 
                     foreach ($list_data_others as $item) {
-                        $no++;
-
-                        $qty_pengajuan = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['qty_pengajuan'] : 0;
-                        $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['nominal_pengajuan'] : 0;
-                        $total_pengajuan = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['total_pengajuan'] : 0;
-                        $aktual_terpakai = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['aktual_terpakai'] : 0;
-                        if($aktual_terpakai <= 0) {
-                            $aktual_terpakai = $item->qty_final;
+                        if (isset($list_arr_kasbon[$item->id_others])) {
+                            $no++;
+                            
+                            $qty_pengajuan = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['total_pengajuan'] : 0;
+                            $aktual_terpakai = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['aktual_terpakai'] : 0;
+                            if ($aktual_terpakai <= 0) {
+                                $aktual_terpakai = $item->qty_final;
+                            }
+                            $sisa_budget = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['sisa_budget'] : 0;
+                            if ($sisa_budget <= 0) {
+                                $sisa_budget = $item->total_final;
+                            }
+    
+                            echo '<tr>';
+    
+                            echo '<td class="text-center">';
+                            echo $no;
+                            echo '<input type="hidden" name="detail_others[' . $no . '][id_others]" value="' . $item->id_others . '">';
+                            echo '<input type="hidden" name="detail_others[' . $no . '][id_item]" value="' . $item->id_item . '">';
+                            echo '<input type="hidden" name="detail_others[' . $no . '][nm_item]" value="' . $item->nm_biaya . '">';
+                            echo '</td>';
+                            echo '<td>' . $item->nm_biaya . '</td>';
+                            echo '<td class="text-center">';
+                            echo number_format($item->qty_final);
+                            echo '<input type="hidden" name="detail_others[' . $no . '][qty_estimasi]" value="' . $item->qty_final . '">';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo number_format($item->price_unit_final, 2);
+                            echo '<input type="hidden" name="detail_others[' . $no . '][price_unit_estimasi]" value="' . $item->price_unit_final . '">';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo number_format($item->total_final, 2);
+                            echo '<input type="hidden" name="detail_others[' . $no . '][total_budget_estimasi]" value="' . $item->total_final . '">';
+                            echo '</td>';
+                            echo '<td class="text-center">';
+                            echo '<input type="number" name="detail_others[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-center" value="' . $qty_pengajuan . '" onchange="hitung_all_pengajuan();">';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo '<input type="text" name="detail_others[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" value="' . $nominal_pengajuan . '">';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo '<input type="text" name="detail_others[' . $no . '][total_pengajuan]" class="form-control form-control-sm text-right auto_num" value="' . $total_pengajuan . '" readonly>';
+                            echo '</td>';
+                            echo '<td class="text-center">';
+                            echo number_format($aktual_terpakai);
+                            echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . ($aktual_terpakai) . '">';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo number_format($sisa_budget, 2);
+                            echo '<input type="hidden" name="detail_others[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
+                            echo '</td>';
+    
+                            echo '</tr>';
+    
+                            $ttl_qty_peng += $qty_pengajuan;
+                            $ttl_nominal_peng += $nominal_pengajuan;
+                            $ttl_total_peng += $total_pengajuan;
+    
+                            $ttl_est_qty += $item->qty_final;
+                            $ttl_est_price_unit += $item->price_unit_final;
+                            $ttl_est_total_budget += $item->total_final;
+    
+                            $ttl_aktual_terpakai += $aktual_terpakai;
+                            $ttl_sisa_budget += $sisa_budget;
                         }
-                        $sisa_budget = (isset($list_arr_kasbon[$item->id_others])) ? $list_arr_kasbon[$item->id_others]['sisa_budget'] : 0;
-                        if($sisa_budget <= 0) {
-                            $sisa_budget = $item->total_final;
-                        }
 
-                        echo '<tr>';
-
-                        echo '<td class="text-center">';
-                        echo $no;
-                        echo '<input type="hidden" name="detail_others['.$no.'][id_others]" value="'.$item->id_others.'">';
-                        echo '<input type="hidden" name="detail_others['.$no.'][id_item]" value="'.$item->id_item.'">';
-                        echo '<input type="hidden" name="detail_others['.$no.'][nm_item]" value="'.$item->nm_biaya.'">';
-                        echo'</td>';
-                        echo '<td>' . $item->nm_biaya . '</td>';
-                        echo '<td class="text-center">';
-                        echo number_format($item->qty_final);
-                        echo '<input type="hidden" name="detail_others['.$no.'][qty_estimasi]" value="'.$item->qty_final.'">';
-                        echo '</td>';
-                        echo '<td class="text-right">';
-                        echo number_format($item->price_unit_final, 2);
-                        echo '<input type="hidden" name="detail_others['.$no.'][price_unit_estimasi]" value="'.$item->price_unit_final.'">';
-                        echo '</td>';
-                        echo '<td class="text-right">';
-                        echo number_format($item->total_final, 2);
-                        echo '<input type="hidden" name="detail_others['.$no.'][total_budget_estimasi]" value="'.$item->total_final.'">';
-                        echo '</td>';
-                        echo '<td class="text-center">';
-                        echo '<input type="number" name="detail_others[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-center" value="' . $qty_pengajuan . '" onchange="hitung_all_pengajuan();">';
-                        echo '</td>';
-                        echo '<td class="text-right">';
-                        echo '<input type="text" name="detail_others[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" value="' . $nominal_pengajuan . '">';
-                        echo '</td>';
-                        echo '<td class="text-right">';
-                        echo '<input type="text" name="detail_others[' . $no . '][total_pengajuan]" class="form-control form-control-sm text-right auto_num" value="' . $total_pengajuan . '" readonly>';
-                        echo '</td>';
-                        echo '<td class="text-center">';
-                        echo number_format($aktual_terpakai);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . ($aktual_terpakai) . '">';
-                        echo '</td>';
-                        echo '<td class="text-right">';
-                        echo number_format($sisa_budget, 2);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
-                        echo '</td>';
-
-                        echo '</tr>';
-
-                        $ttl_qty_peng += $qty_pengajuan;
-                        $ttl_nominal_peng += $nominal_pengajuan;
-                        $ttl_total_peng += $total_pengajuan;
-
-                        $ttl_est_qty += $item->qty_final;
-                        $ttl_est_price_unit += $item->price_unit_final;
-                        $ttl_est_total_budget += $item->total_final;
-
-                        $ttl_aktual_terpakai += $aktual_terpakai;
-                        $ttl_sisa_budget += $sisa_budget;
                     }
                     ?>
                 </tbody>
