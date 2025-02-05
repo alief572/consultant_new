@@ -127,7 +127,7 @@ class Approval_spk_project_leader extends Admin_Controller
 
         $nilai_others = 0;
         foreach ($get_others as $item_others) {
-            $nilai_others += $item_others->total;
+            $nilai_others += $item_others->total_budget;
         }
 
         $nilai_kontrak = 0;
@@ -259,7 +259,7 @@ class Approval_spk_project_leader extends Admin_Controller
 
         $nilai_others = 0;
         foreach ($get_others as $item_others) {
-            $nilai_others += $item_others->total;
+            $nilai_others += $item_others->total_budget;
         }
 
         $nilai_kontrak = 0;
