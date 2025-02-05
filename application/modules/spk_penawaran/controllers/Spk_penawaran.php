@@ -146,6 +146,8 @@ class SPK_penawaran extends Admin_Controller
             $nilai_kontrak += $item_aktifitas->harga_aktifitas;
         }
 
+        $approval_data = [];
+
         $data = [
             'list_spk_aktifitas' => $get_list_spk_aktifitas,
             'list_spk_penawaran' => $get_spk_penawaran,
@@ -1322,47 +1324,126 @@ class SPK_penawaran extends Admin_Controller
     public function one_time()
     {
 
-        $get_spk = $this->db->get_where('kons_tr_spk_penawaran', array('deleted_by' => null))->result();
+        $get_spk_project_leader = $this->db->select('a.id_project_leader, a.nm_project_leader')->from('kons_tr_spk_penawaran a')->where('a.id_project_leader <>', '')->not_like('a.id_project_leader', 'EMP', 'both')->get()->result();
 
-        $data_insert = [];
-        if (!empty($get_spk)) {
-            foreach ($get_spk as $item) {
-                $get_penawaran_aktifitas = $this->db->get_where('kons_tr_penawaran_aktifitas', array('id_penawaran' => $item->id_penawaran))->result();
-                if (!empty($get_penawaran_aktifitas)) {
-                    foreach ($get_penawaran_aktifitas as $item2) {
-                        $get_aktifitas = $this->db->get_where('kons_master_aktifitas', array('id_aktifitas' => $item2->id_aktifitas))->row();
+        foreach($get_spk_project_leader as $item) {
+            $id_employees_hris = '';
 
-                        $nm_aktifitas = (!empty($get_aktifitas)) ? $get_aktifitas->nm_aktifitas : '';
+            if($item->id_project_leader == '166') {
+                $id_employees_hris = 'EMP0213';
+            }
+            if($item->id_project_leader == '169') {
+                $id_employees_hris = 'EMP0187';
+            }
+            if($item->id_project_leader == '170') {
+                $id_employees_hris = 'EMP0121';
+            }
+            if($item->id_project_leader == '172') {
+                $id_employees_hris = 'EMP0011';
+            }
+            if($item->id_project_leader == '173') {
+                $id_employees_hris = 'EMP0018';
+            }
+            if($item->id_project_leader == '174') {
+                $id_employees_hris = 'EMP0005';
+            }
+            if($item->id_project_leader == '175') {
+                $id_employees_hris = 'EMP0090';
+            }
+            if($item->id_project_leader == '176') {
+                $id_employees_hris = 'EMP0001';
+            }
+            if($item->id_project_leader == '183') {
+                $id_employees_hris = 'EMP0207';
+            }
 
-                        $data_insert[] = [
-                            'id_penawaran' => $item2->id_penawaran,
-                            'id_spk_penawaran' => $item->id_spk_penawaran,
-                            'id_aktifitas' => $item2->id_aktifitas,
-                            'nm_aktifitas' => $nm_aktifitas,
-                            'bobot' => $item2->bobot,
-                            'mandays' => $item2->mandays,
-                            'mandays_rate' => $item2->mandays_rate,
-                            'mandays_tandem' => $item2->mandays_tandem,
-                            'mandays_rate_tandem' => $item2->mandays_rate_tandem,
-                            'harga_aktifitas' => $item2->harga_aktifitas,
-                            'total_aktifitas' => $item2->total_aktifitas,
-                            'input_by' => $this->auth->user_id(),
-                            'input_date' => date('Y-m-d H:i:s')
-                        ];
-                    }
+            if($id_employees_hris !== '') {
+                $get_hris_employees = $this->db->get_where(DBHR.'.employees', ['id' => $id_employees_hris])->row();
+                if(!empty($get_hris_employees)) {
+                    $this->db->update('kons_tr_spk_penawaran', ['id_project_leader' => $id_employees_hris, 'nm_project_leader' => $get_hris_employees->name], ['id_project_leader' => $item->id_project_leader]);
                 }
             }
         }
 
-        $this->db->trans_begin();
+        $get_spk_konsultan_1 = $this->db->select('a.id_konsultan_1, a.nm_konsultan_1')->from('kons_tr_spk_penawaran a')->where('a.id_konsultan_1 <>', '')->not_like('a.id_konsultan_1', 'EMP', 'both')->get()->result();
 
-        if (!empty($data_insert)) {
-            $insert_query = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert);
-            if (!$insert_query) {
-                $this->db->trans_rollback();
+        foreach($get_spk_konsultan_1 as $item) {
+            $id_employees_hris = '';
 
-                print_r($this->db->last_query());
-                exit;
+            if($item->id_konsultan_1 == '166') {
+                $id_employees_hris = 'EMP0213';
+            }
+            if($item->id_konsultan_1 == '169') {
+                $id_employees_hris = 'EMP0187';
+            }
+            if($item->id_konsultan_1 == '170') {
+                $id_employees_hris = 'EMP0121';
+            }
+            if($item->id_konsultan_1 == '172') {
+                $id_employees_hris = 'EMP0011';
+            }
+            if($item->id_konsultan_1 == '173') {
+                $id_employees_hris = 'EMP0018';
+            }
+            if($item->id_konsultan_1 == '174') {
+                $id_employees_hris = 'EMP0005';
+            }
+            if($item->id_konsultan_1 == '175') {
+                $id_employees_hris = 'EMP0090';
+            }
+            if($item->id_konsultan_1 == '176') {
+                $id_employees_hris = 'EMP0001';
+            }
+            if($item->id_konsultan_1 == '183') {
+                $id_employees_hris = 'EMP0207';
+            }
+
+            if($id_employees_hris !== '') {
+                $get_hris_employees = $this->db->get_where(DBHR.'.employees', ['id' => $id_employees_hris])->row();
+                if(!empty($get_hris_employees)) {
+                    $this->db->update('kons_tr_spk_penawaran', ['id_konsultan_1' => $id_employees_hris, 'nm_konsultan_1' => $get_hris_employees->name], ['id_konsultan_1' => $item->id_konsultan_1]);
+                }
+            }
+        }
+
+        $get_spk_konsultan_2 = $this->db->select('a.id_konsultan_2, a.nm_konsultan_2')->from('kons_tr_spk_penawaran a')->where('a.id_konsultan_2 <>', '')->not_like('a.id_konsultan_2', 'EMP', 'both')->get()->result();
+
+        foreach($get_spk_konsultan_2 as $item) {
+            $id_employees_hris = '';
+
+            if($item->id_konsultan_2 == '166') {
+                $id_employees_hris = 'EMP0213';
+            }
+            if($item->id_konsultan_2 == '169') {
+                $id_employees_hris = 'EMP0187';
+            }
+            if($item->id_konsultan_2 == '170') {
+                $id_employees_hris = 'EMP0121';
+            }
+            if($item->id_konsultan_2 == '172') {
+                $id_employees_hris = 'EMP0011';
+            }
+            if($item->id_konsultan_2 == '173') {
+                $id_employees_hris = 'EMP0018';
+            }
+            if($item->id_konsultan_2 == '174') {
+                $id_employees_hris = 'EMP0005';
+            }
+            if($item->id_konsultan_2 == '175') {
+                $id_employees_hris = 'EMP0090';
+            }
+            if($item->id_konsultan_2 == '176') {
+                $id_employees_hris = 'EMP0001';
+            }
+            if($item->id_konsultan_2 == '183') {
+                $id_employees_hris = 'EMP0207';
+            }
+
+            if($id_employees_hris !== '') {
+                $get_hris_employees = $this->db->get_where(DBHR.'.employees', ['id' => $id_employees_hris])->row();
+                if(!empty($get_hris_employees)) {
+                    $this->db->update('kons_tr_spk_penawaran', ['id_konsultan_2' => $id_employees_hris, 'nm_konsultan_2' => $get_hris_employees->name], ['id_konsultan_2' => $item->id_konsultan_2]);
+                }
             }
         }
 

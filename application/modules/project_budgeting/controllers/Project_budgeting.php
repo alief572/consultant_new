@@ -393,13 +393,15 @@ class Project_budgeting extends Admin_Controller
                 $this->db->where('a.id', $item['id_akomodasi']);
                 $get_akomodasi = $this->db->get()->row();
 
+                $get_item = $this->db->get_where('kons_master_biaya', ['id' => $get_akomodasi->id_item])->row();
+
                 $data_insert_akomodasi[] = [
                     'id_spk_budgeting' => $id_spk_budgeting,
                     'id_spk_penawaran' => $post['id_spk_penawaran'],
                     'id_penawaran' => $get_spk_penawaran->id_penawaran,
                     'id_akomodasi' => $item['id_akomodasi'],
                     'id_item' => $get_akomodasi->id_item,
-                    'nm_item' => $get_akomodasi->nm_item,
+                    'nm_item' => $get_item->nm_biaya,
                     'qty_estimasi' => $get_akomodasi->qty,
                     'price_unit_estimasi' => $get_akomodasi->price_unit,
                     'total_estimasi' => $get_akomodasi->total,
@@ -422,13 +424,15 @@ class Project_budgeting extends Admin_Controller
                 $this->db->where('a.id', $item['id_others']);
                 $get_others = $this->db->get()->row();
 
+                $get_item = $this->db->get_where('kons_master_biaya', ['id' => $get_others->id_item])->row();
+
                 $data_insert_others[] = [
                     'id_spk_budgeting' => $id_spk_budgeting,
                     'id_spk_penawaran' => $post['id_spk_penawaran'],
                     'id_penawaran' => $get_spk_penawaran->id_penawaran,
                     'id_others' => $item['id_others'],
                     'id_item' => $get_others->id_item,
-                    'nm_item' => $get_others->nm_item,
+                    'nm_item' => $get_item->nm_biaya,
                     'qty_estimasi' => $get_others->qty,
                     'price_unit_estimasi' => $get_others->price_unit,
                     'total_estimasi' => $get_others->total,

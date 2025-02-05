@@ -646,7 +646,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     });
 
     $(document).on('click', '.del_kasbon_others', function() {
-        var id_kasbon_others = $(this).data('id_kasbon_others');
+        var id_kasbon_others = $(this).data('id');
 
         swal({
             type: 'warning',
