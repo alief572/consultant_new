@@ -128,19 +128,20 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             <table class="table custom-table">
                 <thead>
                     <tr>
-                        <th rowspan="2" class="text-center valign-middle">No</th>
-                        <th rowspan="2" class="text-center valign-middle">Item</th>
-                        <th colspan="2" class="text-center valign-middle">Pengajuan</th>
-                        <th colspan="3" class="text-center valign-middle">Estimasi</th>
-                        <th rowspan="2" class="text-center valign-middle">Aktual Terpakai</th>
-                        <th rowspan="2" class="text-center valign-middle">Sisa Budget</th>
+                        <th rowspan="2" class="text-center" valign="middle">No.</th>
+                        <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+                        <th colspan="2" class="text-center">Estimasi</th>
+                        <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
+                        <th colspan="3" class="text-center">Pengajuan</th>
+                        <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
+                        <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
                     </tr>
                     <tr>
-                        <th class="text-center valign-middle">Qty</th>
-                        <th class="text-center valign-middle">Nominal</th>
-                        <th class="text-center valign-middle">Qty</th>
-                        <th class="text-center valign-middle">Price/Unit</th>
-                        <th class="text-center valign-middle">Total Budget</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price / Unit</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price / Unit</th>
+                        <th class="text-center">Total Pengajuan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -149,6 +150,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                     $ttl_qty_peng = 0;
                     $ttl_nominal_peng = 0;
+                    $ttl_total_peng = 0;
 
                     $ttl_est_qty = 0;
                     $ttl_est_price_unit = 0;
@@ -162,6 +164,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                         $qty_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'] : 0;
                         $nominal_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'] : 0;
+                        $total_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_pengajuan'] : 0;
                         $qty_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_estimasi'] : 0;
                         $price_unit_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['price_unit_estimasi'] : 0;
                         $total_budgeting_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_budgeting_estimasi'] : 0;
@@ -169,21 +172,23 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         $sisa_budget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['sisa_budget'] : 0;
 
                         echo '<tr>';
-                        
-                        echo '<td class="text-center">'.$item->id_aktifitas.'</td>';
-                        echo '<td>'.$item->nm_aktifitas.'</td>';
-                        echo '<td class="text-center">'.number_format($qty_pengajuan).'</td>';
-                        echo '<td class="text-right">'.number_format($nominal_pengajuan, 2).'</td>';
-                        echo '<td class="text-center">'.number_format($qty_estimasi).'</td>';
-                        echo '<td class="text-right">'.number_format($price_unit_estimasi, 2).'</td>';
-                        echo '<td class="text-right">'.number_format($total_budgeting_estimasi, 2).'</td>';
-                        echo '<td class="text-center">'.number_format($aktual_terpakai).'</td>';
-                        echo '<td class="text-right">'.number_format($sisa_budget, 2).'</td>';
+
+                        echo '<td class="text-center">' . $no . '</td>';
+                        echo '<td>' . $item->nm_aktifitas . '</td>';
+                        echo '<td class="text-center">' . number_format($qty_estimasi) . '</td>';
+                        echo '<td class="text-right">' . number_format($price_unit_estimasi, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($total_budgeting_estimasi, 2) . '</td>';
+                        echo '<td class="text-center">' . number_format($qty_pengajuan) . '</td>';
+                        echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
+                        echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
+                        echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
 
                         echo '</tr>';
 
                         $ttl_qty_peng += $qty_pengajuan;
                         $ttl_nominal_peng += $nominal_pengajuan;
+                        $ttl_total_peng += $total_pengajuan;
 
                         $ttl_est_qty += $qty_estimasi;
                         $ttl_est_price_unit += $price_unit_estimasi;
@@ -196,11 +201,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 <tfoot>
                     <tr>
                         <td colspan="2" class="text-center">Total</td>
-                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_peng) ?></td>
-                        <td class="text-right ttl_nominal_pengajuan"><?= number_format($ttl_nominal_peng, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
                         <td class="text-right"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-right"><?= number_format($ttl_est_total_budget, 2) ?></td>
+                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_peng) ?></td>
+                        <td class="text-right"></td>
+                        <td class="text-right"><?= number_format($ttl_total_peng, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_aktual_terpakai) ?></td>
                         <td class="text-right"><?= number_format($ttl_sisa_budget, 2) ?></td>
                     </tr>
@@ -215,12 +221,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th style="padding: 5px;">Document</th>
                         <td style="padding: 5px;">
                             <input type="file" name="kasbon_document" id="" class="form-control form-control-sm" disabled>
-                            <?php 
-                                if(file_exists('./'.$header->dokument_link)) {
-                                    echo '<a href="'.base_url($header->dokument_link).'" class="btn btn-sm btn-primary" target="_blank">
+                            <?php
+                            if (file_exists('./' . $header->dokument_link)) {
+                                echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-sm btn-primary" target="_blank">
                                         <i class="fa fa-download"></i> Download
                                     </a>';
-                                }
+                            }
                             ?>
                         </td>
                     </tr>

@@ -112,7 +112,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 <tr>
                     <th class="pd-5 valign-top" width="150">Tgl</th>
                     <td class="pd-5 valign-top" width="400">
-                        <input type="date" class="form-control form-control-sm" name="tgl" required>
+                        <input type="date" class="form-control form-control-sm" name="tgl" value="<?= date('Y-m-d') ?>" required>
                     </td>
                     <th class="pd-5 valign-top" width="150">Deskripsi</th>
                     <td class="pd-5 valign-top" width="400">
@@ -132,20 +132,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             <table class="table custom-table">
                 <thead>
                     <tr>
-                        <th rowspan="2" class="text-center valign-middle">No</th>
-                        <th rowspan="2" class="text-center valign-middle">Item</th>
-                        <th colspan="2" class="text-center valign-middle">Pengajuan</th>
-                        <th colspan="3" class="text-center valign-middle">Estimasi</th>
-                        <th rowspan="2" class="text-center valign-middle">Budget Tambahan</th>
-                        <th rowspan="2" class="text-center valign-middle">Aktual Terpakai</th>
-                        <th rowspan="2" class="text-center valign-middle">Sisa Budget</th>
+                        <th rowspan="2" class="text-center" valign="middle">No.</th>
+                        <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+                        <th colspan="2" class="text-center">Estimasi</th>
+                        <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
+                        <th colspan="3" class="text-center">Pengajuan</th>
+                        <th rowspan="2" class="text-center" valign="middle">Budget Tambahan</th>
+                        <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
+                        <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
                     </tr>
                     <tr>
-                        <th class="text-center valign-middle">Qty</th>
-                        <th class="text-center valign-middle">Nominal</th>
-                        <th class="text-center valign-middle">Qty</th>
-                        <th class="text-center valign-middle">Price/Unit</th>
-                        <th class="text-center valign-middle">Total Budget</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price / Unit</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price / Unit</th>
+                        <th class="text-center">Total Pengajuan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -186,14 +187,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<input type="hidden" name="detail_akomodasi[' . $no . '][nm_item]" value="' . $item->nm_item . '">';
                         echo '</td>';
 
-                        echo '<td>';
-                        echo '<input type="text" name="detail_akomodasi[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right auto_num qty_pengajuan qty_pengajuan_' . $no . '" onchange="hitung_all_pengajuan()" ' . $readonly . ' data-no_urut="' . $no . '" data-price_unit="' . $item->price_unit_final . '">';
-                        echo '</td>';
-
-                        echo '<td>';
-                        echo '<input type="text" name="detail_akomodasi[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" value="'.$item->price_unit_final.'" '.$readonly.'>';
-                        echo '</td>';
-
                         echo '<td class="text-center">';
                         echo number_format($item->qty_final);
                         echo '<input type="hidden" name="detail_akomodasi[' . $no . '][qty_estimasi]" value="' . $item->qty_final . '">';
@@ -209,14 +202,26 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<input type="hidden" name="detail_akomodasi[' . $no . '][total_estimasi]" value="' . $item->total_final . '">';
                         echo '</td>';
 
+                        echo '<td>';
+                        echo '<input type="number" name="detail_akomodasi[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right qty_pengajuan qty_pengajuan_' . $no . '" onchange="hitung_all_pengajuan()" ' . $readonly . ' data-no_urut="' . $no . '" data-price_unit="' . $item->price_unit_final . '">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" name="detail_akomodasi[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" value="' . $item->price_unit_final . '" ' . $readonly . '>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" name="detail_akomodasi[' . $no . '][total_pengajuan]" class="form-control form-control-sm text-right auto_num" value="" readonly>';
+                        echo '</td>';
+
                         echo '<td class="text-center">';
                         echo number_format($total_budget_tambahan, 2);
                         echo '<input type="hidden" name="detail_akomodasi[' . $no . '][budget_tambahan]" value="' . $total_budget_tambahan . '">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
-                        echo number_format($aktual_terpakai);
-                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
+                        echo number_format($item->qty_final - $aktual_terpakai);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][aktual_terpakai]" value="' . ($item->qty_final - $aktual_terpakai) . '">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
@@ -230,7 +235,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         $ttl_est_price_unit += $item->price_unit_final;
                         $ttl_est_total_budget += $item->total_final;
                         $ttl_budget_tambahan += $total_budget_tambahan;
-                        $ttl_aktual_pakai += $aktual_terpakai;
+                        $ttl_aktual_pakai += ($item->qty_final - $aktual_terpakai);
                         $ttl_sisa_budget += $sisa_budget;
 
                         $no++;
@@ -240,11 +245,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 <tfoot>
                     <tr>
                         <td colspan="2" class="text-center">Total</td>
-                        <td class="text-center ttl_qty_pengajuan">0</td>
-                        <td class="text-center ttl_nominal_pengajuan"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_est_total_budget, 2) ?></td>
+                        <td class="text-center ttl_qty_pengajuan">0</td>
+                        <td class="text-center"></td>
+                        <td class="text-center ttl_pengajuan"></td>
                         <td class="text-center"><?= number_format($ttl_budget_tambahan, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_aktual_pakai) ?></td>
                         <td class="text-center"><?= number_format($ttl_sisa_budget, 2) ?></td>
@@ -359,17 +365,29 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var ttl_qty = 0;
         var ttl_price = 0;
+        var ttl_total = 0;
 
         for (i = 1; i <= no; i++) {
-            var qty_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][qty_pengajuan]"]').val());
+            var qty_pengajuan = $('input[name="detail_akomodasi[' + i + '][qty_pengajuan]"]').val();
+            if (isNaN(qty_pengajuan) || qty_pengajuan == '') {
+                qty_pengajuan = 0;
+            } else {
+                qty_pengajuan = parseInt(qty_pengajuan);
+            }
+
             var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
+
+            var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
+
+            $('input[name="detail_akomodasi[' + i + '][total_pengajuan]"]').autoNumeric('set', total_pengajuan);
 
             ttl_qty += qty_pengajuan;
             ttl_price += nominal_pengajuan;
+            ttl_total += total_pengajuan;
         }
 
+        $('.ttl_pengajuan').html(number_format(ttl_total));
         $('.ttl_qty_pengajuan').html(number_format(ttl_qty));
-        $('.ttl_nominal_pengajuan').html(number_format(ttl_price, 2));
     }
 
     $(document).on('submit', '#frm-data', function(e) {
