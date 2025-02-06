@@ -95,7 +95,10 @@ class Approval_penawaran extends Admin_Controller
         $this->db->from('kons_master_aktifitas a');
         $get_aktifitas = $this->db->get()->result();
 
-        $get_divisi = $this->db->get_where('ms_department a', ['a.deleted_by' => null])->result();
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
+        $get_divisi = $this->db->get()->result();
 
         $data = [
             'list_penawaran' => $get_penawaran,
@@ -174,7 +177,10 @@ class Approval_penawaran extends Admin_Controller
         $this->db->from('kons_master_aktifitas a');
         $get_aktifitas = $this->db->get()->result();
 
-        $get_divisi = $this->db->get_where('ms_department a', ['a.deleted_by' => null])->result();
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
+        $get_divisi = $this->db->get()->result();
 
         $data = [
             'list_penawaran' => $get_penawaran,
@@ -201,18 +207,17 @@ class Approval_penawaran extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, c.name as nama_marketing');
         $this->db->from('kons_tr_penawaran a');
         $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
-        $this->db->join('members c', 'c.id = a.id_marketing', 'left');
+        $this->db->join(DBHR . '.employees c', 'c.id = a.id_marketing', 'left');
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
-        $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
-        $this->db->where_in('a.sts_quot', [0, 1]);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.tgl_quotation', $search['value'], 'both');
-            $this->db->or_like('c.nama', $search['value'], 'both');
+            $this->db->or_like('a.id_quotation', $search['value'], 'both');
+            $this->db->or_like('c.name', $search['value'], 'both');
             $this->db->or_like('d.nm_paket', $search['value'], 'both');
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
             $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
@@ -223,18 +228,17 @@ class Approval_penawaran extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, c.name as nama_marketing');
         $this->db->from('kons_tr_penawaran a');
         $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
-        $this->db->join('members c', 'c.id = a.id_marketing', 'left');
+        $this->db->join(DBHR . '.employees c', 'c.id = a.id_marketing', 'left');
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
-        $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
-        $this->db->where_in('a.sts_quot', [0, 1]);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.tgl_quotation', $search['value'], 'both');
-            $this->db->or_like('c.nama', $search['value'], 'both');
+            $this->db->or_like('a.id_quotation', $search['value'], 'both');
+            $this->db->or_like('c.name', $search['value'], 'both');
             $this->db->or_like('d.nm_paket', $search['value'], 'both');
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
             $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
@@ -335,9 +339,8 @@ class Approval_penawaran extends Admin_Controller
             $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
             $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nm_karyawan : '';
 
-            $this->db->select('a.*, b.nm_paket');
+            $this->db->select('a.*');
             $this->db->from('kons_master_konsultasi_header a');
-            $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
             $this->db->where('a.id_konsultasi_h', $item->id_paket);
             $get_package = $this->db->get()->row();
 
@@ -350,7 +353,7 @@ class Approval_penawaran extends Admin_Controller
                 'no' => $no,
                 'id_quotation' => $item->id_quotation,
                 'tgl_quotation' => $item->tgl_quotation,
-                'nm_marketing' => ucfirst($nm_marketing),
+                'nm_marketing' => ucfirst($item->nama_marketing),
                 'nm_paket' => $nm_paket,
                 'nm_customer' => $nm_customer,
                 'grand_total' => number_format($item->grand_total),
