@@ -25,6 +25,7 @@ class Master_lab extends Admin_Controller
         $this->template->title('Master Lab');
         $this->template->page_icon('fa fa-cubes');
         $this->load->library('upload');
+        $this->load->model(array('Master_lab/Master_lab_model'));
         date_default_timezone_set('Asia/Bangkok');
     }
 
@@ -35,7 +36,44 @@ class Master_lab extends Admin_Controller
         $this->template->render('index');
     }
 
-    public function add_data() {
+    public function add_data()
+    {
         $this->template->render('add_data_lab');
+    }
+
+    public function view_lab()
+    {
+        $id = $this->input->post('id');
+
+        $get_data_lab = $this->Master_lab_model->get_data_spec($id);
+
+        $this->template->set('data_lab', $get_data_lab);
+        $this->template->render('view_data_lab');
+    }
+
+    public function edit_lab()
+    {
+        $id = $this->input->post('id');
+
+        $get_data_lab = $this->Master_lab_model->get_data_spec($id);
+
+        $this->template->set('data_lab', $get_data_lab);
+        $this->template->render('edit_data_lab');
+    }
+
+    public function del_lab(){
+        $id = $this->input->post('id');
+
+        $this->Master_lab_model->del_lab($id);
+    }
+
+    public function save_lab()
+    {
+        $this->Master_lab_model->save_lab();
+    }
+
+    public function get_data_lab()
+    {
+        $this->Master_lab_model->get_data_lab();
     }
 }

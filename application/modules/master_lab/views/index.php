@@ -56,19 +56,19 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 <h4 class="modal-title" id="myModalLabel"></h4>
             </div>
-            <form action="" id="form-data">
-                <div class="modal-body" id="MyModalBody">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">
-                        <span class="glyphicon glyphicon-remove"></span> Cancel
-                    </button>
-                    <button type="submit" class="btn btn-sm btn-primary">
-                        <i class="fa fa-save"></i> Save
-                    </button>
-                </div>
-            </form>
+            <!-- <form action="" id="form-data"> -->
+            <div class="modal-body" id="MyModalBody">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span> Cancel
+                </button>
+                <button type="button" class="btn btn-sm btn-primary btn_save">
+                    <i class="fa fa-save"></i> Save
+                </button>
+            </div>
+            <!-- </form> -->
         </div>
     </div>
 </div>
@@ -78,6 +78,7 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
 
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
+<script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
 <!-- page script -->
 <script type="text/javascript">
     $(document).ready(function() {
@@ -90,7 +91,12 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
             url: siteurl + active_controller + 'add_data',
             cache: false,
             success: function(result) {
+                $('.modal-title').html('Add Data Lab');
+                $('#MyModalBody').html(result);
+                $('#dialog-rekap').modal('show');
+                $('.btn_save').show();
 
+                auto_num();
             },
             error: function(result) {
                 swal({
@@ -101,6 +107,194 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
             }
         });
     });
+
+    $(document).on('click', '.view_lab', function() {
+        var id = $(this).data('id');
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'view_lab',
+            data: {
+                'id': id
+            },
+            cache: false,
+            success: function(result) {
+                $('.modal-title').html('View Data Lab');
+                $('#MyModalBody').html(result);
+                $('#dialog-rekap').modal('show');
+                $('.btn_save').hide();
+            },
+            error: function(result) {
+                swal({
+                    type: 'error',
+                    title: 'Error !',
+                    text: 'Please try again later !'
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.edit_lab', function() {
+        var id = $(this).data('id');
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'edit_lab',
+            data: {
+                'id': id
+            },
+            cache: false,
+            success: function(result) {
+                $('.modal-title').html('Edit Data Lab');
+                $('#MyModalBody').html(result);
+                $('#dialog-rekap').modal('show');
+                $('.btn_save').show();
+            },
+            error: function(result) {
+                swal({
+                    type: 'error',
+                    title: 'Error !',
+                    text: 'Please try again later !'
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_lab', function() {
+        var id = $(this).data('id');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_lab',
+                    data: {
+                        'id': id
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == 1) {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan,
+                                allowOutsideClick: false
+                            }, function(lanjut) {
+                                $('#dialog-rekap').modal('hide');
+                                DataTables();
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Warning !',
+                                text: result.pesan,
+                                allowOutsideClick: false
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.btn_save', function() {
+        var isu_lingkungan = $('input[name="isu_lingkungan"]').val();
+        var harga_ssc = get_num($('input[name="harga_ssc"]').val());
+        var harga_lab = get_num($('input[name="harga_lab"]').val());
+
+        if (isu_lingkungan == '') {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: 'Isu Lingkungan is empty !'
+            });
+
+            return false;
+        }
+        if (harga_ssc <= 0 || harga_lab <= 0) {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: 'Harga SSC / Lab cannot zero !'
+            });
+
+            return false;
+        }
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be saved !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                var formdata = $('#form-data').serialize();
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'save_lab',
+                    data: formdata,
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == 1) {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan,
+                                allowOutsideClick: false
+                            }, function(lanjut) {
+                                $('#dialog-rekap').modal('hide');
+                                DataTables();
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Warning !',
+                                text: result.pesan,
+                                allowOutsideClick: false
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    })
+
+    function get_num(nilai = null) {
+        if (nilai !== '' && nilai !== null) {
+            nilai = nilai.split(',').join('');
+            nilai = parseFloat(nilai);
+        } else {
+            nilai = 0;
+        }
+
+        return nilai;
+    }
+
+    function auto_num() {
+        $('.auto_num').autoNumeric();
+    }
+
 
     function DataTables() {
         // var dataTables = $('#table_lab').dataTable();
@@ -121,7 +315,7 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
                     data: 'isu_lingkungan'
                 },
                 {
-                    data: 'peraturan_undang'
+                    data: 'peraturan'
                 },
                 {
                     data: 'waktu'
