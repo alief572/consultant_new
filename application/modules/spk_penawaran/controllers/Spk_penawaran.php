@@ -961,7 +961,7 @@ class SPK_penawaran extends Admin_Controller
             'mandays_rate' => ($post['mandays_rate'] !== '') ? str_replace(',', '', $post['mandays_rate']) : 0,
             'total_mandays' => ($post['total_mandays'] !== '') ? str_replace(',', '', $post['total_mandays']) : 0,
             'mandays_subcont' => ($post['mandays_subcont'] !== '') ? str_replace(',', '', $post['mandays_subcont']) : 0,
-            'mandays_internal' => ($post['mandays_internal'] !== '') ? str_replace(',', '', $post['mandays_internal']) : 0,
+            'mandays_internal' => ($post['total_mandays'] !== '') ? str_replace(',', '', $post['total_mandays']) : 0,
             'nm_pemberi_informasi_1_komisi' => $post['nm_pemberi_informasi_1_komisi'],
             'persen_pemberi_informasi_1_komisi' => ($post['persentase_pemberi_informasi_1_komisi'] !== '') ? str_replace(',', '', $post['persentase_pemberi_informasi_1_komisi']) : 0,
             'nominal_pemberi_informasi_1_komisi' => ($post['nominal_pemberi_informasi_1_komisi'] !== '') ? str_replace(',', '', $post['nominal_pemberi_informasi_1_komisi']) : 0,
