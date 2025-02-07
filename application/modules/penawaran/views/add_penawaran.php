@@ -335,7 +335,56 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         </div>
     </div>
 
-    
+    <div class="box">
+        <div class="box-header">
+            <h4 class="semi-bold">
+                Lab
+                <div style="float: right">
+                    <div class="onoffswitch">
+                        <input type="checkbox" name="switch_lab" class="onoffswitch-checkbox" id="switch_lab">
+                        <label class="onoffswitch-label" for="switch_lab">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </h4>
+        </div>
+        <div class="box-body box_lab d-none">
+            <div style="float: right; margin-bottom: 1rem;">
+                <button type="button" class="btn btn-sm btn-success add_lab">
+                    <i class="fa fa-plus"></i> Add
+                </button>
+            </div>
+
+            <br>
+
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">Item</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price/Unit Customer</th>
+                        <th class="text-center">Price/Unit Budget</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Keterangan</th>
+                        <th class="text-center">Opsi</th>
+                    </tr>
+                </thead>
+                <tbody class="list_lab"></tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-right">
+                            Total
+                        </th>
+                        <th class="text-right ttl_lab_grand_total">000,00</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
 
     <div class="box">
         <div class="box-header">
@@ -370,6 +419,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <tr>
                         <td class="text-left">Others</td>
                         <td class="text-right summary_others">0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Lab</td>
+                        <td class="text-right summary_lab">0.00</td>
                     </tr>
                     <tr>
                         <td class="text-left"><b>Subtotal</b></td>
@@ -467,6 +520,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <input type="hidden" class="no" value="1">
 <input type="hidden" class="no_akomodasi" value="1">
 <input type="hidden" class="no_others" value="1">
+<input type="hidden" class="no_lab" value="1">
 
 <div id="form-data"></div>
 <!-- DataTables -->
@@ -612,6 +666,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     });
     $(document).on('click', '.add_others', function() {
         addAOthers();
+    });
+    $(document).on('click', '.add_lab', function() {
+        addALab();
     });
 
     function auto_num() {
@@ -775,6 +832,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hitung_detail_other_summary();
     }
 
+    
+
     function hitung_all_others() {
         var no_others = parseFloat($('.no_others').val());
 
@@ -793,18 +852,50 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hitung_detail_other_summary();
     }
 
+    function hitung_item_lab(no) {
+        var qty = get_num($('input[name="dt_lab[' + no + '][qty_lab]"]').val());
+        var harga = get_num($('input[name="dt_lab[' + no + '][harga_lab]"]').val());
+
+        var total = parseFloat(qty * harga);
+
+        $('input[name="dt_lab[' + no + '][total_lab]"]').val(number_format(total, 2));
+
+        hitung_all_lab();
+        hitung_detail_other_summary();
+    }
+
+    function hitung_all_lab(){
+        var no_lab = parseFloat($('.no_lab').val());
+
+        var ttl_grand_total = 0;
+        for (i = 1; i < no_lab; i++) {
+            if ($('input[name="dt_lab[' + i + '][total_lab]"]').val() !== '') {
+                var total_lab = get_num($('input[name="dt_lab[' + i + '][total_lab]"]').val());
+
+                ttl_grand_total += total_lab;
+            }
+        }
+
+        $('.ttl_lab_grand_total').html(number_format(ttl_grand_total, 2));
+
+        hitung_summary();
+        hitung_detail_other_summary();
+    }
+
     function hitung_summary() {
         var ttl_act_price = get_num($('.ttl_act_price').html());
         var ttl_ako_grand_total = get_num($('.ttl_ako_grand_total').html());
         var ttl_oth_grand_total = get_num($('.ttl_oth_grand_total').html());
+        var ttl_lab_grand_total = get_num($('.ttl_lab_grand_total').html());
 
         $('.summary_konsultasi').html(number_format(ttl_act_price, 2));
         $('.summary_akomodasi').html(number_format(ttl_ako_grand_total, 2));
         $('.summary_others').html(number_format(ttl_oth_grand_total, 2));
+        $('.summary_lab').html(number_format(ttl_lab_grand_total, 2));
 
         var nilai_disc = get_num($('.input_diskon_value').val());
 
-        var subtotal = (ttl_act_price + ttl_ako_grand_total + ttl_oth_grand_total);
+        var subtotal = (ttl_act_price + ttl_ako_grand_total + ttl_oth_grand_total + ttl_lab_grand_total);
         $('.summary_subtotal').html(number_format(subtotal, 2));
 
         subtotal -= nilai_disc;
@@ -936,6 +1027,64 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         auto_num();
     }
 
+    function addALab() {
+        var no_lab = parseFloat($('.no_lab').val());
+
+        var hasil = '<tr class="tr_lab_' + no_lab + '">';
+
+        hasil += '<td>';
+        hasil += '<select class="form-control form-control-sm change_lab select_lab_' + no_lab + '" name="dt_lab[' + no_lab + '][id_lab]" data-no="' + no_lab + '">';
+        hasil += '<option value="">- Item Lab -</option>';
+        <?php
+        foreach ($list_def_lab as $item) {
+        ?>
+
+            hasil += '<option value="<?= $item->id ?>"><?= $item->isu_lingkungan ?></option>';
+
+        <?php
+        }
+        ?>
+        hasil += '</select>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_lab[' + no_lab + '][qty_lab]" onchange="hitung_item_lab(' + no_lab + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_lab[' + no_lab + '][harga_lab]" onchange="hitung_item_lab(' + no_lab + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_lab[' + no_lab + '][harga_lab_budget]" onchange="hitung_item_lab(' + no_lab + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_lab[' + no_lab + '][total_lab]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm" name="dt_lab[' + no_lab + '][keterangan_lab]">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<button type="button" class="btn btn-sm btn-danger del_lab" data-no="' + no_lab + '"><i class="fa fa-trash"></i></button>';
+        hasil += '</td>';
+
+        hasil += '</tr>';
+
+        $('.list_lab').append(hasil);
+
+        $('.select_lab_' + no_lab).select2({
+            width: '280px'
+        });
+
+        no_lab = parseFloat(no_lab + 1);
+        $('.no_lab').val(no_lab);
+
+        auto_num();
+    }
+
     function hitung_detail_other_summary() {
         var max_no = 1;
         $('.tr_no').each(function() {
@@ -1017,6 +1166,32 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
     }
 
+    $(document).on('change', '.change_lab', function() {
+        var no = $(this).data('no');
+        var id_lab = $(this).val();
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'change_lab',
+            data: {
+                'id_lab': id_lab
+            },
+            cache: false,
+            dataType: 'json',
+            success: function(result) {
+                $('input[name="dt_lab['+no+'][harga_lab]"]').autoNumeric('set', result.harga_ssc);
+                $('input[name="dt_lab['+no+'][harga_lab_budget]"]').autoNumeric('set', result.harga_lab);
+            },
+            error: function(result) {
+                swal({
+                    type: 'error',
+                    title: 'Error !',
+                    text: 'Please try again later !'
+                });
+            }
+        });
+    });
+
     $(document).on('change', '.input_diskon_persen', function() {
         var persen = get_num($(this).val());
         var subtotal = get_num($('.summary_subtotal').html());
@@ -1052,6 +1227,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             $('.box_others').fadeIn(500);
         } else {
             $('.box_others').fadeOut(500);
+        }
+    });
+
+    $(document).on('click', '#switch_lab', function() {
+        if ($(this).is(':checked')) {
+            $('.box_lab').fadeIn(500);
+        } else {
+            $('.box_lab').fadeOut(500);
         }
     });
 
@@ -1181,6 +1364,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         $('.tr_others_' + no_others).remove();
 
         hitung_all_others();
+    });
+
+    $(document).on('click', '.del_lab', function() {
+        var no_lab = $(this).data('no');
+
+        $('.tr_lab_' + no_lab).remove();
+
+        hitung_all_lab();
     });
 
     $(document).on('change', '.include_ppn', function() {
