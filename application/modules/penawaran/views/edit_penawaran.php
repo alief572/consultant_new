@@ -696,14 +696,6 @@ if (count($list_penawaran_others) > 0) {
                         </td>
                     </tr>
                     <tr>
-                        <td>Mandays Internal</td>
-                        <td class="text-center">:</td>
-                        <td class="text-right">
-                            <input type="hidden" name="ttl_mandays_internal" value="<?= $list_penawaran->mandays_internal ?>">
-                            <span class="ttl_mandays_internal"><?= number_format($list_penawaran->mandays_internal) ?></span>
-                        </td>
-                    </tr>
-                    <tr>
                         <td>Mandays Rate</td>
                         <td class="text-center">:</td>
                         <td class="text-right ">
@@ -1303,8 +1295,8 @@ if (count($list_penawaran_others) > 0) {
         $('input[name="ttl_mandays_tandem"]').val(ttl_mandays_tandem);
         $('.ttl_mandays_subcont').html(number_format(ttl_mandays_subcont));
         $('input[name="ttl_mandays_subcont"]').val(ttl_mandays_subcont);
-        $('.ttl_mandays_internal').html(number_format(ttl_mandays_internal));
-        $('input[name="ttl_mandays_internal"]').val(ttl_mandays_internal);
+        // $('.ttl_mandays_internal').html(number_format(ttl_mandays_internal));
+        // $('input[name="ttl_mandays_internal"]').val(ttl_mandays_internal);
         $('.ttl_mandays_rate').html('Rp. ' + number_format(mandays_rate));
         $('input[name="ttl_mandays_rate"]').val(mandays_rate);
 

@@ -335,6 +335,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         </div>
     </div>
 
+    
+
     <div class="box">
         <div class="box-header">
             <h4 class="semi-bold">
@@ -436,14 +438,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <td class="text-right">
                             <input type="hidden" name="ttl_mandays_subcont">
                             <span class="ttl_mandays_subcont">0</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Mandays Internal</td>
-                        <td class="text-center">:</td>
-                        <td class="text-right">
-                            <input type="hidden" name="ttl_mandays_internal">
-                            <span class="ttl_mandays_internal">0</span>
                         </td>
                     </tr>
                     <tr>
@@ -1016,8 +1010,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         $('input[name="ttl_mandays_tandem"]').val(ttl_mandays_tandem);
         $('.ttl_mandays_subcont').html(number_format(ttl_mandays_subcont));
         $('input[name="ttl_mandays_subcont"]').val(ttl_mandays_subcont);
-        $('.ttl_mandays_internal').html(number_format(ttl_mandays_internal));
-        $('input[name="ttl_mandays_internal"]').val(ttl_mandays_internal);
+        // $('.ttl_mandays_internal').html(number_format(ttl_mandays_internal));
+        // $('input[name="ttl_mandays_internal"]').val(ttl_mandays_internal);
         $('.ttl_mandays_rate').html('Rp. ' + number_format(mandays_rate));
         $('input[name="ttl_mandays_rate"]').val(mandays_rate);
 
