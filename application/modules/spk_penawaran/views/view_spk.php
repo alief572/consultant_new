@@ -427,7 +427,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                         <select name="divisi" id="" class="form-control form-control-sm select_divisi" disabled>
                             <?php
                             foreach ($list_divisi as $item) {
-                                if($item->id == $list_spk_penawaran->id_divisi) {
+                                if ($item->id == $list_spk_penawaran->id_divisi) {
                                     echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
                                 }
                             }
@@ -467,9 +467,22 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     </td>
                 </tr>
                 <tr>
-                <td class="pd-5 semi-bold" valign="top">Mandays Tandem</td>
+                    <td class="pd-5 semi-bold" valign="top">Mandays Tandem</td>
                     <td class="pd-5" valign="top">
                         <input type="text" name="mandays_tandem" id="" class="form-control form-control-sm text-right " value="<?= number_format($total_mandays_tandem) ?>" readonly>
+                    </td>
+                    <td class="pd-5 semi-bold" valign="top">Biaya Lab</td>
+                    <td class="pd-5" valign="top">
+                        <input type="text" name="biaya_lab" id="" class="form-control form-control-sm text-right biaya_lab" value="<?= number_format($nilai_lab, 2) ?>" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <?php
+                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity - $nilai_lab);
+                    ?>
+                    <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
+                    <td class="pd-5" valign="top">
+                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Tandem</td>
                     <td class="pd-5" valign="top">
@@ -478,17 +491,12 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     <td></td>
                 </tr>
                 <tr>
-                    <?php
-                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity);
-                    ?>
-                    <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
-                    <td class="pd-5" valign="top">
-                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
-                    </td>
+                    <td colspan="2"></td>
                     <td class="pd-5 semi-bold" valign="top">Nilai Kontrak Bersih</td>
                     <td class="pd-5" valign="top">
                         <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right total_nilai_kontrak_bersih" value="<?= number_format($nilai_kontrak_bersih, 2) ?>" readonly>
                     </td>
+                    <td></td>
                 </tr>
             </table>
         </div>
@@ -516,7 +524,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                         </table> -->
                     </th>
                     <th class="text-right" valign="top">
-                        
+
                     </th>
                 </tr>
             </table>
@@ -728,21 +736,21 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
 </form>
 
 <div class="modal" id="dialog-rekap" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<h4 class="modal-title" id="myModalLabel"></h4>
-			</div>
-			<div class="modal-body" id="MyModalBody">
-				...
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" data-dismiss="modal">
-					<span class="glyphicon glyphicon-remove"></span> Close</button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body" id="MyModalBody">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span> Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <input type="hidden" name="no_payment" value="<?= $no_payment ?>">
@@ -1177,10 +1185,10 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
             },
             cache: false,
             success: function(result) {
-                if(type == 'akomodasi') {
+                if (type == 'akomodasi') {
                     $('#myModalLabel').html('Detail Akomodasi');
-                } 
-                if(type == 'others') {
+                }
+                if (type == 'others') {
                     $('#myModalLabel').html('Detail Others');
                 }
                 $('#MyModalBody').html(result);

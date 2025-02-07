@@ -141,6 +141,16 @@ class SPK_penawaran extends Admin_Controller
             $nilai_others += $item_others->total_budget;
         }
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_lab = $this->db->get()->result();
+
+        $nilai_lab = 0;
+        foreach ($get_lab as $item_lab) {
+            $nilai_lab += $item_lab->total_budget;
+        }
+
         $nilai_kontrak = 0;
         foreach ($get_aktifitas as $item_aktifitas) {
             $nilai_kontrak += $item_aktifitas->harga_aktifitas;
@@ -163,6 +173,7 @@ class SPK_penawaran extends Admin_Controller
             'nilai_project' => $get_penawaran->grand_total,
             'nilai_akomodasi' => $nilai_akomodasi,
             'nilai_others' => $nilai_others,
+            'nilai_lab' => $nilai_lab,
             'nilai_kontrak' => $nilai_kontrak
         ];
 
@@ -270,6 +281,16 @@ class SPK_penawaran extends Admin_Controller
             $nilai_others += $item_others->total_budget;
         }
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_lab = $this->db->get()->result();
+
+        $nilai_lab = 0;
+        foreach ($get_lab as $item_lab) {
+            $nilai_lab += $item_lab->total_budget;
+        }
+
         $nilai_kontrak = 0;
         foreach ($get_aktifitas as $item_aktifitas) {
             $nilai_kontrak += $item_aktifitas->harga_aktifitas;
@@ -290,6 +311,7 @@ class SPK_penawaran extends Admin_Controller
             'nilai_project' => $get_penawaran->grand_total,
             'nilai_akomodasi' => $nilai_akomodasi,
             'nilai_others' => $nilai_others,
+            'nilai_lab' => $nilai_lab,
             'nilai_kontrak' => $nilai_kontrak
         ];
 
@@ -828,6 +850,16 @@ class SPK_penawaran extends Admin_Controller
             $nilai_others += $item_others->total_budget;
         }
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->where('a.id_penawaran', $id_quotation);
+        $get_lab = $this->db->get()->result();
+
+        $nilai_lab = 0;
+        foreach($get_lab as $item_lab) {
+            $nilai_lab += $item_lab->total_budget;
+        }
+
         $nilai_project = $get_penawaran->grand_total;
 
         $data = [
@@ -843,7 +875,8 @@ class SPK_penawaran extends Admin_Controller
             'nilai_kontrak' => $nilai_kontrak,
             'nilai_project' => $nilai_project,
             'nilai_akomodasi' => $nilai_akomodasi,
-            'nilai_others' => $nilai_others
+            'nilai_others' => $nilai_others,
+            'nilai_lab' => $nilai_lab
         ];
 
         $this->template->set($data);
@@ -957,6 +990,7 @@ class SPK_penawaran extends Admin_Controller
             'biaya_akomodasi' => ($post['biaya_akomodasi'] !== '') ? str_replace(',', '', $post['biaya_akomodasi']) : 0,
             'biaya_others' => ($post['biaya_others'] !== '') ? str_replace(',', '', $post['biaya_others']) : 0,
             'biaya_tandem' => ($post['biaya_tandem'] !== '') ? str_replace(',', '', $post['biaya_tandem']) : 0,
+            'biaya_lab' => ($post['biaya_lab'] !== '') ? str_replace(',', '', $post['biaya_lab']) : 0,
             'nilai_kontrak_bersih' => ($post['nilai_kontrak_bersih'] !== '') ? str_replace(',', '', $post['nilai_kontrak_bersih']) : 0,
             'mandays_rate' => ($post['mandays_rate'] !== '') ? str_replace(',', '', $post['mandays_rate']) : 0,
             'total_mandays' => ($post['total_mandays'] !== '') ? str_replace(',', '', $post['total_mandays']) : 0,
