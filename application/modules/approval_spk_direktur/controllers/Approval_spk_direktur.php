@@ -127,6 +127,16 @@ class Approval_spk_direktur extends Admin_Controller
             $nilai_others += $item_others->total_budget;
         }
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_lab = $this->db->get()->result();
+
+        $nilai_lab = 0;
+        foreach ($get_lab as $item_lab) {
+            $nilai_lab += $item_lab->total_budget;
+        }
+
         $nilai_kontrak = 0;
         foreach ($get_aktifitas as $item_aktifitas) {
             $nilai_kontrak += $item_aktifitas->harga_aktifitas;
@@ -152,6 +162,7 @@ class Approval_spk_direktur extends Admin_Controller
             'nilai_project' => $get_penawaran->grand_total,
             'nilai_akomodasi' => $nilai_akomodasi,
             'nilai_others' => $nilai_others,
+            'nilai_lab' => $nilai_lab,
             'nilai_kontrak' => $nilai_kontrak,
             'data_user' => $get_user
         ];
@@ -258,6 +269,16 @@ class Approval_spk_direktur extends Admin_Controller
             $nilai_others += $item_others->total_budget;
         }
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_lab = $this->db->get()->result();
+
+        $nilai_lab = 0;
+        foreach ($get_lab as $item_lab) {
+            $nilai_lab += $item_lab->total_budget;
+        }
+
         $nilai_kontrak = 0;
         foreach ($get_aktifitas as $item_aktifitas) {
             $nilai_kontrak += $item_aktifitas->harga_aktifitas;
@@ -283,6 +304,7 @@ class Approval_spk_direktur extends Admin_Controller
             'nilai_project' => $get_penawaran->grand_total,
             'nilai_akomodasi' => $nilai_akomodasi,
             'nilai_others' => $nilai_others,
+            'nilai_lab' => $nilai_lab,
             'nilai_kontrak' => $nilai_kontrak,
             'data_user' => $get_user
         ];

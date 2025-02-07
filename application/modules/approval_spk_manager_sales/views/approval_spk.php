@@ -464,29 +464,36 @@ if ($data_user->employee_id == '168') {
 
             </tr>
             <tr>
-                <td class="pd-5 semi-bold" valign="top">Mandays Internal</td>
-                <td class="pd-5" width="400" valign="top">
-                    <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right total_mandays_internal" value="<?= number_format($total_mandays - $total_mandays_subcont) ?>" readonly>
-                </td>
-                <td class="pd-5 semi-bold" valign="top">Biaya Tandem</td>
+                <td class="pd-5 semi-bold" valign="top">Mandays Tandem</td>
                 <td class="pd-5" valign="top">
-                    <input type="text" name="biaya_tandem" id="" class="form-control form-control-sm text-right biaya_tandem" value="<?= number_format($nilai_tandem, 2) ?>" readonly>
+                    <input type="text" name="mandays_tandem" id="" class="form-control form-control-sm text-right " value="<?= number_format($total_mandays_tandem) ?>" readonly>
                 </td>
-
-
+                <td class="pd-5 semi-bold" valign="top">Biaya Lab</td>
+                <td class="pd-5" valign="top">
+                    <input type="text" name="biaya_lab" id="" class="form-control form-control-sm text-right biaya_lab" value="<?= number_format($nilai_lab, 2) ?>" readonly>
+                </td>
             </tr>
             <tr>
                 <?php
-                $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity);
+                $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity - $nilai_lab);
                 ?>
                 <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                 <td class="pd-5" valign="top">
                     <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
                 </td>
+                <td class="pd-5 semi-bold" valign="top">Biaya Tandem</td>
+                <td class="pd-5" valign="top">
+                    <input type="text" name="biaya_tandem" id="" class="form-control form-control-sm text-right biaya_tandem" value="<?= number_format($nilai_tandem, 2) ?>" readonly>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
                 <td class="pd-5 semi-bold" valign="top">Nilai Kontrak Bersih</td>
                 <td class="pd-5" valign="top">
                     <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right total_nilai_kontrak_bersih" value="<?= number_format($nilai_kontrak_bersih, 2) ?>" readonly>
                 </td>
+                <td></td>
             </tr>
         </table>
     </div>
