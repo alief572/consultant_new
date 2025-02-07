@@ -155,7 +155,7 @@ class Master_lab_model extends BF_Model
             $this->db->or_like('a.harga_lab', $search['value'], 'both');
             $this->db->group_end();
         }
-        $this->db->order_by('a.id', 'desc');
+        $this->db->order_by('a.id', 'asc');
         $this->db->limit($length, $start);
         $get_data = $this->db->get();
 
@@ -171,7 +171,7 @@ class Master_lab_model extends BF_Model
             $this->db->or_like('a.harga_lab', $search['value'], 'both');
             $this->db->group_end();
         }
-        $this->db->order_by('a.id', 'desc');
+        $this->db->order_by('a.id', 'asc');
         $get_data_all = $this->db->get();
 
         $hasil = [];
