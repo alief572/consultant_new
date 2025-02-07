@@ -542,9 +542,9 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top">Mandays Internal</td>
-                    <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right total_mandays_internal" value="<?= number_format($total_mandays - $total_mandays_subcont) ?>" readonly>
+                    <td class="pd-5 semi-bold" valign="top">Mandays Tandem</td>
+                    <td class="pd-5" valign="top">
+                        <input type="text" name="mandays_tandem" id="" class="form-control form-control-sm text-right " value="<?= number_format($total_mandays_tandem) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Tandem</td>
                     <td class="pd-5" valign="top">

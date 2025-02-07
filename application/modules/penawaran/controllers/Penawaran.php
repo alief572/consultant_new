@@ -576,7 +576,7 @@ class Penawaran extends Admin_Controller
                 $hasil .= '<option value="' . $item_aktifitas->id_aktifitas . '" ' . $selected . '>' . $item_aktifitas->nm_aktifitas . '</option>';
             }
 
-            $mandays = ($item->mandays > 0) ? $item->mandays : 1;
+            $mandays = $item->mandays;
             $mandays_rate = ($item->mandays >= 1) ? ($item->harga_aktifitas / $item->mandays) : ($item->harga_aktifitas);
             $total = ($item->mandays >= 1) ? $mandays_rate : ($item->harga_aktifitas * $item->mandays);
 
@@ -799,7 +799,7 @@ class Penawaran extends Admin_Controller
             'total_mandays' => $post['ttl_total_mandays'],
             'mandays_subcont' => $post['ttl_mandays_subcont'],
             'mandays_tandem' => $post['ttl_mandays_tandem'],
-            'mandays_internal' => $post['ttl_mandays_internal'],
+            'mandays_internal' => $post['ttl_total_mandays'],
             'mandays_rate' => $post['ttl_mandays_rate'],
             'input_by' => $this->auth->user_id(),
             'input_date' => date('Y-m-d H:i:s')
@@ -1006,7 +1006,7 @@ class Penawaran extends Admin_Controller
                 'total_mandays' => $post['ttl_total_mandays'],
                 'mandays_subcont' => $post['ttl_mandays_subcont'],
                 'mandays_tandem' => $post['ttl_mandays_tandem'],
-                'mandays_internal' => $post['ttl_mandays_internal'],
+                'mandays_internal' => $post['ttl_total_mandays'],
                 'mandays_rate' => $post['ttl_mandays_rate'],
                 'sts_quot' => 1,
                 'sts_deal' => null,

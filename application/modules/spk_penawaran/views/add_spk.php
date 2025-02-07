@@ -492,23 +492,15 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <?php
                     $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity);
                     ?>
-
-                    <td class="pd-5 semi-bold" valign="top">Mandays Internal</td>
-                    <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right total_mandays_internal" value="<?= number_format($total_mandays - $total_mandays_subcont) ?>" readonly>
+                    <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
+                    <td class="pd-5" valign="top">
+                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Nilai Kontrak Bersih</td>
                     <td class="pd-5" valign="top">
                         <input type="text" name="nilai_kontrak_bersih" id="" class="form-control form-control-sm text-right total_nilai_kontrak_bersih" value="<?= number_format($nilai_kontrak_bersih, 2) ?>" readonly>
                     </td>
                     <td></td>
-                </tr>
-                <tr>
-                    <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
-                    <td class="pd-5" valign="top">
-                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
-                    </td>
-                    <td colspan="2"></td>
                 </tr>
             </table>
         </div>
@@ -836,7 +828,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
         var mandays_internal = parseFloat(total_mandays - ttl_mandays_subcont);
 
-        $('.total_mandays_internal').val(mandays_internal);
+        // $('.total_mandays_internal').val(mandays_internal);
     }
 
     function hitung_total_subcont() {

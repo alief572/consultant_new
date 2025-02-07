@@ -77,9 +77,9 @@ class Approval_spk_direktur extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('ms_department a');
-        $this->db->where('a.deleted_by', null);
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -208,9 +208,9 @@ class Approval_spk_direktur extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('ms_department a');
-        $this->db->where('a.deleted_by', null);
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');

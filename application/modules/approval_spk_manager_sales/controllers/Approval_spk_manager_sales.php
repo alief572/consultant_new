@@ -77,9 +77,9 @@ class Approval_spk_manager_sales extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('ms_department a');
-        $this->db->where('a.deleted_by', null);
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -202,9 +202,9 @@ class Approval_spk_manager_sales extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $this->db->select('a.id, a.nama');
-        $this->db->from('ms_department a');
-        $this->db->where('a.deleted_by', null);
+        $this->db->select('a.id, a.name as nama');
+        $this->db->from(DBHR . '.divisions a');
+        $this->db->where('a.company_id', 'COM003');
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -306,6 +306,7 @@ class Approval_spk_manager_sales extends Admin_Controller
         $this->db->where('a.sts_spk', null);
         $this->db->where('a.approval_manager_sales', null);
         $this->db->where('a.approval_project_leader_sts <>', null);
+        $this->db->where('a.approval_project_leader_sts <>', '');
 
         if (!empty($search['value'])) {
             $this->db->group_start();
@@ -329,6 +330,7 @@ class Approval_spk_manager_sales extends Admin_Controller
         $this->db->where('a.sts_spk', null);
         $this->db->where('a.approval_manager_sales', null);
         $this->db->where('a.approval_project_leader_sts <>', null);
+        $this->db->where('a.approval_project_leader_sts <>', '');
 
         if (!empty($search['value'])) {
             $this->db->group_start();
@@ -420,6 +422,10 @@ class Approval_spk_manager_sales extends Admin_Controller
                     $valid = 0;
                 }
 
+                if($get_user->employee_id == 'EMP0010') {
+                    $valid = 1;
+                }
+
 
                 if ($valid == 1) {
                     $option .= '
@@ -453,6 +459,10 @@ class Approval_spk_manager_sales extends Admin_Controller
             }
             if ($get_user->employee_id == $item->id_konsultan_2 && $item->approval_konsultan_2_sts !== null) {
                 $valid_show = 0;
+            }
+
+            if($get_user->employee_id == 'EMP0010') {
+                $valid_show = 1;
             }
 
             if ($valid_show == 1) {

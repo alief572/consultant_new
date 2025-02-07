@@ -622,9 +622,36 @@ class SPK_penawaran extends Admin_Controller
             $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
             $this->db->group_end();
         }
-        $this->db->order_by('a.id_quotation', 'desc');
+        $this->db->order_by('a.input_date', 'desc');
+        $this->db->limit($length, $start);
 
         $get_data = $this->db->get();
+
+        $this->db->select('a.*, c.nama');
+        $this->db->from('kons_tr_penawaran a');
+        $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
+        $this->db->join('members c', 'c.id = a.id_marketing', 'left');
+        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
+        $this->db->join('kons_master_paket e', 'e.id_paket = d.id_paket', 'left');
+        $this->db->where(1, 1);
+        $this->db->where('a.deleted_by', null);
+        $this->db->group_start();
+        $this->db->where('a.id_spk_penawaran', null);
+        $this->db->or_where('a.id_spk_penawaran', '');
+        $this->db->group_end();
+        $this->db->where('a.sts_deal', 1);
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('a.tgl_quotation', $search['value'], 'both');
+            $this->db->or_like('c.nama', $search['value'], 'both');
+            $this->db->or_like('e.nm_paket', $search['value'], 'both');
+            $this->db->or_like('b.nm_customer', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
+            $this->db->group_end();
+        }
+        $this->db->order_by('a.input_date', 'desc');
+
+        $get_data_all = $this->db->get();
 
         $hasil = [];
 
@@ -702,8 +729,8 @@ class SPK_penawaran extends Admin_Controller
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data->num_rows(),
-            'recordsFiltered' => $get_data->num_rows(),
+            'recordsTotal' => $get_data_all->num_rows(),
+            'recordsFiltered' => $get_data_all->num_rows(),
             'data' => $hasil
         ]);
     }
@@ -860,10 +887,10 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $get_divisi = $this->db->get_where('ms_department', ['id' => $post['divisi']])->row();
+        $get_divisi = $this->db->get_where(DBHR.'.divisions', ['id' => $post['divisi']])->row();
 
         $id_divisi = (!empty($get_divisi)) ? $get_divisi->id : '';
-        $nm_divisi = (!empty($get_divisi)) ? $get_divisi->nama : '';
+        $nm_divisi = (!empty($get_divisi)) ? $get_divisi->name : '';
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
@@ -1099,9 +1126,9 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $get_divisi = $this->db->get_where('ms_department', ['id' => $post['divisi']])->row();
+        $get_divisi = $this->db->get_where(DBHR.'.divisions', ['id' => $post['divisi']])->row();
 
-        $nm_divisi = (!empty($get_divisi)) ? $get_divisi->nama : '';
+        $nm_divisi = (!empty($get_divisi)) ? $get_divisi->name : '';
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
