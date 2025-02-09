@@ -80,12 +80,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th rowspan="2" class="text-center valign-middle">No</th>
                         <th rowspan="2" class="text-center valign-middle">Item</th>
                         <th colspan="3" class="text-center valign-middle">Estimasi</th>
-                        <th colspan="3" class="text-center valign-middle">Pengajuan</th>
+                        <th colspan="4" class="text-center valign-middle">Pengajuan</th>
                     </tr>
                     <tr>
                         <th class="text-center valign-middle">Qty</th>
                         <th class="text-center valign-middle">Price/Unit</th>
                         <th class="text-center valign-middle">Total Budget</th>
+                        <th class="text-center valign-middle">Qty Budget Tambahan</th>
                         <th class="text-center valign-middle">Budget Tambahan</th>
                         <th class="text-center valign-middle">Pengajuan New Budget</th>
                         <th class="text-center valign-middle">Reason</th>
@@ -101,6 +102,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                         echo '<td class="text-center">';
                         echo $no;
+                        echo '<input type="hidden" name="req_akomodasi[' . $no . '][id_detail]" value="' . $item->id . '">';
                         echo '<input type="hidden" name="req_akomodasi[' . $no . '][id_item]" value="' . $item->id_item . '">';
                         echo '<input type="hidden" name="req_akomodasi[' . $no . '][nm_item]" value="' . $item->nm_item . '">';
                         echo '</td>';
@@ -122,7 +124,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="req_akomodasi[' . $no . '][budget_tambahan]" value="0" onchange="hitung_all()">';
+                        echo '<input type="number" class="form-control form-control-sm text-right" name="req_akomodasi[' . $no . '][qty_budget_tambahan]" min="0" value="0" onchange="hitung_all()">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="req_akomodasi[' . $no . '][budget_tambahan]" value="'.$item->price_unit_final.'" readonly>';
                         echo '</td>';
 
                         echo '<td>';
@@ -147,7 +153,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <td class="text-center">
                             <?= number_format($ttl_total_budget_estimasi, 2) ?>
                         </td>
-                        <td></td>
+                        <td colspan="2"></td>
                         <td class="text-center ttl_new_budget">
                             <?= number_format($ttl_total_budget_estimasi, 2) ?>
                         </td>
@@ -219,9 +225,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         for (i = 1; i <= no; i++) {
             var total_budget = get_num($('input[name="req_akomodasi[' + i + '][total_budget]"]').val());
+            var qty_budget_tambahan = get_num($('input[name="req_akomodasi[' + i + '][qty_budget_tambahan]"]').val());
             var budget_tambahan = get_num($('input[name="req_akomodasi[' + i + '][budget_tambahan]"]').val());
 
-            var pengajuan_budget_new = parseFloat(total_budget + budget_tambahan);
+            var pengajuan_budget_new = parseFloat(total_budget + (budget_tambahan * qty_budget_tambahan));
 
             $('input[name="req_akomodasi[' + i + '][pengajuan_new_budget]"]').val(number_format(pengajuan_budget_new, 2));
 
