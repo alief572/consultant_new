@@ -475,6 +475,9 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_lab" id="" class="form-control form-control-sm text-right biaya_lab" value="<?= number_format($nilai_lab, 2) ?>" readonly>
                     </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="lab" data-id_spk_penawaran="<?= $list_spk_penawaran->id_spk_penawaran ?>"><i class="fa fa-eye"></i> Detail</button>
+                    </td>
                 </tr>
                 <tr>
                     <?php
@@ -1190,6 +1193,9 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                 }
                 if (type == 'others') {
                     $('#myModalLabel').html('Detail Others');
+                }
+                if (type == 'lab') {
+                    $('#myModalLabel').html('Detail Lab');
                 }
                 $('#MyModalBody').html(result);
                 $('#dialog-rekap').modal('show');

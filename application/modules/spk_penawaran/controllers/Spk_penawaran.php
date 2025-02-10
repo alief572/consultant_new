@@ -1556,7 +1556,7 @@ class SPK_penawaran extends Admin_Controller
                 $this->template->render('detail_akomodasi');
             }
             if ($type == 'others') {
-                $this->db->select('a.id, a.qty, a.price_unit, a.total, a.keterangan, b.nm_biaya');
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya');
                 $this->db->from('kons_tr_penawaran_others a');
                 $this->db->join('kons_master_biaya b', 'b.id = a.id_item');
                 $this->db->where('a.id_penawaran', $get_spk_penawaran->id_penawaran);
@@ -1568,6 +1568,20 @@ class SPK_penawaran extends Admin_Controller
 
                 $this->template->set($data);
                 $this->template->render('detail_others');
+            }
+            if ($type == 'lab') {
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.isu_lingkungan as nm_biaya');
+                $this->db->from('kons_tr_penawaran_lab a');
+                $this->db->join('kons_master_lab b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $get_spk_penawaran->id_penawaran);
+                $get_lab = $this->db->get()->result();
+
+                $data = [
+                    'list_lab' => $get_lab
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_lab');
             }
         } else {
             $id_penawaran = $this->input->post('id_penawaran');
@@ -1588,7 +1602,7 @@ class SPK_penawaran extends Admin_Controller
                 $this->template->render('detail_akomodasi');
             }
             if ($type == 'others') {
-                $this->db->select('a.id, a.qty, a.price_unit, a.total, a.keterangan, b.nm_biaya');
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya');
                 $this->db->from('kons_tr_penawaran_others a');
                 $this->db->join('kons_master_biaya b', 'b.id = a.id_item');
                 $this->db->where('a.id_penawaran', $id_penawaran);
@@ -1600,6 +1614,20 @@ class SPK_penawaran extends Admin_Controller
 
                 $this->template->set($data);
                 $this->template->render('detail_others');
+            }
+            if ($type == 'lab') {
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.isu_lingkungan as nm_biaya');
+                $this->db->from('kons_tr_penawaran_lab a');
+                $this->db->join('kons_master_lab b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $id_penawaran);
+                $get_lab = $this->db->get()->result();
+
+                $data = [
+                    'list_lab' => $get_lab
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_lab');
             }
         }
     }

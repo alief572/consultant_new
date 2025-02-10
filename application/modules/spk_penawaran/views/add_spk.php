@@ -487,6 +487,9 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_lab" id="" class="form-control form-control-sm text-right biaya_lab" value="<?= number_format($nilai_lab, 2) ?>" readonly>
                     </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="lab" data-id_quotation="<?= $list_penawaran->id_quotation ?>"><i class="fa fa-eye"></i> Detail</button>
+                    </td>
                 </tr>
                 <tr>
                     <?php
@@ -848,16 +851,20 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         var biaya_lab = get_num($('input[name="biaya_lab"]').val());
         var total_mandays = "<?= $total_mandays ?>";
 
+        var mandays_subcont = 0;
         var ttl_subcont = 0;
 
         var no = $('.tr_list_subcont').length;
         for (i = 1; i <= no; i++) {
+            var total_mandays = get_num($('input[name="subcont[' + i + '][subcont_new_mandays]"]').val());
             var total_subcont = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
 
+            mandays_subcont += parseFloat(total_mandays);
             ttl_subcont += parseFloat(total_subcont);
         }
 
         $('.biaya_subcont').val(number_format(ttl_subcont, 2));
+        $('.total_mandays_subcont').val(mandays_subcont);
         $('.ttl_total_subcont').html(number_format(ttl_subcont, 2));
 
         $('input[name="nilai_kontrak_bersih"]').val(number_format((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_lab), 2));
@@ -975,12 +982,16 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         var no_subcont = $('.tr_list_subcont').length;
 
         var ttl_subcont = 0;
+        var ttl_mandays_subcont = 0;
         for (i = 1; i <= no_subcont; i++) {
+            var subcont_mandays = get_num($('input[name="subcont[' + i + '][subcont_new_mandays]"]').val());
             var subcont_price = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
 
+            ttl_mandays_subcont += subcont_mandays;
             ttl_subcont += subcont_price;
         }
 
+        $('.total_mandays_subcont').val(ttl_mandays_subcont);
         $('.td_grand_total_subcont').html(number_format(ttl_subcont, 2));
 
         hitung_total_subcont();
@@ -1252,6 +1263,9 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                 }
                 if (type == 'others') {
                     $('#myModalLabel').html('Detail Others');
+                }
+                if (type == 'lab') {
+                    $('#myModalLabel').html('Detail Lab');
                 }
                 $('#MyModalBody').html(result);
                 $('#dialog-rekap').modal('show');
