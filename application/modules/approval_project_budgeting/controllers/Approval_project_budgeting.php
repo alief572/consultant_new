@@ -221,6 +221,7 @@ class Approval_project_budgeting extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Approval Project Budgeting');
         $this->template->render('approval');
     }
 
