@@ -13,7 +13,7 @@
         <?php
         $no = 0;
         $ttl = 0;
-        foreach ($list_others as $item) {
+        foreach ($list_lab as $item) {
             $no++;
 
             echo '<tr>';
