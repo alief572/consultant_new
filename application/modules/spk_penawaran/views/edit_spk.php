@@ -1017,12 +1017,16 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
         var no_subcont = $('.tr_list_subcont').length;
 
         var ttl_subcont = 0;
+        var ttl_mandays_subcont = 0;
         for (i = 1; i <= no_subcont; i++) {
+            var subcont_mandays = get_num($('input[name="subcont[' + i + '][subcont_new_mandays]"]').val());
             var subcont_price = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
 
+            ttl_mandays_subcont += subcont_mandays;
             ttl_subcont += subcont_price;
         }
 
+        $('.total_mandays_subcont').val(ttl_mandays_subcont);
         $('.td_grand_total_subcont').html(number_format(ttl_subcont, 2));
 
         hitung_total_subcont();
