@@ -197,9 +197,9 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.id_quotation', $get_spk->id_penawaran);
         $get_penawaran = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR.'.employees a');
+        $this->db->where('a.flag_active', 'Y');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('a.*, b.mandays as mandays_def');
@@ -250,9 +250,9 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_spk_budgeting = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR. '.employees a');
+        $this->db->where('a.flag_active', 'Y');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('a.*, c.mandays as mandays_def');
@@ -341,6 +341,18 @@ class Project_budgeting extends Admin_Controller
             'mandays_rate' => $get_spk_penawaran->mandays_rate,
             'ppn' => $get_penawaran->ppn,
             'grand_total' => $get_penawaran->grand_total,
+            'mandays_subcont_before' => $post['ttl_mandays_subcont_before'],
+            'biaya_subcont_before' => $post['ttl_subcont_before'],
+            'biaya_akomodasi_before' => $post['ttl_total_akomodasi_before'],
+            'biaya_others_before' => $post['ttl_total_others_before'],
+            'mandays_subcont_after' => $post['summary_mandays_subcont'],
+            'biaya_subcont_after' => $post['summary_biaya_subcont_after'],
+            'biaya_akomodasi_after' => $post['summary_biaya_akomodasi_after'],
+            'biaya_others_after' => $post['summary_biaya_others_after'],
+            'mandays_subcont_result' => $post['summary_mandays_subcont_result_value'],
+            'biaya_subcont_result' => $post['summary_biaya_subcont_result_value'],
+            'biaya_akomodasi_result' => $post['summary_biaya_akomodasi_result_value'],
+            'biaya_others_result' => $post['summary_biaya_others_result_value'],
             'create_by' => $this->auth->user_id(),
             'create_date' => date('Y-m-d H:i:s')
         ];
