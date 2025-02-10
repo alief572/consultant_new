@@ -1330,18 +1330,19 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
-        $this->db->select('b.id_item, SUM(b.budget_tambahan) as total_budget_tambahan');
+        $this->db->select('b.id_detail ,b.id_item, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_header a');
         $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_detail b', 'b.id_request_ovb = a.id_request_ovb');
         $this->db->where('a.tipe', 2);
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $this->db->group_by('b.id_item');
+        $this->db->group_by('b.id');
         $get_ovb_akomodasi = $this->db->get()->result_array();
 
         $data_ovb_akomodasi = [];
         foreach ($get_ovb_akomodasi as $item) {
-            $data_ovb_akomodasi[$item['id_item']] = [
-                'total_budget_tambahan' => $item['total_budget_tambahan']
+            $data_ovb_akomodasi[$item['id_detail']] = [
+                'total_budget_tambahan' => $item['total_budget_tambahan'],
+                'ttl_qty_tambahan' => $item['ttl_qty_tambahan']
             ];
         }
 
@@ -1381,17 +1382,18 @@ class Kasbon_project extends Admin_Controller
 
         $data_budget_tambahan = [];
 
-        $this->db->select('a.id_item, SUM(a.budget_tambahan) as ttl_budget_tambahan');
+        $this->db->select('a.id, a.id_item, SUM(a.budget_tambahan) as ttl_budget_tambahan, SUM(a.qty_budget_tambahan) as ttl_qty_budget_tambahan');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
         $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_header b', 'b.id_request_ovb = a.id_request_ovb');
         $this->db->where('b.id_spk_budgeting', $get_header->id_spk_budgeting);
         $this->db->where('b.sts', '1');
-        $this->db->group_by('a.id_item');
+        $this->db->group_by('a.id');
         $get_data_ovb = $this->db->get()->result();
 
         foreach ($get_data_ovb as $item) {
-            $data_budget_tambahan[$item->id_item] = [
-                'budget_tambahan' => $item->ttl_budget_tambahan
+            $data_budget_tambahan[$item->id] = [
+                'budget_tambahan' => $item->ttl_budget_tambahan,
+                'qty_budget_tambahan' => $item->ttl_qty_budget_tambahan
             ];
         }
 
@@ -1407,7 +1409,7 @@ class Kasbon_project extends Admin_Controller
         $data_list_kasbon_akomodasi = [];
 
         foreach ($get_kasbon_akomodasi as $item) {
-            $data_list_kasbon_akomodasi[$item->id_item] = [
+            $data_list_kasbon_akomodasi[$item->id] = [
                 'nm_biaya' => $item->nm_biaya,
                 'nominal_pengajuan' => $item->nominal_pengajuan,
                 'qty_pengajuan' => $item->qty_pengajuan,
@@ -1415,6 +1417,7 @@ class Kasbon_project extends Admin_Controller
                 'qty_estimasi' => $item->qty_estimasi,
                 'price_unit_estimasi' => $item->price_unit_estimasi,
                 'total_budgeting_estimasi' => $item->total_budget_estimasi,
+                'qty_budget_tambahan' => $item->qty_budget_tambahan,
                 'budget_tambahan' => $item->budget_tambahan,
                 'aktual_terpakai' => $item->aktual_terpakai,
                 'sisa_budget' => $item->sisa_budget
@@ -1424,7 +1427,7 @@ class Kasbon_project extends Admin_Controller
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
-            'list_data_kasbon' => $get_data_akomodasi,
+            'list_data_kasbon' => $get_kasbon_akomodasi,
             'list_budget_tambahan' => $data_budget_tambahan,
             'data_list_kasbon_akomodasi' => $data_list_kasbon_akomodasi
         ];
@@ -1456,7 +1459,7 @@ class Kasbon_project extends Admin_Controller
 
         $data_budget_tambahan = [];
 
-        $this->db->select('a.id_item, SUM(a.budget_tambahan) as ttl_budget_tambahan');
+        $this->db->select('a.id, a.id_item, SUM(a.budget_tambahan) as ttl_budget_tambahan, SUM(a.qty_budget_tambahan) as ttl_qty_budget_tambahan');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
         $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_header b', 'b.id_request_ovb = a.id_request_ovb');
         $this->db->where('b.id_spk_budgeting', $get_header->id_spk_budgeting);
@@ -1465,8 +1468,9 @@ class Kasbon_project extends Admin_Controller
         $get_data_ovb = $this->db->get()->result();
 
         foreach ($get_data_ovb as $item) {
-            $data_budget_tambahan[$item->id_item] = [
-                'budget_tambahan' => $item->ttl_budget_tambahan
+            $data_budget_tambahan[$item->id] = [
+                'budget_tambahan' => $item->ttl_budget_tambahan,
+                'qty_budget_tambahan' => $item->ttl_qty_budget_tambahan
             ];
         }
 
@@ -1482,7 +1486,7 @@ class Kasbon_project extends Admin_Controller
         $data_list_kasbon_akomodasi = [];
 
         foreach ($get_kasbon_akomodasi as $item) {
-            $data_list_kasbon_akomodasi[$item->id_item] = [
+            $data_list_kasbon_akomodasi[$item->id] = [
                 'nm_biaya' => $item->nm_biaya,
                 'nominal_pengajuan' => $item->nominal_pengajuan,
                 'qty_pengajuan' => $item->qty_pengajuan,
@@ -1490,6 +1494,7 @@ class Kasbon_project extends Admin_Controller
                 'qty_estimasi' => $item->qty_estimasi,
                 'price_unit_estimasi' => $item->price_unit_estimasi,
                 'total_budgeting_estimasi' => $item->total_budget_estimasi,
+                'qty_budget_tambahan' => $item->qty_budget_tambahan,
                 'budget_tambahan' => $item->budget_tambahan,
                 'aktual_terpakai' => $item->aktual_terpakai,
                 'sisa_budget' => $item->sisa_budget
@@ -2004,7 +2009,8 @@ class Kasbon_project extends Admin_Controller
                     'qty_estimasi' => $item['qty_estimasi'],
                     'price_unit_estimasi' => $item['price_unit_estimasi'],
                     'total_budget_estimasi' => $item['total_estimasi'],
-                    // 'budget_tambahan' => $item['budget_tambahan'],
+                    'qty_budget_tambahan' => $item['qty_budget_tambahan'],
+                    'budget_tambahan' => $item['budget_tambahan'],
                     'aktual_terpakai' => $item['aktual_terpakai'],
                     'sisa_budget' => $item['sisa_budget'],
                     'created_by' => $this->auth->user_id(),
@@ -2636,15 +2642,18 @@ class Kasbon_project extends Admin_Controller
         $data_detail = [];
         if (isset($post['req_akomodasi'])) {
             foreach ($post['req_akomodasi'] as $item) {
+                $qty_budget_tambahan = str_replace(',', '', $item['qty_budget_tambahan']);
                 $budget_tambahan = str_replace(',', '', $item['budget_tambahan']);
-                if ($budget_tambahan > 0) {
+                if ($qty_budget_tambahan > 0) {
                     $data_detail[] = [
                         'id_request_ovb' => $id_request_ovb,
+                        'id_detail' => $item['id_detail'],
                         'id_item' => $item['id_item'],
                         'nm_item' => $item['nm_item'],
                         'qty_estimasi' => str_replace(',', '', $item['qty_estimasi']),
                         'price_unit_estimasi' => str_replace(',', '', $item['price_unit_estimasi']),
                         'total_budget_estimasi' => str_replace(',', '', $item['total_budget']),
+                        'qty_budget_tambahan' => str_replace(',', '', $item['qty_budget_tambahan']),
                         'budget_tambahan' => str_replace(',', '', $item['budget_tambahan']),
                         'pengajuan_budget' => str_replace(',', '', $item['pengajuan_new_budget']),
                         'reason' => $item['reason'],

@@ -56,6 +56,7 @@ class Penawaran extends Admin_Controller
 
         $get_penawaran_akomodasi = $this->db->get_where('kons_tr_penawaran_akomodasi', ['id_penawaran' => $id_penawaran])->result();
         $get_penawaran_others = $this->db->get_where('kons_tr_penawaran_others', ['id_penawaran' => $id_penawaran])->result();
+        $get_penawaran_lab = $this->db->get_where('kons_tr_penawaran_lab', ['id_penawaran' => $id_penawaran])->result();
 
         $this->db->select('a.*');
         $this->db->from('customer a');
@@ -100,6 +101,11 @@ class Penawaran extends Admin_Controller
         $this->db->where('a.deleted_by', null);
         $get_def_biaya_others = $this->db->get()->result();
 
+        $this->db->select('a.*');
+        $this->db->from('kons_master_lab a');
+        $this->db->where('a.deleted_by', null);
+        $get_def_biaya_lab = $this->db->get()->result();
+
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
         $this->db->where('a.company_id', 'COM003');
@@ -110,17 +116,19 @@ class Penawaran extends Admin_Controller
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
             'list_penawaran_akomodasi' => $get_penawaran_akomodasi,
             'list_penawaran_others' => $get_penawaran_others,
+            'list_penawaran_lab' => $get_penawaran_lab,
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
             'list_aktifitas' => $get_aktifitas,
             'list_def_akomodasi' => $get_def_biaya_akomodasi,
             'list_def_others' => $get_def_biaya_others,
+            'list_def_lab' => $get_def_biaya_lab,
             'list_divisi' => $get_divisi,
             'list_employees' => $get_employees
         ];
 
-        $this->template->title('View Quotation');
+        $this->template->title('Edit Quotation');
         $this->template->set($data);
         $this->template->render('edit_penawaran');
     }
@@ -152,6 +160,12 @@ class Penawaran extends Admin_Controller
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_penawaran', $id_penawaran);
         $get_penawaran_others = $this->db->get()->result();
+
+        $this->db->select('a.*, b.isu_lingkungan');
+        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $id_penawaran);
+        $get_penawaran_lab = $this->db->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('customer a');
@@ -194,6 +208,7 @@ class Penawaran extends Admin_Controller
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
             'list_penawaran_akomodasi' => $get_penawaran_akomodasi,
             'list_penawaran_others' => $get_penawaran_others,
+            'list_penawaran_lab' => $get_penawaran_lab,
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
@@ -481,6 +496,11 @@ class Penawaran extends Admin_Controller
         $this->db->where('a.deleted_by', null);
         $get_def_biaya_others = $this->db->get()->result();
 
+        $this->db->select('a.id, a.isu_lingkungan, a.peraturan, a.waktu, a.harga_ssc, a.harga_lab');
+        $this->db->from('kons_master_lab a');
+        $this->db->where('a.deleted_by', null);
+        $get_def_biaya_lab = $this->db->get()->result();
+
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
         $this->db->where('a.company_id', 'COM003');
@@ -493,6 +513,7 @@ class Penawaran extends Admin_Controller
             'list_aktifitas' => $get_aktifitas,
             'list_def_akomodasi' => $get_def_biaya_akomodasi,
             'list_def_others' => $get_def_biaya_others,
+            'list_def_lab' => $get_def_biaya_lab,
             'list_divisi' => $get_divisi,
             'list_employees' => $get_employees
         ];
@@ -860,6 +881,24 @@ class Penawaran extends Admin_Controller
             }
         }
 
+        $arr_insert_lab = [];
+        if (isset($post['dt_lab'])) {
+            foreach ($post['dt_lab'] as $item_lab) {
+                $arr_insert_lab[] = [
+                    'id_penawaran' => $id_penawaran,
+                    'id_item' => $item_lab['id_lab'],
+                    'qty' => str_replace(',', '', $item_lab['qty_lab']),
+                    'price_unit' => str_replace(',', '', $item_lab['harga_lab']),
+                    'total' => str_replace(',', '', $item_lab['total_lab']),
+                    'price_unit_budget' => str_replace(',', '', $item_lab['harga_lab_budget']),
+                    'total_budget' => (str_replace(',', '', $item_lab['harga_lab_budget']) * str_replace(',', '', $item_lab['qty_lab'])),
+                    'keterangan' => $item_lab['keterangan_lab'],
+                    'input_by' => $this->auth->user_id(),
+                    'input_date' => date('Y-m-d H:i:s')
+                ];
+            }
+        }
+
         $insert_penawaran = $this->db->insert('kons_tr_penawaran', $arr_insert);
         if (!$insert_penawaran) {
             $this->db->trans_rollback();
@@ -889,6 +928,15 @@ class Penawaran extends Admin_Controller
                 $this->db->trans_rollback();
                 print_r('error_insert 4');
                 print_r($this->db->error($insert_penawaran_others));
+                exit;
+            }
+        }
+        if(!empty($arr_insert_lab)) {
+            $insert_penawaran_lab = $this->db->insert_batch('kons_tr_penawaran_lab', $arr_insert_lab);
+            if (!$insert_penawaran_lab) {
+                $this->db->trans_rollback();
+                print_r('error_insert 4');
+                print_r($this->db->error($insert_penawaran_lab));
                 exit;
             }
         }
@@ -948,6 +996,7 @@ class Penawaran extends Admin_Controller
         $this->db->delete('kons_tr_penawaran_aktifitas', ['id_penawaran' => $post['id_penawaran']]);
         $this->db->delete('kons_tr_penawaran_akomodasi', ['id_penawaran' => $post['id_penawaran']]);
         $this->db->delete('kons_tr_penawaran_others', ['id_penawaran' => $post['id_penawaran']]);
+        $this->db->delete('kons_tr_penawaran_lab', ['id_penawaran' => $post['id_penawaran']]);
 
         $config['upload_path'] = './uploads/proposal_penawaran/';
         $config['allowed_types'] = '*';
@@ -1079,7 +1128,27 @@ class Penawaran extends Admin_Controller
                     'qty' => str_replace(',', '', $item_oth['qty_others']),
                     'price_unit' => str_replace(',', '', $item_oth['harga_others']),
                     'total' => str_replace(',', '', $item_oth['total_others']),
+                    'price_unit_budget' => str_replace(',', '', $item_oth['harga_others_budget']),
+                    'total_budget' => (str_replace(',', '', $item_oth['harga_others_budget']) * str_replace(',', '', $item_oth['qty_others'])),
                     'keterangan' => $item_oth['keterangan_others'],
+                    'input_by' => $this->auth->user_id(),
+                    'input_date' => date('Y-m-d H:i:s')
+                ];
+            }
+        }
+
+        $arr_insert_lab = [];
+        if (isset($post['dt_lab'])) {
+            foreach ($post['dt_lab'] as $item_lab) {
+                $arr_insert_lab[] = [
+                    'id_penawaran' => $id_penawaran,
+                    'id_item' => $item_lab['id_lab'],
+                    'qty' => str_replace(',', '', $item_lab['qty_lab']),
+                    'price_unit' => str_replace(',', '', $item_lab['harga_lab']),
+                    'total' => str_replace(',', '', $item_lab['total_lab']),
+                    'price_unit_budget' => str_replace(',', '', $item_lab['harga_lab_budget']),
+                    'total_budget' => (str_replace(',', '', $item_lab['harga_lab_budget']) * str_replace(',', '', $item_lab['qty_lab'])),
+                    'keterangan' => $item_lab['keterangan_lab'],
                     'input_by' => $this->auth->user_id(),
                     'input_date' => date('Y-m-d H:i:s')
                 ];
@@ -1115,6 +1184,15 @@ class Penawaran extends Admin_Controller
                 $this->db->trans_rollback();
                 print_r('error_insert 4');
                 print_r($this->db->error($insert_penawaran_others));
+                exit;
+            }
+        }
+        if (!empty($arr_insert_lab)) {
+            $insert_penawaran_lab = $this->db->insert_batch('kons_tr_penawaran_lab', $arr_insert_lab);
+            if (!$insert_penawaran_lab) {
+                $this->db->trans_rollback();
+                print_r('error_insert 5');
+                print_r($this->db->error($insert_penawaran_lab));
                 exit;
             }
         }
@@ -1192,6 +1270,20 @@ class Penawaran extends Admin_Controller
 
         echo json_encode([
             'nm_divisi' => $nm_divisi
+        ]);
+    }
+
+    public function change_lab() {
+        $id_lab = $this->input->post('id_lab');
+
+        $get_lab = $this->db->get_where('kons_master_lab', array('id' => $id_lab))->row();
+
+        $harga_ssc = (!empty($get_lab)) ? $get_lab->harga_ssc : 0;
+        $harga_lab = (!empty($get_lab)) ? $get_lab->harga_lab : 0;
+
+        echo json_encode([
+            'harga_ssc' => $harga_ssc,
+            'harga_lab' => $harga_lab
         ]);
     }
 }

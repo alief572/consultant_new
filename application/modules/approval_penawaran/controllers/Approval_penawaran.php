@@ -64,6 +64,12 @@ class Approval_penawaran extends Admin_Controller
         $this->db->where('a.id_penawaran', $id_penawaran);
         $get_penawaran_others = $this->db->get()->result();
 
+        $this->db->select('a.*, b.isu_lingkungan');
+        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $id_penawaran);
+        $get_penawaran_lab = $this->db->get()->result();
+
         $this->db->select('a.*');
         $this->db->from('customer a');
         $this->db->where('a.nm_customer <>', '');
@@ -105,6 +111,7 @@ class Approval_penawaran extends Admin_Controller
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
             'list_penawaran_akomodasi' => $get_penawaran_akomodasi,
             'list_penawaran_others' => $get_penawaran_others,
+            'list_penawaran_lab' => $get_penawaran_lab,
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
@@ -146,6 +153,12 @@ class Approval_penawaran extends Admin_Controller
         $this->db->where('a.id_penawaran', $id_penawaran);
         $get_penawaran_others = $this->db->get()->result();
 
+        $this->db->select('a.*, b.isu_lingkungan');
+        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $id_penawaran);
+        $get_penawaran_lab = $this->db->get()->result();
+
         $this->db->select('a.*');
         $this->db->from('customer a');
         $this->db->where('a.nm_customer <>', '');
@@ -187,6 +200,7 @@ class Approval_penawaran extends Admin_Controller
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
             'list_penawaran_akomodasi' => $get_penawaran_akomodasi,
             'list_penawaran_others' => $get_penawaran_others,
+            'list_penawaran_lab' => $get_penawaran_lab,
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,

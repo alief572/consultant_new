@@ -6,12 +6,16 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
 $open_akomodasi = 'd-none';
 $open_others = 'd-none';
+$open_lab = 'd-none';
 
 if (count($list_penawaran_akomodasi) > 0) {
     $open_akomodasi = '';
 }
 if (count($list_penawaran_others) > 0) {
     $open_others = '';
+}
+if (count($list_penawaran_lab) > 0) {
+    $open_lab = '';
 }
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
@@ -436,11 +440,74 @@ if (count($list_penawaran_others) > 0) {
 <div class="box">
     <div class="box-header">
         <h4 class="semi-bold">
+            Lab
+            <div style="float: right">
+                <div class="onoffswitch">
+                    <input type="checkbox" name="switch_others" class="onoffswitch-checkbox" id="switch_others" <?= ($open_lab == '') ? 'checked' : '' ?>>
+                    <label class="onoffswitch-label" for="switch_others">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+        </h4>
+    </div>
+    <div class="box-body box_others <?= ($open_lab == '') ? '' : 'd-none' ?>">
+
+
+        <br>
+
+        <table class="table custom-table">
+            <thead>
+                <tr>
+                    <th class="text-center">Item</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Price/Unit Customer</th>
+                    <th class="text-center">Price/Unit Budget</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Keterangan</th>
+                </tr>
+            </thead>
+            <tbody class="list_lab">
+                <?php
+                $no_lab = 1;
+
+                $ttl_lab = 0;
+                foreach ($list_penawaran_lab as $item_lab) {
+                    echo '<tr>';
+                    echo '<td>' . $item_lab->isu_lingkungan . '</td>';
+                    echo '<td class="text-center">' . number_format($item_lab->qty, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_lab->price_unit, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_lab->price_unit_budget, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_lab->total, 2) . '</td>';
+                    echo '<td>' . $item_lab->keterangan . '</td>';
+                    echo '</tr>';
+
+                    $ttl_lab += $item_lab->total;
+                }
+                ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" class="text-right">
+                        Total
+                    </th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_lab, 2) ?></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <h4 class="semi-bold">
             Summary
 
             <div style="float: right;">
                 <div class="cbx-krajee">
-                    <input id="input-id" type="checkbox" class="include_ppn" name="include_ppn" value="1" <?= ($list_penawaran->ppn == 1) ? 'checked' : '' ?> disabled>
+                    <input id="input-id" type="checkbox" class="include_ppn" name="include_ppn" value="1" <?= ($list_penawaran->ppn == 1) ? 'checked' : '' ?>>
                     <label for="input-id" class="cbx-label">Include PPN</label>
                 </div>
             </div>
@@ -468,8 +535,12 @@ if (count($list_penawaran_others) > 0) {
                     <td class="text-right summary_others"><?= number_format($ttl_others, 2) ?></td>
                 </tr>
                 <tr>
+                    <td class="text-left">Lab</td>
+                    <td class="text-right summary_lab"><?= number_format($ttl_lab, 2) ?></td>
+                </tr>
+                <tr>
                     <td class="text-left"><b>Subtotal</b></td>
-                    <td class="text-right summary_subtotal"><?= number_format(($ttl_price + $ttl_akomodasi + $ttl_others), 2) ?></td>
+                    <td class="text-right summary_subtotal"><?= number_format(($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab), 2) ?></td>
                 </tr>
                 <tr>
                     <td class="text-left"><b>Discount</b></td>
@@ -482,13 +553,13 @@ if (count($list_penawaran_others) > 0) {
                 </tr>
                 <tr>
                     <td class="text-left"><b>Price after discount</b></td>
-                    <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc), 2) ?></td>
+                    <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc), 2) ?></td>
                 </tr>
                 <tr>
                     <?php
                     $nilai_ppn = 0;
                     if ($list_penawaran->ppn == 1) {
-                        $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc) * 11 / 100);
+                        $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc) * 11 / 100);
                     }
                     ?>
                     <td class="text-left">PPN</td>
@@ -498,17 +569,65 @@ if (count($list_penawaran_others) > 0) {
             <tfoot>
                 <tr>
                     <td class="text-left"><b>Grand Total</b></td>
-                    <td class="text-right summary_grand_total"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others) - $list_penawaran->nilai_disc) + $nilai_ppn, 2) ?></td>
+                    <td class="text-right summary_grand_total"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc) + $nilai_ppn, 2) ?></td>
                 </tr>
             </tfoot>
         </table>
 
         <input type="hidden" class="grand_total" name="grand_total">
+    </div>
+</div>
 
-        <div style="float: right; margin-top: 1rem;">
-            <a href="<?= base_url('approval_penawaran') ?>" class="btn btn-sm btn-danger">
-                <i class="fa fa-arrow-left"></i> Back
-            </a>
+<div class="box">
+    <div class="box-header"></div>
+    <div class="box-body">
+        <div class="col-md-6">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th colspan="3">Detail Other Summary</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>Total Mandays</td>
+                    <td class="text-center">:</td>
+                    <td class="text-right">
+                        <input type="hidden" name="ttl_total_mandays" value="<?= $list_penawaran->total_mandays ?>">
+                        <span class="ttl_total_mandays"><?= number_format($list_penawaran->total_mandays) ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mandays Tandem</td>
+                    <td class="text-center">:</td>
+                    <td class="text-right">
+                        <input type="hidden" name="ttl_mandays_tandem" value="<?= $list_penawaran->mandays_tandem ?>">
+                        <span class="ttl_mandays_tandem"><?= number_format($list_penawaran->mandays_tandem) ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mandays Subcont</td>
+                    <td class="text-center">:</td>
+                    <td class="text-right">
+                        <input type="hidden" name="ttl_mandays_subcont" value="<?= $list_penawaran->mandays_subcont ?>">
+                        <span class="ttl_mandays_subcont"><?= number_format($list_penawaran->mandays_subcont) ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mandays Rate</td>
+                    <td class="text-center">:</td>
+                    <td class="text-right ">
+                        <input type="hidden" name="ttl_mandays_rate" value="<?= $list_penawaran->mandays_rate ?>">
+                        <span class="ttl_mandays_rate">Rp. <?= number_format($list_penawaran->mandays_rate, 2) ?></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-12">
+            <div style="float: right; margin-top: 1rem;top: 0;">
+                <a href="<?= base_url('approval_penawaran') ?>" class="btn btn-sm btn-danger">
+                    <i class="fa fa-arrow-left"></i> Back
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -516,6 +635,7 @@ if (count($list_penawaran_others) > 0) {
 <input type="hidden" class="no" value="1">
 <input type="hidden" class="no_akomodasi" value="1">
 <input type="hidden" class="no_others" value="1">
+<input type="hidden" class="no_lab" value="1">
 
 <div id="form-data"></div>
 <!-- DataTables -->

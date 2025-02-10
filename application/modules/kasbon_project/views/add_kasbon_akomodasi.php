@@ -137,6 +137,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th colspan="2" class="text-center">Estimasi</th>
                         <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
                         <th colspan="3" class="text-center">Pengajuan</th>
+                        <th rowspan="2" class="text-center" valign="middle">Qty Tambahan</th>
                         <th rowspan="2" class="text-center" valign="middle">Budget Tambahan</th>
                         <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
                         <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
@@ -159,6 +160,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_budget_tambahan = 0;
                     $ttl_aktual_pakai = 0;
                     $ttl_sisa_budget = 0;
+                    $ttl_total_qty_tambah = 0;
 
                     $ttl_nominal_pengajuan = 0;
 
@@ -166,7 +168,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                         $aktual_terpakai = (isset($data_kasbon_akomodasi[$item->id_akomodasi]['ttl_qty_pengajuan'])) ? $data_kasbon_akomodasi[$item->id_akomodasi]['ttl_qty_pengajuan'] : 0;
 
-                        $total_budget_tambahan = (isset($data_ovb_akomodasi[$item->id_item])) ? $data_ovb_akomodasi[$item->id_item]['total_budget_tambahan'] : 0;
+                        $total_budget_tambahan = (isset($data_ovb_akomodasi[$item->id])) ? $data_ovb_akomodasi[$item->id]['total_budget_tambahan'] : 0;
+                        $ttl_qty_tambahan = (isset($data_ovb_akomodasi[$item->id])) ? $data_ovb_akomodasi[$item->id]['ttl_qty_tambahan'] : 0;
 
                         $sisa_budget = (isset($data_kasbon_akomodasi[$item->id_akomodasi]['ttl_total_pengajuan'])) ? (($item->price_unit_final * $item->qty_final) - $data_kasbon_akomodasi[$item->id_akomodasi]['ttl_total_pengajuan']) : ($item->price_unit_final * $item->qty_final);
 
@@ -176,6 +179,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         if ($sisa_budget <= 0) {
                             $readonly = 'readonly';
                         }
+
+                        $sisa_qty = (($item->qty_final + $ttl_qty_tambahan) - $aktual_terpakai);
 
                         echo '<tr>';
 
@@ -215,13 +220,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td class="text-center">';
+                        echo number_format($ttl_qty_tambahan);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][qty_budget_tambahan]" value="' . $ttl_qty_tambahan . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
                         echo number_format($total_budget_tambahan, 2);
                         echo '<input type="hidden" name="detail_akomodasi[' . $no . '][budget_tambahan]" value="' . $total_budget_tambahan . '">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
-                        echo number_format($item->qty_final - $aktual_terpakai);
-                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][aktual_terpakai]" value="' . ($item->qty_final - $aktual_terpakai) . '">';
+                        echo number_format($sisa_qty);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][aktual_terpakai]" value="' . ($sisa_qty) . '">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
@@ -235,8 +245,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         $ttl_est_price_unit += $item->price_unit_final;
                         $ttl_est_total_budget += $item->total_final;
                         $ttl_budget_tambahan += $total_budget_tambahan;
-                        $ttl_aktual_pakai += ($item->qty_final - $aktual_terpakai);
+                        $ttl_aktual_pakai += ($sisa_qty);
                         $ttl_sisa_budget += $sisa_budget;
+                        $ttl_total_qty_tambah += $ttl_qty_tambahan;
 
                         $no++;
                     }
@@ -251,6 +262,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <td class="text-center ttl_qty_pengajuan">0</td>
                         <td class="text-center"></td>
                         <td class="text-center ttl_pengajuan"></td>
+                        <td class="text-center"><?= number_format($ttl_total_qty_tambah) ?></td>
                         <td class="text-center"><?= number_format($ttl_budget_tambahan, 2) ?></td>
                         <td class="text-center"><?= number_format($ttl_aktual_pakai) ?></td>
                         <td class="text-center"><?= number_format($ttl_sisa_budget, 2) ?></td>

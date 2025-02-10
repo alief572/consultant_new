@@ -130,19 +130,20 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     <table class="table custom-table">
       <thead>
         <tr>
-          <th class="text-center valign-middle" rowspan="2">No</th>
-          <th class="text-center valign-middle" rowspan="2">Item</th>
-          <th class="text-center valign-middle" colspan="2">Pengajuan</th>
-          <th class="text-center valign-middle" colspan="3">Estimasi</th>
-          <th class="text-center valign-middle" rowspan="2">Aktual Terpakai</th>
-          <th class="text-center valign-middle" rowspan="2">Sisa Budget</th>
+          <th rowspan="2" class="text-center" valign="middle">No.</th>
+          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+          <th colspan="2" class="text-center">Estimasi</th>
+          <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
+          <th colspan="3" class="text-center">Pengajuan</th>
+          <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
+          <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
         </tr>
         <tr>
-          <th class="text-center valign-middle">Qty</th>
-          <th class="text-center valign-middle">Nominal</th>
-          <th class="text-center valign-middle">Qty</th>
-          <th class="text-center valign-middle">Price/Unit</th>
-          <th class="text-center valign-middle">Total Budget</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Pengajuan</th>
         </tr>
       </thead>
       <tbody>
@@ -155,11 +156,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
           echo '<td class="text-center">' . $no . '</td>';
           echo '<td class="text-left">' . $item->nm_aktifitas . '</td>';
-          echo '<td class="text-center">' . number_format($item->qty_pengajuan) . '</td>';
-          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
           echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_pengajuan) . '</td>';
+          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->aktual_terpakai) . '</td>';
           echo '<td class="text-right">' . number_format($item->sisa_budget, 2) . '</td>';
           echo '</tr>';
@@ -180,20 +182,22 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     <table class="table custom-table">
       <thead>
         <tr>
-          <th class="text-center valign-middle" rowspan="2">No</th>
-          <th class="text-center valign-middle" rowspan="2">Item</th>
-          <th class="text-center valign-middle" colspan="2">Pengajuan</th>
-          <th class="text-center valign-middle" colspan="3">Estimasi</th>
-          <th class="text-center valign-middle" rowspan="2">Budget Tambahan</th>
-          <th class="text-center valign-middle" rowspan="2">Aktual Terpakai</th>
-          <th class="text-center valign-middle" rowspan="2">Sisa Budget</th>
+          <th rowspan="2" class="text-center" valign="middle">No.</th>
+          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+          <th colspan="2" class="text-center">Estimasi</th>
+          <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
+          <th colspan="3" class="text-center">Pengajuan</th>
+          <th rowspan="2" class="text-center" valign="middle">Qty Budget Tambahan</th>
+          <th rowspan="2" class="text-center" valign="middle">Budget Tambahan</th>
+          <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
+          <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
         </tr>
         <tr>
-          <th class="text-center valign-middle">Qty</th>
-          <th class="text-center valign-middle">Nominal</th>
-          <th class="text-center valign-middle">Qty</th>
-          <th class="text-center valign-middle">Price/Unit</th>
-          <th class="text-center valign-middle">Total Budget</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Pengajuan</th>
         </tr>
       </thead>
       <tbody>
@@ -206,11 +210,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
           echo '<td class="text-center">' . $no . '</td>';
           echo '<td class="text-left">' . $item->nm_biaya . '</td>';
-          echo '<td class="text-center">' . number_format($item->qty_pengajuan) . '</td>';
-          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
           echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_pengajuan) . '</td>';
+          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_budget_tambahan) . '</td>';
           echo '<td class="text-right">' . number_format($item->budget_tambahan, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->aktual_terpakai) . '</td>';
           echo '<td class="text-right">' . number_format($item->sisa_budget, 2) . '</td>';
@@ -232,19 +238,20 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     <table class="table custom-table">
       <thead>
         <tr>
-          <th class="text-center valign-middle" rowspan="2">No</th>
-          <th class="text-center valign-middle" rowspan="2">Item</th>
-          <th class="text-center valign-middle" colspan="2">Pengajuan</th>
-          <th class="text-center valign-middle" colspan="3">Estimasi</th>
-          <th class="text-center valign-middle" rowspan="2">Aktual Terpakai</th>
-          <th class="text-center valign-middle" rowspan="2">Sisa Budget</th>
+          <th rowspan="2" class="text-center" valign="middle">No.</th>
+          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+          <th colspan="2" class="text-center">Estimasi</th>
+          <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
+          <th colspan="3" class="text-center">Pengajuan</th>
+          <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
+          <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
         </tr>
         <tr>
-          <th class="text-center valign-middle">Qty</th>
-          <th class="text-center valign-middle">Nominal</th>
-          <th class="text-center valign-middle">Qty</th>
-          <th class="text-center valign-middle">Price/Unit</th>
-          <th class="text-center valign-middle">Total Budget</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Pengajuan</th>
         </tr>
       </thead>
       <tbody>
@@ -257,11 +264,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
           echo '<td class="text-center">' . $no . '</td>';
           echo '<td class="text-left">' . $item->nm_biaya . '</td>';
-          echo '<td class="text-center">' . number_format($item->qty_pengajuan) . '</td>';
-          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
           echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_pengajuan) . '</td>';
+          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->aktual_terpakai) . '</td>';
           echo '<td class="text-right">' . number_format($item->sisa_budget, 2) . '</td>';
           echo '</tr>';
