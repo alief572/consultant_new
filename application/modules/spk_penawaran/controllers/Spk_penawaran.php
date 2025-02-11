@@ -158,6 +158,13 @@ class SPK_penawaran extends Admin_Controller
 
         $approval_data = [];
 
+        $this->db->select('a.nm_paket');
+        $this->db->from('kons_master_konsultasi_header a');
+        $this->db->where('a.id_konsultasi_h', $get_spk_penawaran->id_project);
+        $get_package = $this->db->get()->row();
+
+        $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
+
         $data = [
             'list_spk_aktifitas' => $get_list_spk_aktifitas,
             'list_spk_penawaran' => $get_spk_penawaran,
@@ -174,7 +181,8 @@ class SPK_penawaran extends Admin_Controller
             'nilai_akomodasi' => $nilai_akomodasi,
             'nilai_others' => $nilai_others,
             'nilai_lab' => $nilai_lab,
-            'nilai_kontrak' => $nilai_kontrak
+            'nilai_kontrak' => $nilai_kontrak,
+            'nm_paket' => $nm_paket
         ];
 
         $this->auth->restrict($this->viewPermission);
@@ -296,6 +304,13 @@ class SPK_penawaran extends Admin_Controller
             $nilai_kontrak += $item_aktifitas->harga_aktifitas;
         }
 
+        $this->db->select('a.nm_paket');
+        $this->db->from('kons_master_konsultasi_header a');
+        $this->db->where('a.id_konsultasi_h', $get_spk_penawaran->id_project);
+        $get_package = $this->db->get()->row();
+
+        $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
+
         $data = [
             'list_spk_aktifitas' => $get_list_spk_aktifitas,
             'list_spk_penawaran' => $get_spk_penawaran,
@@ -312,7 +327,8 @@ class SPK_penawaran extends Admin_Controller
             'nilai_akomodasi' => $nilai_akomodasi,
             'nilai_others' => $nilai_others,
             'nilai_lab' => $nilai_lab,
-            'nilai_kontrak' => $nilai_kontrak
+            'nilai_kontrak' => $nilai_kontrak,
+            'nm_paket' => $nm_paket
         ];
 
         $this->auth->restrict($this->viewPermission);
@@ -404,6 +420,13 @@ class SPK_penawaran extends Admin_Controller
             $ttl_tandem += ($item->mandays_tandem * $item->mandays_rate_tandem);
         }
 
+        $this->db->select('a.nm_paket');
+        $this->db->from('kons_master_konsultasi_header a');
+        $this->db->where('a.id_konsultasi_h', $get_spk_penawaran->id_project);
+        $get_package = $this->db->get()->row();
+
+        $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
+
         $data = [
             'list_spk_penawaran' => $get_spk_penawaran,
             'list_spk_penawaran_subcont' => $get_spk_penawaran_subcont,
@@ -418,7 +441,8 @@ class SPK_penawaran extends Admin_Controller
             'list_akomodasi' => $get_akomodasi,
             'list_others' => $get_others,
             'ttl_mandays_subcont' => $ttl_mandays_subcont,
-            'ttl_tandem' => $ttl_tandem
+            'ttl_tandem' => $ttl_tandem,
+            'nm_paket' => $nm_paket
         ];
 
         // ob_clean();
@@ -588,7 +612,12 @@ class SPK_penawaran extends Admin_Controller
 
             $nm_marketing = $item->nm_sales;
 
-            $nm_paket = $item->nm_project;
+            $this->db->select('a.*');
+            $this->db->from('kons_master_konsultasi_header a');
+            $this->db->where('a.id_konsultasi_h', $item->id_project);
+            $get_package = $this->db->get()->row();
+
+            $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
 
             $nm_customer = $item->nm_customer;
 
@@ -724,9 +753,8 @@ class SPK_penawaran extends Admin_Controller
             $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
             $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nm_karyawan : '';
 
-            $this->db->select('a.*, b.nm_paket');
+            $this->db->select('a.*');
             $this->db->from('kons_master_konsultasi_header a');
-            $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
             $this->db->where('a.id_konsultasi_h', $item->id_paket);
             $get_package = $this->db->get()->row();
 

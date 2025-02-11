@@ -150,6 +150,13 @@ class Approval_spk_project_leader extends Admin_Controller
         $this->db->where('a.id_user', $this->auth->user_id());
         $get_user = $this->db->get()->row();
 
+        $this->db->select('a.nm_paket');
+        $this->db->from('kons_master_konsultasi_header a');
+        $this->db->where('a.id_konsultasi_h', $get_spk_penawaran->id_project);
+        $get_package = $this->db->get()->row();
+
+        $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
+
         $data = [
             'list_spk_aktifitas' => $get_list_spk_aktifitas,
             'list_spk_penawaran' => $get_spk_penawaran,
@@ -167,7 +174,8 @@ class Approval_spk_project_leader extends Admin_Controller
             'nilai_others' => $nilai_others,
             'nilai_lab' => $nilai_lab,
             'nilai_kontrak' => $nilai_kontrak,
-            'data_user' => $get_user
+            'data_user' => $get_user,
+            'nm_paket' => $nm_paket
         ];
 
         $this->auth->restrict($this->viewPermission);
@@ -293,6 +301,13 @@ class Approval_spk_project_leader extends Admin_Controller
         $this->db->where('a.id_user', $this->auth->user_id());
         $get_user = $this->db->get()->row();
 
+        $this->db->select('a.nm_paket');
+        $this->db->from('kons_master_konsultasi_header a');
+        $this->db->where('a.id_konsultasi_h', $get_spk_penawaran->id_project);
+        $get_package = $this->db->get()->row();
+
+        $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
+
         $data = [
             'list_spk_aktifitas' => $get_list_spk_aktifitas,
             'list_spk_penawaran' => $get_spk_penawaran,
@@ -310,7 +325,8 @@ class Approval_spk_project_leader extends Admin_Controller
             'nilai_others' => $nilai_others,
             'nilai_lab' => $nilai_lab,
             'nilai_kontrak' => $nilai_kontrak,
-            'data_user' => $get_user
+            'data_user' => $get_user,
+            'nm_paket' => $nm_paket
         ];
 
         $this->auth->restrict($this->viewPermission);

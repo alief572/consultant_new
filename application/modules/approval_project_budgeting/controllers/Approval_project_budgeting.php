@@ -84,7 +84,7 @@ class Approval_project_budgeting extends Admin_Controller
         foreach ($get_data->result() as $item) {
 
             $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-            if($item->sts == 2) {
+            if ($item->sts == 2) {
                 $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
             }
 
@@ -187,9 +187,8 @@ class Approval_project_budgeting extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_spk_budgeting = $this->db->get()->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('a.*, c.mandays as mandays_def');
@@ -211,13 +210,21 @@ class Approval_project_budgeting extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_spk_budgeting_others = $this->db->get()->result();
 
+        $this->db->select('a.nm_paket');
+        $this->db->from('kons_master_konsultasi_header a');
+        $this->db->where('a.id_konsultasi_h', $get_spk_budgeting->id_project);
+        $get_package = $this->db->get()->row();
+
+        $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
+
         $data = [
             'id_spk_budgeting' => $id_spk_budgeting,
             'list_budgeting' => $get_spk_budgeting,
             'list_all_marketing' => $get_all_marketing,
             'list_budgeting_aktifitas' => $get_spk_budgeting_aktifitas,
             'list_budgeting_akomodasi' => $get_spk_budgeting_akomodasi,
-            'list_budgeting_others' => $get_spk_budgeting_others
+            'list_budgeting_others' => $get_spk_budgeting_others,
+            'nm_paket' => $nm_paket
         ];
 
         $this->template->set($data);
@@ -495,7 +502,8 @@ class Approval_project_budgeting extends Admin_Controller
         ]);
     }
 
-    public function reject_budget() {
+    public function reject_budget()
+    {
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $reject_reason = $this->input->post('reject_reason');
 
@@ -521,7 +529,8 @@ class Approval_project_budgeting extends Admin_Controller
         ]);
     }
 
-    public function approve_budget() {
+    public function approve_budget()
+    {
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
 
         $this->db->trans_begin();
