@@ -151,7 +151,12 @@ class Project_budgeting extends Admin_Controller
 
             $nm_marketing = $item->nm_sales;
 
-            $nm_paket = $item->nm_project;
+            $this->db->select('a.nm_paket');
+            $this->db->from('kons_master_konsultasi_header a');
+            $this->db->where('a.id_konsultasi_h', $item->id_project);
+            $get_package = $this->db->get()->row();
+
+            $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
 
             $nm_customer = $item->nm_customer;
 
@@ -161,7 +166,7 @@ class Project_budgeting extends Admin_Controller
                 'nm_customer' => $item->nm_customer,
                 'nm_sales' => ucfirst($item->nm_sales),
                 'nm_project_leader' => ucfirst($item->nm_project_leader),
-                'nm_project' => $item->nm_project,
+                'nm_project' => $nm_paket,
                 'status' => $status,
                 'option' => $option
             ];
@@ -198,7 +203,7 @@ class Project_budgeting extends Admin_Controller
         $get_penawaran = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR.'.employees a');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.flag_active', 'Y');
         $get_all_marketing = $this->db->get()->result();
 
@@ -226,13 +231,21 @@ class Project_budgeting extends Admin_Controller
         // print_r($get_all_marketing);
         // exit;
 
+        $this->db->select('a.nm_paket');
+        $this->db->from('kons_master_konsultasi_header a');
+        $this->db->where('a.id_konsultasi_h', $get_spk->id_project);
+        $get_package = $this->db->get()->row();
+
+        $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
+
         $data = [
             'list_spk_penawaran' => $get_spk,
             'list_all_marketing' => $get_all_marketing,
             'list_aktifitas' => $get_aktifitas,
             'list_akomodasi' => $get_akomodasi,
             'list_others' => $get_others,
-            'list_penawaran' => $get_penawaran
+            'list_penawaran' => $get_penawaran,
+            'nm_paket' => $nm_paket
         ];
 
         $this->template->set($data);
@@ -251,7 +264,7 @@ class Project_budgeting extends Admin_Controller
         $get_spk_budgeting = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR. '.employees a');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.flag_active', 'Y');
         $get_all_marketing = $this->db->get()->result();
 
@@ -274,12 +287,20 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_spk_budgeting_others = $this->db->get()->result();
 
+        $this->db->select('a.nm_paket');
+            $this->db->from('kons_master_konsultasi_header a');
+            $this->db->where('a.id_konsultasi_h', $get_spk_budgeting->id_project);
+            $get_package = $this->db->get()->row();
+
+            $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
+
         $data = [
             'list_budgeting' => $get_spk_budgeting,
             'list_all_marketing' => $get_all_marketing,
             'list_budgeting_aktifitas' => $get_spk_budgeting_aktifitas,
             'list_budgeting_akomodasi' => $get_spk_budgeting_akomodasi,
-            'list_budgeting_others' => $get_spk_budgeting_others
+            'list_budgeting_others' => $get_spk_budgeting_others,
+            'nm_paket' => $nm_paket
         ];
 
         $this->template->set($data);
@@ -384,7 +405,7 @@ class Project_budgeting extends Admin_Controller
                     'mandays_rate_subcont_estimasi' => $get_data_subcont['price_subcont'],
                     'total_aktifitas_estimasi' => $total_aktifitas_estimasi,
                     'mandays_final' => $get_data_subcont['mandays'],
-                    'mandays_rate_final' =>$get_data_subcont['mandays_rate'],
+                    'mandays_rate_final' => $get_data_subcont['mandays_rate'],
                     'mandays_tandem_final' =>  $get_data_subcont['mandays_tandem'],
                     'mandays_rate_tandem_final' => $get_data_subcont['mandays_rate_tandem'],
                     'mandays_subcont_final' => str_replace(',', '', $item['mandays_subcont']),

@@ -95,7 +95,7 @@
     <tr>
         <th align="left" valign="top" width="50" rowspan="3">Project</th>
         <th align="center" valign="top" width="2" rowspan="3">:</th>
-        <td width="100" valign="top" rowspan="3"><?= $list_spk_penawaran->nm_project ?></td>
+        <td width="100" valign="top" rowspan="3"><?= $nm_paket ?></td>
         <th align="left" valign="top" width="50">Project Leader</th>
         <th align="center" width="2" valign="top">:</th>
         <td width="100" valign="top"><?= ucfirst($list_spk_penawaran->nm_project_leader) ?></td>
