@@ -133,6 +133,9 @@ if (count($list_penawaran_lab) > 0) {
                                     if ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Facebook') {
                                         echo '<option value="Facebook">Facebook</option>';
                                     }
+                                    if ($list_penawaran->tipe_informasi_awal == 'Medsos' && $list_penawaran->detail_informasi_awal == 'Incoming Call') {
+                                        echo '<option value="Incoming Call">Incoming Call</option>';
+                                    }
                                     ?>
                                 </select>
                             </td>
