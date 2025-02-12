@@ -43,9 +43,10 @@ class Approval_expense_report_project extends Admin_Controller
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
 
-        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to, c.nm_paket');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budgeting = $this->db->get()->row();
 
@@ -660,11 +661,12 @@ class Approval_expense_report_project extends Admin_Controller
         $search = $this->input->post('search');
 
 
-        $this->db->select('a.*, b.nm_sales');
+        $this->db->select('a.*, b.nm_sales, e.nm_paket');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_tr_kasbon_project_header c', 'c.id_spk_budgeting = a.id_spk_budgeting', 'left');
         $this->db->join('kons_tr_expense_report_project_header d', 'd.id_header = c.id', 'left');
+        $this->db->join('kons_master_konsultasi_header e', 'e.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('d.sts_req', 1);
         if (!empty($search)) {
             $this->db->group_start();
@@ -736,7 +738,7 @@ class Approval_expense_report_project extends Admin_Controller
                     'nm_customer' => $item->nm_customer,
                     'nm_sales' => ucfirst($item->nm_sales),
                     'nm_project_leader' => ucfirst($item->nm_project_leader),
-                    'nm_project' => $item->nm_project,
+                    'nm_project' => $item->nm_paket,
                     'option' => $option
                 ];
             }

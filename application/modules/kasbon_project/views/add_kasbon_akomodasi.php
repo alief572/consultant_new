@@ -303,9 +303,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
             <div class="col-md-6">
                 <div class="row">
-                    <a href="<?= base_url('kasbon_project/add_request_budget_akomodasi/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
+                    <!-- <a href="<?= base_url('kasbon_project/add_request_budget_akomodasi/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
                         <i class="fa fa-plus"></i> Request Overbudget
-                    </a>
+                    </a> -->
                 </div>
             </div>
 

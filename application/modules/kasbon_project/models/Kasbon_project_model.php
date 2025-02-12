@@ -55,7 +55,8 @@ class Kasbon_project_model extends BF_Model
         return $kode_trans;
     }
 
-    public function generate_id_req_ovb_akomodasi() {
+    public function generate_id_req_ovb_akomodasi()
+    {
         $Ym             = date('ym');
         $srcMtr            = "SELECT MAX(id_request_ovb) as maxP FROM kons_tr_kasbon_req_ovb_akomodasi_header WHERE id_request_ovb LIKE '%/REQ/OVB/A/" . date('Y') . "%' ";
         $resultMtr        = $this->db->query($srcMtr)->result_array();

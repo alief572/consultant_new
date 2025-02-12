@@ -281,7 +281,7 @@ class Expense_report_project extends Admin_Controller
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_akomodasi a');
                 $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_item', $item->id_item);
+                $this->db->where('a.id_akomodasi', $item->id_akomodasi);
                 $get_kasbon = $this->db->get()->row();
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
@@ -316,7 +316,7 @@ class Expense_report_project extends Admin_Controller
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_others a');
                 $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_item', $item->id_item);
+                $this->db->where('a.id_others', $item->id_others);
                 $get_kasbon = $this->db->get()->row();
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
@@ -622,7 +622,7 @@ class Expense_report_project extends Admin_Controller
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_akomodasi a');
                 $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_item', $item->id_item);
+                $this->db->where('a.id_akomodasi', $item->id_akomodasi);
                 $get_kasbon = $this->db->get()->row();
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
@@ -673,7 +673,7 @@ class Expense_report_project extends Admin_Controller
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_others a');
                 $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_item', $item->id_item);
+                $this->db->where('a.id_others', $item->id_others);
                 $get_kasbon = $this->db->get()->row();
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
@@ -775,11 +775,29 @@ class Expense_report_project extends Admin_Controller
 
             $valid_show = 1;
 
-            if ($valid_show == 1) {
-                $no++;
+            $count_ttl_kasbon_subcont = $this->db->select('SUM(a.total_pengajuan) as val')->get_where('kons_tr_kasbon_project_subcont a', array('a.id_spk_budgeting' => $item->id_spk_budgeting, 'a.sts' => 1))->row();
 
+            $count_ttl_kasbon_akomodasi = $this->db->select('SUM(a.total_pengajuan) as val')->get_where('kons_tr_kasbon_project_akomodasi a', array('a.id_spk_budgeting' => $item->id_spk_budgeting, 'a.sts' => 1))->row();
 
+            $count_ttl_kasbon_others = $this->db->select('SUM(a.total_pengajuan) as val')->get_where('kons_tr_kasbon_project_others a', array('a.id_spk_budgeting' => $item->id_spk_budgeting, 'a.sts' => 1))->row();
 
+            $ttl_kasbon = ($count_ttl_kasbon_subcont->val + $count_ttl_kasbon_akomodasi->val + $count_ttl_kasbon_others->val);
+
+            $ttl_expense = 0;
+
+            $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting))->result();
+            foreach($get_kasbon as $item_kas) {
+                $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', array('id_header' => $item_kas->id, 'sts' => 1))->result();
+                foreach($get_expense as $item_exp) {
+                    $ttl_expense += $item_exp->total_expense_report;
+                }
+            }
+
+            if(($ttl_kasbon - $ttl_expense) <= 0 && $item->sts !== 1) {
+                $valid_show = 0;
+            }
+
+            $no++;
 
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_expense_report_project_header a');
@@ -812,7 +830,7 @@ class Expense_report_project extends Admin_Controller
                     $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
                     $check_expense = $this->db->get()->result();
 
-                    if(count($check_expense) > 0) {
+                    if($valid_show < 1) {
                         $option = '<a href="' . base_url('expense_report_project/view/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info" title="View Expense Report"><i class="fa fa-eye"></i></a>';
                     } else {
                         $option = '<a href="' . base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" title="Add Expense Report"><i class="fa fa-arrow-up"></i></a>';
@@ -829,7 +847,6 @@ class Expense_report_project extends Admin_Controller
                     'nm_project' => $item->nm_project,
                     'option' => $option
                 ];
-            }
         }
 
         echo json_encode([
@@ -1820,6 +1837,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.sts', null);
         $get_data_exp = $this->db->get()->result();
 
         foreach ($get_data_exp as $item) {

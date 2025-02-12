@@ -106,7 +106,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             </tr>
             <tr>
                 <th class="pd-5 valign-top" width="150">Project</th>
-                <td class="pd-5 valign-top" width="400"><?= $list_budgeting->nm_project ?></td>
+                <td class="pd-5 valign-top" width="400"><?= $list_budgeting->nm_paket ?></td>
                 <th class="pd-5 valign-top" width="150"></th>
                 <td class="pd-5 valign-top" width="400"></td>
             </tr>
@@ -246,12 +246,19 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         <br><br>
 
+        <h4 style="font-weight: 800;">
+            Overbudget Akomodasi
+        </h4>
+        <a href="<?= base_url('kasbon_project/add_request_budget_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Overbudget
+        </a>
         <table class="table custom-table mt-5" id="table_ovb_akomodasi" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
+                    <th class="text-center">Status</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -495,6 +502,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'amount'
+                },
+                {
+                    data: 'sts'
                 },
                 {
                     data: 'option'
