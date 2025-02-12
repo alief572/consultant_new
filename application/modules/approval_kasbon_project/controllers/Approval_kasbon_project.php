@@ -43,10 +43,11 @@ class Approval_kasbon_project extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('b.*, c.nm_sales');
+        $this->db->select('b.*, c.nm_sales, d.nm_paket');
         $this->db->from('kons_tr_req_kasbon_project a');
         $this->db->join('kons_tr_spk_budgeting b', 'b.id_spk_budgeting = a.id_spk_budgeting', 'left');
         $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = b.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = c.id_project', 'left');
         $this->db->where('a.sts', 0);
         if (!empty($search)) {
             $this->db->group_start();
@@ -62,10 +63,11 @@ class Approval_kasbon_project extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('b.*, c.nm_sales');
+        $this->db->select('b.*, c.nm_sales, d.nm_paket');
         $this->db->from('kons_tr_req_kasbon_project a');
         $this->db->join('kons_tr_spk_budgeting b', 'b.id_spk_budgeting = a.id_spk_budgeting', 'left');
         $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = b.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = c.id_project', 'left');
         $this->db->where('a.sts', 0);
         if (!empty($search)) {
             $this->db->group_start();
@@ -99,7 +101,7 @@ class Approval_kasbon_project extends Admin_Controller
                 'nm_customer' => $item->nm_customer,
                 'nm_sales' => ucfirst($item->nm_sales),
                 'nm_project_leader' => ucfirst($item->nm_project_leader),
-                'nm_project' => $item->nm_project,
+                'nm_project' => $item->nm_paket,
                 'option' => $option
             ];
 
@@ -119,9 +121,10 @@ class Approval_kasbon_project extends Admin_Controller
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
 
-        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to, c.nm_paket');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budgeting = $this->db->get()->row();
 

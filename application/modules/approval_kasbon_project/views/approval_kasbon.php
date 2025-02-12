@@ -112,7 +112,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
       </tr>
       <tr>
         <th class="pd-5 valign-top" width="150">Project</th>
-        <td class="pd-5 valign-top" width="400"><?= $list_budgeting->nm_project ?></td>
+        <td class="pd-5 valign-top" width="400"><?= $list_budgeting->nm_paket ?></td>
         <th class="pd-5 valign-top" width="150"></th>
         <td class="pd-5 valign-top" width="400"></td>
       </tr>

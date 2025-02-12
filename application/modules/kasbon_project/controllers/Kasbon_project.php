@@ -43,10 +43,10 @@ class Kasbon_project extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*, b.nm_sales');
+        $this->db->select('a.*, b.nm_sales, c.nm_paket');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
-
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.sts', 1);
         if (!empty($search)) {
             $this->db->group_start();
@@ -137,6 +137,7 @@ class Kasbon_project extends Admin_Controller
             $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
             $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_header b', 'b.id_request_ovb = a.id_request_ovb');
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+            $this->db->where('b.sts', 1);
             $get_ovb_kasbon = $this->db->get()->result();
 
             foreach ($get_ovb_kasbon as $item_ovb) {
@@ -233,7 +234,7 @@ class Kasbon_project extends Admin_Controller
             // $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
             // $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_header b', 'b.id_request_ovb = a.id_request_ovb');
             // $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
-            
+
             // $get_ovb_akomodasi_nd = $this->db->get()->result();
 
             // foreach ($get_ovb_akomodasi_nd as $item_ovb_akomodasi_nd) {
@@ -244,7 +245,7 @@ class Kasbon_project extends Admin_Controller
             // if ($get_req->num_rows() > 0) {
             //     $valid_show = 0;
             // }
-            if($total_kasbon > 0 || $total_kasbon_nd > 0) {
+            if ($total_kasbon > 0 || $total_kasbon_nd > 0) {
                 if ($total_kasbon >= $total_budgeting) {
                     $valid_show = 0;
                 }
@@ -285,14 +286,14 @@ class Kasbon_project extends Admin_Controller
                 }
 
                 if (!empty($get_req_kasbon)) {
-                    if($get_req_kasbon->sts == 0) {
+                    if ($get_req_kasbon->sts == 0) {
                         $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
                         $btn_req_app = '';
                         $btn_edit = '';
                     }
                 }
 
-                $option .= $btn_edit.' '.$btn_req_app;
+                $option .= $btn_edit . ' ' . $btn_req_app;
 
 
                 $hasil[] = [
@@ -301,7 +302,7 @@ class Kasbon_project extends Admin_Controller
                     'nm_customer' => $item->nm_customer,
                     'nm_sales' => ucfirst($item->nm_sales),
                     'nm_project_leader' => ucfirst($item->nm_project_leader),
-                    'nm_project' => $item->nm_project,
+                    'nm_project' => $item->nm_paket,
                     'reject_reason' => $reject_reason,
                     'status' => $status,
                     'option' => $option
@@ -897,11 +898,20 @@ class Kasbon_project extends Admin_Controller
                 $option = '';
             }
 
+            $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+            if ($item['sts'] == '1') {
+                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+            }
+            if ($item['sts'] == '2') {
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+            }
+
 
             $hasil[] = [
                 'no' => $no,
                 'id_request_ovb' => $item['id_request_ovb'],
                 'amount' => number_format($get_amount['amount'], 2),
+                'sts' => $sts,
                 'option' => $option
             ];
 
@@ -921,9 +931,10 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
 
-        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to, c.nm_paket');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budgeting = $this->db->get()->row();
 
@@ -1015,9 +1026,10 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
 
-        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to, c.nm_paket');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budgeting = $this->db->get()->row();
 
@@ -1334,6 +1346,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_header a');
         $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_detail b', 'b.id_request_ovb = a.id_request_ovb');
         $this->db->where('a.tipe', 2);
+        $this->db->where('a.sts', 1);
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_by('b.id');
         $get_ovb_akomodasi = $this->db->get()->result_array();

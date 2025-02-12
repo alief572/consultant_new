@@ -165,7 +165,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             </table>
 
             <div class="col-md-12 mt-5">
-                <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
+                <a href="<?= base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
                     <i class="fa fa-arrow-left"></i> Back
                 </a>
                 <button type="submit" class="btn btn-sm btn-success">
