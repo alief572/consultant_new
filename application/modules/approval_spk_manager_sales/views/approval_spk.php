@@ -667,7 +667,7 @@ if ($data_user->employee_id == '168') {
     <div class="box-body">
         <div class="form-group">
             <label for="">Isu Khusus / Permintaan khusus dari customer / Tujuan Program / 3 objective utama (khusus konsultasi)</label>
-            <textarea name="isu_khusus" id="" class="form-control form-control-sm isu_khusus" rows="10" <?= $readonly_isu ?>><?= $list_spk_penawaran->isu_khusus ?></textarea>
+            <textarea name="isu_khusus" id="" class="form-control form-control-sm isu_khusus" rows="10" ><?= $list_spk_penawaran->isu_khusus ?></textarea>
         </div>
         <br><br>
 
