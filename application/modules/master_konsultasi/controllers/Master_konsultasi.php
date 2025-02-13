@@ -62,12 +62,11 @@ class Master_konsultasi extends Admin_Controller
 
         $data   = array();
 
+        $no = (0+$requestData['start']);
         foreach ($query->result_array() as $row) {
-
-
-
+            $no++;
             $nestedData     = array();
-            $nestedData[]   = $row['nomor'];
+            $nestedData[]   = $no;
             $nestedData[]   = $row['id_konsultasi_h'];
             $nestedData[]   = $row['nm_paket'];
             $nestedData[]   = $row['datetimes'];
@@ -127,19 +126,13 @@ class Master_konsultasi extends Admin_Controller
     {
         $sql = "
             SELECT 
-                (@row:=@row+1) AS nomor,
                 DATE_FORMAT(a.input_date, '%d-%m-%Y %H:%i') AS datetimes,
-                a.*,
-                c.kategori_paket,
-                a.nm_paket 
+                a.*
             FROM 
                 kons_master_konsultasi_header AS a
-                LEFT JOIN kons_master_paket AS b ON a.id_paket = b.id_paket
-                LEFT JOIN kons_kategori_paket AS c ON b.id_kategori = c.id_kategori_paket,
-                (SELECT @row := 0) r 
             WHERE 1=1 AND (
-                c.kategori_paket LIKE '%" . $this->db->escape_like_str($like_value) . "%' 
-                OR b.nm_paket LIKE '%" . $this->db->escape_like_str($like_value) . "%' 
+                a.id_konsultasi_h LIKE '%" . $this->db->escape_like_str($like_value) . "%' 
+                OR a.nm_paket LIKE '%" . $this->db->escape_like_str($like_value) . "%' 
                 OR DATE_FORMAT(a.input_date, '%d-%m-%Y %H:%i') LIKE '%" . $this->db->escape_like_str($like_value) . "%' 
             )
         ";
@@ -149,7 +142,7 @@ class Master_konsultasi extends Admin_Controller
 
         $data['totalFiltered']  = $this->db->query($sql)->num_rows();
         $columns_order_by = array(
-            0 => 'nomor'
+            0 => 'id_konsultasi_h'
         );
         $sql .= " ORDER BY id_konsultasi_h DESC ";
         $sql .= " LIMIT " . $limit_start . " ," . $limit_length . " ";
