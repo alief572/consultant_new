@@ -668,6 +668,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $data_arr = [];
         if ($get_spk->id_sales == $get_user->employee_id && ($get_user->employee_id !== '' && $get_user->employee_id !== null)) {
             $data_arr = [
+                'isu_khusus' => $isu_khusus,
                 'approval_sales_sts' => 1,
                 'approval_sales_date' => date('Y-m-d H:i:s'),
                 'reject_sales_sts' => null,
