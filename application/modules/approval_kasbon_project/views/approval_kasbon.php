@@ -184,7 +184,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           <th class="text-right"><?= number_format($ttl_estimasi_subcont, 2) ?></th>
           <th colspan="2"></th>
           <th class="text-right"><?= number_format($ttl_pengajuan_subcont, 2) ?></th>
-          <th class="text-right"><?= number_format($ttl_aktual_subcont, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_aktual_subcont) ?></th>
           <th class="text-right"><?= number_format($ttl_sisa_subcont, 2) ?></th>
         </tr>
       </tfoot>
@@ -337,7 +337,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           <th class="text-right"><?= number_format($ttl_estimasi_others, 2) ?></th>
           <th colspan="2"></th>
           <th class="text-right"><?= number_format($ttl_pengajuan_others, 2) ?></th>
-          <th class="text-right"><?= number_format($ttl_aktual_others, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_aktual_others) ?></th>
           <th class="text-right"><?= number_format($ttl_sisa_others, 2) ?></th>
         </tr>
       </tfoot>
