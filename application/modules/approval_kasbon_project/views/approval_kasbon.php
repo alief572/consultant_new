@@ -149,6 +149,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
       <tbody>
         <?php
         $no = 0;
+
+        $ttl_estimasi_subcont = 0;
+        $ttl_pengajuan_subcont = 0;
+        $ttl_aktual_subcont = 0;
+        $ttl_sisa_subcont = 0;
         foreach ($list_kasbon_subcont as $item) {
           $no++;
 
@@ -165,9 +170,24 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           echo '<td class="text-center">' . number_format($item->aktual_terpakai) . '</td>';
           echo '<td class="text-right">' . number_format($item->sisa_budget, 2) . '</td>';
           echo '</tr>';
+
+          $ttl_estimasi_subcont += $item->total_budget_estimasi;
+          $ttl_pengajuan_subcont += $iem->total_pengajuan;
+          $ttl_aktual_subcont += $item->aktual_terpakai;
+          $ttl_sisa_subcont += $item->sisa_budget;
         }
         ?>
       </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="4" class="text-right">Grand Total</th>
+          <th class="text-right"><?= number_format($ttl_estimasi_subcont, 2) ?></th>
+          <th colspan="2"></th>
+          <th class="text-right"><?= number_format($ttl_pengajuan_subcont, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_aktual_subcont, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_sisa_subcont, 2) ?></th>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </div>
@@ -203,6 +223,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
       <tbody>
         <?php
         $no = 0;
+
+        $ttl_estimasi_akomodasi = 0;
+        $ttl_pengajuan_akomodasi = 0;
+        $ttl_qty_tambahan_akomodasi = 0;
+        $ttl_qty_sisa_akomodasi = 0;
+        $ttl_sisa_budget_akomodasi = 0;
+
         foreach ($list_kasbon_akomodasi as $item) {
           $no++;
 
@@ -221,9 +248,27 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           echo '<td class="text-center">' . number_format($item->aktual_terpakai) . '</td>';
           echo '<td class="text-right">' . number_format($item->sisa_budget, 2) . '</td>';
           echo '</tr>';
+
+          $ttl_estimasi_akomodasi += $item->total_budget_estimasi;
+          $ttl_pengajuan_akomodasi += $item->total_pengajuan;
+          $ttl_qty_tambahan_akomodasi += $item->qty_budget_tambahan;
+          $ttl_qty_sisa_akomodasi += $item->aktual_terpakai;
+          $ttl_sisa_budget_akomodasi += $item->sisa_budget;
         }
         ?>
       </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="4"></th>
+          <th class="text-right"><?= number_format($ttl_estimasi_akomodasi, 2) ?></th>
+          <th colspan="2"></th>
+          <th class="text-right"><?= number_format($ttl_pengajuan_akomodasi, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_tambahan_akomodasi) ?></th>
+          <th class="text-right"></th>
+          <th class="text-center"><?= number_format($ttl_qty_sisa_akomodasi) ?></th>
+          <th class="text-right"><?= number_format($ttl_sisa_budget_akomodasi, 2) ?></th>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </div>
@@ -256,6 +301,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
       </thead>
       <tbody>
         <?php
+        $ttl_estimasi_others = 0;
+        $ttl_pengajuan_others = 0;
+        $ttl_aktual_others = 0;
+        $ttl_sisa_others = 0;
+
         $no = 0;
         foreach ($list_kasbon_others as $item) {
           $no++;
@@ -273,9 +323,24 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           echo '<td class="text-center">' . number_format($item->aktual_terpakai) . '</td>';
           echo '<td class="text-right">' . number_format($item->sisa_budget, 2) . '</td>';
           echo '</tr>';
+
+          $ttl_estimasi_others += $item->total_budget_estimasi;
+          $ttl_pengajuan_others += $iem->total_pengajuan;
+          $ttl_aktual_others += $item->aktual_terpakai;
+          $ttl_sisa_others += $item->sisa_budget;
         }
         ?>
       </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="4" class="text-right">Grand Total</th>
+          <th class="text-right"><?= number_format($ttl_estimasi_others, 2) ?></th>
+          <th colspan="2"></th>
+          <th class="text-right"><?= number_format($ttl_pengajuan_others, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_aktual_others, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_sisa_others, 2) ?></th>
+        </tr>
+      </tfoot>
     </table>
 
     <br><br>
