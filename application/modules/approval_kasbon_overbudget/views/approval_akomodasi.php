@@ -21,7 +21,7 @@
             echo '<td class="text-left">' . $item['nm_item'] . '</td>';
             echo '<td class="text-center">' . number_format($item['qty_budget_tambahan']) . '</td>';
             echo '<td class="text-right">' . number_format($item['budget_tambahan']) . '</td>';
-            echo '<td class="text-right">' . number_format($item['pengajuan_budget']) . '</td>';
+            echo '<td class="text-right">' . number_format($item['qty_budget_tambahan'] * $item['budget_tambahan']) . '</td>';
             echo '<td class="text-left">' . $item['reason'] . '</td>';
             echo '</tr>';
         }
