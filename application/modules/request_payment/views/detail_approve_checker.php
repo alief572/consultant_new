@@ -7,45 +7,21 @@ $ENABLE_DELETE  = has_permission('Request_Payment_Approval.Delete');
 
 
 if ($type == 'expense') {
-	$keterangan = $header->informasi;
-	$no_doc = $header->no_doc;
-	$tgl_doc = $header->tgl_doc;
+	$keterangan = $data_req_payment['keperluan'];
+	$no_doc = $header->id;
+	$tgl_doc = date('Y-m-d', strtotime($header->created_date));
 
-	$bank_id = $header->bank_id;
-	$accnumber = $header->accnumber;
-	$accname = $header->accname;
+	$bank_id = $header->bank;
+	$accnumber = $header->bank_number;
+	$accname = $header->bank_account;
 } elseif ($type == 'kasbon') {
-	$keterangan = $header->keperluan;
-	$no_doc = $header->no_doc;
-	$tgl_doc = $header->tgl_doc;
+	$keterangan = $header->deskripsi;
+	$no_doc = $header->id;
+	$tgl_doc = $header->tgl;
 
-	$bank_id = $header->bank_id;
-	$accnumber = $header->accnumber;
-	$accname = $header->accname;
-} elseif ($type == 'transportasi') {
-	$keterangan = 'Transportasi';
-	$no_doc = $header->no_doc;
-	$tgl_doc = $header->tgl_doc;
-
-	$bank_id = $header->bank_id;
-	$accnumber = $header->accnumber;
-	$accname = $header->accname;
-} elseif ($type == 'nonpo') {
-	$keterangan = $header->info;
-	$no_doc = $header->no_doc;
-	$tgl_doc = $header->tanggal_doc;
-
-	$bank_id = $header->bank_id;
-	$accnumber = $header->accnumber;
-	$accname = $header->accname;
-} elseif ($type == 'periodik') {
-	$keterangan = $header->keterangan;
-	$no_doc = $header->no_doc;
-	$tgl_doc = $header->tanggal;
-
-	$bank_id = $header->bank_id;
-	$accnumber = $header->accnumber;
-	$accname = $header->accname;
+	$bank_id = $header->bank;
+	$accnumber = $header->bank_number;
+	$accname = $header->bank_account;
 }
 
 ?>
@@ -133,311 +109,18 @@ if ($type == 'expense') {
 					if (!empty($details)) {
 						$n = $gTotal = 0;
 						foreach ($details as $dtl) : $n++;
-							$nm_coa = (isset($list_coa[$dtl->coa]) && $dtl->coa !== '') ? $list_coa[$dtl->coa] : '';
+							$nm_coa = '';
 							if ($type == 'expense') :
-								$harga  = $dtl->harga;
-								if (isset($dtl->id_kasbon) && $dtl->id_kasbon !== '') {
-									$harga = $dtl->kasbon * -1;
-								}
+								$harga  = $dtl->selisih;
 
 
 
 								$gTotal += ($data_req_payment['jumlah'] + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']); ?>
-								<tr>
-									<td><?= $n; ?></td>
-									<td><?= $dtl->coa . ' - ' . $nm_coa; ?></td>
-									<td><?= $dtl->deskripsi; ?> <?= (isset($dtl->id_kasbon) && $dtl->id_kasbon !== '') ? "<b>(Kasbon)</b>" : null ?></td>
-									<td><?= $dtl->tanggal; ?></td>
-									<td><?= $dtl->qty; ?></td>
-									<td><?= $data_req_payment['currency']; ?></td>
-									<td class="text-left">
-										<table class="w-100">
-											<tr>
-												<td>Nilai Pengajuan</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['jumlah'], 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Nilai PPh</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['total_pph'], 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Bank Charge</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['admin_bank'], 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Net Payment</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($data_req_payment['jumlah'] + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']), 2) ?>" readonly>
-												</td>
-											</tr>
-										</table>
-									</td>
-									<td class="text-center">
-										<?php
-
-										$get_ros = $this->db->get_where('tr_ros', ['id' => $dtl->no_doc])->row_array();
-										$get_invoice = $this->db->get_where('tr_invoice_po', ['id' => $dtl->no_doc])->row_array();
-										if (!empty($get_ros)) {
-											if (file_exists($get_ros['link_doc'])) {
-												echo '<a href="' . base_url('./' . $get_ros['link_doc']) . '" target="_blank"><i class="fa fa-download"></i></a>';
-											}
-										} else if (!empty($get_invoice)) {
-											if (file_exists($get_invoice['link_doc'])) {
-												echo '<a href="' . base_url('./' . $get_invoice['link_doc']) . '" target="_blank"><i class="fa fa-download"></i></a>';
-											}
-										} else {
-											if (file_exists('./assets/expense/' . $dtl->doc_file) && $dtl->doc_file !== '') {
-										?>
-												<a href="<?= base_url('./assets/expense/') . $dtl->doc_file; ?>" target="_blank"><i class="fa fa-download"></i></a>
-										<?php
-											}
-										}
-										?>
-									</td>
-									<td>
-
-										<input type="checkbox" checked value="<?= $dtl->id; ?>" name="item[<?= $n; ?>][id]" class="check_item" id="check_<?= $dtl->id; ?>">
-
-									</td>
-								</tr>
-								<?php elseif ($type == 'kasbon') :
-
-								if ($kasbon_pr == '1') {
-								?>
-
-									<tr>
-										<td><?= $n; ?></td>
-										<td><?= $dtl->coa . ' - ' . $nm_coa; ?></td>
-										<td><?= $dtl->keperluan; ?></td>
-										<td><?= $dtl->tgl_doc; ?></td>
-										<td>-</td>
-										<td><?= $data_req_payment['currency']; ?></td>
-										<td class="text-right">-</td>
-										<td class="text-right">-</td>
-										<td class="text-center"><a href="<?= base_url('assets/expense/') . $dtl->doc_file; ?>" target="_blank"><i class="fa fa-download"></i></a></td>
-										<td>
-											<?php if ($dtl->status == '2') : ?>
-												<input type="checkbox" checked value="<?= $dtl->id; ?>" name="item[<?= $n; ?>][id]" class="check_item" id="check_<?= $dtl->id; ?>">
-											<?php elseif ($dtl->status == '3') : ?>
-												<label for="" class="label bg-maroon">Process</label>
-											<?php elseif ($dtl->status == '4') : ?>
-												<label for="" class="label bg-green">PAID</label>
-											<?php else : ?>
-												<label for="" class="label bg-gray"><span class="text-muted">Undefined</span></label>
-											<?php endif; ?>
-										</td>
-									</tr>
-									<?php
-
-									foreach ($data_detail_pr_kasbon as $detail_kasbon_pr) :
-										echo '<tr>';
-										echo '<td></td>';
-										echo '<td></td>';
-										echo '<td>' . $detail_kasbon_pr->nm_material . '</td>';
-										echo '<td></td>';
-										echo '<td>' . number_format($detail_kasbon_pr->qty) . '</td>';
-										echo '<td>' . $data_req_payment['currency'] . '</td>';
-										echo '<td class="text-right">' . number_format($detail_kasbon_pr->total_harga) . '</td>';
-										echo '<td class="text-right">' . number_format($data_req_payment['admin_bank']) . '</td>';
-										echo '<td></td>';
-										echo '<td></td>';
-										echo '</tr>';
-
-										$gTotal += $detail_kasbon_pr->total_harga;
-									endforeach;
-								} else {
-									$gTotal += ($dtl->jumlah_kasbon + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']);
-									?>
-
-									<tr>
-										<td><?= $n; ?></td>
-										<td><?= $dtl->coa . ' - ' . $nm_coa; ?></td>
-										<td><?= $dtl->keperluan; ?></td>
-										<td><?= $dtl->tgl_doc; ?></td>
-										<td>1</td>
-										<td><?= $data_req_payment['currency']; ?></td>
-										<td class="text-left">
-											<table class="w-100">
-												<tr>
-													<td>Nilai Pengajuan</td>
-													<td class="text-center" style="min-width: 50px;">:</td>
-													<td class="text-right">
-														<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($dtl->jumlah_kasbon, 2) ?>">
-													</td>
-												</tr>
-												<tr>
-													<td>Nilai PPh</td>
-													<td class="text-center" style="min-width: 50px;">:</td>
-													<td class="text-right">
-														<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['total_pph'], 2) ?>">
-													</td>
-												</tr>
-												<tr>
-													<td>Bank Charge</td>
-													<td class="text-center" style="min-width: 50px;">:</td>
-													<td class="text-right">
-														<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['admin_bank'], 2) ?>">
-													</td>
-												</tr>
-												<tr>
-													<td>Net Payment</td>
-													<td class="text-center" style="min-width: 50px;">:</td>
-													<td class="text-right">
-														<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($dtl->jumlah_kasbon + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']), 2) ?>">
-													</td>
-												</tr>
-											</table>
-										</td>
-										<td class="text-center"><a href="<?= base_url('assets/expense/') . $dtl->doc_file; ?>" target="_blank"><i class="fa fa-download"></i></a></td>
-										<td>
-											<?php if ($dtl->status == '2') : ?>
-												<input type="checkbox" checked value="<?= $dtl->id; ?>" name="item[<?= $n; ?>][id]" class="check_item" id="check_<?= $dtl->id; ?>">
-											<?php elseif ($dtl->status == '3') : ?>
-												<label for="" class="label bg-maroon">Process</label>
-											<?php elseif ($dtl->status == '4') : ?>
-												<label for="" class="label bg-green">PAID</label>
-											<?php else : ?>
-												<label for="" class="label bg-gray"><span class="text-muted">Undefined</span></label>
-											<?php endif; ?>
-										</td>
-									</tr>
-
-								<?php
-								}
-								?>
-							<?php elseif ($type == 'transportasi') :
-								$gTotal += ($dtl->jumlah_kasbon + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']); ?>
 								<tr>
 									<td><?= $n; ?></td>
 									<td></td>
-									<td><?= $dtl->keperluan; ?></td>
-									<td><?= $dtl->tgl_doc; ?></td>
-									<td>1</td>
-									<td><?= $data_req_payment['currency']; ?></td>
-									<td class="text-left">
-										<table class="w-100">
-											<tr>
-												<td>Nilai Pengajuan</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($dtl->jumlah_kasbon, 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Nilai PPh</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['total_pph'], 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Bank Charge</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['admin_bank'], 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Net Payment</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($dtl->jumlah_kasbon + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']), 2) ?>" readonly>
-												</td>
-											</tr>
-										</table>
-									</td>
-									<td class="text-center">
-										<?php
-										if (file_exists('./assets/expense/' . $dtl->doc_file) && $dtl->doc_file !== '') {
-											echo '<a href="' . base_url('./assets/expense/') . $dtl->doc_file . '" target="_blank"><i class="fa fa-download"></i></a>';
-										}
-										?>
-									</td>
-									<td>
-										<?php if ($dtl->status == '1') : ?>
-											<input type="checkbox" checked value="<?= $dtl->id; ?>" name="item[<?= $n; ?>][id]" class="check_item" id="check_<?= $dtl->id; ?>">
-										<?php elseif ($dtl->status == '2') : ?>
-											<label for="" class="label bg-maroon">Process</label>
-										<?php elseif ($dtl->status == '3') : ?>
-											<label for="" class="label bg-green">PAID</label>
-										<?php else : ?>
-											<label for="" class="label bg-gray"><span class="text-muted">Undefined</span></label>
-										<?php endif; ?>
-									</td>
-								</tr>
-
-							<?php elseif ($type == 'nonpo') :
-								$gTotal += ($dtl->total_request + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']); ?>
-								<tr>
-									<td><?= $n; ?></td>
-									<td><?= $dtl->coa . ' - ' . $nm_coa; ?></td>
-									<td><?= $dtl->deskripsi; ?></td>
-									<td><?= $dtl->tgl_pr; ?></td>
-									<td>1</td>
-									<td><?= $data_req_payment['currency']; ?></td>
-									<td class="text-left">
-										<table class="w-100">
-											<tr>
-												<td>Nilai Pengajuan</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($dtl->total_request, 2) ?>">
-												</td>
-											</tr>
-											<tr>
-												<td>Nilai PPh</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['total_pph'], 2) ?>">
-												</td>
-											</tr>
-											<tr>
-												<td>Bank Charge</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['admin_bank'], 2) ?>">
-												</td>
-											</tr>
-											<tr>
-												<td>Net Payment</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($dtl->total_request + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']), 2) ?>">
-												</td>
-											</tr>
-										</table>
-									</td>
-									<td class="text-center">
-										<?php
-										if (file_exists('./assets/expense/' . $dtl->doc_file) && $dtl->doc_file !== '') {
-											echo '<a href="' . base_url('./assets/expense/') . $dtl->doc_file . '" target="_blank"><i class="fa fa-download"></i></a>';
-										}
-										?>
-									</td>
-									<td>
-
-										<input type="checkbox" checked value="<?= $dtl->id; ?>" name="item[<?= $n; ?>][id]" class="check_item" id="check_<?= $dtl->id; ?>">
-
-									</td>
-								</tr>
-
-							<?php elseif ($type == 'periodik') :
-								$gTotal += ($data_req_payment['jumlah'] + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']); ?>
-								<tr>
-									<td><?= $n; ?></td>
-									<td><?= $dtl->coa . ' - ' . $nm_coa; ?></td>
-									<td><?= $dtl->keterangan; ?></td>
-									<td><?= $dtl->tanggal; ?></td>
+									<td><?= $data_req_payment['keperluan']; ?> <?= (isset($dtl->id_kasbon) && $dtl->id_kasbon !== '') ? "<b>(Kasbon)</b>" : '' ?></td>
+									<td><?= date('Y-m-d', strtotime($dtl->created_date)) ?></td>
 									<td>1</td>
 									<td><?= $data_req_payment['currency']; ?></td>
 									<td class="text-left">
@@ -474,8 +157,10 @@ if ($type == 'expense') {
 									</td>
 									<td class="text-center">
 										<?php
-										if (file_exists('./assets/bayar_rutin/' . $dtl->doc_file) && $dtl->doc_file !== '') {
-											echo '<a href="' . base_url('./assets/bayar_rutin/') . $dtl->doc_file . '" target="_blank"><i class="fa fa-download"></i></a>';
+										if (file_exists('./assets/expense/' . $data_req_payment['link_doc']) && $data_req_payment['link_doc'] !== '') {
+										?>
+												<a href="<?= base_url('./assets/expense/') . $data_req_payment['link_doc']; ?>" target="_blank"><i class="fa fa-download"></i></a>
+										<?php
 										}
 										?>
 									</td>
@@ -485,6 +170,58 @@ if ($type == 'expense') {
 
 									</td>
 								</tr>
+							<?php elseif ($type == 'kasbon') :
+
+								$gTotal += ($dtl->selisih + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']);
+							?>
+
+								<tr>
+									<td><?= $n; ?></td>
+									<td></td>
+									<td><?= $dtl->deskripsi; ?></td>
+									<td><?= $dtl->tgl; ?></td>
+									<td>1</td>
+									<td><?= $data_req_payment['currency']; ?></td>
+									<td class="text-left">
+										<table class="w-100">
+											<tr>
+												<td>Nilai Pengajuan</td>
+												<td class="text-center" style="min-width: 50px;">:</td>
+												<td class="text-right">
+													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($dtl->grand_total, 2) ?>" readonly>
+												</td>
+											</tr>
+											<tr>
+												<td>Nilai PPh</td>
+												<td class="text-center" style="min-width: 50px;">:</td>
+												<td class="text-right">
+													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['total_pph'], 2) ?>" readonly>
+												</td>
+											</tr>
+											<tr>
+												<td>Bank Charge</td>
+												<td class="text-center" style="min-width: 50px;">:</td>
+												<td class="text-right">
+													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['admin_bank'], 2) ?>" readonly>
+												</td>
+											</tr>
+											<tr>
+												<td>Net Payment</td>
+												<td class="text-center" style="min-width: 50px;">:</td>
+												<td class="text-right">
+													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($dtl->grand_total + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']), 2) ?>" readonly>
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td class="text-center"><a href="<?= base_url('assets/expense/') . $data_req_payment['link_doc']; ?>" target="_blank"><i class="fa fa-download"></i></a></td>
+									<td>
+
+										<input type="checkbox" checked value="<?= $dtl->id; ?>" name="item[<?= $n; ?>][id]" class="check_item" id="check_<?= $dtl->id; ?>">
+
+									</td>
+								</tr>
+
 					<?php endif;
 						endforeach;
 					}  ?>
@@ -508,17 +245,17 @@ if ($type == 'expense') {
 						<tr>
 							<td>Bank</td>
 							<td class="text-center" style="min-width: 50px;">:</td>
-							<td class="text-right"><?= $bank_id ?></td>
+							<td class="text-left"><?= $bank_id ?></td>
 						</tr>
 						<tr>
 							<td>Account Number</td>
 							<td class="text-center" style="min-width: 50px;">:</td>
-							<td class="text-right"><?= $accnumber ?></td>
+							<td class="text-left"><?= $accnumber ?></td>
 						</tr>
 						<tr>
 							<td>Account Name</td>
 							<td class="text-center" style="min-width: 50px;">:</td>
-							<td class="text-right"><?= $accname ?></td>
+							<td class="text-left"><?= $accname ?></td>
 						</tr>
 					</tbody>
 				</table>
@@ -554,77 +291,70 @@ if ($type == 'expense') {
 	$(document).on('click', '#process', function(e) {
 		var errors = "";
 		if ($("#bank_coa").val() == "0") errors = "Bank tidak boleh kosong";
-		const check = $('.check_item').is(':checked')
 
-		if (check) {
-			swal({
-					title: "Anda Yakin?",
-					text: "Item Akan Di Approve!",
-					type: "info",
-					showCancelButton: true,
-					confirmButtonText: "Ya, Approve!",
-					cancelButtonText: "Tidak!",
-					closeOnConfirm: false,
-					closeOnCancel: true
-				},
-				function(isConfirm) {
-					if (isConfirm) {
-						var formdata = new FormData($('#frm_data')[0]);
-						$.ajax({
-							url: url_save,
-							dataType: "json",
-							type: 'POST',
-							data: formdata,
-							processData: false,
-							contentType: false,
-							success: function(msg) {
-								if (msg['save'] == '1') {
-									swal({
-										title: "Sukses!",
-										text: "Data Berhasil Di Approve",
-										type: "success",
-										timer: 1500,
-										showConfirmButton: false
-									});
-									location.href = siteurl + active_controller + 'list_approve_checker';
-								} else {
-									swal({
-										title: "Gagal!",
-										text: "Data Gagal Di Approve",
-										type: "error",
-										timer: 1500,
-										showConfirmButton: false
-									});
-								};
-								console.log(msg);
-							},
-							error: function(msg) {
+		swal({
+				title: "Anda Yakin?",
+				text: "Item Akan Di Approve!",
+				type: "info",
+				showCancelButton: true,
+				confirmButtonText: "Ya, Approve!",
+				cancelButtonText: "Tidak!",
+				closeOnConfirm: false,
+				closeOnCancel: true
+			},
+			function(isConfirm) {
+				if (isConfirm) {
+					var formdata = new FormData($('#frm_data')[0]);
+					$.ajax({
+						url: url_save,
+						dataType: "json",
+						type: 'POST',
+						data: formdata,
+						processData: false,
+						contentType: false,
+						success: function(msg) {
+							if (msg['save'] == '1') {
+								swal({
+									title: "Sukses!",
+									text: "Data Berhasil Di Approve",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+								});
+								location.href = siteurl + active_controller + 'list_approve_checker';
+							} else {
 								swal({
 									title: "Gagal!",
-									text: "Ajax Data Gagal Di Proses",
+									text: "Data Gagal Di Approve",
 									type: "error",
 									timer: 1500,
 									showConfirmButton: false
 								});
-								console.log(msg);
-							}
-						});
-					}
-				});
-		} else {
-			swal("Warning!", "Pilih item yang akan di Approve!", "warning", 3000);
-			return false;
-		}
+							};
+							console.log(msg);
+						},
+						error: function(msg) {
+							swal({
+								title: "Gagal!",
+								text: "Ajax Data Gagal Di Proses",
+								type: "error",
+								timer: 1500,
+								showConfirmButton: false
+							});
+							console.log(msg);
+						}
+					});
+				}
+			});
 	});
 
 	$(document).on('click', '#reject', function(e) {
 		var errors = "";
 		if ($("#bank_coa").val() == "0") errors = "Bank tidak boleh kosong";
-		const check = $('.check_item').is(':checked');
 
 		var reject_reason = $('.reject_reason').val();
 
-		if (check && reject_reason !== '') {
+		if (reject_reason !== '') {
 			swal({
 					title: "Anda Yakin?",
 					text: "Item Akan Di Reject!",
@@ -680,7 +410,7 @@ if ($type == 'expense') {
 					}
 				});
 		} else {
-			swal("Warning!", "Pilih item yang akan di Reject dan pastikan Reject Reason terisi!", "warning", 3000);
+			swal("Warning!", "Pastikan Reject Reason terisi!", "warning", 3000);
 			return false;
 		}
 	});

@@ -3,65 +3,17 @@
 <div class="box">
 	<div class="box-header">
 		<h3 class="box-title"><?php echo $title; ?></h3>
-		<button type="button" class="btn btn-sm btn-success choose_payment" style="float: right;">Payment</button>
+		<a href="<?= base_url('pembayaran_material/list_request_payment/2') ?>" class="btn btn-sm btn-success" style="float: right;">Payment</a>
 	</div>
 	<div class="box-body">
 
 		<ul class="nav nav-tabs" role="tablist">
-			<li role="presentation" class="active"><a href="#material" aria-controls="material" role="tab" data-toggle="tab">PR</a></li>
-			<li role="presentation"><a href="#non_material" aria-controls="non_material" role="tab" data-toggle="tab">Non PR</a></li>
+			<!-- <li role="presentation" ><a href="#material" aria-controls="material" role="tab" data-toggle="tab">PR</a></li> -->
+			<li role="presentation" class="active"><a href="#non_material" aria-controls="non_material" role="tab" data-toggle="tab">Non PR</a></li>
 			<li role="presentation"></li>
 		</ul>
 		<div class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="material">
-				<div class="box-body">
-					<table class="table table-bordered table-striped" id="mytabledata" width='100%'>
-						<thead>
-							<tr class='bg-blue'>
-								<th class="text-center">No Payment</th>
-								<th class="text-center">No Dokumen</th>
-								<th class="text-center">Tgl Bayar</th>
-								<th class="text-center">Requesto / Supplier</th>
-								<th class="text-center">Nilai Bayar</th>
-								<th class="text-center">Keterangan</th>
-								<th class="text-center" width='110px'>Option</th>
-							</tr>
-						</thead>
-
-						<tbody>
-							<?php 
-
-							if (!empty($results)) {
-								$no = 1;
-								foreach ($results as $item) {
-
-									$nm_supplier = $item->nm_supplier;
-
-									echo '<tr>';
-									echo '<td class="text-center">' . $item->id_payment . '</td>';
-									echo '<td class="text-center">' . $item->no_doc . '</td>';
-									echo '<td class="text-center">' . date('d F Y', strtotime($item->tgl_bayar)) . '</td>';
-									echo '<td class="text-center">' . $nm_supplier . '</td>';
-									echo '<td class="text-right">' . number_format($item->payment_bank, 2) . '</td>';
-									echo '<td class="text-left">'.$item->keterangan_pembayaran.'</td>';
-									echo '<td>';
-									echo '<a href="' . base_url('pembayaran_material/view_payment_new/' . $item->id_payment) . '" target="_blank" class="btn btn-sm btn-info view" title="View Request Payment"><i class="fa fa-eye"></i></a>';
-									if(file_exists('assets/expense/'.$item->link_doc) && $item->link_doc !== '') {
-										echo '<a href="'.base_url('assets/expense/'.$item->link_doc).'" class="btn btn-sm btn-primary" style="margin-left: 5px;"><i class="fa fa-download"></i></a>';
-									}
-									echo '</td>';
-									echo '</tr>';
-
-									$no++;
-								}
-							}
-
-							?>
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div role="tabpanel" class="tab-pane" id="non_material">
+			<div role="tabpanel" class="tab-pane active" id="non_material">
 				<div class="box-body">
 					<table class="table table-bordered table-striped" id="mytabledatanonmaterial" width='100%'>
 						<thead>

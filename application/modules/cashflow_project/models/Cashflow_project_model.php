@@ -20,10 +20,11 @@ class Cashflow_project_model extends BF_Model
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*, c.nm_sales');
+        $this->db->select('a.*, d.nm_paket as nama_project, c.nm_sales');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id_spk_budgeting = a.id_spk_budgeting', 'left');
         $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('b.sts', 1);
         if (!empty($search)) {
             $this->db->group_start();
@@ -40,10 +41,11 @@ class Cashflow_project_model extends BF_Model
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*, c.nm_sales');
+        $this->db->select('a.*, d.nm_paket as nama_project, c.nm_sales');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id_spk_budgeting = a.id_spk_budgeting', 'left');
         $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('b.sts', 1);
         if (!empty($search)) {
             $this->db->group_start();
@@ -74,7 +76,7 @@ class Cashflow_project_model extends BF_Model
                 'id_spk_penawaran' => $item->id_spk_penawaran,
                 'nm_customer' => $item->nm_customer,
                 'nm_sales' => $item->nm_sales,
-                'nm_project' => $item->nm_project,
+                'nm_project' => $item->nama_project,
                 'option' => $option
             ];
         }

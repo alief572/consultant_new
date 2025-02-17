@@ -65,30 +65,15 @@ foreach ($results['result_payment'] as $item) {
 					<td width="15%" style="">Tgl Bayar</td>
 					<td width="5%" class="text-center">:</td>
 					<td width="25%">
-						<input type="date" name="tgl_bayar" id="" class="form-control form-control-sm tgl_bayar" required>
+						<input type="date" name="tgl_bayar" id="" class="form-control form-control-sm tgl_bayar" value="<?= $results['result_payment'][0]->tanggal ?>" required>
 					</td>
-					<td width="15%" style="">Supplier</td>
-					<td width="5%" class="text-center">:</td>
-					<td width="25%">
-						<input type="hidden" name="supplier_input" class="supplier_input" value="<?= implode(',', $kode_supplier) ?>">
-						<input type="hidden" name="nm_supplier_input" class="nm_supplier_input" value="<?= implode(',', $nm_supplier) ?>">
-						<select name="supplier" id="" class="form-control form-control-sm supplier" disabled>
-							<option value="">- Supplier Name -</option>
-							<?php
-							foreach ($results['list_supplier'] as $item_supplier) {
-								$selected = (isset($kode_supplier[$item_supplier->kode_supplier])) ? 'selected' : '';
-								echo '<option value="' . $item_supplier->kode_supplier . '" ' . $selected . '>' . $item_supplier->nama . '</option>';
-							}
-							?>
-						</select>
-					</td>
-				</tr>
-				<tr>
 					<td width="15%" style="">Keterangan Pembayaran</td>
 					<td width="5%" class="text-center">:</td>
 					<td width="25%">
-						<textarea name="keterangan_pembayaran" id="" class="form-control form-control-sm keterangan_pembayaran"></textarea>
+						<textarea name="keterangan_pembayaran" id="" class="form-control form-control-sm keterangan_pembayaran"><?= $results['result_payment'][0]->keperluan ?></textarea>
 					</td>
+				</tr>
+				<tr>
 					<td width="15%" style="">Pilih Bank</td>
 					<td width="5%" class="text-center">:</td>
 					<td width="25%">
@@ -96,36 +81,37 @@ foreach ($results['result_payment'] as $item) {
 							<option value="">- Bank -</option>
 							<?php
 							foreach ($results['list_bank'] as $item_bank) {
-								echo '<option value="' . $item_bank->no_perkiraan . '">' . $item_bank->nama . '</option>';
+								$selected = '';
+
+								$exp_no_perkiraan = explode(' - ', $results['result_payment'][0]->bank_name);
+								$no_perkiraan = $exp_no_perkiraan[0];
+
+								if ($no_perkiraan == $item_bank->no_perkiraan) {
+									$selected = 'selected';
+								}
+								echo '<option value="' . $item_bank->no_perkiraan . '" ' . $selected . '>' . $item_bank->nama . '</option>';
 							}
 							?>
 						</select>
 					</td>
-				</tr>
-				<tr>
 					<td width="15%" style="">Mata Uang</td>
 					<td width="5%" class="text-center">:</td>
 					<td width="25%">
 						<select name="mata_uang" id="" class="form-control form-control-sm mata_uang" required>
-							<option value="">- Mata Uang -</option>
-							<?php
-							foreach ($results['list_mata_uang'] as $item_mata_uang) {
-								echo '<option value="' . $item_mata_uang->kode . '">' . $item_mata_uang->kode . '</option>';
-							}
-							?>
+							<option value="IDR">IDR</option>
 						</select>
 					</td>
+				</tr>
+				<tr>
 					<td width="15%" style="">Payment Bank</td>
 					<td width="5%" class="text-center">:</td>
 					<td width="25%">
 						<input type="text" name="payment_bank" id="" class="form-control form-control-sm text-right input_payment_bank auto_num" value="0">
 					</td>
-				</tr>
-				<tr>
 					<td width="15%" style="">Kurs</td>
 					<td width="5%" class="text-center">:</td>
 					<td width="25%">
-						<input type="text" name="kurs_payment" id="" class="form-control form-control-sm text-right auto_num">
+						<input type="text" name="kurs_payment" id="" class="form-control form-control-sm text-right auto_num" value="1" readonly>
 					</td>
 				</tr>
 				<!-- <tr>
@@ -142,7 +128,6 @@ foreach ($results['result_payment'] as $item) {
 			<table class="table table-bordered table-striped" id="mytabledata" width='100%'>
 				<thead>
 					<tr class='bg-blue'>
-						<th class="text-center">Supplier</th>
 						<th class="text-center">Nomor Dokumen</th>
 						<th class="text-center">Request Payment</th>
 						<th class="text-center" colspan="2">PPH</th>
@@ -162,16 +147,9 @@ foreach ($results['result_payment'] as $item) {
 
 						$nm_supplier = [];
 
-						$get_rec_invoice = $this->db->get_where('tr_invoice_po', ['id' => $item->no_doc])->row();
-						// print_r($item->no_doc);
-						// exit;
-						if($get_rec_invoice->kurs < 1) {
-							$kurs_invoice = 1;
-						} else {
-							$kurs_invoice = $get_rec_invoice->kurs;
-						}
-						
-						$ppn = $get_rec_invoice->nilai_ppn;
+
+
+						$ppn = 0;
 
 						$nilai_utuh = 0;
 						$persen_progress = 1;
@@ -267,10 +245,9 @@ foreach ($results['result_payment'] as $item) {
 						// }
 
 						echo '<tr>';
-						echo '<td class="text-center">' . $nm_supplier . '</td>';
 						echo '<td class="text-center">
 						<input type="hidden" name="dt[' . $no . '][id_payment]" value="' . $item->id . '">
-						<input type="hidden" name="dt[' . $no . '][kurs_invoice]" value="' . $kurs_invoice . '">
+						<input type="hidden" name="dt[' . $no . '][kurs_invoice]" value="1">
 						
 						' . $item->no_doc . '</td>';
 						echo '<td class="text-right">
@@ -306,38 +283,38 @@ foreach ($results['result_payment'] as $item) {
 				</tbody>
 				<tbody>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>Total Payment</td>
 						<td class="text-right">
 							<?= number_format($total_payment, 2) ?>
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>Selisih</td>
 						<td class="text-right selisih_col"><?= number_format($total_payment - 0, 2) ?></td>
 					</tr>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>Bank Charge</td>
 						<td>
 							<input type="text" name="bank_charge" id="" class="form-control form-control-sm text-right auto_num bank_charge" value="<?= $ttl_bank_charge ?>">
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>PPh</td>
 						<td class="text-right total_pph_col">
 							<?= number_format($total_pph, 2) ?>
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>PPn</td>
 						<td class="text-right"><?= number_format($total_ppn, 2) ?></td>
 					</tr>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>Kontrol</td>
 						<td class="text-right kontrol_col"><?= number_format($kontrol, 2) ?></td>
 					</tr>

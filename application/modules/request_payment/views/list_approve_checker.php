@@ -11,22 +11,13 @@ $count_periodik = 0;
 $count_pembayaran_po = 0;
 
 foreach ($data as $item) :
-    if ($item->tipe == 'transportasi') {
-        $count_transport += 1;
-    }
     if ($item->tipe == 'kasbon') {
         $count_kasbon += 1;
     }
     if ($item->tipe == 'expense') {
-        if (strpos($item->no_doc, 'ER-') !== false || strpos($item->no_doc, 'ROS-') !== false) {
-            $count_expense += 1;
-        } else {
-            $count_pembayaran_po += 1;
-        }
+        $count_expense += 1;
     }
-    if ($item->tipe == 'periodik') {
-        $count_periodik += 1;
-    }
+    
 endforeach;
 ?>
 <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
@@ -36,17 +27,7 @@ endforeach;
 <div class="box">
     <div class="container">
         <div class="row">
-            <div class="col-md-4" style="margin-top: 2vh;">
-                <div class="panel panel-default">
-                    <div class="panel-heading bg-green">Transportasi</div>
-                    <div class="panel-body">
-                        <h2><?= $count_transport ?></h2>
-                    </div>
-                    <div class="panel-footer w-100">
-                        <button type="button" class="btn btn-sm btn-primary btn_view_req" style="width: 100%;" data-val="transportasi"><i class="fa fa-eye"></i> View</button>
-                    </div>
-                </div>
-            </div>
+            
             <div class="col-md-4" style="margin-top: 2vh;">
                 <div class="panel panel-default">
                     <div class="panel-heading bg-yellow">Kasbon</div>
@@ -66,28 +47,6 @@ endforeach;
                     </div>
                     <div class="panel-footer w-100">
                         <button type="button" class="btn btn-sm btn-primary btn_view_req" style="width: 100%;" data-val="expense"><i class="fa fa-eye"></i> View</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4" style="margin-top: 2vh;">
-                <div class="panel panel-default">
-                    <div class="panel-heading bg-red">Periodik</div>
-                    <div class="panel-body">
-                        <h2><?= $count_periodik ?></h2>
-                    </div>
-                    <div class="panel-footer w-100">
-                        <button type="button" class="btn btn-sm btn-primary btn_view_req" style="width: 100%;" data-val="periodik"><i class="fa fa-eye"></i> View</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4" style="margin-top: 2vh;">
-                <div class="panel panel-default">
-                    <div class="panel-heading bg-light-blue">Pembayaran PO</div>
-                    <div class="panel-body">
-                        <h2><?= $count_pembayaran_po ?></h2>
-                    </div>
-                    <div class="panel-footer w-100">
-                        <button type="button" class="btn btn-sm btn-primary btn_view_req" style="width: 100%;" data-val="pembayaran_po"><i class="fa fa-eye"></i> View</button>
                     </div>
                 </div>
             </div>
@@ -237,8 +196,7 @@ endforeach;
                                 if (strpos($item_expense->no_doc, 'ROS') === true) {
                                     $tipe = 'Pembayaran PIB';
                                 }
-                                if (strpos($item_expense->no_doc, 'ER-') !== false || strpos($item_expense->no_doc, 'ROS-') !== false) {
-                                    echo '<tr>';
+                                echo '<tr>';
                                     echo '<td>' . $item_expense->no_doc . '</td>';
                                     echo '<td>' . $item_expense->nama . '</td>';
                                     echo '<td>' . $item_expense->tgl_doc . '</td>';
@@ -270,7 +228,6 @@ endforeach;
                         <?php endif;
                                     echo '</td>';
                                     echo '</tr>';
-                                }
                             }
                         endforeach;
                         ?>

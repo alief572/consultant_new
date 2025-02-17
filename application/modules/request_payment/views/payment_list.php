@@ -43,7 +43,7 @@ $ENABLE_VIEW    = has_permission('Payment_List.View');
 			</div>
 			<div class="col-md-2">
 				<button type="button" class="btn btn-sm btn-primary search_data"><i class="fa fa-search"></i> Search</button>
-				<button type="button" class="btn btn-sm btn-success excel_data"><i class="fa fa-download"></i> Excel</button>
+				<button type="button" class="btn btn-sm btn-danger clearing"><i class="fa fa-cogs"></i> Reset</button>
 			</div>
 		</div>
 		<!-- </div> -->
@@ -66,75 +66,7 @@ $ENABLE_VIEW    = has_permission('Payment_List.View');
 						<th>Status</th>
 					</tr>
 				</thead>
-				<tbody>
-					<?php
-					if (!empty($data)) {
-						$numb = 0;
-						foreach ($data as $record) {
-
-							$tgl_pengajuan = (isset($list_tgl_pengajuan_pembayaran[$record->no_doc])) ? $list_tgl_pengajuan_pembayaran[$record->no_doc]['tgl_pengajuan'] : '';
-
-							$tgl_pembayaran = (isset($list_tgl_pengajuan_pembayaran[$record->no_doc])) ? $list_tgl_pengajuan_pembayaran[$record->no_doc]['tgl_pembayaran'] : '';
-
-							$diajukan_oleh = (isset($list_tgl_pengajuan_pembayaran[$record->no_doc])) ? $list_tgl_pengajuan_pembayaran[$record->no_doc]['diajukan_oleh'] : '';
-
-							$dibayar_oleh = (isset($list_tgl_pengajuan_pembayaran[$record->no_doc])) ? $list_tgl_pengajuan_pembayaran[$record->no_doc]['dibayar_oleh'] : '';
-
-							$numb++; ?>
-							<tr>
-								<td><?= $numb; ?></td>
-								<td><?= $record->no_doc ?></td>
-								<td><?= $record->nama ?></td>
-								<td><?= $record->tgl_doc ?></td>
-								<td><?= $record->keperluan ?></td>
-								<td><?= $record->tipe ?></td>
-								<td><?= number_format($record->jumlah) ?></td>
-								<td class="text-center"><?= $diajukan_oleh ?></td>
-								<td class="text-center"><?= $tgl_pengajuan ?></td>
-								<td class="text-center"><?= $dibayar_oleh ?></td>
-								<td class="text-center"><?= $tgl_pembayaran ?></td>
-								<td>
-									<?php
-									$get_request_payment = $this->db->get_where('request_payment', ['no_doc' => $record->no_doc])->row();
-									if (!empty($get_request_payment)) {
-										if ($record->sts_reject !== '1' && $record->sts_reject_manage !== '1') {
-											if ($get_request_payment->status == '0') {
-												echo '<div class="badge bg-yellow text-light">Process</div>';
-											}
-											if ($get_request_payment->status == '1' || $get_request_payment->status == '2') {
-												$get_payment_approve = $this->db->get_where('payment_approve', ['no_doc' => $record->no_doc])->row();
-												if ($get_payment_approve->status == '2') {
-													echo '<div class="badge bg-green text-light">Paid</div>';
-												} else {
-													echo '<div class="badge bg-yellow text-light">Approved</div>';
-												}
-											}
-										} else {
-											if ($record->sts_reject == '1') {
-												echo '<div class="badge bg-red">Rejected by Checker</div>';
-											} else if ($record->sts_reject_manage == '1') {
-												echo '<div class="badge bg-red">Rejected by Management</div>';
-											} else {
-												echo '<div class="badge bg-blue">Open</div>';
-											}
-										}
-									} else {
-										if ($record->sts_reject == '1') {
-											echo '<div class="badge bg-red">Rejected by Checker</div>';
-										} else if ($record->sts_reject_manage == '1') {
-											echo '<div class="badge bg-red">Rejected by Management</div>';
-										} else {
-											echo '<div class="badge bg-blue">Open</div>';
-										}
-									}
-									?>
-								</td>
-							</tr>
-					<?php
-						}
-					}  ?>
-
-				</tbody>
+				<tbody></tbody>
 			</table>
 		</div>
 	</div>
@@ -146,12 +78,77 @@ $ENABLE_VIEW    = has_permission('Payment_List.View');
 
 <script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
 <script type="text/javascript">
-	$(".divide").autoNumeric('init');
-	$("#mytabledata").DataTable();
+	
+	
+	$(document).ready(function() {
+		$(".divide").autoNumeric('init');
+	
+		$('.select2').select2({
+			width: '100%'
+		});
 
-	$('.select2').select2({
-		width: '100%'
-	});
+		DataTablee();
+	})
+
+	function DataTablee() {
+		var tgl_from = $('.tgl_from').val()
+		var tgl_to = $('.tgl_to').val()
+		var bank = $('.bank').val()
+
+		var DataTablee = $('#mytabledata').DataTable().destroy();
+
+		var DataTablee = $('#mytabledata').DataTable({
+			processing: true,
+			serverSide: true,
+			ajax: {
+				type: 'post',
+				url: siteurl + active_controller + 'get_payment_list',
+				data: function(d) {
+					d.tgl_from = tgl_from
+					d.tgl_to = tgl_to
+					d.bank = bank
+				}
+			},
+			columns: [
+				{
+					data: 'no'
+				},
+				{
+					data: 'no_dokumen'
+				},
+				{
+					data: 'request_by'
+				},
+				{
+					data: 'tanggal'
+				},
+				{
+					data: 'keperluan'
+				},
+				{
+					data: 'tipe'
+				},
+				{
+					data: 'nilai_pengajuan'
+				},
+				{
+					data: 'diajukan_oleh'
+				},
+				{
+					data: 'tanggal_pengajuan'
+				},
+				{
+					data: 'dibayar_oleh'
+				},
+				{
+					data: 'tanggal_pembayaran'
+				},
+				{
+					data: 'status'
+				}
+			]
+		});
+	}
 
 	function cektotal() {
 		var total_req = 0;
@@ -238,35 +235,14 @@ $ENABLE_VIEW    = has_permission('Payment_List.View');
 	});
 
 	$(document).on('click', '.search_data', function() {
-		var tgl_from = $('.tgl_from').val();
-		var tgl_to = $('.tgl_to').val();
-		var bank = $('.bank').val();
+		DataTablee();
+	});
+	$(document).on('click', '.clearing', function() {
+		var tgl_from = $('.tgl_from').val('')
+		var tgl_to = $('.tgl_to').val('')
+		var bank = $('.bank').val('')
 
-		$.ajax({
-			type: "POST",
-			url: siteurl + active_controller + 'search_payment_list',
-			data: {
-				'tgl_from': tgl_from,
-				'tgl_to': tgl_to,
-				'bank': bank
-			},
-			cache: false,
-			beforeSend: function(result) {
-				$('.search_data').html('<i class="fa fa-spin fa-spinner"></i>');
-			},
-			success: function(result) {
-				$('.table_container').html(result);
-				$('.search_data').html('<i class="fa fa-search"></i> Search');
-			},
-			error: function(result) {
-				swal({
-					title: 'Error !',
-					text: 'Please try again later !',
-					type: 'error'
-				});
-				$('.search_data').html('<i class="fa fa-search"></i> Search');
-			}
-		});
+		DataTablee();
 	});
 
 	$(document).on('click', '.excel_data', function() {
