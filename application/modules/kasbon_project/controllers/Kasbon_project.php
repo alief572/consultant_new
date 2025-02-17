@@ -373,7 +373,13 @@ class Kasbon_project extends Admin_Controller
             if ($item->sts_req == '1') {
                 $sts = '<button type="button" class="btn btn-sm btn-warning">Waiting Approval</button>';
             }
+
             if ($item->sts == '1') {
+                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+            }
+
+            $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
+            if(!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
             }
 
@@ -545,6 +551,11 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-warning">Waiting Approval</button>';
             }
             if ($item->sts == '1') {
+                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+            }
+            
+            $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
+            if(!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
             }
 
@@ -701,6 +712,10 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-warning">Waiting Approval</button>';
             }
             if ($item->sts == '1') {
+                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+            }
+            $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
+            if(!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
             }
 

@@ -67,28 +67,13 @@ foreach ($results['result_payment'] as $item) {
 					<td width="25%">
 						<input type="date" name="tgl_bayar" id="" class="form-control form-control-sm tgl_bayar" value="<?= $results['result_header']->tgl_bayar ?>" readonly>
 					</td>
-					<td width="15%" style="">Supplier</td>
-					<td width="5%" class="text-center">:</td>
-					<td width="25%">
-						<input type="hidden" name="supplier_input" class="supplier_input" value="<?= implode(',', $kode_supplier) ?>">
-						<input type="hidden" name="nm_supplier_input" class="nm_supplier_input" value="<?= implode(',', $nm_supplier) ?>">
-						<select name="supplier" id="" class="form-control form-control-sm supplier" disabled>
-							<option value="">- Supplier Name -</option>
-							<?php
-							foreach ($results['list_supplier'] as $item_supplier) {
-								$selected = (isset($kode_supplier[$item_supplier->kode_supplier])) ? 'selected' : '';
-								echo '<option value="' . $item_supplier->kode_supplier . '" ' . $selected . '>' . $item_supplier->nama . '</option>';
-							}
-							?>
-						</select>
-					</td>
-				</tr>
-				<tr>
 					<td width="15%" style="">Keterangan Pembayaran</td>
 					<td width="5%" class="text-center">:</td>
 					<td width="25%">
 						<textarea name="keterangan_pembayaran" id="" class="form-control form-control-sm keterangan_pembayaran" readonly><?= $results['result_header']->keterangan_pembayaran ?></textarea>
 					</td>
+				</tr>
+				<tr>
 					<td width="15%" style="">Pilih Bank</td>
 					<td width="5%" class="text-center">:</td>
 					<td width="25%">
@@ -102,8 +87,6 @@ foreach ($results['result_payment'] as $item) {
 							?>
 						</select>
 					</td>
-				</tr>
-				<tr>
 					<td width="15%" style="">Mata Uang</td>
 					<td width="5%" class="text-center">:</td>
 					<td width="25%">
@@ -111,33 +94,31 @@ foreach ($results['result_payment'] as $item) {
 							<option value="">- Mata Uang -</option>
 							<?php
 							foreach ($results['list_mata_uang'] as $item_mata_uang) {
-                                $selected = ($item_mata_uang->kode == $results['result_header']->mata_uang) ? 'selected' : '';
+								$selected = ($item_mata_uang->kode == $results['result_header']->mata_uang) ? 'selected' : '';
 								echo '<option value="' . $item_mata_uang->kode . '" '.$selected.'>' . $item_mata_uang->kode . '</option>';
 							}
 							?>
 						</select>
 					</td>
-					<td width="15%" style="">Request Payment</td>
+				</tr>
+				<tr>
+					<td width="15%" style="">Payment Bank</td>
 					<td width="5%" class="text-center">:</td>
 					<td width="25%">
 						<input type="text" name="payment_bank" id="" class="form-control form-control-sm text-right input_payment_bank auto_num" value="<?= number_format($results['result_header']->payment_bank, 2) ?>" readonly>
 					</td>
+					<td width="15%" style="">Kurs</td>
+					<td width="5%" class="text-center">:</td>
+					<td width="25%">
+						<input type="text" name="kurs_payment" id="" class="form-control form-control-sm text-right auto_num" value="1" readonly>
+					</td>
 				</tr>
-				<!-- <tr>
-				<td colspan="3"></td>
-				<td width="15%" style="">Kurs</td>
-				<td width="5%" class="text-center">:</td>
-				<td width="25%">
-					<input type="text" name="kurs" id="" class="form-control form-control-sm text-right auto_num" value="0">
-				</td>
-			</tr> -->
 			</table>
 		</div>
 		<div class="box-body">
 			<table class="table table-bordered table-striped" id="mytabledata" width='100%'>
 				<thead>
 					<tr class='bg-blue'>
-						<th class="text-center">Supplier</th>
 						<th class="text-center">Nomor Dokumen</th>
 						<th class="text-center">Payment Bank</th>
 						<th class="text-center" colspan="2">PPH</th>
@@ -245,7 +226,6 @@ foreach ($results['result_payment'] as $item) {
                         $selected_pph_22 = ($item->tipe_pph == 'PPH 22') ? 'selected' : '';
 
 						echo '<tr>';
-						echo '<td class="text-center">' . $nm_supplier . '</td>';
 						echo '<td class="text-center"><input type="hidden" name="dt['.$no.'][id_payment]" value="'.$item->id.'">' . $item->no_doc . '</td>';
 						echo '<td class="text-right">
 					<input type="hidden" class="jumlah_col_' . $item->id . '">
@@ -278,38 +258,38 @@ foreach ($results['result_payment'] as $item) {
 				</tbody>
 				<tbody>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>Total Payment</td>
 						<td class="text-right">
 							<?= number_format($total_payment, 2) ?>
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>Selisih</td>
 						<td class="text-right selisih_col"><?= number_format($total_payment - $results['result_header']->payment_bank, 2) ?></td>
 					</tr>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>Bank Charge</td>
 						<td>
 							<input type="text" name="bank_charge" id="" class="form-control form-control-sm text-right auto_num bank_charge" value="<?= number_format($results['bank_charge'], 2) ?>" readonly>
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>PPh</td>
 						<td class="text-right total_pph_col">
 							<?= number_format($total_pph, 2) ?>
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>PPn</td>
 						<td class="text-right"><?= number_format($total_ppn, 2) ?></td>
 					</tr>
 					<tr>
-						<td colspan="5"></td>
+						<td colspan="4"></td>
 						<td>Kontrol</td>
 						<td class="text-right kontrol_col"><?= number_format($results['result_header']->payment_bank - $total_payment - $results['bank_charge'] - $total_ppn + $total_pph, 2) ?></td>
 					</tr>

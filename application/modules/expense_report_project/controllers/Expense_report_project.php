@@ -43,9 +43,10 @@ class Expense_report_project extends Admin_Controller
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
 
-        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to, c.nm_paket as nama_project');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budgeting = $this->db->get()->row();
 
@@ -735,16 +736,17 @@ class Expense_report_project extends Admin_Controller
         $search = $this->input->post('search');
 
 
-        $this->db->select('a.*, b.nm_sales');
+        $this->db->select('a.*, b.nm_sales, c.nm_paket as nama_project');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
             $this->db->or_like('b.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
-            $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->or_like('c.nm_paket', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.create_date', 'desc');
@@ -752,16 +754,17 @@ class Expense_report_project extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*, b.nm_sales');
+        $this->db->select('a.*, b.nm_sales, c.nm_paket as nama_project');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
             $this->db->or_like('b.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
-            $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->or_like('c.nm_paket', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.create_date', 'desc');
@@ -844,7 +847,7 @@ class Expense_report_project extends Admin_Controller
                     'nm_customer' => $item->nm_customer,
                     'nm_sales' => ucfirst($item->nm_sales),
                     'nm_project_leader' => ucfirst($item->nm_project_leader),
-                    'nm_project' => $item->nm_project,
+                    'nm_project' => $item->nama_project,
                     'option' => $option
                 ];
         }

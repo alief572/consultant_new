@@ -14,7 +14,6 @@
                     <th class="text-center">Tgl</th>
                     <th class="text-center">Keperluan</th>
                     <th class="text-center">Currency</th>
-                    <th class="text-center">Supplier</th>
                     <th class="text-center">Total Invoice</th>
                     <th class="text-center">Option</th>
                 </tr>
@@ -82,7 +81,6 @@
                     echo '<td class="text-center">' . date('d F Y', strtotime($item->created_on)) . '</td>';
                     echo '<td class="text-left">' . $item->keperluan . '</td>';
                     echo '<td class="text-center">' . $item->currency . '</td>';
-                    echo '<td class="text-center">' . $nm_supplier . '</td>';
                     echo '<td class="text-right">' . number_format($item->jumlah, 2) . '</td>';
                     echo '<td class="text-center">';
                     echo '<input type="checkbox" class="check_payment" value="' . $item->id . '" ' . $checked . '>';
