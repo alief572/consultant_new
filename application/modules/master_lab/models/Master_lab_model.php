@@ -10,10 +10,10 @@ class Master_lab_model extends BF_Model
 {
     public function __construct()
     {
-        $this->ENABLE_ADD     = has_permission('Master_Lab.Add');
-        $this->ENABLE_MANAGE  = has_permission('Master_Lab.Manage');
-        $this->ENABLE_VIEW    = has_permission('Master_Lab.View');
-        $this->ENABLE_DELETE  = has_permission('Master_Lab.Delete');
+        $this->ENABLE_ADD     = 'Master_Lab.Add';
+        $this->ENABLE_MANAGE  = 'Master_Lab.Manage';
+        $this->ENABLE_VIEW    = 'Master_Lab.View';
+        $this->ENABLE_DELETE  = 'Master_Lab.Delete';
     }
 
     public function save_lab()
