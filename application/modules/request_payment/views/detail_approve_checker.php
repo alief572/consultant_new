@@ -172,7 +172,7 @@ if ($type == 'expense') {
 								</tr>
 							<?php elseif ($type == 'kasbon') :
 
-								$gTotal += ($dtl->selisih + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']);
+								$gTotal += ($dtl->grand_total + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']);
 							?>
 
 								<tr>
