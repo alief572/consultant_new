@@ -172,7 +172,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           echo '</tr>';
 
           $ttl_estimasi_subcont += $item->total_budget_estimasi;
-          $ttl_pengajuan_subcont += $iem->total_pengajuan;
+          $ttl_pengajuan_subcont += $item->total_pengajuan;
           $ttl_aktual_subcont += $item->aktual_terpakai;
           $ttl_sisa_subcont += $item->sisa_budget;
         }

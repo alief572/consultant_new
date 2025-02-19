@@ -97,6 +97,12 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_kasbon_akomodasi = $this->db->get()->result();
 
+        $this->db->select('SUM(a.total_expense_report) as ttl_expense_akomodasi');
+        $this->db->from('kons_tr_expense_report_project a');
+        $this->db->where('a.tipe', 2);
+        $this->db->where('a.sts <>', 1);
+        $get_expense_akomodasi = $this->db->get()->result();
+
         $nilai_kasbon_on_proses_akomodasi = 0;
         foreach ($get_kasbon_akomodasi as $item) {
             if ($item->sts !== '1') {
