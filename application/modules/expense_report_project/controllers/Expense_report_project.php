@@ -80,47 +80,38 @@ class Expense_report_project extends Admin_Controller
         $get_budget_others = $this->db->get()->row();
         $budget_others = $get_budget_others->budget_others;
 
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_kasbon_project_subcont a');
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_kasbon_subcont = $this->db->get()->result();
+        $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->where('a.tipe', 1);
+        $this->db->group_start();
+        $this->db->where('a.sts', null);
+        $this->db->or_where('a.sts <>', 1);
+        $this->db->group_end();
+        $get_expense_subcont = $this->db->get()->row();
 
-        $nilai_kasbon_on_proses = 0;
-        foreach ($get_kasbon_subcont as $item) {
-            if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses += $item->total_pengajuan;
-            }
-        }
-
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_kasbon_project_akomodasi a');
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_kasbon_akomodasi = $this->db->get()->result();
+        $nilai_kasbon_on_proses = $get_expense_subcont->ttl_expense_subcont;
 
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_akomodasi');
-        $this->db->from('kons_tr_expense_report_project a');
+        $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->where('a.tipe', 2);
-        $this->db->where('a.sts <>', 1);
-        $get_expense_akomodasi = $this->db->get()->result();
+        $this->db->group_start();
+        $this->db->where('a.sts', null);
+        $this->db->or_where('a.sts <>', 1);
+        $this->db->group_end();
+        $get_expense_akomodasi = $this->db->get()->row();
 
-        $nilai_kasbon_on_proses_akomodasi = 0;
-        foreach ($get_kasbon_akomodasi as $item) {
-            if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses_akomodasi += $item->total_pengajuan;
-            }
-        }
+        $nilai_kasbon_on_proses_akomodasi = $get_expense_akomodasi->ttl_expense_akomodasi;
 
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_kasbon_project_others a');
-        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $get_kasbon_others = $this->db->get()->result();
+        $this->db->select('SUM(a.total_expense_report) as ttl_expense_others');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->where('a.tipe', 3);
+        $this->db->group_start();
+        $this->db->where('a.sts', null);
+        $this->db->or_where('a.sts <>', 1);
+        $this->db->group_end();
+        $get_expense_others = $this->db->get()->row();
 
-        $nilai_kasbon_on_proses_others = 0;
-        foreach ($get_kasbon_others as $item) {
-            if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses_others += $item->total_pengajuan;
-            }
-        }
+        $nilai_kasbon_on_proses_others = $get_expense_others->ttl_expense_others;
 
         $data = [
             'list_budgeting' => $get_budgeting,
