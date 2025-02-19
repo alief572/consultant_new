@@ -73,7 +73,7 @@ if ($data_user->employee_id == '168') {
                 <!-- <td width="100"></td> -->
                 <td class="pd-5 semi-bold" valign="top" width="110">No. SPK</td>
                 <td class="pd-5" width="500" valign="top">
-                    <input type="text" name="id_spk_penawaran" id="" class="form-control form-control-sm text-center" value="<?= $list_spk_penawaran->id_spk_penawaran ?>" readonly>
+                    <input type="text" name="id_spk_penawaran" id="" class="form-control form-control-sm text-center id_spk_penawaran" value="<?= $list_spk_penawaran->id_spk_penawaran ?>" readonly>
                 </td>
             </tr>
             <tr>
