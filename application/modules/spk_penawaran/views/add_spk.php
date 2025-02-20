@@ -79,7 +79,8 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <!-- <td width="100"></td> -->
                     <td class="pd-5 semi-bold" valign="top" width="110">No. SPK</td>
                     <td class="pd-5" width="500" valign="top">
-                        <input type="text" name="id_quotation" id="" class="form-control form-control-sm text-center" value="<?= $list_penawaran->id_quotation ?>" readonly>
+                        <input type="text" name="id_spk_penawaran" id="" class="form-control form-control-sm text-center" value="">
+                        <input type="hidden" name="id_quotation" id="" value="<?= $list_penawaran->id_quotation ?>" readonly>
                     </td>
                 </tr>
                 <tr>

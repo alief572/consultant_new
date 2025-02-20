@@ -988,6 +988,21 @@ class SPK_penawaran extends Admin_Controller
 
         $this->db->trans_begin();
 
+        $lanjut = 1;
+
+        if($post['id_spk_penawaran'] !== '') {
+            $check_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', array('id_spk_penawaran' => $post['id_spk_penawaran']))->num_rows();
+
+            if($check_spk_penawaran > 0) {
+                $lanjut = 0;
+            } else {
+                $id_spk_penawaran = $post['id_spk_penawaran'];
+            }
+        }
+
+        // print_r($id_spk_penawaran);
+        // exit;
+
         $arr_insert = [
             'id_spk_penawaran' => $id_spk_penawaran,
             'id_penawaran' => $post['id_quotation'],
@@ -1140,10 +1155,13 @@ class SPK_penawaran extends Admin_Controller
             exit;
         }
 
-        if ($this->db->trans_status() === false) {
+        if ($this->db->trans_status() === false || $lanjut < 1) {
             $this->db->trans_rollback();
             $valid = 0;
             $msg = 'Please try again later !';
+            if($lanjut < 1) {
+                $msg = 'Maaf, ID SPK sudah terdaftar sebelum nya !';
+            }
         } else {
             $this->db->trans_commit();
             $valid = 1;
