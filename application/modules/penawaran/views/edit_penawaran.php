@@ -150,7 +150,7 @@ if (count($list_penawaran_lab) > 0) {
                                         <?php
                                         foreach ($list_employees as $item) {
                                             $selected = '';
-                                            if ($list_penawaran->tipe_informasi_awal == 'Others' && $item->detail_informasi_awal == $item->id) {
+                                            if ($list_penawaran->tipe_informasi_awal == 'Others' && $list_penawaran->detail_informasi_awal == $item->id) {
                                                 $selected = 'selected';
                                             }
                                             echo '<option value="' . $item->id . '" ' . $selected . '>' . ucfirst($item->nm_karyawan) . '</option>';
