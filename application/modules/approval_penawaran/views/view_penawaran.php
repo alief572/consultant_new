@@ -142,12 +142,12 @@ if (count($list_penawaran_lab) > 0) {
                         </tr>
                         <tr>
                             <td style="padding: 0.2rem;">
-                                <input type="checkbox" name="check_info_awal_others" id="" class="check_info_awal_others" disabled> Others
+                                <input type="checkbox" name="check_info_awal_others" id="" class="check_info_awal_others" <?= ($list_penawaran->tipe_informasi_awal == 'Others') ? 'checked' : '' ?> disabled> Others
                             </td>
                             <td style="padding: 0.2rem;">
                                 <select name="informasi_awal_others" id="" class="informasi_awal_others" disabled>
                                     <?php
-                                    foreach ($list_marketing as $item) {
+                                    foreach ($list_employees as $item) {
                                         if ($list_penawaran->tipe_informasi_awal == 'Others' && $item->id == $list_penawaran->detail_informasi_awal) {
                                             echo '<option value="' . $item->id . '">' . $item->nm_karyawan . '</option>';
                                         }
