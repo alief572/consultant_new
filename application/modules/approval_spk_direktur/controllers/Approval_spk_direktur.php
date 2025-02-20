@@ -513,7 +513,7 @@ class Approval_spk_direktur extends Admin_Controller
             'reject_level2_by' => $this->auth->user_id(),
             'reject_level2_date' => date('Y-m-d H:i:s'),
             'reject_level2_reason' => $reject_reason,
-            'approval_level2_sts' => null,
+            'approval_level2_sts' => null,  
             'approval_level2_by' => null,
             'approval_level2_date' => null,
             'reject_reason' => $reject_reason

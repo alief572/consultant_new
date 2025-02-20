@@ -1279,6 +1279,7 @@ class SPK_penawaran extends Admin_Controller
             'reject_konsultan_1_sts' => null,
             'reject_konsultan_2_sts' => null,
             'reject_sales_sts' => null,
+            'reject_manager_sales_sts' => null,
             'edited_by' => $this->auth->user_id(),
             'edited_date' => date('Y-m-d H:i:s')
         ];
