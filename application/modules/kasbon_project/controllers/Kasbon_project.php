@@ -1729,23 +1729,23 @@ class Kasbon_project extends Admin_Controller
 
         $upload_po = '';
 
-        $files = $_FILES['kasbon_document'];
-        $file_count = count($files['name']);
+        // $files = $_FILES['kasbon_document'];
+        // $file_count = count($files['name']);
 
-        $_FILES['kasbon_document']['name'] = $files['name'];
-        $_FILES['kasbon_document']['type'] = $files['type'];
-        $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        $_FILES['kasbon_document']['error'] = $files['error'];
-        $_FILES['kasbon_document']['size'] = $files['size'];
+        // $_FILES['kasbon_document']['name'] = $files['name'];
+        // $_FILES['kasbon_document']['type'] = $files['type'];
+        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
+        // $_FILES['kasbon_document']['error'] = $files['error'];
+        // $_FILES['kasbon_document']['size'] = $files['size'];
 
-        if (!$this->upload->do_upload('kasbon_document')) {
-            // If upload fails, display error
-            $error = array('error' => $this->upload->display_errors());
-            // print_r($error);
-        } else {
-            $data_upload_po = $this->upload->data();
-            $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
-        }
+        // if (!$this->upload->do_upload('kasbon_document')) {
+        //     // If upload fails, display error
+        //     $error = array('error' => $this->upload->display_errors());
+        //     // print_r($error);
+        // } else {
+        //     $data_upload_po = $this->upload->data();
+        //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
+        // }
 
 
         $this->db->trans_begin();
@@ -1965,23 +1965,23 @@ class Kasbon_project extends Admin_Controller
 
         $upload_po = '';
 
-        $files = $_FILES['kasbon_document'];
-        $file_count = count($files['name']);
+        // $files = $_FILES['kasbon_document'];
+        // $file_count = count($files['name']);
 
-        $_FILES['kasbon_document']['name'] = $files['name'];
-        $_FILES['kasbon_document']['type'] = $files['type'];
-        $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        $_FILES['kasbon_document']['error'] = $files['error'];
-        $_FILES['kasbon_document']['size'] = $files['size'];
+        // $_FILES['kasbon_document']['name'] = $files['name'];
+        // $_FILES['kasbon_document']['type'] = $files['type'];
+        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
+        // $_FILES['kasbon_document']['error'] = $files['error'];
+        // $_FILES['kasbon_document']['size'] = $files['size'];
 
-        if (!$this->upload->do_upload('kasbon_document')) {
-            // If upload fails, display error
-            $error = array('error' => $this->upload->display_errors());
-            // print_r($error);
-        } else {
-            $data_upload_po = $this->upload->data();
-            $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
-        }
+        // if (!$this->upload->do_upload('kasbon_document')) {
+        //     // If upload fails, display error
+        //     $error = array('error' => $this->upload->display_errors());
+        //     // print_r($error);
+        // } else {
+        //     $data_upload_po = $this->upload->data();
+        //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
+        // }
 
 
         $this->db->trans_begin();
@@ -2089,23 +2089,23 @@ class Kasbon_project extends Admin_Controller
 
         $upload_po = '';
 
-        $files = $_FILES['kasbon_document'];
-        $file_count = count($files['name']);
+        // $files = $_FILES['kasbon_document'];
+        // $file_count = count($files['name']);
 
-        $_FILES['kasbon_document']['name'] = $files['name'];
-        $_FILES['kasbon_document']['type'] = $files['type'];
-        $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        $_FILES['kasbon_document']['error'] = $files['error'];
-        $_FILES['kasbon_document']['size'] = $files['size'];
+        // $_FILES['kasbon_document']['name'] = $files['name'];
+        // $_FILES['kasbon_document']['type'] = $files['type'];
+        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
+        // $_FILES['kasbon_document']['error'] = $files['error'];
+        // $_FILES['kasbon_document']['size'] = $files['size'];
 
-        if (!$this->upload->do_upload('kasbon_document')) {
-            // If upload fails, display error
-            $error = array('error' => $this->upload->display_errors());
-            // print_r($error);
-        } else {
-            $data_upload_po = $this->upload->data();
-            $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
-        }
+        // if (!$this->upload->do_upload('kasbon_document')) {
+        //     // If upload fails, display error
+        //     $error = array('error' => $this->upload->display_errors());
+        //     // print_r($error);
+        // } else {
+        //     $data_upload_po = $this->upload->data();
+        //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
+        // }
 
 
         $this->db->trans_begin();
@@ -2217,23 +2217,23 @@ class Kasbon_project extends Admin_Controller
 
         $upload_po = '';
 
-        $files = $_FILES['kasbon_document'];
-        $file_count = count($files['name']);
+        // $files = $_FILES['kasbon_document'];
+        // $file_count = count($files['name']);
 
-        $_FILES['kasbon_document']['name'] = $files['name'];
-        $_FILES['kasbon_document']['type'] = $files['type'];
-        $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        $_FILES['kasbon_document']['error'] = $files['error'];
-        $_FILES['kasbon_document']['size'] = $files['size'];
+        // $_FILES['kasbon_document']['name'] = $files['name'];
+        // $_FILES['kasbon_document']['type'] = $files['type'];
+        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
+        // $_FILES['kasbon_document']['error'] = $files['error'];
+        // $_FILES['kasbon_document']['size'] = $files['size'];
 
-        if (!$this->upload->do_upload('kasbon_document')) {
-            // If upload fails, display error
-            $error = array('error' => $this->upload->display_errors());
-            // print_r($error);
-        } else {
-            $data_upload_po = $this->upload->data();
-            $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
-        }
+        // if (!$this->upload->do_upload('kasbon_document')) {
+        //     // If upload fails, display error
+        //     $error = array('error' => $this->upload->display_errors());
+        //     // print_r($error);
+        // } else {
+        //     $data_upload_po = $this->upload->data();
+        //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
+        // }
 
 
         $this->db->trans_begin();
