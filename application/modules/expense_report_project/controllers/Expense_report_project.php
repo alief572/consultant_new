@@ -82,7 +82,9 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont');
         $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
         $this->db->where('a.tipe', 1);
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
         $this->db->where('a.sts', null);
         $this->db->or_where('a.sts <>', 1);
@@ -93,7 +95,9 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_akomodasi');
         $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
         $this->db->where('a.tipe', 2);
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
         $this->db->where('a.sts', null);
         $this->db->or_where('a.sts <>', 1);
@@ -104,7 +108,9 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_others');
         $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
         $this->db->where('a.tipe', 3);
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
         $this->db->where('a.sts', null);
         $this->db->or_where('a.sts <>', 1);
@@ -786,67 +792,66 @@ class Expense_report_project extends Admin_Controller
             $ttl_expense = 0;
 
             $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting))->result();
-            foreach($get_kasbon as $item_kas) {
+            foreach ($get_kasbon as $item_kas) {
                 $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', array('id_header' => $item_kas->id, 'sts' => 1))->result();
-                foreach($get_expense as $item_exp) {
+                foreach ($get_expense as $item_exp) {
                     $ttl_expense += $item_exp->total_expense_report;
                 }
             }
 
-            if(($ttl_kasbon - $ttl_expense) <= 0 && $item->sts !== 1) {
+            if (($ttl_kasbon - $ttl_expense) <= 0 && $item->sts !== 1) {
                 $valid_show = 0;
             }
 
             $no++;
 
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_expense_report_project_header a');
+            $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+            $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+            $this->db->where('a.sts', 1);
+            $this->db->group_by('a.id');
+            $check_expense = $this->db->get()->result();
+
+            if (count($check_expense) > 0) {
+                $option = '<a href="' . base_url('expense_report_project/view/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info" title="View Expense Report"><i class="fa fa-eye"></i></a>';
+            }
+
+            $this->db->select('a.id');
+            $this->db->from('kons_tr_expense_report_project_header a');
+            $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+            $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+            $this->db->where('a.sts', null);
+            $this->db->where('a.sts_req', null);
+            $check_expense_draft = $this->db->get()->num_rows();
+
+            $option = '<a href="' . base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" title="Add Expense Report"><i class="fa fa-arrow-up"></i></a>';
+
+            if ($check_expense_draft > 0) {
+                $option .= ' ' . '<button type="button" class="btn btn-sm btn-warning req_app" data-id_spk_budgeting="' . $item->id_spk_budgeting . '" title="Request Approval"><i class="fa fa-arrow-up"></i></button>';
+            } else {
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_expense_report_project_header a');
                 $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
                 $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
-                $this->db->where('a.sts', 1);
-                $this->db->group_by('a.id');
                 $check_expense = $this->db->get()->result();
 
-                if (count($check_expense) > 0) {
+                if ($valid_show < 1) {
                     $option = '<a href="' . base_url('expense_report_project/view/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info" title="View Expense Report"><i class="fa fa-eye"></i></a>';
-                }
-
-                $this->db->select('a.id');
-                $this->db->from('kons_tr_expense_report_project_header a');
-                $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
-                $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
-                $this->db->where('a.sts', null);
-                $this->db->where('a.sts_req', null);
-                $check_expense_draft = $this->db->get()->num_rows();
-
-                $option = '<a href="' . base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" title="Add Expense Report"><i class="fa fa-arrow-up"></i></a>';
-
-                if ($check_expense_draft > 0) {
-                    $option .= ' ' . '<button type="button" class="btn btn-sm btn-warning req_app" data-id_spk_budgeting="' . $item->id_spk_budgeting . '" title="Request Approval"><i class="fa fa-arrow-up"></i></button>';
                 } else {
-                    $this->db->select('a.*');
-                    $this->db->from('kons_tr_expense_report_project_header a');
-                    $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
-                    $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
-                    $check_expense = $this->db->get()->result();
-
-                    if($valid_show < 1) {
-                        $option = '<a href="' . base_url('expense_report_project/view/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info" title="View Expense Report"><i class="fa fa-eye"></i></a>';
-                    } else {
-                        $option = '<a href="' . base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" title="Add Expense Report"><i class="fa fa-arrow-up"></i></a>';
-                    }
-
+                    $option = '<a href="' . base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" title="Add Expense Report"><i class="fa fa-arrow-up"></i></a>';
                 }
+            }
 
-                $hasil[] = [
-                    'no' => $no,
-                    'id_spk_penawaran' => $item->id_spk_penawaran,
-                    'nm_customer' => $item->nm_customer,
-                    'nm_sales' => ucfirst($item->nm_sales),
-                    'nm_project_leader' => ucfirst($item->nm_project_leader),
-                    'nm_project' => $item->nama_project,
-                    'option' => $option
-                ];
+            $hasil[] = [
+                'no' => $no,
+                'id_spk_penawaran' => $item->id_spk_penawaran,
+                'nm_customer' => $item->nm_customer,
+                'nm_sales' => ucfirst($item->nm_sales),
+                'nm_project_leader' => ucfirst($item->nm_project_leader),
+                'nm_project' => $item->nama_project,
+                'option' => $option
+            ];
         }
 
         echo json_encode([
@@ -953,22 +958,7 @@ class Expense_report_project extends Admin_Controller
                     </div>
                 ';
 
-                if ($check_expense->row()->sts_req == '0' && $check_expense->row()->sts == '0') {
-                    $option .= '
-                        <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                            <a href="javascript:void(0);" class="btn btn-sm btn-primary req_approval" style="color: #000000" data-id="' . $item->id . '" title="Request Approval">
-                                <div class="col-12 dropdown-item">
-                                <b>
-                                    <i class="fa fa-check"></i>
-                                </b>
-                                </div>
-                            </a>
-                            <span style="font-weight: 500"> Req. Approval </span>
-                        </div>
-                    ';
-                }
-
-                if ($check_expense->row()->sts_req == '0' && $check_expense->row()->sts == '0') {
+                if ($check_expense->row()->sts_req == null && $check_expense->row()->sts == null) {
                     $option .= '
                     <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
                         <a href="' . base_url('expense_report_project/edit_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
@@ -979,6 +969,19 @@ class Expense_report_project extends Admin_Controller
                             </div>
                         </a>
                         <span style="font-weight: 500"> Edit </span>
+                    </div>
+                ';
+
+                    $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="javascript:void();" class="btn btn-sm btn-danger del_expense" data-id_kasbon="' . $item->id . '" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-trash"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Delete </span>
                     </div>
                 ';
                 }
@@ -1872,6 +1875,84 @@ class Expense_report_project extends Admin_Controller
         echo json_encode([
             'status' => $valid,
             'pesan' => $msg
+        ]);
+    }
+
+    public function del_expense()
+    {
+        $id = $this->input->post('id');
+
+        $this->db->trans_begin();
+
+        $this->db->delete('kons_tr_expense_report_project_header', array('id_header' => $id));
+        $this->db->delete('kons_tr_expense_report_project_detail', array('id_header_kasbon' => $id));
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+        }
+
+        echo json_encode([
+            'status' => $valid
+        ]);
+    }
+
+    public function hitung_all_budget_on_process()
+    {
+        $id_spk_budgeting = $this->input->post('id_spk_budgeting');
+
+        $nilai_budget_subcont_on_process = 0;
+        $nilai_budget_akomodasi_on_process = 0;
+        $nilai_budget_others_on_process = 0;
+
+        $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('a.tipe', 1);
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->group_start();
+        $this->db->where('a.sts', null);
+        $this->db->or_where('a.sts <>', 1);
+        $this->db->group_end();
+        $get_expense_subcont = $this->db->get()->row();
+
+        $nilai_kasbon_on_proses = $get_expense_subcont->ttl_expense_subcont;
+
+        $this->db->select('SUM(a.total_expense_report) as ttl_expense_akomodasi');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('a.tipe', 2);
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->group_start();
+        $this->db->where('a.sts', null);
+        $this->db->or_where('a.sts <>', 1);
+        $this->db->group_end();
+        $get_expense_akomodasi = $this->db->get()->row();
+
+        $nilai_kasbon_on_proses_akomodasi = $get_expense_akomodasi->ttl_expense_akomodasi;
+
+        $this->db->select('SUM(a.total_expense_report) as ttl_expense_others');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('a.tipe', 3);
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->group_start();
+        $this->db->where('a.sts', null);
+        $this->db->or_where('a.sts <>', 1);
+        $this->db->group_end();
+        $get_expense_others = $this->db->get()->row();
+
+        $nilai_kasbon_on_proses_others = $get_expense_others->ttl_expense_others;
+
+        echo json_encode([
+            'nilai_budget_subcont' => $nilai_kasbon_on_proses,
+            'nilai_budget_akomodasi' => $nilai_kasbon_on_proses_akomodasi,
+            'nilai_budget_others' => $nilai_kasbon_on_proses_others
         ]);
     }
 
