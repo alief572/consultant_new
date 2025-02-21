@@ -257,20 +257,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             <div class="col-md-6">
                 <table style="width: 100%">
                     <tr>
-                        <th style="padding: 5px;">Document</th>
-                        <td style="padding: 5px;">
-                            <input type="file" name="kasbon_document" id="" class="form-control form-control-sm">
-                            <input type="hidden" name="dokument_link" value="<?= $header->dokument_link ?>">
-                            <?php
-                            if (file_exists('./' . $header->dokument_link)) {
-                                echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-sm btn-primary" target="_blank">
-                                        <i class="fa fa-download"></i> Download
-                                    </a>';
-                            }
-                            ?>
-                        </td>
-                    </tr>
-                    <tr>
                         <th style="padding: 5px;">Bank</th>
                         <td style="padding: 5px;">
                             <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>">
