@@ -64,14 +64,14 @@ class Approval_spk_project_leader extends Admin_Controller
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where('a.deleted', 'N');
+        $this->db->where('a.flag_active', 'Y');
         $this->db->where('a.id', $get_penawaran->id_marketing);
         $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where('a.deleted', 'N');
-        $this->db->order_by('a.nm_karyawan', 'asc');
+        $this->db->where('a.flag_active', 'Y');
+        $this->db->order_by('a.name', 'asc');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('a.nm_paket');
@@ -91,8 +91,8 @@ class Approval_spk_project_leader extends Admin_Controller
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
             $this->db->select('a.id, a.name as nm_karyawan');
-            $this->db->from('employees a');
-            $this->db->where('a.deleted', 'N');
+            $this->db->from(DBHR . '.employees a');
+            $this->db->where('a.flag_active', 'Y');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
@@ -221,7 +221,7 @@ class Approval_spk_project_leader extends Admin_Controller
         $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR.'.employees a');
+        $this->db->from(DBHR . '.employees a');
         $this->db->where('a.flag_active', 'Y');
         $this->db->order_by('a.name', 'asc');
         $get_all_marketing = $this->db->get()->result();
@@ -243,7 +243,7 @@ class Approval_spk_project_leader extends Admin_Controller
         $detail_informasi_awal = '';
         if ($get_penawaran->tipe_informasi_awal == 'Sales' || $get_penawaran->tipe_informasi_awal == 'Others') {
             $this->db->select('a.id, a.name as nm_karyawan');
-            $this->db->from(DBHR.'.employees a');
+            $this->db->from(DBHR . '.employees a');
             $this->db->where('a.id', $get_penawaran->detail_informasi_awal);
             $get_marketing_informasi_awal = $this->db->get()->row();
 
@@ -613,5 +613,104 @@ class Approval_spk_project_leader extends Admin_Controller
             'status' => $valid,
             'pesan' => $pesan
         ]);
+    }
+
+    public function detail_sum()
+    {
+        if (isset($_POST['id_spk_penawaran'])) {
+            $id_spk_penawaran = $this->input->post('id_spk_penawaran');
+            $type = $this->input->post('type');
+
+            $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', array('id_spk_penawaran' => $id_spk_penawaran))->row();
+
+            if ($type == 'akomodasi') {
+                $this->db->select('a.id, a.qty, a.price_unit, a.total, a.keterangan, b.nm_biaya');
+                $this->db->from('kons_tr_penawaran_akomodasi a');
+                $this->db->join('kons_master_biaya b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $get_spk_penawaran->id_penawaran);
+                $get_akomodasi = $this->db->get()->result();
+
+                $data = [
+                    'list_akomodasi' => $get_akomodasi
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_akomodasi');
+            }
+            if ($type == 'others') {
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya');
+                $this->db->from('kons_tr_penawaran_others a');
+                $this->db->join('kons_master_biaya b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $get_spk_penawaran->id_penawaran);
+                $get_others = $this->db->get()->result();
+
+                $data = [
+                    'list_others' => $get_others
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_others');
+            }
+            if ($type == 'lab') {
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.isu_lingkungan as nm_biaya');
+                $this->db->from('kons_tr_penawaran_lab a');
+                $this->db->join('kons_master_lab b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $get_spk_penawaran->id_penawaran);
+                $get_lab = $this->db->get()->result();
+
+                $data = [
+                    'list_lab' => $get_lab
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_lab');
+            }
+        } else {
+            $id_penawaran = $this->input->post('id_penawaran');
+            $type = $this->input->post('type');
+
+            if ($type == 'akomodasi') {
+                $this->db->select('a.id, a.qty, a.price_unit, a.total, a.keterangan, b.nm_biaya');
+                $this->db->from('kons_tr_penawaran_akomodasi a');
+                $this->db->join('kons_master_biaya b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $id_penawaran);
+                $get_akomodasi = $this->db->get()->result();
+
+                $data = [
+                    'list_akomodasi' => $get_akomodasi
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_akomodasi');
+            }
+            if ($type == 'others') {
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya');
+                $this->db->from('kons_tr_penawaran_others a');
+                $this->db->join('kons_master_biaya b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $id_penawaran);
+                $get_others = $this->db->get()->result();
+
+                $data = [
+                    'list_others' => $get_others
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_others');
+            }
+            if ($type == 'lab') {
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.isu_lingkungan as nm_biaya');
+                $this->db->from('kons_tr_penawaran_lab a');
+                $this->db->join('kons_master_lab b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $id_penawaran);
+                $get_lab = $this->db->get()->result();
+
+                $data = [
+                    'list_lab' => $get_lab
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_lab');
+            }
+        }
     }
 }

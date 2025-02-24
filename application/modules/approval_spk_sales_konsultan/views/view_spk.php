@@ -419,7 +419,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                             </div>
                         </div>
                     </td>
-
+                    <td></td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Divisi</td>
@@ -427,7 +427,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                         <select name="divisi" id="" class="form-control form-control-sm select_divisi" disabled>
                             <?php
                             foreach ($list_divisi as $item) {
-                                if($item->id == $list_spk_penawaran->id_divisi) {
+                                if ($item->id == $list_spk_penawaran->id_divisi) {
                                     echo '<option value="' . $item->id . '">' . ucfirst($item->nama) . '</option>';
                                 }
                             }
@@ -438,7 +438,9 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_akomodasi" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_akomodasi, 2) ?>" readonly>
                     </td>
-
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="akomodasi" data-id_spk_penawaran="<?= $list_spk_penawaran->id_spk_penawaran ?>"><i class="fa fa-eye"></i> Detail</button>
+                    </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Total Mandays</td>
@@ -449,6 +451,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_subcont" id="" class="form-control form-control-sm text-right biaya_subcont" value="<?= number_format($total_activity, 2) ?>" readonly>
                     </td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Subcont</td>
@@ -459,7 +462,9 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_others" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_others, 2) ?>" readonly>
                     </td>
-
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="others" data-id_spk_penawaran="<?= $list_spk_penawaran->id_spk_penawaran ?>"><i class="fa fa-eye"></i> Detail</button>
+                    </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Tandem</td>
@@ -469,6 +474,9 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     <td class="pd-5 semi-bold" valign="top">Biaya Lab</td>
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_lab" id="" class="form-control form-control-sm text-right biaya_lab" value="<?= number_format($nilai_lab, 2) ?>" readonly>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="lab" data-id_spk_penawaran="<?= $list_spk_penawaran->id_spk_penawaran ?>"><i class="fa fa-eye"></i> Detail</button>
                     </td>
                 </tr>
                 <tr>
@@ -672,6 +680,24 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
 
     <a href="<?= base_url('approval_spk_sales_konsultan'); ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
 </form>
+
+<div class="modal" id="dialog-rekap" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body" id="MyModalBody">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <input type="hidden" name="no_payment" value="<?= $no_payment ?>">
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
@@ -1090,5 +1116,40 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
 
             hitung_subcont_af_add();
         }
+    });
+
+    $(document).on('click', '.btn_detail', function() {
+        var id_spk_penawaran = $(this).data('id_spk_penawaran');
+        var type = $(this).data('type');
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'detail_sum',
+            data: {
+                'id_spk_penawaran': id_spk_penawaran,
+                'type': type
+            },
+            cache: false,
+            success: function(result) {
+                if (type == 'akomodasi') {
+                    $('#myModalLabel').html('Detail Akomodasi');
+                }
+                if (type == 'others') {
+                    $('#myModalLabel').html('Detail Others');
+                }
+                if (type == 'lab') {
+                    $('#myModalLabel').html('Detail Lab');
+                }
+                $('#MyModalBody').html(result);
+                $('#dialog-rekap').modal('show');
+            },
+            error: function(result) {
+                swal({
+                    type: 'error',
+                    title: 'Error !',
+                    text: 'Please try again later !'
+                });
+            }
+        });
     });
 </script>
