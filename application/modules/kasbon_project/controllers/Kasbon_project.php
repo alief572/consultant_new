@@ -81,7 +81,7 @@ class Kasbon_project extends Admin_Controller
 
         $hasil = [];
 
-        $no = 0;
+        $no = (0 + $start);
         foreach ($get_data->result() as $item) {
 
             $this->db->select('a.id');
