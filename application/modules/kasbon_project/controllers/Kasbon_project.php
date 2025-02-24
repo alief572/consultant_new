@@ -310,10 +310,187 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
+        $no_all = 0;
+        foreach($get_data_all->result() as $item) {
+            $this->db->select('a.id');
+            $this->db->from('kons_tr_req_kasbon_project a');
+            $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
+            $this->db->group_start();
+            $this->db->where('a.sts', '');
+            $this->db->or_where('a.sts', null);
+            $this->db->group_end();
+            $get_req = $this->db->get();
+
+            $total_budgeting = 0;
+
+            $sql_total_budget = '
+                SELECT
+                    a.total_final as total_akomodasi, 
+                    0 as total_others, 
+                    0 as total_subcont
+                FROM
+                    kons_tr_spk_budgeting_akomodasi a
+                WHERE
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+
+                UNION ALL
+
+                SELECT
+                    0 as total_akomodasi, 
+                    a.total_final as total_others, 
+                    0 as total_subcont
+                FROM
+                    kons_tr_spk_budgeting_others a
+                WHERE
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+
+                UNION ALL
+
+                SELECT
+                    0 as total_akomodasi, 
+                    0 as total_others, 
+                    (a.mandays_subcont_final * a.mandays_rate_subcont_final) as total_subcont
+                FROM
+                    kons_tr_spk_budgeting_aktifitas a
+                WHERE
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+            ';
+
+            $get_total_budget = $this->db->query($sql_total_budget)->result();
+            foreach ($get_total_budget as $item_budget) {
+                $total_budgeting += ($item_budget->total_akomodasi + $item_budget->total_others + $item_budget->total_subcont);
+            }
+
+            $this->db->select('a.budget_tambahan');
+            $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
+            $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_header b', 'b.id_request_ovb = a.id_request_ovb');
+            $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+            $this->db->where('b.sts', 1);
+            $get_ovb_kasbon = $this->db->get()->result();
+
+            foreach ($get_ovb_kasbon as $item_ovb) {
+                $total_budgeting += $item_ovb->budget_tambahan;
+            }
+
+            $total_kasbon = 0;
+
+            $sql_total_kasbon = '
+                SELECT
+                    a.total_pengajuan as total_subcont, 
+                    0 as total_akomodasi, 
+                    0 as total_others
+                FROM
+                    kons_tr_kasbon_project_subcont a
+                WHERE
+                    a.sts = "1" AND
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                
+                UNION ALL
+
+                SELECT
+                    0 as total_subcont, 
+                    a.total_pengajuan as total_akomodasi, 
+                    0 as total_others
+                FROM
+                    kons_tr_kasbon_project_akomodasi a
+                WHERE
+                    a.sts = "1" AND
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+
+                UNION ALL
+
+                SELECT
+                    0 as total_subcont, 
+                    0 as total_akomodasi, 
+                    a.total_pengajuan as total_others
+                FROM
+                    kons_tr_kasbon_project_others a
+                WHERE
+                    a.sts = "1" AND
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+            ';
+
+            $get_total_kasbon  = $this->db->query($sql_total_kasbon)->result();
+            foreach ($get_total_kasbon as $item_kasbon) {
+                $total_kasbon += ($item_kasbon->total_subcont + $item_kasbon->total_akomodasi + $item_kasbon->total_others);
+            }
+
+            $total_kasbon_nd = 0;
+
+            $sql_total_kasbon_nd = '
+                SELECT
+                    a.total_pengajuan as total_subcont, 
+                    0 as total_akomodasi, 
+                    0 as total_others
+                FROM
+                    kons_tr_kasbon_project_subcont a
+                WHERE
+                    a.sts IS NULL AND
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                
+                UNION ALL
+
+                SELECT
+                    0 as total_subcont, 
+                    a.total_pengajuan as total_akomodasi, 
+                    0 as total_others
+                FROM
+                    kons_tr_kasbon_project_akomodasi a
+                WHERE
+                    a.sts IS NULL AND
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+
+                UNION ALL
+
+                SELECT
+                    0 as total_subcont, 
+                    0 as total_akomodasi, 
+                    a.total_pengajuan as total_others
+                FROM
+                    kons_tr_kasbon_project_others a
+                WHERE
+                    a.sts IS NULL AND
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+            ';
+
+            $get_total_kasbon_nd  = $this->db->query($sql_total_kasbon_nd)->result();
+            foreach ($get_total_kasbon_nd as $item_kasbon_nd) {
+                $total_kasbon_nd += ($item_kasbon_nd->total_subcont + $item_kasbon_nd->total_akomodasi + $item_kasbon_nd->total_others);
+            }
+
+            // $this->db->select('a.budget_tambahan');
+            // $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
+            // $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_header b', 'b.id_request_ovb = a.id_request_ovb');
+            // $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+
+            // $get_ovb_akomodasi_nd = $this->db->get()->result();
+
+            // foreach ($get_ovb_akomodasi_nd as $item_ovb_akomodasi_nd) {
+            //     $total_kasbon_nd += $item_ovb_akomodasi_nd->budget_tambahan;
+            // }
+
+            $valid_show = 1;
+            // if ($get_req->num_rows() > 0) {
+            //     $valid_show = 0;
+            // }
+            if ($total_kasbon > 0 || $total_kasbon_nd > 0) {
+                if ($total_kasbon >= $total_budgeting) {
+                    $valid_show = 0;
+                }
+            }
+            // if ($total_kasbon >= $total_budgeting) {
+            //     $valid_show = 0;
+            // }
+
+            if ($valid_show == 1) {
+                $no_all++;
+            }
+        }
+
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $no,
-            'recordsFiltered' => $no,
+            'recordsTotal' => $no_all,
+            'recordsFiltered' => $no_all,
             'data' => $hasil
         ]);
     }
