@@ -178,7 +178,7 @@ class Request_payment extends Admin_Controller
 		$this->template->set('tingkat_approval', 1);
 		$this->template->set('data', $data);
 		// $this->template->set('list_no_invoice', $list_no_invoice);
-		$this->template->title('Request Payment Approval Checker');
+		$this->template->title('Request Payment Approval Finance');
 		$this->template->render('list_approve_checker');
 	}
 
@@ -197,7 +197,7 @@ class Request_payment extends Admin_Controller
 		$this->template->set('tingkat_approval', 2);
 		$this->template->set('data', $data);
 		$this->template->set('list_no_invoice', $list_no_invoice);
-		$this->template->title('Request Payment Approval Management');
+		$this->template->title('Request Payment Approval Direktur');
 		$this->template->render('list_approve_management');
 	}
 
