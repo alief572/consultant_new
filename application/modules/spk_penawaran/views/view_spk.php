@@ -220,7 +220,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                         Project
                     </td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="text" name="nm_paket" id="" class="form-control form-control-sm" value="<?= $nm_paket ?>" readonly>
+                        <textarea name="nm_paket" id="" class="form-control form-control-sm" readonly><?= $nm_paket ?></textarea>
                     </td>
                     <td></td>
                     <td></td>

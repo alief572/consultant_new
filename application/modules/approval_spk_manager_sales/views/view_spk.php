@@ -198,7 +198,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                         Project
                     </td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="text" name="nm_paket" id="" class="form-control form-control-sm" value="<?= $nm_paket ?>" readonly>
+                        <textarea name="nm_paket" id="" class="form-control form-control-sm" readonly><?= $nm_paket ?></textarea>
                     </td>
                     <td></td>
                     <td></td>
@@ -527,7 +527,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                         </table> -->
                     </th>
                     <th class="text-right" valign="top">
-                        
+
                     </th>
                 </tr>
             </table>
@@ -1101,7 +1101,8 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
             hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new_price]" value="' + subcont_price + '">';
             hasil += '</td>';
 
-            hasil += '<td class="text-center">';bac
+            hasil += '<td class="text-center">';
+            bac
             hasil += '<button type="button" class="btn btn-sm btn-danger del_subcont" data-no="' + no_subcont + '" title="Delete Subcont"><i class="fa fa-trash"></i></button>';
             hasil += '</td>';
 
