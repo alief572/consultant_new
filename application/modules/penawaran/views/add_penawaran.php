@@ -316,6 +316,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th class="text-center">Price/Unit Customer</th>
                         <th class="text-center">Price/Unit Budget</th>
                         <th class="text-center">Total</th>
+                        <th class="text-center">Total Budget</th>
                         <th class="text-center">Keterangan</th>
                         <th class="text-center">Opsi</th>
                     </tr>
@@ -327,6 +328,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             Total
                         </th>
                         <th class="text-right ttl_oth_grand_total">000,00</th>
+                        <th class="text-right ttl_oth_grand_total_budget">000,00</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -367,6 +369,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th class="text-center">Price/Unit Customer</th>
                         <th class="text-center">Price/Unit Budget</th>
                         <th class="text-center">Total</th>
+                        <th class="text-center">Total Budget</th>
                         <th class="text-center">Keterangan</th>
                         <th class="text-center">Opsi</th>
                     </tr>
@@ -378,6 +381,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             Total
                         </th>
                         <th class="text-right ttl_lab_grand_total">000,00</th>
+                        <th class="text-right ttl_lab_grand_total_budget">000,00</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -823,10 +827,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     function hitung_item_others(no) {
         var qty = get_num($('input[name="dt_oth[' + no + '][qty_others]"]').val());
         var harga = get_num($('input[name="dt_oth[' + no + '][harga_others]"]').val());
+        var harga_budget = get_num($('input[name="dt_oth[' + no + '][harga_others_budget]"]').val());
 
         var total = parseFloat(qty * harga);
+        var total_budget = parseFloat(qty * harga_budget);
 
         $('input[name="dt_oth[' + no + '][total_others]"]').val(number_format(total, 2));
+        $('input[name="dt_oth[' + no + '][total_budget_others]"]').val(number_format(total_budget, 2));
 
         hitung_all_others();
         hitung_detail_other_summary();
@@ -838,15 +845,19 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var no_others = parseFloat($('.no_others').val());
 
         var ttl_grand_total = 0;
+        var ttl_grand_total_budget = 0;
         for (i = 1; i < no_others; i++) {
             if ($('input[name="dt_oth[' + i + '][total_others]"]').val() !== '') {
                 var total_others = get_num($('input[name="dt_oth[' + i + '][total_others]"]').val());
+                var total_others_budget = get_num($('input[name="dt_oth[' + i + '][total_budget_others]"]').val());
 
                 ttl_grand_total += total_others;
+                ttl_grand_total_budget += total_others_budget;
             }
         }
 
         $('.ttl_oth_grand_total').html(number_format(ttl_grand_total, 2));
+        $('.ttl_oth_grand_total_budget').html(number_format(ttl_grand_total_budget, 2));
 
         hitung_summary();
         hitung_detail_other_summary();
@@ -855,10 +866,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     function hitung_item_lab(no) {
         var qty = get_num($('input[name="dt_lab[' + no + '][qty_lab]"]').val());
         var harga = get_num($('input[name="dt_lab[' + no + '][harga_lab]"]').val());
+        var harga_budget = get_num($('input[name="dt_lab[' + no + '][harga_lab_budget]"]').val());
 
         var total = parseFloat(qty * harga);
+        var total_budget = parseFloat(qty * harga_budget);
 
         $('input[name="dt_lab[' + no + '][total_lab]"]').val(number_format(total, 2));
+        $('input[name="dt_lab[' + no + '][total_lab_budget]"]').val(number_format(total_budget, 2));
 
         hitung_all_lab();
         hitung_detail_other_summary();
@@ -868,15 +882,19 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var no_lab = parseFloat($('.no_lab').val());
 
         var ttl_grand_total = 0;
+        var ttl_grand_total_budget = 0;
         for (i = 1; i < no_lab; i++) {
             if ($('input[name="dt_lab[' + i + '][total_lab]"]').val() !== '') {
                 var total_lab = get_num($('input[name="dt_lab[' + i + '][total_lab]"]').val());
+                var total_lab_budget = get_num($('input[name="dt_lab[' + i + '][total_lab_budget]"]').val());
 
                 ttl_grand_total += total_lab;
+                ttl_grand_total_budget += total_lab_budget;
             }
         }
 
         $('.ttl_lab_grand_total').html(number_format(ttl_grand_total, 2));
+        $('.ttl_lab_grand_total_budget').html(number_format(ttl_grand_total_budget, 2));
 
         hitung_summary();
         hitung_detail_other_summary();
@@ -1006,6 +1024,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hasil += '</td>';
 
         hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' + no_others + '][total_budget_others]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
         hasil += '<input type="text" class="form-control form-control-sm" name="dt_oth[' + no_others + '][keterangan_others]">';
         hasil += '</td>';
 
@@ -1061,6 +1083,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         hasil += '<td>';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_lab[' + no_lab + '][total_lab]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_lab[' + no_lab + '][total_lab_budget]" readonly>';
         hasil += '</td>';
 
         hasil += '<td>';

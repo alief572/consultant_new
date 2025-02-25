@@ -520,6 +520,7 @@ if (count($list_penawaran_lab) > 0) {
                         <th class="text-center">Price/Unit Customer</th>
                         <th class="text-center">Price/Unit Budget</th>
                         <th class="text-center">Total</th>
+                        <th class="text-center">Total Budget</th>
                         <th class="text-center">Keterangan</th>
                         <th class="text-center">Opsi</th>
                     </tr>
@@ -529,6 +530,7 @@ if (count($list_penawaran_lab) > 0) {
                     $no_others = 1;
 
                     $ttl_others = 0;
+                    $ttl_others_budget = 0;
                     foreach ($list_penawaran_others as $item_others) {
                         echo '<tr class="tr_others_' . $no_others . '">';
 
@@ -562,6 +564,10 @@ if (count($list_penawaran_lab) > 0) {
                         echo '</td>';
 
                         echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' . $no_others . '][total_budget_others]" value="' . $item_others->total_budget . '" readonly>';
+                        echo '</td>';
+
+                        echo '<td>';
                         echo '<input type="text" class="form-control form-control-sm" name="dt_oth[' . $no_others . '][keterangan_others]" value="' . $item_others->keterangan . '">';
                         echo '</td>';
 
@@ -572,6 +578,7 @@ if (count($list_penawaran_lab) > 0) {
                         echo '</tr>';
 
                         $ttl_others += $item_others->total;
+                        $ttl_others_budget += $item_others->total_budget;
                         $no_others++;
                     }
                     ?>
@@ -582,6 +589,7 @@ if (count($list_penawaran_lab) > 0) {
                             Total
                         </th>
                         <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_others, 2) ?></th>
+                        <th class="text-right ttl_oth_grand_total_budget"><?= number_format($ttl_others_budget, 2) ?></th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -622,6 +630,7 @@ if (count($list_penawaran_lab) > 0) {
                         <th class="text-center">Price/Unit Customer</th>
                         <th class="text-center">Price/Unit Budget</th>
                         <th class="text-center">Total</th>
+                        <th class="text-center">Total Budget</th>
                         <th class="text-center">Keterangan</th>
                         <th class="text-center">Opsi</th>
                     </tr>
@@ -631,6 +640,7 @@ if (count($list_penawaran_lab) > 0) {
                     $no_lab = 1;
 
                     $ttl_lab = 0;
+                    $ttl_lab_budget = 0;
                     foreach ($list_penawaran_lab as $item_lab) {
                         echo '<tr class="tr_lab_' . $no_lab . '">';
 
@@ -664,6 +674,10 @@ if (count($list_penawaran_lab) > 0) {
                         echo '</td>';
 
                         echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_lab[' . $no_lab . '][total_lab_budget]" value="' . $item_lab->total_budget . '" readonly>';
+                        echo '</td>';
+
+                        echo '<td>';
                         echo '<input type="text" class="form-control form-control-sm" name="dt_lab[' . $no_lab . '][keterangan_lab]" value="' . $item_lab->keterangan . '">';
                         echo '</td>';
 
@@ -674,6 +688,7 @@ if (count($list_penawaran_lab) > 0) {
                         echo '</tr>';
 
                         $ttl_lab += $item_lab->total;
+                        $ttl_lab_budget += $item_lab->total_budget;
                         $no_lab++;
                     }
                     ?>
@@ -684,6 +699,7 @@ if (count($list_penawaran_lab) > 0) {
                             Total
                         </th>
                         <th class="text-right ttl_lab_grand_total"><?= number_format($ttl_lab, 2) ?></th>
+                        <th class="text-right ttl_lab_grand_total_budget"><?= number_format($ttl_lab_budget, 2) ?></th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -1101,29 +1117,38 @@ if (count($list_penawaran_lab) > 0) {
     function hitung_item_others(no) {
         var qty = get_num($('input[name="dt_oth[' + no + '][qty_others]"]').val());
         var harga = get_num($('input[name="dt_oth[' + no + '][harga_others]"]').val());
+        var harga_budget = get_num($('input[name="dt_oth[' + no + '][harga_others_budget]"]').val());
 
         var total = parseFloat(qty * harga);
+        var total_budget = parseFloat(qty * harga_budget);
 
         $('input[name="dt_oth[' + no + '][total_others]"]').val(number_format(total, 2));
+        $('input[name="dt_oth[' + no + '][total_budget_others]"]').val(number_format(total_budget, 2));
 
         hitung_all_others();
+        hitung_detail_other_summary();
     }
 
     function hitung_all_others() {
         var no_others = parseFloat($('.no_others').val());
 
         var ttl_grand_total = 0;
+        var ttl_grand_total_budget = 0;
         for (i = 1; i < no_others; i++) {
             if ($('input[name="dt_oth[' + i + '][total_others]"]').val() !== '') {
                 var total_others = get_num($('input[name="dt_oth[' + i + '][total_others]"]').val());
+                var total_others_budget = get_num($('input[name="dt_oth[' + i + '][total_budget_others]"]').val());
 
                 ttl_grand_total += total_others;
+                ttl_grand_total_budget += total_others_budget;
             }
         }
 
         $('.ttl_oth_grand_total').html(number_format(ttl_grand_total, 2));
+        $('.ttl_oth_grand_total_budget').html(number_format(ttl_grand_total_budget, 2));
 
         hitung_summary();
+        hitung_detail_other_summary();
     }
 
     function hitung_summary() {
@@ -1480,10 +1505,13 @@ if (count($list_penawaran_lab) > 0) {
     function hitung_item_lab(no) {
         var qty = get_num($('input[name="dt_lab[' + no + '][qty_lab]"]').val());
         var harga = get_num($('input[name="dt_lab[' + no + '][harga_lab]"]').val());
+        var harga_budget = get_num($('input[name="dt_lab[' + no + '][harga_lab_budget]"]').val());
 
         var total = parseFloat(qty * harga);
+        var total_budget = parseFloat(qty * harga_budget);
 
         $('input[name="dt_lab[' + no + '][total_lab]"]').val(number_format(total, 2));
+        $('input[name="dt_lab[' + no + '][total_lab_budget]"]').val(number_format(total_budget, 2));
 
         hitung_all_lab();
         hitung_detail_other_summary();
@@ -1493,15 +1521,19 @@ if (count($list_penawaran_lab) > 0) {
         var no_lab = parseFloat($('.no_lab').val());
 
         var ttl_grand_total = 0;
+        var ttl_grand_total_budget = 0;
         for (i = 1; i < no_lab; i++) {
             if ($('input[name="dt_lab[' + i + '][total_lab]"]').val() !== '') {
                 var total_lab = get_num($('input[name="dt_lab[' + i + '][total_lab]"]').val());
+                var total_lab_budget = get_num($('input[name="dt_lab[' + i + '][total_lab_budget]"]').val());
 
                 ttl_grand_total += total_lab;
+                ttl_grand_total_budget += total_lab_budget;
             }
         }
 
         $('.ttl_lab_grand_total').html(number_format(ttl_grand_total, 2));
+        $('.ttl_lab_grand_total_budget').html(number_format(ttl_grand_total_budget, 2));
 
         hitung_summary();
         hitung_detail_other_summary();
@@ -1641,8 +1673,8 @@ if (count($list_penawaran_lab) > 0) {
             cache: false,
             dataType: 'json',
             success: function(result) {
-                $('input[name="dt_lab['+no+'][harga_lab]"]').autoNumeric('set', result.harga_ssc);
-                $('input[name="dt_lab['+no+'][harga_lab_budget]"]').autoNumeric('set', result.harga_lab);
+                $('input[name="dt_lab[' + no + '][harga_lab]"]').autoNumeric('set', result.harga_ssc);
+                $('input[name="dt_lab[' + no + '][harga_lab_budget]"]').autoNumeric('set', result.harga_lab);
             },
             error: function(result) {
                 swal({
