@@ -873,7 +873,7 @@ class Penawaran extends Admin_Controller
                     'price_unit' => str_replace(',', '', $item_oth['harga_others']),
                     'total' => str_replace(',', '', $item_oth['total_others']),
                     'price_unit_budget' => str_replace(',', '', $item_oth['harga_others_budget']),
-                    'total_budget' => (str_replace(',', '', $item_oth['harga_others_budget']) * str_replace(',', '', $item_oth['qty_others'])),
+                    'total_budget' => (str_replace(',', '', $item_oth['total_budget_others'])),
                     'keterangan' => $item_oth['keterangan_others'],
                     'input_by' => $this->auth->user_id(),
                     'input_date' => date('Y-m-d H:i:s')
@@ -891,7 +891,7 @@ class Penawaran extends Admin_Controller
                     'price_unit' => str_replace(',', '', $item_lab['harga_lab']),
                     'total' => str_replace(',', '', $item_lab['total_lab']),
                     'price_unit_budget' => str_replace(',', '', $item_lab['harga_lab_budget']),
-                    'total_budget' => (str_replace(',', '', $item_lab['harga_lab_budget']) * str_replace(',', '', $item_lab['qty_lab'])),
+                    'total_budget' => (str_replace(',', '', $item_lab['total_lab_budget'])),
                     'keterangan' => $item_lab['keterangan_lab'],
                     'input_by' => $this->auth->user_id(),
                     'input_date' => date('Y-m-d H:i:s')
