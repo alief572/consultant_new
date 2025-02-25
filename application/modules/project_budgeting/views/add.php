@@ -424,8 +424,8 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         echo '</tr>';
 
                         $ttl_qty_others += $item->qty;
-                        $ttl_price_others += $item->price_unit;
-                        $ttl_total_others += $item->total;
+                        $ttl_price_others += $item->price_unit_budget;
+                        $ttl_total_others += $item->total_budget;
 
                         $no_others++;
                     }
