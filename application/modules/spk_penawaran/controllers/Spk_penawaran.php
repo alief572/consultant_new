@@ -509,8 +509,36 @@ class SPK_penawaran extends Admin_Controller
         $no = 1;
         foreach ($get_data->result() as $item) {
 
+            $approval_position = '';
+            $approval_position_arr = [];
+            if ($item->approval_sales_sts == null) {
+                $approval_position_arr[] = 'Sales';
+            }
+            if ($item->approval_sales_sts !== null && $item->approval_konsultan_1_sts == null && $item->id_konsultan_1 !== '') {
+                $approval_position_arr[] = 'Konsultan 1';
+            }
+            if ($item->approval_sales_sts !== null && $item->approval_konsultan_2_sts == null && $item->id_konsultan_2 !== '') {
+                $approval_position_arr[] = 'Konsultan 2';
+            }
+
+            if (empty($approval_position_arr) && $item->approval_level2_sts == null) {
+                $approval_position = 'Direktur';
+            }
+            if (empty($approval_position_arr) && $item->approval_manager_sales == null) {
+                $approval_position = 'Manager Sales';
+            }
+            if (empty($approval_position_arr) && $item->approval_project_leader_sts == null) {
+                $approval_position = 'Project Leader';
+            }
+
             $status = '<button type="button" class="btn btn-sm btn-success">NEW</button>';
             $status_spk = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+            if (!empty($approval_position_arr)) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval : ' . implode(' & ', $approval_position_arr) . '</button>';
+            }
+            if (!empty($approval_position)) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval : ' . $approval_position . '</button>';
+            }
 
             $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $item->id_penawaran])->row();
             if ($get_penawaran->sts_cust == 0) {
@@ -532,6 +560,25 @@ class SPK_penawaran extends Admin_Controller
             }
             if ($item->sts_spk == '0') {
                 $status_spk = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+            }
+
+            if ($item->reject_sales_sts !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Sales</button>';
+            }
+            if ($item->reject_konsultan_1_sts !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Konsultan 1</button>';
+            }
+            if ($item->reject_konsultan_2_sts !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Konsultan 2</button>';
+            }
+            if ($item->reject_project_leader_sts !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Project Leader</button>';
+            }
+            if ($item->reject_manager_sales_sts !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Manager Sales</button>';
+            }
+            if ($item->reject_level2_by !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Direktur</button>';
             }
 
             $option = '
@@ -884,7 +931,7 @@ class SPK_penawaran extends Admin_Controller
         $get_lab = $this->db->get()->result();
 
         $nilai_lab = 0;
-        foreach($get_lab as $item_lab) {
+        foreach ($get_lab as $item_lab) {
             $nilai_lab += $item_lab->total_budget;
         }
 
@@ -948,7 +995,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $get_divisi = $this->db->get_where(DBHR.'.divisions', ['id' => $post['divisi']])->row();
+        $get_divisi = $this->db->get_where(DBHR . '.divisions', ['id' => $post['divisi']])->row();
 
         $id_divisi = (!empty($get_divisi)) ? $get_divisi->id : '';
         $nm_divisi = (!empty($get_divisi)) ? $get_divisi->name : '';
@@ -990,10 +1037,10 @@ class SPK_penawaran extends Admin_Controller
 
         $lanjut = 1;
 
-        if($post['id_spk_penawaran'] !== '') {
+        if ($post['id_spk_penawaran'] !== '') {
             $check_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', array('id_spk_penawaran' => $post['id_spk_penawaran']))->num_rows();
 
-            if($check_spk_penawaran > 0) {
+            if ($check_spk_penawaran > 0) {
                 $lanjut = 0;
             } else {
                 $id_spk_penawaran = $post['id_spk_penawaran'];
@@ -1159,7 +1206,7 @@ class SPK_penawaran extends Admin_Controller
             $this->db->trans_rollback();
             $valid = 0;
             $msg = 'Please try again later !';
-            if($lanjut < 1) {
+            if ($lanjut < 1) {
                 $msg = 'Maaf, ID SPK sudah terdaftar sebelum nya !';
             }
         } else {
@@ -1206,7 +1253,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
         $get_konsultasi = $this->db->get()->row();
 
-        $get_divisi = $this->db->get_where(DBHR.'.divisions', ['id' => $post['divisi']])->row();
+        $get_divisi = $this->db->get_where(DBHR . '.divisions', ['id' => $post['divisi']])->row();
 
         $nm_divisi = (!empty($get_divisi)) ? $get_divisi->name : '';
 
@@ -1298,6 +1345,7 @@ class SPK_penawaran extends Admin_Controller
             'reject_konsultan_2_sts' => null,
             'reject_sales_sts' => null,
             'reject_manager_sales_sts' => null,
+            'reject_level2_by' => null,
             'edited_by' => $this->auth->user_id(),
             'edited_date' => date('Y-m-d H:i:s')
         ];

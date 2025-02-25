@@ -395,6 +395,35 @@ class Approval_spk_direktur extends Admin_Controller
             $status = '<span class="btn btn-sm btn-success" style="width: 100% !important;">New</span>';
             $status_spk = '<span class="btn btn-sm btn-primary" style="width: 100% !important;">Waiting Approval</span>';
 
+            $approval_position = '';
+            $approval_position_arr = [];
+            if ($item->approval_sales_sts == null) {
+                $approval_position_arr[] = 'Sales';
+            }
+            if ($item->approval_sales_sts !== null && $item->approval_konsultan_1_sts == null && $item->id_konsultan_1 !== '') {
+                $approval_position_arr[] = 'Konsultan 1';
+            }
+            if ($item->approval_sales_sts !== null && $item->approval_konsultan_2_sts == null && $item->id_konsultan_2 !== '') {
+                $approval_position_arr[] = 'Konsultan 2';
+            }
+
+            if (empty($approval_position_arr) && $item->approval_level2_sts == null) {
+                $approval_position = 'Direktur';
+            }
+            if (empty($approval_position_arr) && $item->approval_manager_sales == null) {
+                $approval_position = 'Manager Sales';
+            }
+            if (empty($approval_position_arr) && $item->approval_project_leader_sts == null) {
+                $approval_position = 'Project Leader';
+            }
+            
+            if (!empty($approval_position_arr)) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval : ' . implode(' & ', $approval_position_arr) . '</button>';
+            }
+            if (!empty($approval_position)) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval : ' . $approval_position . '</button>';
+            }
+
             $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $item->id_penawaran])->row();
             if ($get_penawaran->sts_cust == 0) {
                 $status = '
@@ -415,6 +444,25 @@ class Approval_spk_direktur extends Admin_Controller
             }
             if ($item->sts_spk == '0') {
                 $status_spk = '<span class="btn btn-sm btn-danger" style="width: 100% !important;">Rejected</span>';
+            }
+
+            if ($item->reject_sales_sts !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Sales</button>';
+            }
+            if ($item->reject_konsultan_1_sts !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Konsultan 1</button>';
+            }
+            if ($item->reject_konsultan_2_sts !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Konsultan 2</button>';
+            }
+            if ($item->reject_project_leader_sts !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Project Leader</button>';
+            }
+            if ($item->reject_manager_sales_sts !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Manager Sales</button>';
+            }
+            if ($item->reject_level2_by !== null) {
+                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Direktur</button>';
             }
 
             $option = '
@@ -516,6 +564,26 @@ class Approval_spk_direktur extends Admin_Controller
             'approval_level2_sts' => null,
             'approval_level2_by' => null,
             'approval_level2_date' => null,
+            'approval_sales_sts' => null,
+            'approval_sales_date' => null,
+            'approval_project_leader_sts' => null,
+            'approval_project_leader_date' => null,
+            'approval_konsultan_1_sts' => null,
+            'approval_konsultan_1_date' => null,
+            'approval_konsultan_2_sts' => null,
+            'approval_konsultan_2_date' => null,
+            'approval_manager_sales' => null,
+            'approval_manager_sales_date' => null,
+            'reject_sales_sts' => null,
+            'reject_sales_date' => null,
+            'reject_project_leader_sts' => null,
+            'reject_project_leader_date' => null,
+            'reject_konsultan_1_sts' => null,
+            'reject_konsultan_1_date' => null,
+            'reject_konsultan_2_sts' => null,
+            'reject_konsultan_2_date' => null,
+            'reject_manager_sales_sts' => null,
+            'reject_manager_sales_date' => null,
             'reject_reason' => $reject_reason
         ];
 

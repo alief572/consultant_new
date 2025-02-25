@@ -8,6 +8,28 @@ $ttl_persen_komisi = ($list_spk_penawaran->persen_pemberi_informasi_1_komisi + $
 
 $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi + $list_spk_penawaran->nominal_pemberi_informasi_2_komisi + $list_spk_penawaran->nominal_sales_1_komisi + $list_spk_penawaran->nominal_sales_2_komisi);
 
+$reject_by_label = '';
+if ($list_spk_penawaran->reject_sales_sts !== null) {
+    $reject_by_label = 'Sales';
+}
+if ($list_spk_penawaran->reject_konsultan_1_sts !== null) {
+    $reject_by_label = 'Konsultan 1';
+}
+if ($list_spk_penawaran->reject_konsultan_2_sts !== null) {
+    $reject_by_label = 'Konsultan 2';
+}
+if ($list_spk_penawaran->reject_project_leader_sts !== null) {
+    $reject_by_label = 'Project Leader';
+}
+
+if ($list_spk_penawaran->reject_manager_sales_sts !== null) {
+    $reject_by_label = 'Manager Sales';
+}
+
+if ($list_spk_penawaran->reject_level2_by !== null) {
+    $reject_by_label = 'Direktur';
+}
+
 // $nilai_akomodasi = $list_spk_penawaran->biaya_akomodasi;
 // $nilai_others = $list_spk_penawaran->biaya_others;
 ?>
@@ -732,6 +754,18 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                 <label for="">Isu Khusus / Permintaan khusus dari customer / Tujuan Program / 3 objective utama (khusus konsultasi)</label>
                 <textarea name="isu_khusus" id="" class="form-control form-control-sm" rows="10"><?= $list_spk_penawaran->isu_khusus ?></textarea>
             </div>
+
+            <?php
+            if ($list_spk_penawaran->reject_reason !== null || $list_spk_penawaran->reject_reason !== '') {
+                echo '
+                        <div class="form-group">
+                            <label for="">Reject By : ' . $reject_by_label    . '</label> <br>
+                            <label for="">Reject Reason</label>
+                            <textarea class="form-control form-control-sm" readonly>' . $list_spk_penawaran->reject_reason . '</textarea>
+                        </div>
+                    ';
+            }
+            ?>
         </div>
     </div>
 
