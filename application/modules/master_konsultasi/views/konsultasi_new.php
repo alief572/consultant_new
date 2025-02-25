@@ -49,6 +49,15 @@
                                                 <tbody class="listKonsultasi">
 
                                                 </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th colspan="2" class="text-right">Total</th>
+                                                        <th class="text-right ttl_harga"></th>
+                                                        <th class="text-right ttl_bobot"></th>
+                                                        <th class="text-right ttl_mandays"></th>
+                                                        <th colspan="2"></th>
+                                                    </tr>
+                                                </tfoot>
                                             </table>
                                             <!-- </div> -->
                                         </div>
@@ -278,14 +287,14 @@
         Baris += "         </select>";
         Baris += "    </td>";
         Baris += "    <td>";
-        Baris += "        <input type='text' class='form-control text-right auto_num' name='hrg_aktifitas[]' id='hrg_aktifitas'>";
+        Baris += "        <input type='text' class='form-control text-right auto_num' name='hrg_aktifitas[]' id='hrg_aktifitas' onchange='hitung_all()'>";
         Baris += "        <input type='hidden' class='form-control' name='nm_aktifitas[]' id='nm_aktifitas'>";
         Baris += "    </td>";
         Baris += "    <td>";
-        Baris += "        <input type='number' class='form-control' name='bobot[]' id='bobot'>";
+        Baris += "        <input type='number' class='form-control' name='bobot[]' id='bobot' onchange='hitung_all()'>";
         Baris += "    </td>";
         Baris += "    <td>";
-        Baris += "        <input type='number' class='form-control' name='mandays[]' id='mandays'>";
+        Baris += "        <input type='number' class='form-control' name='mandays[]' id='mandays' onchange='hitung_all()'>";
         Baris += "    </td>";
         Baris += "    <td></td>";
         Baris += "    <td align='center' style='padding-top:13px'>" + Hapus + "</td>";
@@ -303,6 +312,74 @@
          * //////////////////////////////////////////////////////////////////////////////////
          */
     }
+
+    function get_num(nilai = null) {
+        if (nilai !== '' && nilai !== null) {
+            nilai = nilai.split(',').join('');
+            if (isNaN(nilai)) {
+                nilai = 0;
+            } else {
+                nilai = parseFloat(nilai);
+            }
+        } else {
+            nilai = 0;
+        }
+
+        return nilai;
+    }
+
+    function number_format(number, decimals, dec_point, thousands_sep) {
+        // Strip all characters but numerical ones.
+        number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
+        var n = !isFinite(+number) ? 0 : +number,
+            prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+            sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+            dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+            s = '',
+            toFixedFix = function(n, prec) {
+                var k = Math.pow(10, prec);
+                return '' + Math.round(n * k) / k;
+            };
+        // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+        s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+        if (s[0].length > 3) {
+            s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+        }
+        if ((s[1] || '').length < prec) {
+            s[1] = s[1] || '';
+            s[1] += new Array(prec - s[1].length + 1).join('0');
+        }
+        return s.join(dec);
+    }
+
+    function hitung_all() {
+        var ttl_harga = 0;
+        var ttl_bobot = 0;
+        var ttl_mandays = 0;
+
+        $('input[name="hrg_aktifitas[]"]').each(function() {
+            var harga = get_num($(this).val());
+
+            ttl_harga += harga;
+        });
+
+        $('input[name="bobot[]"]').each(function() {
+            var bobot = get_num($(this).val());
+
+            ttl_bobot += bobot;
+        });
+
+        $('input[name="mandays[]"]').each(function() {
+            var mandays = get_num($(this).val());
+
+            ttl_mandays += mandays;
+        });
+
+        $('.ttl_harga').html(number_format(ttl_harga));
+        $('.ttl_bobot').html(number_format(ttl_bobot));
+        $('.ttl_mandays').html(number_format(ttl_mandays));
+    }
+
     $(document).on('change', '#NamaAktifitas', function(e) {
         e.preventDefault();
         var nm_aktifitas = $(this).parent().parent().find('td:nth-child(3) input#nm_aktifitas');
@@ -323,6 +400,8 @@
                     bobot.val(data.bobot);
                     mandays.val(data.mandays);
                     total_check.html("<a href='<?php echo base_url("master_konsultasi/aktifitas_check_point"); ?>/" + data.id_aktifitas + "' class='btn btn-default btn-xs add-point' id='AddChekPoint'>" + data.total_chk + " POINT</a>");
+
+                    hitung_all();
                 }
             }
         });

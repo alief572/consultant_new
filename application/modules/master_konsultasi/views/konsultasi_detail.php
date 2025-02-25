@@ -19,20 +19,25 @@
                 </thead>
                 <tbody>
                     <?php
+
+                    $ttl_harga = 0;
+                    $ttl_bobot = 0;
+                    $ttl_mandays = 0;
+
                     if ($konsultasi_detail->num_rows() > 0) {
                         $no = 1;
                         foreach ($konsultasi_detail->result() as $dt) {
                     ?>
                             <tr>
-                                <td><?php echo $no; ?></td>
-                                <td style='vertical-align:middle; width:40px;'>
+                                <td class="text-center"><?php echo $no; ?></td>
+                                <td class="text-left" style='vertical-align:middle; width:40px;'>
                                     <?php echo $dt->nm_aktifitas; ?>
                                 </td>
-                                <td>
+                                <td class="text-right">
                                     <?php echo number_format($dt->harga_aktifitas); ?>
                                 </td>
-                                <td><?php echo $dt->bobot; ?></td>
-                                <td><?php echo $dt->mandays; ?></td>
+                                <td class="text-center"><?php echo $dt->bobot; ?></td>
+                                <td class="text-center"><?php echo $dt->mandays; ?></td>
                             </tr>
 
                             <?php
@@ -72,6 +77,10 @@
                                 </tr>
                     <?php
                             }
+
+                            $ttl_harga += $dt->harga_aktifitas;
+                            $ttl_bobot += $dt->bobot;
+                            $ttl_mandays += $dt->mandays;
                             $no++;
                         }
                     } else {
@@ -83,6 +92,14 @@
                     }
                     ?>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-right">Total</th>
+                        <th class="text-right"><?= number_format($ttl_harga) ?></th>
+                        <th class="text-center"><?= number_format($ttl_bobot) ?></th>
+                        <th class="text-center"><?= number_format($ttl_mandays) ?></th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
 

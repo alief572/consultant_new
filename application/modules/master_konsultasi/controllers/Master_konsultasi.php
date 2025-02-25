@@ -62,7 +62,7 @@ class Master_konsultasi extends Admin_Controller
 
         $data   = array();
 
-        $no = (0+$requestData['start']);
+        $no = (0 + $requestData['start']);
         foreach ($query->result_array() as $row) {
             $no++;
             $nestedData     = array();
