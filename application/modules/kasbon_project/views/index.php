@@ -110,7 +110,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         swal({
             type: 'warning',
-            title: 'Are you sure ?',
+            title: 'Are you sure to Request Approval this data?',
             text: 'This action cannot be undo !',
             showCancelButton: true
         }, function(next) {
