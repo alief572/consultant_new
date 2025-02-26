@@ -1342,6 +1342,10 @@ if (count($list_penawaran_lab) > 0) {
         hasil += '</td>';
 
         hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_oth[' + no_others + '][total_budget_others]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
         hasil += '<input type="text" class="form-control form-control-sm" name="dt_oth[' + no_others + '][keterangan_others]">';
         hasil += '</td>';
 
@@ -1478,6 +1482,10 @@ if (count($list_penawaran_lab) > 0) {
 
         hasil += '<td>';
         hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_lab[' + no_lab + '][total_lab]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_lab[' + no_lab + '][total_lab_budget]" readonly>';
         hasil += '</td>';
 
         hasil += '<td>';
