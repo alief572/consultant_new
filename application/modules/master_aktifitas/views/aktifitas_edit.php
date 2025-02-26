@@ -40,7 +40,7 @@
                                                         ?>
                                                                 <tr>
                                                                     <td>
-                                                                        <input type='text' class='form-control' name='nm_aktifitas[]' value="<?php echo @$d->nm_aktifitas; ?>">
+                                                                        <textarea name="nm_aktifitas[]" id="nm_aktifitas" class="form-control"><?= @$d->nm_aktifitas ?></textarea>
                                                                         <input type='hidden' class='form-control' name='aktifitas_num[]' value="<?php echo @$d->id_aktifitas; ?>">
                                                                         <input type='hidden' class='form-control' name='aktifitas_unique_id[]' value="<?php echo @$d->unique_id; ?>">
                                                                     </td>

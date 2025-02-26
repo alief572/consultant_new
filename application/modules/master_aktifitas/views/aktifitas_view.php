@@ -54,57 +54,57 @@
         function datatable() {
             var dataTable = $('#my-grid').DataTable();
             dataTable.destroy();
-            
+
             var dataTable = $('#my-grid').DataTable({
-            "serverSide": true,
-            "stateSave": false,
-            "bAutoWidth": true,
-            "oLanguage": {
-                "sSearch": "Live Search : ",
-                "sLengthMenu": "_MENU_", //"_MENU_ &nbsp;&nbsp;Per Halaman ",
-                "sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
-                "sInfoFiltered": "(filtered from _MAX_ total entries)",
-                "sZeroRecords": "<center>Data tidak ditemukan</center>",
-                "sEmptyTable": "No data available in table",
-                "sLoadingRecords": "Please wait - loading...",
-                "oPaginate": {
-                    "sPrevious": "Prev",
-                    "sNext": "Next"
-                }
-            },
-            "aaSorting": [
-                [2, "desc"]
-            ],
-            "columnDefs": [{
-                    "aTargets": [0],
-                    "sClass": "column-hide"
+                "serverSide": true,
+                "stateSave": false,
+                "bAutoWidth": true,
+                "oLanguage": {
+                    "sSearch": "Live Search : ",
+                    "sLengthMenu": "_MENU_", //"_MENU_ &nbsp;&nbsp;Per Halaman ",
+                    "sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "sInfoFiltered": "(filtered from _MAX_ total entries)",
+                    "sZeroRecords": "<center>Data tidak ditemukan</center>",
+                    "sEmptyTable": "No data available in table",
+                    "sLoadingRecords": "Please wait - loading...",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
+                    }
                 },
-                {
-                    "aTargets": 'no-sort',
-                    "orderable": false
+                "aaSorting": [
+                    [2, "desc"]
+                ],
+                "columnDefs": [{
+                        "aTargets": [0],
+                        "sClass": "column-hide"
+                    },
+                    {
+                        "aTargets": 'no-sort',
+                        "orderable": false
+                    }
+                ],
+                "sPaginationType": "simple_numbers",
+                "iDisplayLength": 10,
+                "aLengthMenu": [
+                    [10, 20, 50, 100, 150],
+                    [10, 20, 50, 100, 150]
+                ],
+                "ajax": {
+                    url: siteurl + active_controller + 'display_aktifitas_json',
+                    type: "post",
+                    error: function() {
+                        $(".my-grid-error").html("");
+                        $("#my-grid").append('<tbody class="my-grid-error"><tr><th colspan="9"><center>No data found in the server</center></th></tr></tbody>');
+                        $("#my-grid_processing").css("display", "none");
+                    }
                 }
-            ],
-            "sPaginationType": "simple_numbers",
-            "iDisplayLength": 10,
-            "aLengthMenu": [
-                [10, 20, 50, 100, 150],
-                [10, 20, 50, 100, 150]
-            ],
-            "ajax": {
-                url: siteurl + active_controller + 'display_aktifitas_json',
-                type: "post",
-                error: function() {
-                    $(".my-grid-error").html("");
-                    $("#my-grid").append('<tbody class="my-grid-error"><tr><th colspan="9"><center>No data found in the server</center></th></tr></tbody>');
-                    $("#my-grid_processing").css("display", "none");
-                }
-            }
-        });
+            });
         }
 
         $(document).on('click', '.delete_aktifitas', function() {
             var id = $(this).data('id');
-    
+
             swal({
                 type: 'warning',
                 title: 'Are you sure?',
@@ -149,5 +149,4 @@
             });
         });
     });
-
 </script>
