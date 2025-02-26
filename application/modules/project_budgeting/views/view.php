@@ -633,9 +633,9 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                 <a href="<?= base_url('project_budgeting') ?>" class="btn btn-sm btn-danger">
                     <i class="fa fa-arrow-left"></i> Back
                 </a>
-                <button type="submit" class="btn btn-sm btn-success">
+                <!-- <button type="submit" class="btn btn-sm btn-success">
                     <i class="fa fa-save"></i> Save
-                </button>
+                </button> -->
             </div>
         </div>
     </div>
