@@ -214,7 +214,7 @@
         Baris += "    <td style='vertical-align:middle; text-align:center; width:40px;'>" + Nomor + ".";
         Baris += "    </td>";
         Baris += "    <td>";
-        Baris += "        <input type='text' class='form-control' name='nm_aktifitas[]' id='nm_aktifitas'>";
+        Baris += "        <textarea name='nm_aktifitas[]' class='form-control' id='nm_aktifitas'></textarea>";
         Baris += "        <input type='hidden' class='form-control' name='aktifitas_num[]' value='" + UnikNumber + "'>";
         Baris += "        <input type='hidden' class='form-control' name='aktifitas_unique_id[]'>";
         Baris += "    </td>";

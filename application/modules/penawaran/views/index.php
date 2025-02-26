@@ -170,6 +170,11 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
                 }
             },
+            language: {
+                loadingRecords: 'Please wait - Loading ...'
+            },
+            stateSave: false,
+            autoWidth: true,
             columns: [{
                     data: 'no',
                 }, {
@@ -201,9 +206,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 }
             ],
             responsive: true,
-            processing: true,
+            processing: false,
             serverSide: true,
-            stateSave: true,
             destroy: true,
             paging: true
         });
