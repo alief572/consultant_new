@@ -91,6 +91,10 @@ class Master_konsultasi extends Admin_Controller
                     </a>
                 ";
             }
+            $print_btn = '';
+            if ($this->managePermission) {
+                $print_btn = '<a href="' . site_url('master_konsultasi/konsultasi_print/' . $row['id_konsultasi_h']) . '" class="btn btn-info btn-xs" target="_blank><i class="fa fa-file"></i> Print</a>';
+            }
 
             $nestedData[]   = "
                 <div class='btn-group'>
@@ -99,6 +103,7 @@ class Master_konsultasi extends Admin_Controller
                     </a>
                     " . $edit_btn . "
                     " . $delete_btn . "
+                    " . $print_btn . "
                 </div>
             ";
 
@@ -611,6 +616,20 @@ class Master_konsultasi extends Admin_Controller
 
         $this->template->set($dt);
         $this->template->render('konsultasi_detail');
+    }
+
+    public function konsultasi_print($id_konsultasi)
+    {
+        $sql_header = "SELECT * FROM kons_master_konsultasi_header WHERE id_konsultasi_h = '" . $id_konsultasi . "'";
+        $sql_detail = "SELECT * FROM kons_master_konsultasi_detail WHERE id_konsultasi_h = '" . $id_konsultasi . "' ORDER BY tahapan";
+        $dt['konsultasi_header'] = $this->db->query($sql_header);
+        $dt['konsultasi_detail'] = $this->db->query($sql_detail);
+        $dt['paket'] = $this->db
+            ->select('id_paket, nm_paket')
+            ->order_by('nm_paket', 'asc')
+            ->get('kons_master_paket');
+
+        $this->load->view('konsultasi_print', $dt);
     }
 
 
