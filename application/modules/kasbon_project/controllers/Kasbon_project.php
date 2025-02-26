@@ -2988,16 +2988,19 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.id_header');
         $this->db->from('kons_tr_kasbon_project_subcont a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.sts', null);
         $get_kasbon_subcont = $this->db->get()->result();
 
         $this->db->select('a.id_header');
         $this->db->from('kons_tr_kasbon_project_akomodasi a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.sts', null);
         $get_kasbon_akomodasi = $this->db->get()->result();
 
         $this->db->select('a.id_header');
         $this->db->from('kons_tr_kasbon_project_others a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.sts', null);
         $get_kasbon_others = $this->db->get()->result();
 
         foreach ($get_kasbon_subcont as $item) {
