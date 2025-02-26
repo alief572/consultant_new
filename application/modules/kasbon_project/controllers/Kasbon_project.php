@@ -262,7 +262,7 @@ class Kasbon_project extends Admin_Controller
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_req_kasbon_project a');
                 $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
-                $this->db->order_by('a.created_date', 'desc');
+                $this->db->where('a.sts', 0);
                 $this->db->limit(1, 0);
                 $get_req_kasbon = $this->db->get()->row();
 
@@ -311,7 +311,7 @@ class Kasbon_project extends Admin_Controller
         }
 
         $no_all = 0;
-        foreach($get_data_all->result() as $item) {
+        foreach ($get_data_all->result() as $item) {
             $this->db->select('a.id');
             $this->db->from('kons_tr_req_kasbon_project a');
             $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
@@ -556,7 +556,7 @@ class Kasbon_project extends Admin_Controller
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
-            if(!empty($check_payment)) {
+            if (!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
             }
 
@@ -730,9 +730,9 @@ class Kasbon_project extends Admin_Controller
             if ($item->sts == '1') {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
-            
+
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
-            if(!empty($check_payment)) {
+            if (!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
             }
 
@@ -892,7 +892,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
-            if(!empty($check_payment)) {
+            if (!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
             }
 
@@ -2983,13 +2983,51 @@ class Kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $data_insert = [
-            'id_spk_budgeting' => $id_spk_budgeting,
-            'created_by' => $this->auth->user_id(),
-            'created_date' => date('Y-m-d H:i:s')
-        ];
+        $data_insert = [];
 
-        $insert_req = $this->db->insert('kons_tr_req_kasbon_project', $data_insert);
+        $this->db->select('a.id_header');
+        $this->db->from('kons_tr_kasbon_project_subcont a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_kasbon_subcont = $this->db->get()->result();
+
+        $this->db->select('a.id_header');
+        $this->db->from('kons_tr_kasbon_project_akomodasi a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_kasbon_akomodasi = $this->db->get()->result();
+
+        $this->db->select('a.id_header');
+        $this->db->from('kons_tr_kasbon_project_others a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_kasbon_others = $this->db->get()->result();
+
+        foreach ($get_kasbon_subcont as $item) {
+            $data_insert[] = [
+                'id_spk_budgeting' => $id_spk_budgeting,
+                'id_kasbon' => $item->id_header,
+                'created_by' => $this->auth->user_id(),
+                'created_date' => date('Y-m-d H:i:s')
+            ];
+        }
+
+        foreach ($get_kasbon_akomodasi as $item) {
+            $data_insert[] = [
+                'id_spk_budgeting' => $id_spk_budgeting,
+                'id_kasbon' => $item->id_header,
+                'created_by' => $this->auth->user_id(),
+                'created_date' => date('Y-m-d H:i:s')
+            ];
+        }
+
+        foreach ($get_kasbon_others as $item) {
+            $data_insert[] = [
+                'id_spk_budgeting' => $id_spk_budgeting,
+                'id_kasbon' => $item->id_header,
+                'created_by' => $this->auth->user_id(),
+                'created_date' => date('Y-m-d H:i:s')
+            ];
+        }
+
+        $insert_req = $this->db->insert_batch('kons_tr_req_kasbon_project', $data_insert);
         if (!$insert_req) {
             $this->db->trans_rollback();
 

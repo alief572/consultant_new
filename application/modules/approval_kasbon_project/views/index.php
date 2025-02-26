@@ -30,10 +30,14 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
                 <tr>
                     <th align="center">No</th>
                     <th align="center">Nomor SPK</th>
+                    <th align="center">Nomor Kasbon</th>
                     <th align="center">Customer</th>
                     <th align="center">Sales</th>
                     <th align="center">Project Leader</th>
                     <th align="center">Package</th>
+                    <th align="center">Keterangan</th>
+                    <th align="center">Tipe</th>
+                    <th align="center">Nominal</th>
                     <th align="center">Action</th>
                 </tr>
             </thead>
@@ -116,8 +120,12 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
             },
             columns: [{
                     data: 'no',
-                }, {
+                }, 
+                {
                     data: 'id_spk_penawaran'
+                },
+                {
+                    data: 'id_kasbon'
                 },
                 {
                     data: 'nm_customer'
@@ -130,6 +138,15 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
                 },
                 {
                     data: 'nm_project'
+                },
+                {
+                    data: 'keterangan'
+                },
+                {
+                    data: 'tipe'
+                },
+                {
+                    data: 'nominal'
                 },
                 {
                     data: 'option'

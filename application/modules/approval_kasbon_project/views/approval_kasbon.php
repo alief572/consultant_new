@@ -69,9 +69,14 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
   .valign-middle {
     vertical-align: middle !important;
   }
+
+  .d-none {
+    display: none !important;
+  }
 </style>
 
 <input type="hidden" name="id_spk_budgeting" value="<?= $list_budgeting->id_spk_budgeting ?>">
+<input type="hidden" name="id_kasbon" value="<?= $id_kasbon ?>">
 
 <div class="box">
   <div class="box-header">
@@ -120,7 +125,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
   </div>
 </div>
 
-<div class="box">
+<div class="box <?= ($tipe !== '1') ? 'd-none' : '' ?>">
   <div class="box-header">
     <h4>List Subcont</h4>
     <hr>
@@ -192,7 +197,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
   </div>
 </div>
 
-<div class="box">
+<div class="box <?= ($tipe !== '2') ? 'd-none' : '' ?>">
   <div class="box-header">
     <h4>List Akomodasi</h4>
     <hr>
@@ -273,7 +278,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
   </div>
 </div>
 
-<div class="box">
+<div class="box <?= ($tipe !== '3') ? 'd-none' : '' ?>">
   <div class="box-header">
     <h4>List Others</h4>
     <hr>
@@ -345,24 +350,32 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
     <br><br>
 
+
+  </div>
+</div>
+
+<div class="box">
+  <div class="box-body">
     <div class="col-md-6">
       <div class="form-group">
         <label for="">Reject Reason</label>
         <textarea name="reject_reason" class="form-control form-control-sm" id="" cols="30" rows="5"></textarea>
       </div>
     </div>
+
+    <div class="col-md-12">
+      <a href="<?= base_url('approval_kasbon_project') ?>" class="btn btn-sm btn-danger">
+        <i class="fa fa-arrow-left"></i> Back
+      </a>
+      <button type="button" class="btn btn-sm btn-danger reject_kasbon">
+        <i class="fa fa-close"></i> Reject
+      </button>
+      <button type="button" class="btn btn-sm btn-primary approve_kasbon">
+        <i class="fa fa-check"></i> Approve
+      </button>
+    </div>
   </div>
 </div>
-
-<a href="<?= base_url('approval_kasbon_project') ?>" class="btn btn-sm btn-danger">
-  <i class="fa fa-arrow-left"></i> Back
-</a>
-<button type="button" class="btn btn-sm btn-danger reject_kasbon">
-  <i class="fa fa-close"></i> Reject
-</button>
-<button type="button" class="btn btn-sm btn-primary approve_kasbon">
-  <i class="fa fa-check"></i> Approve
-</button>
 
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
@@ -376,7 +389,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
   $(document).on('click', '.reject_kasbon', function(e) {
     e.preventDefault();
 
-    var id_spk_budgeting = $('input[name="id_spk_budgeting"]').val();
+    var id_kasbon = $('input[name="id_kasbon"]').val();
     var reject_reason = $('input[name="reject_reason"]').val();
 
     if (reject_reason == '') {
@@ -389,14 +402,15 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
       swal({
         type: 'warning',
         title: 'Are you sure ?',
-        text: 'This data will be rejected !'
+        text: 'This data will be rejected !',
+        showCancelButton: true
       }, function(next) {
         if (next) {
           $.ajax({
             type: 'post',
             url: siteurl + active_controller + 'reject_kasbon',
             data: {
-              'id_spk_budgeting': id_spk_budgeting,
+              'id_kasbon': id_kasbon,
               'reject_reason': reject_reason
             },
             cache: false,
@@ -434,19 +448,20 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
   $(document).on('click', '.approve_kasbon', function(e) {
     e.preventDefault();
 
-    var id_spk_budgeting = $('input[name="id_spk_budgeting"]').val();
+    var id_kasbon = $('input[name="id_kasbon"]').val();
 
     swal({
       type: 'warning',
       title: 'Are you sure ?',
-      text: 'This data will be approved !'
+      text: 'This data will be approved !',
+      showCancelButton: true
     }, function(next) {
       if (next) {
         $.ajax({
           type: 'post',
           url: siteurl + active_controller + 'approve_kasbon',
           data: {
-            'id_spk_budgeting': id_spk_budgeting
+            'id_kasbon': id_kasbon
           },
           cache: false,
           dataType: 'json',
