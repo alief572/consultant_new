@@ -850,7 +850,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         var biaya_others = get_num($('input[name="biaya_others"]').val());
         var biaya_tandem = get_num($('input[name="biaya_tandem"]').val());
         var biaya_lab = get_num($('input[name="biaya_lab"]').val());
-        var total_mandays = "<?= $total_mandays ?>";
+        var total_mandays = get_num($('input[name="total_mandays"]').val());
 
         var mandays_subcont = 0;
         var ttl_subcont = 0;

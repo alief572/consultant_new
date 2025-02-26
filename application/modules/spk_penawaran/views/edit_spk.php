@@ -931,7 +931,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
         var biaya_others = get_num($('input[name="biaya_others"]').val());
         var biaya_tandem = get_num($('input[name="biaya_tandem"]').val());
         var biaya_lab = get_num($('input[name="biaya_lab"]').val());
-        var total_mandays = "<?= $total_mandays ?>";
+        var total_mandays = get_num($('input[name="total_mandays"]').val());
 
         var ttl_subcont = 0;
 
