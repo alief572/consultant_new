@@ -857,10 +857,10 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
         var no = $('.tr_list_subcont').length;
         for (i = 1; i <= no; i++) {
-            var total_mandays = get_num($('input[name="subcont[' + i + '][subcont_new_mandays]"]').val());
+            var total_mandayss = get_num($('input[name="subcont[' + i + '][subcont_new_mandays]"]').val());
             var total_subcont = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
 
-            mandays_subcont += parseFloat(total_mandays);
+            mandays_subcont += parseFloat(total_mandayss);
             ttl_subcont += parseFloat(total_subcont);
         }
 
