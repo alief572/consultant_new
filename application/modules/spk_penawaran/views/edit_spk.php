@@ -933,16 +933,20 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
         var biaya_lab = get_num($('input[name="biaya_lab"]').val());
         var total_mandays = get_num($('input[name="total_mandays"]').val());
 
+        var mandays_subcont = 0;
         var ttl_subcont = 0;
 
         var no = $('.tr_list_subcont').length;
         for (i = 1; i <= no; i++) {
+            var total_mandayss = get_num($('input[name="subcont[' + i + '][subcont_new_mandays]"]').val());
             var total_subcont = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
 
+            mandays_subcont += parseFloat(total_mandayss);
             ttl_subcont += parseFloat(total_subcont);
         }
 
         $('.biaya_subcont').val(number_format(ttl_subcont, 2));
+        $('.total_mandays_subcont').val(mandays_subcont);
         $('.ttl_total_subcont').html(number_format(ttl_subcont, 2));
 
         $('input[name="nilai_kontrak_bersih"]').val(number_format((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_lab), 2));
