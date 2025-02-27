@@ -208,11 +208,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="number" name="detail_akomodasi[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right qty_pengajuan qty_pengajuan_' . $no . '" onchange="hitung_all_pengajuan()" ' . $readonly . ' data-no_urut="' . $no . '" data-price_unit="' . $item->price_unit_final . '">';
+                        echo '<input type="number" name="detail_akomodasi[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right qty_pengajuan qty_pengajuan_' . $no . '" step="0.01" onchange="hitung_all_pengajuan()" ' . $readonly . ' data-no_urut="' . $no . '" data-price_unit="' . $item->price_unit_final . '">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_akomodasi[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" value="' . $item->price_unit_final . '" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_akomodasi[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" value="' . $item->price_unit_final . '" data-no="' . $no . '" data-budget="' . ($item->price_unit_final) . '" ' . $readonly . '>';
                         echo '</td>';
 
                         echo '<td>';
@@ -230,7 +230,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td class="text-center">';
-                        echo number_format($sisa_qty);
+                        echo number_format($sisa_qty, 2);
                         echo '<input type="hidden" name="detail_akomodasi[' . $no . '][aktual_terpakai]" value="' . ($sisa_qty) . '">';
                         echo '</td>';
 
@@ -274,7 +274,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
             <div class="col-md-6">
                 <table style="width: 100%">
-                    
+
                     <tr>
                         <th style="padding: 5px;">Bank</th>
                         <td style="padding: 5px;">
@@ -379,12 +379,15 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             if (isNaN(qty_pengajuan) || qty_pengajuan == '') {
                 qty_pengajuan = 0;
             } else {
-                qty_pengajuan = parseInt(qty_pengajuan);
+                qty_pengajuan = parseFloat(qty_pengajuan);
             }
 
             var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
-
-            var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
+            if (qty_pengajuan < 1) {
+                var total_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][total_pengajuan]"]').val());
+            } else {
+                var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
+            }
 
             $('input[name="detail_akomodasi[' + i + '][total_pengajuan]"]').autoNumeric('set', total_pengajuan);
 
@@ -393,9 +396,23 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             ttl_total += total_pengajuan;
         }
 
-        $('.ttl_pengajuan').html(number_format(ttl_total));
-        $('.ttl_qty_pengajuan').html(number_format(ttl_qty));
+        $('.ttl_pengajuan').html(number_format(ttl_total, 2));
+        $('.ttl_qty_pengajuan').html(number_format(ttl_qty, 2));
     }
+
+    $(document).on('change', '.hitung_per_price', function() {
+        var no = $(this).data('no');
+        var budget = $(this).data('budget');
+        var pengajuan = get_num($(this).val());
+
+        var qty = (pengajuan / budget);
+
+
+        $('input[name="detail_akomodasi[' + no + '][qty_pengajuan]"]').val(qty);
+        $('input[name="detail_akomodasi[' + no + '][total_pengajuan]"]').autoNumeric('set', pengajuan);
+
+        hitung_all_pengajuan();
+    });
 
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();

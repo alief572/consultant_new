@@ -173,11 +173,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             echo '<td class="text-center">' . number_format($item->qty_final) . '</td>';
                             echo '<td class="text-right">' . number_format($item->price_unit_final, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($item->total_final, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($qty_pengajuan) . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
-                            echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($aktual_terpakai - $qty_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($sisa_budget - $total_pengajuan, 2) . '</td>';
     
                             echo '</tr>';
     
@@ -189,8 +189,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             $ttl_est_price_unit += $item->price_unit_final;
                             $ttl_est_total_budget += $item->total_final;
     
-                            $ttl_aktual_terpakai += $aktual_terpakai;
-                            $ttl_sisa_budget += $sisa_budget;
+                            $ttl_aktual_terpakai += ($aktual_terpakai - $qty_pengajuan);
+                            $ttl_sisa_budget += ($sisa_budget - $total_pengajuan);
 
                         }
                     }
@@ -202,10 +202,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
                         <td class="text-right"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-right"><?= number_format($ttl_est_total_budget, 2) ?></td>
-                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_peng) ?></td>
+                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_peng, 2) ?></td>
                         <td class="text-right"></td>
-                        <td class="text-right ttl_pengajuan"><?= number_format($ttl_total_peng) ?></td>
-                        <td class="text-center"><?= number_format($ttl_aktual_terpakai) ?></td>
+                        <td class="text-right ttl_pengajuan"><?= number_format($ttl_total_peng, 2) ?></td>
+                        <td class="text-center"><?= number_format($ttl_aktual_terpakai, 2) ?></td>
                         <td class="text-right"><?= number_format($ttl_sisa_budget, 2) ?></td>
                     </tr>
                 </tfoot>
@@ -220,7 +220,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <td style="padding: 5px;">
                             <input type="file" name="kasbon_document" id="" class="form-control form-control-sm" disabled>
                             <?php
-                            if (file_exists('./' . $header->dokument_link)) {
+                            if (file_exists('./' . $header->dokument_link) && $header->dokument_link !== '') {
                                 echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-sm btn-primary" target="_blank">
                                         <i class="fa fa-download"></i> Download
                                     </a>';
