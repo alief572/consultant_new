@@ -52,6 +52,7 @@ class Approval_kasbon_project extends Admin_Controller
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
+            $this->db->or_like('c.id_spk_penawaran', $search['value'], 'both');
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
             $this->db->or_like('c.nm_sales', $search['value'], 'both');
             $this->db->or_like('b.nm_project_leader', $search['value'], 'both');
@@ -72,6 +73,7 @@ class Approval_kasbon_project extends Admin_Controller
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
+            $this->db->or_like('c.id_spk_penawaran', $search['value'], 'both');
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
             $this->db->or_like('c.nm_sales', $search['value'], 'both');
             $this->db->or_like('b.nm_project_leader', $search['value'], 'both');

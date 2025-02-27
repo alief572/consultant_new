@@ -179,11 +179,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             echo '<td class="text-center">' . number_format($qty_estimasi) . '</td>';
                             echo '<td class="text-right">' . number_format($price_unit_estimasi, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($total_budgeting_estimasi, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($qty_pengajuan) . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($aktual_terpakai) . '</td>';
-                            echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($aktual_terpakai - $qty_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($sisa_budget - $total_pengajuan, 2) . '</td>';
     
                             echo '</tr>';
     
@@ -194,8 +194,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             $ttl_est_qty += $qty_estimasi;
                             $ttl_est_price_unit += $price_unit_estimasi;
                             $ttl_est_total_budget += $total_budgeting_estimasi;
-                            $ttl_aktual_terpakai += $aktual_terpakai;
-                            $ttl_sisa_budget += $sisa_budget;
+                            $ttl_aktual_terpakai += ($aktual_terpakai - $qty_pengajuan);
+                            $ttl_sisa_budget += ($sisa_budget - $total_pengajuan);
 
                         }
                     }
@@ -225,7 +225,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <td style="padding: 5px;">
                             <input type="file" name="kasbon_document" id="" class="form-control form-control-sm" disabled>
                             <?php
-                            if (file_exists('./' . $header->dokument_link)) {
+                            if (file_exists('./' . $header->dokument_link) && $header->dokument_link !== '') {
                                 echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-sm btn-primary" target="_blank">
                                         <i class="fa fa-download"></i> Download
                                     </a>';

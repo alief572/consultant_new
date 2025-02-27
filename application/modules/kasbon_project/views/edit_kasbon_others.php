@@ -203,20 +203,20 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             echo '<input type="hidden" name="detail_others[' . $no . '][total_budget_estimasi]" value="' . $item->total_final . '">';
                             echo '</td>';
                             echo '<td class="text-center">';
-                            echo '<input type="number" name="detail_others[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-center" value="' . $qty_pengajuan . '" onchange="hitung_all_pengajuan();">';
+                            echo '<input type="number" name="detail_others[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-center" value="' . $qty_pengajuan . '" step="0.01" onchange="hitung_all_pengajuan();">';
                             echo '</td>';
                             echo '<td class="text-right">';
-                            echo '<input type="text" name="detail_others[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" value="' . $nominal_pengajuan . '">';
+                            echo '<input type="text" name="detail_others[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" value="' . $nominal_pengajuan . '"  data-no="'.$no.'" data-budget="'.$item->price_unit_final.'">';
                             echo '</td>';
                             echo '<td class="text-right">';
                             echo '<input type="text" name="detail_others[' . $no . '][total_pengajuan]" class="form-control form-control-sm text-right auto_num" value="' . $total_pengajuan . '" readonly>';
                             echo '</td>';
                             echo '<td class="text-center">';
-                            echo number_format($aktual_terpakai);
+                            echo number_format($aktual_terpakai - $qty_pengajuan, 2);
                             echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . ($aktual_terpakai) . '">';
                             echo '</td>';
                             echo '<td class="text-right">';
-                            echo number_format($sisa_budget, 2);
+                            echo number_format($sisa_budget - $total_pengajuan, 2);
                             echo '<input type="hidden" name="detail_others[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
                             echo '</td>';
     
@@ -230,8 +230,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             $ttl_est_price_unit += $item->price_unit_final;
                             $ttl_est_total_budget += $item->total_final;
     
-                            $ttl_aktual_terpakai += $aktual_terpakai;
-                            $ttl_sisa_budget += $sisa_budget;
+                            $ttl_aktual_terpakai += ($aktual_terpakai - $qty_pengajuan);
+                            $ttl_sisa_budget += ($sisa_budget - $total_pengajuan);
                         }
 
                     }
@@ -243,10 +243,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
                         <td class="text-right"><?= number_format($ttl_est_price_unit, 2) ?></td>
                         <td class="text-right"><?= number_format($ttl_est_total_budget, 2) ?></td>
-                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_peng) ?></td>
+                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_peng, 2) ?></td>
                         <td class="text-right"></td>
-                        <td class="text-right ttl_pengajuan"><?= number_format($ttl_total_peng) ?></td>
-                        <td class="text-center"><?= number_format($ttl_aktual_terpakai) ?></td>
+                        <td class="text-right ttl_pengajuan"><?= number_format($ttl_total_peng, 2) ?></td>
+                        <td class="text-center"><?= number_format($ttl_aktual_terpakai, 2) ?></td>
                         <td class="text-right"><?= number_format($ttl_sisa_budget, 2) ?></td>
                     </tr>
                 </tfoot>
@@ -343,12 +343,15 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             if (isNaN(qty_pengajuan) || qty_pengajuan == '') {
                 qty_pengajuan = 0;
             } else {
-                qty_pengajuan = parseInt(qty_pengajuan);
+                qty_pengajuan = parseFloat(qty_pengajuan);
             }
 
             var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
-
-            var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
+            if(qty_pengajuan < 1) {
+                var total_pengajuan = get_num($('input[name="detail_others['+i+'][total_pengajuan]"]').val());
+            } else {
+                var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
+            }
 
             $('input[name="detail_others[' + i + '][total_pengajuan]"]').autoNumeric('set', total_pengajuan);
 
@@ -358,8 +361,22 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         }
 
         $('.ttl_pengajuan').html(number_format(ttl_total));
-        $('.ttl_qty_pengajuan').html(number_format(ttl_qty));
+        $('.ttl_qty_pengajuan').html(number_format(ttl_qty, 2));
     }
+
+    $(document).on('change', '.hitung_per_price', function() {
+        var no = $(this).data('no');
+        var budget = $(this).data('budget');
+        var pengajuan = get_num($(this).val());
+
+        var qty = (pengajuan / budget);
+        
+        
+        $('input[name="detail_others['+no+'][qty_pengajuan]"]').val(qty.toFixed(2));
+        $('input[name="detail_others['+no+'][total_pengajuan]"]').autoNumeric('set', pengajuan);
+
+        hitung_all_pengajuan();
+    });
 
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
