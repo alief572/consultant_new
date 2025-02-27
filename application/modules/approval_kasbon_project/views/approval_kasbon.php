@@ -322,17 +322,17 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
           echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->qty_pengajuan) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->aktual_terpakai) . '</td>';
-          echo '<td class="text-right">' . number_format($item->sisa_budget, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
           echo '</tr>';
 
           $ttl_estimasi_others += $item->total_budget_estimasi;
           $ttl_pengajuan_others += $item->total_pengajuan;
-          $ttl_aktual_others += $item->aktual_terpakai;
-          $ttl_sisa_others += $item->sisa_budget;
+          $ttl_aktual_others += ($item->aktual_terpakai - $item->qty_pengajuan);
+          $ttl_sisa_others += ($item->sisa_budget - $item->total_pengajuan);
         }
         ?>
       </tbody>
@@ -342,7 +342,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           <th class="text-right"><?= number_format($ttl_estimasi_others, 2) ?></th>
           <th colspan="2"></th>
           <th class="text-right"><?= number_format($ttl_pengajuan_others, 2) ?></th>
-          <th class="text-center"><?= number_format($ttl_aktual_others) ?></th>
+          <th class="text-center"><?= number_format($ttl_aktual_others, 2) ?></th>
           <th class="text-right"><?= number_format($ttl_sisa_others, 2) ?></th>
         </tr>
       </tfoot>
