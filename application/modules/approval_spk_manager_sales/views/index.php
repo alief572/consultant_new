@@ -24,22 +24,24 @@ $ENABLE_DELETE  = has_permission('Project_Leader.Delete');
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <table id="table_penawaran" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th align="center">No</th>
-                    <th align="center">Nomor SPK</th>
-                    <th align="center">Marketing</th>
-                    <th align="center">Package</th>
-                    <th align="center">Customer</th>
-                    <th align="center">Grand Total</th>
-                    <th align="center">Status</th>
-                    <th align="center">Status SPK</th>
-                    <th align="center">Action</th>
-                </tr>
-            </thead>
+        <div class="table-responsive">
+            <table id="table_penawaran" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th align="center">No</th>
+                        <th align="center">Nomor SPK</th>
+                        <th align="center">Marketing</th>
+                        <th align="center">Package</th>
+                        <th align="center">Customer</th>
+                        <th align="center">Grand Total</th>
+                        <th align="center">Status</th>
+                        <th align="center">Status SPK</th>
+                        <th align="center">Action</th>
+                    </tr>
+                </thead>
 
-        </table>
+            </table>
+        </div>
     </div>
     <!-- /.box-body -->
 </div>
