@@ -168,86 +168,85 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                     foreach ($list_subcont as $item) {
 
-                        if(isset($data_kasbon_subcont[$item->id_aktifitas])) {
-                            
+                        if (isset($data_kasbon_subcont[$item->id_aktifitas])) {
+
                             $qty_pengajuan = (isset($data_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'])) ? $data_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'] : 0;
-                            
+
                             $nominal_pengajuan = (isset($data_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'])) ? $data_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'] : 0;
-                            
+
                             $total_pengajuan = (isset($data_kasbon_subcont[$item->id_aktifitas]['total_pengajuan'])) ? $data_kasbon_subcont[$item->id_aktifitas]['total_pengajuan'] : 0;
 
                             $aktual_terpakai = (isset($data_kasbon_subcont[$item->id_aktifitas]['aktual_terpakai'])) ? ($data_kasbon_subcont[$item->id_aktifitas]['aktual_terpakai']) : 0;
                             $sisa_budget = (isset($data_kasbon_subcont[$item->id_aktifitas]['sisa_budget'])) ? ($data_kasbon_subcont[$item->id_aktifitas]['sisa_budget']) : 0;
-    
+
                             $readonly = '';
                             // if ($sisa_budget <= 0) {
                             //     $readonly = 'readonly';
                             // }
-    
-    
-    
+
+
+
                             echo '<tr>';
-    
+
                             echo '<td class="text-center">' . $no . '</td>';
                             echo '<td>';
                             echo $item->nm_aktifitas;
                             echo '<input type="hidden" name="detail_subcont[' . $no . '][id_aktifitas]" value="' . $item->id_aktifitas . '">';
                             echo '<input type="hidden" name="detail_subcont[' . $no . '][nm_aktifitas]" value="' . $item->nm_aktifitas . '">';
                             echo '</td>';
-    
+
                             echo '<td class="text-center">';
                             echo number_format($item->mandays_subcont_final);
                             echo '<input type="hidden" name="detail_subcont[' . $no . '][qty_estimasi]" value="' . $item->mandays_subcont_final . '">';
                             echo '</td>';
-    
+
                             echo '<td class="text-center">';
                             echo number_format($item->mandays_rate_subcont_final, 2);
                             echo '<input type="hidden" name="detail_subcont[' . $no . '][price_unit_estimasi]" value="' . $item->mandays_rate_subcont_final . '">';
                             echo '</td>';
-    
+
                             echo '<td class="text-center">';
                             echo number_format(($item->mandays_rate_subcont_final * $item->mandays_subcont_final), 2);
                             echo '<input type="hidden" name="detail_subcont[' . $no . '][total_estimasi]" value="' . ($item->mandays_rate_subcont_final * $item->mandays_subcont_final) . '">';
                             echo '</td>';
-    
+
                             echo '<td>';
                             echo '<input type="number" name="detail_subcont[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right" value="' . $qty_pengajuan . '" min="0" onchange="hitung_all_pengajuan()" step="0.01" ' . $readonly . '>';
                             echo '</td>';
-    
+
                             echo '<td>';
-                            echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" value="'.$nominal_pengajuan.'" data-no="' . $no . '" data-budget="' . ($item->mandays_rate_subcont_final) . '" ' . $readonly . '>';
+                            echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" value="' . $nominal_pengajuan . '" data-no="' . $no . '" data-budget="' . ($item->mandays_rate_subcont_final) . '" ' . $readonly . '>';
                             echo '</td>';
-    
+
                             echo '<td>';
                             echo '<input type="text" name="detail_subcont[' . $no . '][total_pengajuan]" class="form-control form-control-sm text-right auto_num" value="' . $total_pengajuan . '" readonly>';
                             echo '</td>';
-    
+
                             echo '<td class="text-center">';
                             echo number_format($aktual_terpakai - $qty_pengajuan, 2);
                             echo '<input type="hidden" name="detail_subcont[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
                             echo '</td>';
-    
+
                             echo '<td class="text-center">';
                             echo number_format($sisa_budget - $total_pengajuan, 2);
                             echo '<input type="hidden" name="detail_subcont[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
                             echo '</td>';
-    
+
                             echo '</tr>';
-    
+
                             $ttl_qty_pengajuan += $qty_pengajuan;
                             $ttl_nominal_pengajuan += $nominal_pengajuan;
                             $ttl_total_pengajuan += $total_pengajuan;
-    
+
                             $ttl_est_qty += $item->mandays_subcont_final;
                             $ttl_est_price_unit += $item->mandays_rate_subcont_final;
                             $ttl_est_total_budget += ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
-    
+
                             $ttl_aktual_terpakai += $aktual_terpakai;
                             $ttl_sisa_budget += $sisa_budget;
-    
+
                             $no++;
                         }
-
                     }
                     ?>
                 </tbody>
@@ -270,7 +269,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
             <div class="col-md-6">
                 <table style="width: 100%">
-                    
+
                     <tr>
                         <th style="padding: 5px;">Bank</th>
                         <td style="padding: 5px;">
@@ -362,8 +361,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             }
 
             var nominal_pengajuan = get_num($('input[name="detail_subcont[' + i + '][nominal_pengajuan]"]').val());
-            if(qty_pengajuan < 1) {
-                var total_pengajuan = get_num($('input[name="detail_subcont['+i+'][total_pengajuan]"]').val());
+            if (qty_pengajuan < 1) {
+                var total_pengajuan = get_num($('input[name="detail_subcont[' + i + '][total_pengajuan]"]').val());
             } else {
                 var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
             }
@@ -385,10 +384,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         var pengajuan = get_num($(this).val());
 
         var qty = (pengajuan / budget);
-        
-        
-        $('input[name="detail_subcont['+no+'][qty_pengajuan]"]').val(qty);
-        $('input[name="detail_subcont['+no+'][total_pengajuan]"]').autoNumeric('set', pengajuan);
+
+
+        $('input[name="detail_subcont[' + no + '][qty_pengajuan]"]').val(qty);
+        $('input[name="detail_subcont[' + no + '][total_pengajuan]"]').autoNumeric('set', pengajuan);
 
         hitung_all_pengajuan();
     });
@@ -405,11 +404,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             var qty_estimasi = get_num($('input[name="detail_subcont[' + i + '][qty_estimasi]"]').val());
             var nominal_pengajuan = get_num($('input[name="detail_subcont[' + i + '][nominal_pengajuan]"]').val());
             var price_unit_estimasi = get_num($('input[name="detail_subcont[' + i + '][price_unit_estimasi]"]').val());
+            var sisa_budget = get_num($('input[name="detail_subcont[' + i + '][sisa_budget]"]').val());
 
-            if (valid == '1' && qty_pengajuan > qty_estimasi) {
-                valid = 0;
+            if (qty_pengajuan > 0 && qty_pengajuan < 1) {
+                qty_pengajuan = 1;
             }
-            if (valid == '1' && nominal_pengajuan > price_unit_estimasi) {
+            if (valid == '1' && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
                 valid = 0;
             }
         }

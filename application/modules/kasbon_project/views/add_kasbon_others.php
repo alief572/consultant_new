@@ -381,11 +381,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             var qty_estimasi = get_num($('input[name="detail_others[' + i + '][qty_estimasi]"]').val());
             var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
             var price_unit_estimasi = get_num($('input[name="detail_others[' + i + '][price_unit_estimasi]"]').val());
+            var sisa_budget = get_num($('input[name="detail_others[' + i + '][sisa_budget]"]').val());
 
-            if (valid == '1' && qty_pengajuan > qty_estimasi) {
-                valid = 0;
+            if(qty_pengajuan > 0 && qty_pengajuan < 1) {
+                qty_pengajuan = 1;
             }
-            if (valid == '1' && nominal_pengajuan > price_unit_estimasi) {
+            if (valid == '1' && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
                 valid = 0;
             }
         }

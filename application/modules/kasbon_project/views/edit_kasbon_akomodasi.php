@@ -409,6 +409,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             var nominal_pengajuan = get_num($('input[name="dt[' + i + '][nominal_pengajuan]"]').val());
             var sisa_budget = get_num($('input[name="dt[' + i + '][sisa_budget]"]').val());
 
+            if(qty_pengajuan > 0 && qty_pengajuan < 1) {
+                qty_pengajuan = 1;
+            }
             if (valid == '1' && (qty_pengajuan * nominal_pengajuan) > sisa_budget) {
                 valid = 0;
             }
