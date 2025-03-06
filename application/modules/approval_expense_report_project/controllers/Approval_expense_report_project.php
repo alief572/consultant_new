@@ -1352,17 +1352,32 @@ class Approval_expense_report_project extends Admin_Controller
     public function approve_expense_report() {
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, b.deskripsi');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.sts_req', 1);
         $get_expense_report_req_app = $this->db->get()->result();
 
+        $get_user = $this->db->get_where('');
+
         $this->db->trans_begin();
 
         foreach($get_expense_report_req_app as $item) {
             $this->db->update('kons_tr_expense_report_project_header', ['sts' => 1, 'sts_req' => null, 'reject_reason' => ''], ['id' => $item->id]);
+
+            $this->db->insert('request_payment', array(
+                'no_doc' => $item->id,
+                'nama' => $get_user->nama_lengkap,
+                'tgl_doc' => date('Y-m-d', strtotime($item->created_date)),
+                'keperluan' => $item->deskripsi,
+                'tipe' => 'expense',
+                'jumlah' => $item->selisih,
+                'created_by' => $get_user->username,
+                'created_on' => date('Y-m-d H:i:s'),
+                'ids' => $item->id,
+                'currency' => 'IDR'
+            ));
         }
 
         if($this->db->trans_status() === false) {

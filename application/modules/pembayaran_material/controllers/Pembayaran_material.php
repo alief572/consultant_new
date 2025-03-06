@@ -335,44 +335,7 @@ class Pembayaran_material extends Admin_Controller
 	//==================================================================================================================
 	public function payment_list()
 	{
-		// $results = $this->pembayaran_material_model->get_data_json_request_payment_header("status>0 and tipe='material'");
-		// $results = $this->db->get_where('payment_approve', ['status' => 2])->result();
-		$results = $this->db
-			->select('a.*')
-			->from('payment_approve a')
-			->join('tr_expense b', 'b.no_doc = a.no_doc')
-			->where('a.status', 2)
-			->where('b.exp_inv_po', 1)
-			->where('a.id_payment <>', null)
-			->where('a.id_payment <>', '')
-			->group_by('a.id_payment')
-			->order_by('a.created_on', 'DESC')
-			->get()
-			->result();
-
-		$results2 = $this->db->query("SELECT a.* FROM payment_approve a LEFT JOIN tr_expense b ON b.no_doc = a.no_doc WHERE a.status = 2 AND a.no_doc NOT LIKE '%INV-%' AND a.no_doc NOT LIKE '%PI-%' AND (a.id_payment IS NOT NULL AND a.id_payment <> '') GROUP BY a.id_payment ORDER BY a.created_on DESC")->result();
-		// ->select('a.*')
-		// ->from('payment_approve a')
-		// ->join('tr_expense b', 'b.no_doc = a.no_doc', 'left')
-		// ->where('a.status', 2)
-		// ->where('(SELECT COUNT(aa.id) FROM tr_expense aa WHERE aa.no_doc = a.no_doc AND (aa.exp_inv_po IS NULL OR aa.exp_inv_po = "")) <=', 0)
-		// ->group_by('a.id')
-		// ->order_by('a.created_on', 'DESC')
-		// ->get()
-		// ->result();
-
-
-		// $results2 = $this->pembayaran_material_model->get_data_json_request_payment_header("status>0 and tipe='nonmaterial'");
-		// $data_Group			= $this->master_model->getArray('groups', array(), 'id', 'name');
-		$data = array(
-			'title'			=> 'Payment List',
-			'action'		=> 'index',
-			'data_status'	=> $this->data_status,
-			'results'		=> $results,
-			'results2' => $results2
-		);
-		// history('List Payment');
-		$this->template->set($data);
+		$this->template->title('Payment');
 		$this->template->render('index_payment_new');
 	}
 
@@ -2392,117 +2355,6 @@ class Pembayaran_material extends Admin_Controller
 		]);
 	}
 
-	public function save_payment()
-	{
-		$post = $this->input->post();
-
-		$payment_bank = str_replace(',', '', $post['payment_bank']);
-
-		$this->db->trans_start();
-
-		$get_coa_bank = $this->db->get_where('coa_master', ['no_perkiraan' => $post['bank']])->row();
-		$nm_coa_bank = '';
-		$kode_bank = '';
-		if (!empty($get_coa_bank)) {
-			$nm_coa_bank = $get_coa_bank->nama;
-			$kode_bank = $get_coa_bank->kode_bank;
-		}
-
-		$id_payment_paid = $this->Pembayaran_material_model->generate_id_payment_paid($kode_bank, $post['tgl_bayar']);
-
-		$config['upload_path'] = 'assets/expense/';
-		$config['allowed_types'] = '*';
-		$config['remove_spaces'] = TRUE;
-		$config['encrypt_name'] = TRUE;
-		$filenames = '';
-
-		if (!empty($_FILES['upload_doc']['name'])) {
-			$_FILES['file']['name'] = $_FILES['upload_doc']['name'];
-			$_FILES['file']['type'] = $_FILES['upload_doc']['type'];
-			$_FILES['file']['tmp_name'] = $_FILES['upload_doc']['tmp_name'];
-			$_FILES['file']['error'] = $_FILES['upload_doc']['error'];
-			$_FILES['file']['size'] = $_FILES['upload_doc']['size'];
-			// $this->load->library('upload', $config);
-			$this->upload->initialize($config);
-			if ($this->upload->do_upload('file')) {
-				$uploadData = $this->upload->data();
-				$filenames = $uploadData['file_name'];
-			}
-		}
-
-		$insert_payment_paid = $this->db->insert('tr_payment_paid', [
-			'id' => $id_payment_paid,
-			'bank_charge' => str_replace(',', '', $post['bank_charge']),
-			'created_by' => $this->auth->user_id(),
-			'created_on' => date('Y-m-d H:i:s')
-		]);
-		if (!$insert_payment_paid) {
-			print_r($this->db->error($insert_payment_paid));
-			exit;
-		}
-
-		$get_users = $this->db->get_where('users', array('id_user' => $this->auth->user_id()))->row();
-
-		$this->db->where_in('id', explode(',', $post['id_payment']));
-		$update_payment1 = $this->db->update('payment_approve', [
-			'id_payment' => $id_payment_paid,
-			'tgl_bayar' => $post['tgl_bayar'],
-			'supplier' => '',
-			'keterangan_pembayaran' => $post['keterangan_pembayaran'],
-			'coa_bank' => $post['bank'],
-			'nm_coa_bank' => $nm_coa_bank,
-			'mata_uang' => $post['mata_uang'],
-			'payment_bank' => str_replace(',', '', $post['payment_bank']),
-			'total_payment' => $post['total_payment'],
-			'selisih' => ($post['total_payment'] - $payment_bank),
-			'status' => 2,
-			'link_doc' => $filenames,
-			'id_supplier' => '',
-			'nm_supplier' => '',
-			'kurs_payment' => str_replace(',', '', $post['kurs_payment']),
-			'pay_by' => $get_users->username,
-			'pay_on' => date('Y-m-d H:i:s')
-		]);
-		if (!$update_payment1) {
-			print_r($this->db->error($update_payment1));
-			exit;
-		}
-
-		if (!empty($post['dt'])) {
-			foreach ($post['dt'] as $detail) {
-				$tipe_pph = ($detail['tipe_pph'] == 1) ? 'PPH 23' : 'PPH 22';
-
-				$this->db->where('id', $detail['id_payment']);
-				$update_payment_detail = $this->db->update('payment_approve', [
-					'total_ppn' => str_replace(',', '', $detail['nilai_ppn']),
-					'total_pph' => str_replace(',', '', $detail['nilai_pph']),
-					'tipe_pph' => $tipe_pph
-				]);
-
-				$kurs_invoice = $detail['kurs_invoice'];
-				if (!$update_payment_detail) {
-					print_r($this->db->error($update_payment_detail));
-					exit;
-				}
-			}
-		}
-
-		if ($this->db->trans_status() === false) {
-			$this->db->trans_rollback();
-			$valid = 0;
-			$pesan = 'Maaf, data gagal dibayar !';
-		} else {
-			$this->db->trans_commit();
-			$valid = 1;
-			$pesan = 'Selamat, data telah berhasil dibayar !';
-		}
-
-		echo json_encode([
-			'status' => $valid,
-			'pesan' => $pesan
-		]);
-	}
-
 	public function used_choosed_payment()
 	{
 		$this->db->trans_start();
@@ -2514,5 +2366,115 @@ class Pembayaran_material extends Admin_Controller
 		} else {
 			$this->db->trans_commit();
 		}
+	}
+
+	public function payment_modal() {
+		$id = $this->input->post('id');
+
+		$get_payment = $this->db->get_where('payment_approve', array('id' => $id))->row();
+	
+		$get_coa_bank = $this->db->select('a.no_perkiraan, a.nama')->from('coa_master a')->like('a.no_perkiraan', '1101-02-', 'both')->not_like('a.no_perkiraan', '00', 'both')->get()->result();
+
+		if($get_payment->tipe == 'kasbon') {
+			$get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $get_payment->no_doc))->row();
+
+			$this->template->set('data_kasbon', $get_kasbon_header);
+			$this->template->set('data_payment', $get_payment);
+			$this->template->set('list_coa_bank', $get_coa_bank);
+			$this->template->render('kasbon_modal');
+		}
+		if($get_payment->tipe == 'expense') {
+			$get_expense_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $get_payment->no_doc))->row();
+
+			$this->template->set('data_expense', $get_expense_header);
+			$this->template->set('data_payment', $get_payment);
+			$this->template->set('list_coa_bank', $get_coa_bank);
+			$this->template->render('expense_modal');
+		}
+	}
+
+	public function save_payment() {
+		$post = $this->input->post();
+
+		$this->load->library('upload');
+
+		$config['upload_path'] = './uploads/bukti_pembayaran/';
+        $config['allowed_types'] = '*';
+        $config['remove_spaces'] = TRUE;
+        $config['encrypt_name'] = TRUE;
+
+		$bukti_transfer = '';
+		$this->upload->initialize($config);
+        if ($this->upload->do_upload('bukti_transfer')) {
+            $uploadData = $this->upload->data();
+            $bukti_transfer = $uploadData['file_name'];
+        }
+
+		$data_update = [
+			'status' => 2,
+			'nilai_bayar' => str_replace(',', '', $post['nilai_bayar']),
+			'tanggal_pembayaran' => $post['tanggal_pembayaran'],
+			'id_bank_pembayaran' => $post['bank'],
+			'keterangan_pembayaran' => $post['keterangan'],
+			'bukti_transfer' => $bukti_transfer
+		];
+
+		$this->db->trans_begin();
+
+		$this->db->update('payment_approve', $data_update, array('id' => $post['no_payment']));
+
+		if($this->db->trans_status() === false) {
+			$this->db->trans_rollback();
+
+			$valid = 0;
+			$msg = 'Please try again later !';
+		} else {
+			$this->db->trans_commit();
+
+			$valid = 1;
+			$msg = 'Data has been paid !';
+		}
+
+		echo json_encode([
+			'status' => $valid,
+			'msg' => $msg
+		]);
+	}
+
+	public function revisi_payment() {
+		$id = $this->input->post('id');
+
+		$this->db->trans_begin();
+
+		$data_update = array(
+			'nilai_bayar' => null,
+			'tanggal_pembayaran' => null,
+			'id_bank_pembayaran' => null,
+			'bukti_transfer' => null,
+			'keterangan_pembayaran' => null,
+			'status' => 1
+		);
+		$this->db->update('payment_approve', $data_update, array('id' => $id));
+
+		if($this->db->trans_status() === false) {
+			$this->db->trans_rollback();
+
+			$valid = 0;
+			$msg = 'Please try again later !';
+		} else {
+			$this->db->trans_commit();
+
+			$valid = 1;
+			$msg = 'Data has been updated successfully !';
+		}
+
+		echo json_encode([
+			'status' => $valid,
+			'msg' => $msg
+		]);
+	}
+
+	public function get_data_payment() {
+		$this->Pembayaran_material_model->get_data_payment();
 	}
 }

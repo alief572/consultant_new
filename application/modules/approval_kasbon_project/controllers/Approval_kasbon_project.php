@@ -238,7 +238,35 @@ class Approval_kasbon_project extends Admin_Controller
     {
         $id_kasbon = $this->input->post('id_kasbon');
 
+        $get_header_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_kasbon))->row();
+        
+        $get_user = $this->db->get_where('users', array('id_user' => $this->auth->user_id()))->row();
+
+        $nm_user = (!empty($get_user)) ? $get_user->nm_lengkap : '';
+
+        $data_insert_req_payment = [
+            'no_doc' => $id_kasbon,
+            'nama' => $nm_user,
+            'tgl_doc' => date('Y-m-d', strtotime($get_header_kasbon->created_date)),
+            'keperluan' => $get_header_kasbon->deskripsi,
+            'tipe' => 'kasbon',
+            'jumlah' => $get_header_kasbon->grand_total,
+            'status' => 0,
+            'created_by' => $get_user->username,
+            'created_on' => date('Y-m-d H:i:s'),
+            'ids' => $id_kasbon,
+            'currency' => 'IDR'
+        ];
+
         $this->db->trans_begin();
+
+        $insert_req_payment = $this->db->insert('request_payment', $data_insert_req_payment);
+        if(!$insert_req_payment) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->error($insert_req_payment));
+            exit;
+        }
 
         $update_req = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id' => $id_kasbon]);
         if (!$update_req) {
@@ -257,28 +285,10 @@ class Approval_kasbon_project extends Admin_Controller
         }
 
         $update_req_subcont = $this->db->update('kons_tr_kasbon_project_subcont', ['sts' => 1], ['id_header' => $id_kasbon]);
-        if (!$update_req_subcont) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->error($update_req_subcont));
-            exit;
-        }
 
         $update_req_akomodasi = $this->db->update('kons_tr_kasbon_project_akomodasi', ['sts' => 1], ['id_header' => $id_kasbon]);
-        if (!$update_req_akomodasi) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->error($update_req_akomodasi));
-            exit;
-        }
 
         $update_req_others = $this->db->update('kons_tr_kasbon_project_others', ['sts' => 1], ['id_header' => $id_kasbon]);
-        if (!$update_req_others) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->error($update_req_others));
-            exit;
-        }
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

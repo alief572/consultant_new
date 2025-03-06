@@ -1,12 +1,13 @@
 <?php
-$ENABLE_ADD     = has_permission('Approval_Request_Payment_Management.Add');
-$ENABLE_MANAGE  = has_permission('Approval_Request_Payment_Management.Manage');
-$ENABLE_VIEW    = has_permission('Approval_Request_Payment_Management.View');
-$ENABLE_DELETE  = has_permission('Approval_Request_Payment_Management.Delete');
+$ENABLE_ADD     = has_permission('Approval_Request_Payment_Checker.Add');
+$ENABLE_MANAGE  = has_permission('Approval_Request_Payment_Checker.Manage');
+$ENABLE_VIEW    = has_permission('Approval_Request_Payment_Checker.View');
+$ENABLE_DELETE  = has_permission('Approval_Request_Payment_Checker.Delete');
 
 $box_kasbon_subcont = 'd-none';
 $box_kasbon_akomodasi = 'd-none';
 $box_kasbon_others = 'd-none';
+$box_expense = '';
 
 if ($tipe == 'Kasbon Subcont') {
 	$box_kasbon_subcont = '';
@@ -16,6 +17,9 @@ if ($tipe == 'Kasbon Akomodasi') {
 }
 if ($tipe == 'Kasbon Others') {
 	$box_kasbon_others = '';
+}
+if ($tipe == 'Expense') {
+	$box_expense = '';
 }
 
 ?>
@@ -354,6 +358,83 @@ if ($tipe == 'Kasbon Others') {
 	</div>
 </div>
 
+<div class="box <?= $box_expense ?>">
+	<div class="box-header">
+		<h4 style="font-weight: 800;"><?= $title_expense ?></h4>
+	</div>
+
+	<div class="box-body">
+		<table class="table custom-table">
+			<thead>
+				<tr>
+					<th class="text-center" valign="top" rowspan="2">No.</th>
+					<th class="text-center" valign="top" rowspan="2">Item</th>
+					<th class="text-center" valign="top" colspan="2">Kasbon</th>
+					<th class="text-center" valign="top" colspan="2">Expense Report</th>
+				</tr>
+				<tr>
+					<th class="text-center">Qty</th>
+					<th class="text-center">Nominal</th>
+					<th class="text-center">Qty</th>
+					<th class="text-center">Nominal</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php $no = 0;
+				$ttl_kasbon_exp = 0;
+				$ttl_exp = 0;
+				foreach ($list_expense_detail as $item) : $no++;
+					$qty_kasbon = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['qty_kasbon'] : 0;
+					$nominal_kasbon = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['nominal_kasbon'] : 0;
+					$qty_expense = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['qty_expense'] : 0;
+					$nominal_expense = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['nominal_expense'] : 0;
+
+				?>
+
+					<tr>
+						<td class="text-center"><?= $no ?></td>
+						<td class="text-left"><?= (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['nama_expense'] : '' ?></td>
+						<td class="text-center"><?= number_format($qty_kasbon, 2) ?></td>
+						<td class="text-center"><?= number_format($nominal_kasbon, 2) ?></td>
+						<td class="text-center"><?= number_format($qty_expense, 2) ?></td>
+						<td class="text-center"><?= number_format($nominal_expense, 2) ?></td>
+					</tr>
+
+				<?php
+					if ($qty_kasbon > 0 && $qty_kasbon < 1) {
+						$ttl_kasbon_exp += $nominal_kasbon;
+					} else {
+						if ($qty_kasbon > 0) {
+							$ttl_kasbon_exp += ($nominal_kasbon * $qty_kasbon);
+						}
+					}
+					if ($qty_expense > 0 && $qty_expense < 1) {
+						$ttl_exp += $nominal_expense;
+					} else {
+						if ($qty_expense > 0) {
+							$ttl_exp += ($nominal_expense * $qty_expense);
+						}
+					}
+				endforeach; ?>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="5" class="text-right">Total Kasbon</td>
+					<td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon_exp, 2) ?></td>
+				</tr>
+				<tr>
+					<td colspan="5" class="text-right">Total Expense Report</td>
+					<td class="text-right col_ttl_expense_report"><?= number_format($ttl_exp, 2) ?></td>
+				</tr>
+				<tr>
+					<td colspan="5" class="text-right">Selisih</td>
+					<td class="text-right col_selisih"><?= number_format($ttl_kasbon_exp - $ttl_exp, 2) ?></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
+
 <div class="box">
 	<div class="box-body">
 		<div class="col-md-6">
@@ -365,7 +446,7 @@ if ($tipe == 'Kasbon Others') {
 	</div>
 </div>
 
-<a href="<?= base_url('request_payment/list_approve') ?>" class="btn btn-sm btn-danger">
+<a href="<?= base_url('request_payment/list_approve_checker') ?>" class="btn btn-sm btn-danger">
 	<i class="fa fa-arrow-left"></i> Back
 </a>
 <button type="button" class="btn btn-sm btn-danger" id="reject">
@@ -377,7 +458,7 @@ if ($tipe == 'Kasbon Others') {
 
 <script src="<?= base_url('assets/js/number-divider.min.js') ?>"></script>
 <script type="text/javascript">
-	var url_save = siteurl + 'request_payment/save_approval';
+	var url_save = siteurl + 'request_payment/save_approval_checker';
 	var url_reject = siteurl + 'request_payment/reject_approval';
 	$('.divide').divide();
 
@@ -423,7 +504,7 @@ if ($tipe == 'Kasbon Others') {
 									timer: 1500,
 									showConfirmButton: false
 								});
-								location.href = siteurl + active_controller + 'list_approve_management';
+								location.href = siteurl + active_controller + 'list_approve_checker';
 							} else {
 								swal({
 									title: "Gagal!",
@@ -486,7 +567,7 @@ if ($tipe == 'Kasbon Others') {
 										timer: 1500,
 										showConfirmButton: false
 									});
-									location.href = siteurl + active_controller + 'list_approve_management';
+									location.href = siteurl + active_controller + 'list_approve_checker';
 								} else {
 									swal({
 										title: "Gagal!",

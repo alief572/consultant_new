@@ -414,7 +414,7 @@ class Master_aktifitas extends Admin_Controller
                         $unik_id          = $_POST['aktifitas_unique_id'][$key];
                         $keterangan = $_POST['keterangan'][$key];
 
-                        if (! empty($value)) {
+                        if (!empty($value)) {
                             $cek_id = $this->db->select('id_aktifitas')->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas');
                             if (! empty($unik_id) or ($cek_id->num_rows() > 0)) {
                                 ## I. UPDATE AKTIFITAS

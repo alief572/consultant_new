@@ -8,7 +8,7 @@
  */
 
 $status = array();
-class Request_payment extends Admin_Controller
+class Approval_request_payment extends Admin_Controller
 {
 
 	//Permission
@@ -20,7 +20,7 @@ class Request_payment extends Admin_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model(array('Request_payment/Request_payment_model', 'All/All_model', 'Jurnal_nomor/Jurnal_model'));
+		$this->load->model(array('Approval_request_payment/Approval_request_payment_model', 'All/All_model', 'Jurnal_nomor/Jurnal_model'));
 		$this->template->title('Manage Request Payment');
 		$this->template->page_icon('fa fa-table');
 		$this->status = array("0" => "Baru", "1" => "Disetujui", "2" => "Selesai");
@@ -29,7 +29,7 @@ class Request_payment extends Admin_Controller
 
 	public function index()
 	{
-		$data = $this->Request_payment_model->GetListDataRequestNew();
+		$data = $this->Approval_request_payment_model->GetListDataRequestNew();
 		$list_mata_uang = $this->db->get('mata_uang')->result_array();
 		// $list_coa = $this->db->get_where(DBACC.'.coa_master', ['no_perkirran'])->result_array();
 
@@ -147,7 +147,7 @@ class Request_payment extends Admin_Controller
 
 	public function list_approve()
 	{
-		$data = $this->Request_payment_model->GetListDataApproval('status <> 2');
+		$data = $this->Approval_request_payment_model->GetListDataApproval('status <> 2');
 
 		$list_no_invoice = [];
 		$this->db->select('id, invoice_no');
@@ -165,7 +165,7 @@ class Request_payment extends Admin_Controller
 
 	public function list_approve_checker()
 	{
-		$data = $this->Request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker IS NULL');
+		$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker IS NULL');
 
 		$list_no_invoice = [];
 		$this->db->select('id, invoice_no');
@@ -184,7 +184,7 @@ class Request_payment extends Admin_Controller
 
 	public function list_approve_management()
 	{
-		$data = $this->Request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker = 1');
+		$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker = 1');
 
 		$list_no_invoice = [];
 		$this->db->select('id, invoice_no');
@@ -264,13 +264,85 @@ class Request_payment extends Admin_Controller
 		} else {
 			$this->db->select('a.*, b.id_spk_penawaran');
 			$this->db->from('kons_tr_expense_report_project_header a');
-			$this->db->join('kons_tr_kasbon_report_project b', 'b.id = a.id_header');
+			$this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
 			$this->db->where('a.id', $id);
-			$get_expense_header = $this->db->get()->row();
+			$get_expense = $this->db->get()->row();
 
-			$id_spk_penawaran = $get_expense_header->id_spk_penawaran;
+			$id_spk_penawaran = $get_expense->id_spk_penawaran;
 
 			$get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', array('id_spk_penawaran' => $id_spk_penawaran))->row();
+
+			$this->db->select('a.id_spk_penawaran, a.nm_project_leader, a.nm_sales, a.nm_customer, a.waktu_from, a.waktu_to, a.address as alamat, b.nm_paket');
+			$this->db->from('kons_tr_spk_penawaran a');
+			$this->db->join('kons_master_konsultasi_header b', 'b.id_konsultasi_h = a.id_project', 'left');
+			$this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
+			$get_spk_penawaran = $this->db->get()->row();
+
+			$tipe = 'Expense';
+
+			$get_expense_detail = $this->db->get_where('kons_tr_expense_report_project_detail', array('id_header_expense' => $id))->result();
+
+			$list_detail_expense_detail = [];
+			foreach ($get_expense_detail as $item_expense_detail) :
+				if ($item_expense_detail->tipe == '1') {
+					$get_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting_aktifitas', array('id' => $item_expense_detail->id_detail_kasbon))->row();
+					$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_subcont', array('id_spk_budgeting' => $item_expense_detail->id_spk_budgeting, 'id_aktifitas' => $get_spk_budgeting->id_aktifitas))->row();
+
+					$list_detail_expense_detail[$item_expense_detail->id] = [
+						'nama_expense' => $get_spk_budgeting->nm_aktifitas,
+						'qty_kasbon' => $get_kasbon->qty_pengajuan,
+						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
+						'qty_expense' => $item_expense_detail->qty_expense,
+						'nominal_expense' => $item_expense_detail->nominal_expense
+					];
+				}
+				if ($item_expense_detail->tipe == '2') {
+					$get_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting_akomodasi', array('id' => $item_expense_detail->id_detail_kasbon))->row();
+					$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_akomodasi', array('id_spk_budgeting' => $get_spk_budgeting->id_spk_budgeting, 'id_akomodasi' => $item_expense_detail->id_akomodasi))->row();
+
+					$list_detail_expense_detail[$item_expense_detail->id] = [
+						'nama_expense' => $get_spk_budgeting->nm_item,
+						'qty_kasbon' => $get_kasbon->qty_pengajuan,
+						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
+						'qty_expense' => $item_expense_detail->qty_expense,
+						'nominal_expense' => $item_expense_detail->nominal_expense
+					];
+				}
+				if ($item_expense_detail->tipe == '3') {
+					$get_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting_others', array('id' => $item_expense_detail->id_detail_kasbon))->row();
+					$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_others', array('id_spk_budgeting' => $get_spk_budgeting->id_spk_budgeting, 'id_others' => $item_expense_detail->id_others))->row();
+
+					$list_detail_expense_detail[$item_expense_detail->id] = [
+						'nama_expense' => $get_spk_budgeting->nm_item,
+						'qty_kasbon' => $get_kasbon->qty_pengajuan,
+						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
+						'qty_expense' => $item_expense_detail->qty_expense,
+						'nominal_expense' => $item_expense_detail->nominal_expense
+					];
+				}
+			endforeach;
+
+
+			$title_expense = '';
+			if ($get_expense->tipe == '1') {
+				$title_expense = 'Expense Subcont';
+			}
+			if ($get_expense->tipe == '2') {
+				$title_expense = 'Expense Akomodasi';
+			}
+			if ($get_expense->tipe == '3') {
+				$title_expense = 'Expense Others';
+			}
+
+			$data = [
+				'id' => $id,
+				'id_spk_penawaran' => $id_spk_penawaran,
+				'data_spk_penawaran' => $get_spk_penawaran,
+				'list_expense_detail' => $get_expense_detail,
+				'tipe' => $tipe,
+				'title_expense' => $title_expense,
+				'list_detail_expense_detail' => $list_detail_expense_detail
+			];
 		}
 		$this->template->title('Approval Request Payment Direktur');
 		$this->template->set($data);
@@ -334,13 +406,85 @@ class Request_payment extends Admin_Controller
 		} else {
 			$this->db->select('a.*, b.id_spk_penawaran');
 			$this->db->from('kons_tr_expense_report_project_header a');
-			$this->db->join('kons_tr_kasbon_report_project b', 'b.id = a.id_header');
+			$this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
 			$this->db->where('a.id', $id);
-			$get_expense_header = $this->db->get()->row();
+			$get_expense = $this->db->get()->row();
 
-			$id_spk_penawaran = $get_expense_header->id_spk_penawaran;
+			$id_spk_penawaran = $get_expense->id_spk_penawaran;
 
 			$get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', array('id_spk_penawaran' => $id_spk_penawaran))->row();
+
+			$this->db->select('a.id_spk_penawaran, a.nm_project_leader, a.nm_sales, a.nm_customer, a.waktu_from, a.waktu_to, a.address as alamat, b.nm_paket');
+			$this->db->from('kons_tr_spk_penawaran a');
+			$this->db->join('kons_master_konsultasi_header b', 'b.id_konsultasi_h = a.id_project', 'left');
+			$this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
+			$get_spk_penawaran = $this->db->get()->row();
+
+			$tipe = 'Expense';
+
+			$get_expense_detail = $this->db->get_where('kons_tr_expense_report_project_detail', array('id_header_expense' => $id))->result();
+
+			$list_detail_expense_detail = [];
+			foreach ($get_expense_detail as $item_expense_detail) :
+				if ($item_expense_detail->tipe == '1') {
+					$get_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting_aktifitas', array('id' => $item_expense_detail->id_detail_kasbon))->row();
+					$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_subcont', array('id_spk_budgeting' => $item_expense_detail->id_spk_budgeting, 'id_aktifitas' => $get_spk_budgeting->id_aktifitas))->row();
+
+					$list_detail_expense_detail[$item_expense_detail->id] = [
+						'nama_expense' => $get_spk_budgeting->nm_aktifitas,
+						'qty_kasbon' => $get_kasbon->qty_pengajuan,
+						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
+						'qty_expense' => $item_expense_detail->qty_expense,
+						'nominal_expense' => $item_expense_detail->nominal_expense
+					];
+				}
+				if ($item_expense_detail->tipe == '2') {
+					$get_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting_akomodasi', array('id' => $item_expense_detail->id_detail_kasbon))->row();
+					$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_akomodasi', array('id_spk_budgeting' => $get_spk_budgeting->id_spk_budgeting, 'id_akomodasi' => $item_expense_detail->id_akomodasi))->row();
+
+					$list_detail_expense_detail[$item_expense_detail->id] = [
+						'nama_expense' => $get_spk_budgeting->nm_item,
+						'qty_kasbon' => $get_kasbon->qty_pengajuan,
+						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
+						'qty_expense' => $item_expense_detail->qty_expense,
+						'nominal_expense' => $item_expense_detail->nominal_expense
+					];
+				}
+				if ($item_expense_detail->tipe == '3') {
+					$get_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting_others', array('id' => $item_expense_detail->id_detail_kasbon))->row();
+					$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_others', array('id_spk_budgeting' => $get_spk_budgeting->id_spk_budgeting, 'id_others' => $item_expense_detail->id_others))->row();
+
+					$list_detail_expense_detail[$item_expense_detail->id] = [
+						'nama_expense' => $get_spk_budgeting->nm_item,
+						'qty_kasbon' => $get_kasbon->qty_pengajuan,
+						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
+						'qty_expense' => $item_expense_detail->qty_expense,
+						'nominal_expense' => $item_expense_detail->nominal_expense
+					];
+				}
+			endforeach;
+
+
+			$title_expense = '';
+			if ($get_expense->tipe == '1') {
+				$title_expense = 'Expense Subcont';
+			}
+			if ($get_expense->tipe == '2') {
+				$title_expense = 'Expense Akomodasi';
+			}
+			if ($get_expense->tipe == '3') {
+				$title_expense = 'Expense Others';
+			}
+
+			$data = [
+				'id' => $id,
+				'id_spk_penawaran' => $id_spk_penawaran,
+				'data_spk_penawaran' => $get_spk_penawaran,
+				'list_expense_detail' => $get_expense_detail,
+				'tipe' => $tipe,
+				'title_expense' => $title_expense,
+				'list_detail_expense_detail' => $list_detail_expense_detail
+			];
 		}
 
 
@@ -430,21 +574,21 @@ class Request_payment extends Admin_Controller
 			$kode_bank = $get_kode_bank->kode_bank;
 		}
 
-		$Id = $this->Request_payment_model->generate_id_payment($kode_bank);
+		$Id = $this->Approval_request_payment_model->generate_id_payment($kode_bank);
 
 		$ArrDetail 			= [];
 
 		$check_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id))->num_rows();
 
-		if($check_kasbon > 0) {
+		if ($check_kasbon > 0) {
 			$tipe = 'kasbon';
 		} else {
 			$tipe = 'expense';
 		}
 
-		
+
 		if ($tipe == 'expense') {
-			$id_detail = $this->Request_payment_model->generate_id_detail(1);
+			$id_detail = $this->Approval_request_payment_model->generate_id_detail(1);
 			$dtl = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $id])->row();
 
 			$harga = $dtl->selisih;
@@ -475,7 +619,7 @@ class Request_payment extends Admin_Controller
 		}
 
 		if ($tipe == 'kasbon') {
-			$id_detail = $this->Request_payment_model->generate_id_detail(1);
+			$id_detail = $this->Approval_request_payment_model->generate_id_detail(1);
 			$dtl 				= $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id])->row();
 
 			$ArrDetail[] 		= [
@@ -625,7 +769,7 @@ class Request_payment extends Admin_Controller
 	public function list_payment()
 	{
 		$data_coa = $this->All_model->GetCoaCombo(5, 'a.no_perkiraan LIKE "%1101-02%" AND (a.kode_bank IS NOT NULL AND a.kode_bank <> "")');
-		$results = $this->Request_payment_model->GetListDataPayment('status IS NOT NULL');
+		$results = $this->Approval_request_payment_model->GetListDataPayment('status IS NOT NULL');
 		$this->template->set('data_coa', $data_coa);
 		$this->template->set('results', $results);
 		$this->template->title('Payment');
@@ -959,7 +1103,7 @@ class Request_payment extends Admin_Controller
 
 	public function payment_jurnal_list()
 	{
-		$results = $this->Request_payment_model->GetListDataJurnal();
+		$results = $this->Approval_request_payment_model->GetListDataJurnal();
 		$this->template->set('results', $results);
 		$this->template->title('Payment Jurnal');
 		$this->template->render('list_jurnal');
@@ -968,7 +1112,7 @@ class Request_payment extends Admin_Controller
 	{
 		$data = $this->db->query("select * from jurnal where nomor='" . $id . "' order by kredit,debet,no_perkiraan")->result();
 		$data_coa = $this->All_model->GetCoaCombo();
-		$results = $this->Request_payment_model->GetListDataPayment('status=1');
+		$results = $this->Approval_request_payment_model->GetListDataPayment('status=1');
 		$this->template->set('data', $data);
 		$this->template->set('datacoa', $data_coa);
 		$this->template->set('results', $results);
@@ -980,7 +1124,7 @@ class Request_payment extends Admin_Controller
 	{
 		$data = $this->db->query("select * from jurnal where nomor='" . $id . "' order by kredit,debet,no_perkiraan")->result();
 		$data_coa = $this->All_model->GetCoaCombo();
-		$results = $this->Request_payment_model->GetListDataPayment('status=1');
+		$results = $this->Approval_request_payment_model->GetListDataPayment('status=1');
 		$this->template->set('data', $data);
 		$this->template->set('datacoa', $data_coa);
 		$this->template->set('status', 'edit');
@@ -1085,7 +1229,7 @@ class Request_payment extends Admin_Controller
 			// 'akses_menu'	=> $Arr_Akses
 		);
 		// history('View Pengembalian Expense');
-		// $this->load->view('Request_payment/list_return', $data);
+		// $this->load->view('Approval_request_payment/list_return', $data);
 
 		$this->template->set($data);
 		$this->template->title('Pengembalian Expense');
@@ -1195,7 +1339,7 @@ class Request_payment extends Admin_Controller
 		$tgl_to = $this->input->post('tgl_to');
 		$bank = $this->input->post('bank');
 
-		$this->Request_payment_model->search_payment_list($tgl_from, $tgl_to, $bank);
+		$this->Approval_request_payment_model->search_payment_list($tgl_from, $tgl_to, $bank);
 	}
 
 	public function search_req_payment()
@@ -1216,7 +1360,7 @@ class Request_payment extends Admin_Controller
 			$nm_vendor = $get_nm_vendor->nama;
 		}
 
-		$data = $this->Request_payment_model->GetListDataRequest($actived_tab, $from_date, $to_date);
+		$data = $this->Approval_request_payment_model->GetListDataRequest($actived_tab, $from_date, $to_date);
 
 		$list_curr = $this->db->get('mata_uang')->result();
 
@@ -1499,7 +1643,7 @@ class Request_payment extends Admin_Controller
 		$ENABLE_VIEW    = has_permission('Request_Payment.View');
 
 		$tab = $this->input->post('tab');
-		$data = $this->Request_payment_model->GetListDataRequest($tab);
+		$data = $this->Approval_request_payment_model->GetListDataRequest($tab);
 
 		$list_curr = $this->db->get_where('mata_uang', ['deleted' => null])->result();
 		$list_coa = $this->db->get_where('coa_master', ['kode_bank <>' => null])->result();
@@ -1707,7 +1851,7 @@ class Request_payment extends Admin_Controller
 		$tgl_to = $this->uri->segment(4);
 		$bank = $this->uri->segment(5);
 
-		$this->Request_payment_model->excel_payment_list($tgl_from, $tgl_to, $bank);
+		$this->Approval_request_payment_model->excel_payment_list($tgl_from, $tgl_to, $bank);
 	}
 
 	public function view_receive_invoice()
@@ -1743,6 +1887,6 @@ class Request_payment extends Admin_Controller
 
 	public function get_payment_list()
 	{
-		$this->Request_payment_model->get_payment_list();
+		$this->Approval_request_payment_model->get_payment_list();
 	}
 }

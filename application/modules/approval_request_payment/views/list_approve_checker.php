@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Approval_Request_Payment_Management.Add');
-$ENABLE_MANAGE  = has_permission('Approval_Request_Payment_Management.Manage');
-$ENABLE_VIEW    = has_permission('Approval_Request_Payment_Management.View');
-$ENABLE_DELETE  = has_permission('Approval_Request_Payment_Management.Delete');
+$ENABLE_ADD     = has_permission('Approval_Request_Payment_Checker.Add');
+$ENABLE_MANAGE  = has_permission('Approval_Request_Payment_Checker.Manage');
+$ENABLE_VIEW    = has_permission('Approval_Request_Payment_Checker.View');
+$ENABLE_DELETE  = has_permission('Approval_Request_Payment_Checker.Delete');
 
 $count_transport = 0;
 $count_kasbon = 0;
@@ -17,6 +17,7 @@ foreach ($data as $item) :
     if ($item->tipe == 'expense') {
         $count_expense += 1;
     }
+
 endforeach;
 ?>
 <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
@@ -26,6 +27,7 @@ endforeach;
 <div class="box">
     <div class="container">
         <div class="row">
+
             <div class="col-md-4" style="margin-top: 2vh;">
                 <div class="panel panel-default">
                     <div class="panel-heading bg-yellow">Kasbon</div>
@@ -71,14 +73,14 @@ endforeach;
                             $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc))->row();
 
                             $tipe = '';
-                            if(!empty($get_kasbon_header)) {
-                                if($get_kasbon_header->tipe == '1') {
+                            if (!empty($get_kasbon_header)) {
+                                if ($get_kasbon_header->tipe == '1') {
                                     $tipe = 'Kasbon Subcont';
                                 }
-                                if($get_kasbon_header->tipe == '2') {
+                                if ($get_kasbon_header->tipe == '2') {
                                     $tipe = 'Kasbon Akomodasi';
                                 }
-                                if($get_kasbon_header->tipe == '3') {
+                                if ($get_kasbon_header->tipe == '3') {
                                     $tipe = 'Kasbon Others';
                                 }
                             }
@@ -89,10 +91,10 @@ endforeach;
                             echo '<td>' . $item_kasbon->tgl_doc . '</td>';
                             echo '<td>' . $item_kasbon->keperluan . '</td>';
                             echo '<td>' . $tipe . '</td>';
-                            echo '<td class="text-right">'.number_format($item_kasbon->jumlah).'</td>';
+                            echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
                             echo '<td>';
                             if ($ENABLE_MANAGE) :
-                                echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment/'.urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
+                                echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
                                 echo '<i class="fa fa-check-square-o"></i>';
                                 echo ' Approve';
                                 echo '</a>';
@@ -105,18 +107,16 @@ endforeach;
                 </table>
             </div>
             <div class="col-md-12 list_expense" style="display: none;">
-                <h2>Expense</h2>
+                <h2>Request Payment Expense Report</h2>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th class="text-center">No Dokument</th>
+                            <th class="text-center">No. Kasbon</th>
                             <th class="text-center">Request By</th>
-                            <th class="text-center">Tanggal</th>
-                            <th class="text-center">Kepeluan</th>
-                            <th class="text-center">Tipe</th>
+                            <th class="text-center">Tanggal Pengajuan</th>
+                            <th class="text-center">Deskripsi Pengajuan</th>
+                            <th class="text-center">Kategori</th>
                             <th class="text-center">Nilai Pengajuan</th>
-                            <th class="text-center">Tanggal Pembayaran</th>
-                            <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -125,38 +125,24 @@ endforeach;
                         foreach ($data as $item_expense) :
                             if ($item_expense->tipe == 'expense') {
                                 $tipe = ucfirst($item_expense->tipe);
-                                echo '<tr>';
-                                    echo '<td>' . $item_expense->no_doc . '</td>';
-                                    echo '<td>' . $item_expense->nama . '</td>';
-                                    echo '<td>' . $item_expense->tgl_doc . '</td>';
-                                    echo '<td>' . $item_expense->keperluan . '</td>';
-                                    echo '<td>' . $tipe . '</td>';
-                                    echo '<td class="text-right">' . number_format($item_expense->jumlah) . '</td>';
-                                    echo '<td>' . $item_expense->tanggal . '</td>';
-                                    echo '<td>';
-                                    $get_sts_payment = $this->db->select('status')->get_where('payment_approve', ['no_doc' => $item_expense->no_doc, 'ids' => $item_expense->ids])->row_array();
+                                $get_expense = $this->db->get_where('tr_expense', ['no_doc' => $item_expense->no_doc])->row_array();
 
-                                    if ($item_expense->status == '0' || empty($get_sts_payment)) {
-                                        if ($item_expense->status == '9') {
-                                            echo '<label class="label bg-orange">Rejected</label>';
-                                        } else {
-                                            echo '<label class="label bg-aqua">Open</label>';
-                                        }
-                                    } elseif ($get_sts_payment['status'] == 1) {
-                                        echo '<label class="label bg-yellow">Process</label>';
-                                    } elseif ($get_sts_payment['status'] == 2) {
-                                        echo '<label class="label bg-red">Close</label>';
-                                    } else {
-                                        echo '<label class="label bg-gray"><span class="text-muted">Undefined</span></label>';
-                                    }
-                                    echo '</td>';
-                                    echo '<td>';
-                                    if ($ENABLE_MANAGE && $get_sts_payment['status'] < 1) : ?>
-                                        <div class="text-center"><a href="<?= base_url($this->uri->segment(1) . '/approval_payment/'.$item_expense->id); ?>" name="save" class="btn btn-primary btn-sm"><i class="fa fa-check-square-o">&nbsp;</i>Approve</a></div>
-                                        <!-- <input type="checkbox" name="status[]" id="status_<?= $numb ?>" value="<?= $item_expense->id ?>"> -->
-                        <?php endif;
-                                    echo '</td>';
-                                    echo '</tr>';
+                                echo '<tr>';
+                                echo '<td>' . $item_expense->no_doc . '</td>';
+                                echo '<td>' . $item_expense->nama . '</td>';
+                                echo '<td>' . $item_expense->tgl_doc . '</td>';
+                                echo '<td>' . $item_expense->keperluan . '</td>';
+                                echo '<td>' . $tipe . '</td>';
+                                echo '<td class="text-right">' . number_format($item_expense->jumlah) . '</td>';
+                                echo '<td>';
+                                if ($ENABLE_MANAGE) :
+                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-primary btn-sm">';
+                                    echo '<i class="fa fa-check-square-o"></i>';
+                                    echo ' Approve';
+                                    echo '</a>';
+                                endif;
+                                echo '</td>';
+                                echo '</tr>';
                             }
                         endforeach;
                         ?>
@@ -169,6 +155,7 @@ endforeach;
     <!-- /.box-body -->
 </div>
 <?= form_close() ?>
+
 <div class="modal modal-default fade" id="modal_view_receive_invoice" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">

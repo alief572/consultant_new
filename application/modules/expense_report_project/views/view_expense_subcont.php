@@ -106,6 +106,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
                     $qty_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['qty_expense'] : 0;
                     $nominal_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['nominal_expense'] : 0;
+                    $total_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['total_expense'] : 0;
 
                     echo '<tr>';
 
@@ -117,7 +118,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     echo '<td width="500">' . $item['nm_item'] . '</td>';
 
                     echo '<td class="text-center" width="200">';
-                    echo number_format($item['qty_kasbon']);
+                    echo number_format($item['qty_kasbon'], 2);
                     echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][qty_kasbon]" value="' . $item['qty_kasbon'] . '">';
                     echo '</td>';
 
@@ -136,8 +137,8 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
                     echo '</tr>';
 
-                    $ttl_kasbon += ($qty_expense * $nominal_expense);
-                    $ttl_expense_report += ($qty_expense * $nominal_expense);
+                    $ttl_kasbon += ($item['total_kasbon']);
+                    $ttl_expense_report += ($total_expense);
 
                     $count_no++;
                 }

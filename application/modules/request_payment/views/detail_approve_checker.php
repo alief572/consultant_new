@@ -1,278 +1,380 @@
 <?php
-$ENABLE_ADD     = has_permission('Request_Payment_Approval.Add');
-$ENABLE_MANAGE  = has_permission('Request_Payment_Approval.Manage');
-$ENABLE_VIEW    = has_permission('Request_Payment_Approval.View');
-$ENABLE_DELETE  = has_permission('Request_Payment_Approval.Delete');
+$ENABLE_ADD     = has_permission('Approval_Request_Payment_Checker.Add');
+$ENABLE_MANAGE  = has_permission('Approval_Request_Payment_Checker.Manage');
+$ENABLE_VIEW    = has_permission('Approval_Request_Payment_Checker.View');
+$ENABLE_DELETE  = has_permission('Approval_Request_Payment_Checker.Delete');
 
+$box_kasbon_subcont = 'd-none';
+$box_kasbon_akomodasi = 'd-none';
+$box_kasbon_others = 'd-none';
 
-
-if ($type == 'expense') {
-	$keterangan = $data_req_payment['keperluan'];
-	$no_doc = $header->id;
-	$tgl_doc = date('Y-m-d', strtotime($header->created_date));
-
-	$bank_id = $header->bank;
-	$accnumber = $header->bank_number;
-	$accname = $header->bank_account;
-} elseif ($type == 'kasbon') {
-	$keterangan = $header->deskripsi;
-	$no_doc = $header->id;
-	$tgl_doc = $header->tgl;
-
-	$bank_id = $header->bank;
-	$accnumber = $header->bank_number;
-	$accname = $header->bank_account;
+if ($tipe == 'Kasbon Subcont') {
+	$box_kasbon_subcont = '';
+}
+if ($tipe == 'Kasbon Akomodasi') {
+	$box_kasbon_akomodasi = '';
+}
+if ($tipe == 'Kasbon Others') {
+	$box_kasbon_others = '';
 }
 
 ?>
 <!-- <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script> -->
+<style>
+	.btn {
+		border-radius: 10px;
+	}
+
+	.dropdown-menu {
+		top: 100%;
+		position: absolute;
+		overflow: auto;
+	}
+
+	.pd-5 {
+		padding: 5px;
+	}
+
+	.form-inline .form-control {
+		width: auto;
+		/* Let elements adjust automatically */
+		max-width: 100%;
+		/* Prevent overflow */
+	}
+
+	.form-inline {
+		display: flex;
+		/* Use flexbox for better alignment */
+		justify-content: flex-start;
+		/* Align items to the left */
+		flex-wrap: nowrap;
+		/* Prevent wrapping to the next line */
+	}
+
+	.top-total-project {
+		width: 280px;
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 15px;
+	}
+
+	.pd-5 {
+		padding: 5px;
+	}
+
+	.valign-top {
+		vertical-align: top;
+	}
+
+	.mt-5 {
+		margin-top: 5px;
+	}
+
+	.dropdown-menu {
+
+		position: absolute;
+		top: 100%;
+		/* Position below the button */
+		right: 0;
+		/* Align with left edge */
+	}
+</style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
-<?= form_open($this->uri->uri_string(), array('id' => 'frm_data', 'name' => 'frm_data', 'role' => 'form', 'class' => 'form-horizontal')); ?>
+
+<input type="hidden" name="id" value="<?= $id ?>">
+
+<div class="box">
+	<div class="box-header">
+
+	</div>
+
+	<div class="box-body" style="z-index: 1 !important;">
+		<table border="0" style="width: 100%; z-index: 1 !important;">
+			<tr>
+				<th class="pd-5 valign-top" width="150">No. SPK</th>
+				<td class="pd-5 valign-top" width="400"><?= $data_spk_penawaran->id_spk_penawaran ?></td>
+				<th class="pd-5 valign-top" width="150">Project Leader</th>
+				<td class="pd-5 valign-top" width="400"><?= ucfirst($data_spk_penawaran->nm_project_leader) ?></td>
+			</tr>
+			<tr>
+				<th class="pd-5 valign-top" width="150">Customer</th>
+				<td class="pd-5 valign-top" width="400"><?= $data_spk_penawaran->nm_customer ?></td>
+				<th class="pd-5 valign-top" width="150">Sales</th>
+				<td class="pd-5 valign-top" width="400"><?= ucfirst($data_spk_penawaran->nm_sales) ?></td>
+			</tr>
+			<tr>
+				<th class="pd-5 valign-top" width="150">Address</th>
+				<td class="pd-5 valign-top" width="400"><?= $data_spk_penawaran->alamat ?></td>
+				<th class="pd-5 valign-top" width="150">Waktu</th>
+				<td class="pd-5 valign-top" width="400">
+					<div class="form-inline">
+						<div class="form-group">
+							<input type="date" name="" id="" class="form-control form-control-sm" value="<?= $data_spk_penawaran->waktu_from ?>" readonly>
+						</div>
+						<div class="form-group text-center" style="width: 50px; padding-top: 8px;">
+							<span>-</span>
+						</div>
+						<div class="form-group">
+							<input type="date" name="" id="" class="form-control form-control-sm" value="<?= $data_spk_penawaran->waktu_to ?>" readonly>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th class="pd-5 valign-top" width="150">Project</th>
+				<td class="pd-5 valign-top" width="400"><?= $data_spk_penawaran->nm_paket ?></td>
+				<th class="pd-5 valign-top" width="150">Keperluan</th>
+				<td class="pd-5 valign-top" width="400">
+					<textarea name="" id="" class="form-control form-control-sm" readonly><?= $data_spk_penawaran->nm_customer . ', ' . $data_spk_penawaran->id_spk_penawaran . ', ' . $tipe ?></textarea>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div class="box <?= $box_kasbon_subcont ?>">
+	<div class="box-header">
+		<h4 style="font-weight: 800;">List Item Subcont</h4>
+	</div>
+
+	<div class="box-body">
+		<table class="table custom-table">
+			<thead>
+				<tr>
+					<th rowspan="2" class="text-center" valign="middle">No.</th>
+					<th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+					<th colspan="2" class="text-center">Estimasi</th>
+					<th rowspan="2" class="text-center" valign="middle">Total Budget</th>
+					<th colspan="3" class="text-center">Pengajuan</th>
+					<th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
+					<th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
+				</tr>
+				<tr>
+					<th class="text-center">Qty</th>
+					<th class="text-center">Price / Unit</th>
+					<th class="text-center">Qty</th>
+					<th class="text-center">Price / Unit</th>
+					<th class="text-center">Total Pengajuan</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+				$no_subcont = 0;
+
+				$ttl_qty_pengajuan = 0;
+				$ttl_pengajuan = 0;
+				foreach ($data_kasbon_subcont as $item) {
+					$no_subcont++;
+
+					$sisa_qty = ($item->aktual_terpakai - $item->qty_pengajuan);
+					$sisa_budget = ($item->sisa_budget - $item->total_pengajuan);
+
+					echo '<tr>';
+					echo '<td class="text-center">' . $no_subcont . '</td>';
+					echo '<td class="text-left">' . $item->nm_aktifitas . '</td>';
+					echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+					echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+					echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
+					echo '<td class="text-center">' . number_format($sisa_qty, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
+					echo '</tr>';
+
+					$ttl_qty_pengajuan += $item->qty_pengajuan;
+					$ttl_pengajuan += $item->total_pengajuan;
+				}
+				?>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="2" class="text-right">Total</td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+					<td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_pengajuan, 2) ?></td>
+					<td class="text-center"></td>
+					<td class="text-right ttl_pengajuan"><?= number_format($ttl_pengajuan, 2) ?></td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
+
+<div class="box <?= $box_kasbon_akomodasi ?>">
+	<div class="box-header">
+		<h4 style="font-weight: 800;">List Item Others</h4>
+	</div>
+
+	<div class="box-body">
+		<table class="table custom-table">
+			<thead>
+				<tr>
+					<th rowspan="2" class="text-center" valign="middle">No.</th>
+					<th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+					<th colspan="2" class="text-center">Estimasi</th>
+					<th rowspan="2" class="text-center" valign="middle">Total Budget</th>
+					<th colspan="3" class="text-center">Pengajuan</th>
+					<th rowspan="2" class="text-center" valign="middle">Qty Budget Tambahan</th>
+					<th rowspan="2" class="text-center" valign="middle">Budget Tambahan</th>
+					<th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
+					<th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
+				</tr>
+				<tr>
+					<th class="text-center">Qty</th>
+					<th class="text-center">Price / Unit</th>
+					<th class="text-center">Qty</th>
+					<th class="text-center">Price / Unit</th>
+					<th class="text-center">Total Pengajuan</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+				$no_subcont = 0;
+
+				$ttl_qty_pengajuan = 0;
+				$ttl_pengajuan = 0;
+				foreach ($data_kasbon_akomodasi as $item) {
+					$no_subcont++;
+
+					$sisa_qty = ($item->aktual_terpakai + $item->qty_budget_tambahan - $item->qty_pengajuan);
+					$sisa_budget = ($item->sisa_budget + $item->budget_tambahan - $item->total_pengajuan);
+
+					echo '<tr>';
+					echo '<td class="text-center">' . $no_subcont . '</td>';
+					echo '<td class="text-left">' . $item->nm_item . '</td>';
+					echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+					echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+					echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
+					echo '<td class="text-center">' . number_format($item->qty_budget_tambahan) . '</td>';
+					echo '<td class="text-right">' . number_format($item->budget_tambahan, 2) . '</td>';
+					echo '<td class="text-center">' . number_format($sisa_qty, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
+					echo '</tr>';
+
+					$ttl_qty_pengajuan += $item->qty_pengajuan;
+					$ttl_pengajuan += $item->total_pengajuan;
+				}
+				?>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="2" class="text-right">Total</td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+					<td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_pengajuan, 2) ?></td>
+					<td class="text-center"></td>
+					<td class="text-right ttl_pengajuan"><?= number_format($ttl_pengajuan, 2) ?></td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
+
+<div class="box <?= $box_kasbon_others ?>">
+	<div class="box-header">
+		<h4 style="font-weight: 800;">List Item Others</h4>
+	</div>
+
+	<div class="box-body">
+		<table class="table custom-table">
+			<thead>
+				<tr>
+					<th rowspan="2" class="text-center" valign="middle">No.</th>
+					<th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+					<th colspan="2" class="text-center">Estimasi</th>
+					<th rowspan="2" class="text-center" valign="middle">Total Budget</th>
+					<th colspan="3" class="text-center">Pengajuan</th>
+					<th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
+					<th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
+				</tr>
+				<tr>
+					<th class="text-center">Qty</th>
+					<th class="text-center">Price / Unit</th>
+					<th class="text-center">Qty</th>
+					<th class="text-center">Price / Unit</th>
+					<th class="text-center">Total Pengajuan</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+				$no_subcont = 0;
+
+				$ttl_qty_pengajuan = 0;
+				$ttl_pengajuan = 0;
+				foreach ($data_kasbon_others as $item) {
+					$no_subcont++;
+
+					$sisa_qty = ($item->aktual_terpakai - $item->qty_pengajuan);
+					$sisa_budget = ($item->sisa_budget - $item->total_pengajuan);
+
+					echo '<tr>';
+					echo '<td class="text-center">' . $no_subcont . '</td>';
+					echo '<td class="text-left">' . $item->nm_item . '</td>';
+					echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+					echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+					echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
+					echo '<td class="text-center">' . number_format($sisa_qty, 2) . '</td>';
+					echo '<td class="text-right">' . number_format($sisa_budget, 2) . '</td>';
+					echo '</tr>';
+
+					$ttl_qty_pengajuan += $item->qty_pengajuan;
+					$ttl_pengajuan += $item->total_pengajuan;
+				}
+				?>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="2" class="text-right">Total</td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+					<td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_pengajuan, 2) ?></td>
+					<td class="text-center"></td>
+					<td class="text-right ttl_pengajuan"><?= number_format($ttl_pengajuan, 2) ?></td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
+
 <div class="box">
 	<div class="box-body">
-
-		<div class="row">
-			<input type="hidden" name="id" value="<?= $header->id; ?>">
-			<input type="hidden" name="tipe" value="<?= $type; ?>">
-			<input type="hidden" name="tingkat_approval" value="1">
-			<div class="col-md-6">
-				<div class="row">
-					<div class="col-md-4 text-right" style="margin-bottom: 1rem;"><label for="" class="control-label">Nomor Dokumen </label></div>
-					<div class="col-md-6" style="margin-bottom: 1rem;">
-						<input type="text" name="no_doc" class="form-control" readonly value="<?= $no_doc; ?>">
-					</div>
-
-					<div class="col-md-4 text-right" style="margin-bottom: 1rem;"><label for="" class="control-label">Keterangan</label></div>
-					<div class="col-md-6" style="margin-bottom: 1rem;">
-						<input type="text" name="informasi" class="form-control" readonly value="<?= ($keterangan) ?: ''; ?>">
-					</div>
-
-					<div class="col-md-4 text-right" style="margin-bottom: 1rem;"><label for="" class="control-label">Biaya Admin</label></div>
-					<div class="col-md-6" style="margin-bottom: 1rem;">
-						<input type="text" name="admin_bank" class="form-control" readonly value="<?= number_format(($data_req_payment['admin_bank']), 2) ?>">
-					</div>
-
-					<div class="col-md-4 text-right" style="margin-bottom: 1rem;"><label for="" class="control-label">Dokumen Req Payment</label></div>
-					<div class="col-md-6" style="margin-bottom: 1rem;">
-						<?php
-						if ($data_req_payment['link_doc'] !== '' && $data_req_payment['link_doc'] !== null) {
-							if (file_exists('./assets/expense/' . $data_req_payment['link_doc'])) {
-								echo '<a href="' . base_url('assets/expense/' . $data_req_payment['link_doc']) . '" class="btn btn-sm btn-primary" target="_blank">
-										<i class="fa fa-download"></i> Download
-									</a>';
-							}
-						}
-						?>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="row">
-					<div class="col-md-4 text-right" style="margin-bottom: 1rem;"><label for="" class="control-label">Bank</label></div>
-					<div class="col-md-6" style="margin-bottom: 1rem;">
-						<input type="text" name="" class="form-control" readonly value="<?= $data_req_payment['bank_name']; ?>">
-					</div>
-					<div class="col-md-4 text-right" style="margin-bottom: 1rem;"><label for="" class="control-label">Tgl.</label></div>
-					<div class="col-md-6" style="margin-bottom: 1rem;">
-						<input type="text" name="date" class="form-control" readonly value="<?= $tgl_doc; ?>">
-					</div>
-					<div class="col-md-4 text-right" style="margin-bottom: 1rem;"><label for="" class="control-label">Reject Reason</label></div>
-					<div class="col-md-6" style="margin-bottom: 1rem;">
-						<input type="text" name="reject_reason" class="form-control reject_reason" value="">
-					</div>
-				</div>
-			</div>
-
-		</div>
-
-		<div class="table-responsive">
-			<table id="mytabledata" class="table table-bordered">
-				<thead>
-					<tr>
-						<th width="5">#</th>
-						<th class="exclass">COA</th>
-						<th class="exclass">Barang/Jasa</th>
-						<th>Tanggal Transaksi</th>
-						<th class="exclass">Jumlah</th>
-						<th class="exclass">Currency</th>
-						<th class="exclass"></th>
-						<th class="exclass">Bon Bukti</th>
-						<th class="exclass">
-							<div class="checkbox">
-								<label><input class="master_check" type="checkbox" checked>Semua</label>
-							</div>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php
-					if (!empty($details)) {
-						$n = $gTotal = 0;
-						foreach ($details as $dtl) : $n++;
-							$nm_coa = '';
-							if ($type == 'expense') :
-								$harga  = $dtl->selisih;
-
-
-
-								$gTotal += ($data_req_payment['jumlah'] + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']); ?>
-								<tr>
-									<td><?= $n; ?></td>
-									<td></td>
-									<td><?= $data_req_payment['keperluan']; ?> <?= (isset($dtl->id_kasbon) && $dtl->id_kasbon !== '') ? "<b>(Kasbon)</b>" : '' ?></td>
-									<td><?= date('Y-m-d', strtotime($dtl->created_date)) ?></td>
-									<td>1</td>
-									<td><?= $data_req_payment['currency']; ?></td>
-									<td class="text-left">
-										<table class="w-100">
-											<tr>
-												<td>Nilai Pengajuan</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['jumlah'], 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Nilai PPh</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['total_pph'], 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Bank Charge</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['admin_bank'], 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Net Payment</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($data_req_payment['jumlah'] + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']), 2) ?>" readonly>
-												</td>
-											</tr>
-										</table>
-									</td>
-									<td class="text-center">
-										<?php
-										if (file_exists('./assets/expense/' . $data_req_payment['link_doc']) && $data_req_payment['link_doc'] !== '') {
-										?>
-												<a href="<?= base_url('./assets/expense/') . $data_req_payment['link_doc']; ?>" target="_blank"><i class="fa fa-download"></i></a>
-										<?php
-										}
-										?>
-									</td>
-									<td>
-
-										<input type="checkbox" checked value="<?= $dtl->id; ?>" name="item[<?= $n; ?>][id]" class="check_item" id="check_<?= $dtl->id; ?>">
-
-									</td>
-								</tr>
-							<?php elseif ($type == 'kasbon') :
-
-								$gTotal += ($dtl->grand_total + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']);
-							?>
-
-								<tr>
-									<td><?= $n; ?></td>
-									<td></td>
-									<td><?= $dtl->deskripsi; ?></td>
-									<td><?= $dtl->tgl; ?></td>
-									<td>1</td>
-									<td><?= $data_req_payment['currency']; ?></td>
-									<td class="text-left">
-										<table class="w-100">
-											<tr>
-												<td>Nilai Pengajuan</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($dtl->grand_total, 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Nilai PPh</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['total_pph'], 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Bank Charge</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($data_req_payment['admin_bank'], 2) ?>" readonly>
-												</td>
-											</tr>
-											<tr>
-												<td>Net Payment</td>
-												<td class="text-center" style="min-width: 50px;">:</td>
-												<td class="text-right">
-													<input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($dtl->grand_total + $data_req_payment['admin_bank'] - $data_req_payment['total_pph']), 2) ?>" readonly>
-												</td>
-											</tr>
-										</table>
-									</td>
-									<td class="text-center"><a href="<?= base_url('assets/expense/') . $data_req_payment['link_doc']; ?>" target="_blank"><i class="fa fa-download"></i></a></td>
-									<td>
-
-										<input type="checkbox" checked value="<?= $dtl->id; ?>" name="item[<?= $n; ?>][id]" class="check_item" id="check_<?= $dtl->id; ?>">
-
-									</td>
-								</tr>
-
-					<?php endif;
-						endforeach;
-					}  ?>
-				</tbody>
-				<tfoot>
-					<tr class="bg-blue">
-						<th colspan="6" class="text-right">Total</th>
-						<th class="text-right"><?= number_format($gTotal); ?></th>
-						<th colspan="3" class="text-center"></th>
-					</tr>
-				</tfoot>
-			</table>
-			<div class="col-md-4">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th class="text-center" colspan="3">Info Transfer</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Bank</td>
-							<td class="text-center" style="min-width: 50px;">:</td>
-							<td class="text-left"><?= $bank_id ?></td>
-						</tr>
-						<tr>
-							<td>Account Number</td>
-							<td class="text-center" style="min-width: 50px;">:</td>
-							<td class="text-left"><?= $accnumber ?></td>
-						</tr>
-						<tr>
-							<td>Account Name</td>
-							<td class="text-center" style="min-width: 50px;">:</td>
-							<td class="text-left"><?= $accname ?></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="col-md-8"></div>
-			<div class="col-md-12"></div>
-			<div class="">
-				<button type="button" class="btn btn-success btn-sm text-right pull-right" id="process"><i class="fa fa-save">&nbsp;</i>Process</button>
-				<button type="button" class="btn btn-danger btn-sm text-right pull-right" style="margin-right: 0.5em;" id="reject"><i class="fa fa-close">&nbsp;</i>Reject</button>
-				<a href="<?= base_url($this->uri->segment(1) . '/list_approve_checker'); ?>" class="btn btn-default btn-sm pull-right" style="margin-right: 0.5em;"><i class="fa fa-reply">&nbsp;</i>Back</a>
+		<div class="col-md-6">
+			<div class="form-group">
+				<label for="">Reject Reason</label>
+				<textarea class="form-control form-control-sm reject_reason" name="reject_reason"></textarea>
 			</div>
 		</div>
 	</div>
-	<!-- <div> &nbsp;<button type="button" id="btnxls" class="btn btn-default">Export Excel</button><br /><br /></div> -->
-	<!-- /.box-body -->
 </div>
-<?= form_close() ?>
+
+<a href="<?= base_url('request_payment/list_approve_checker') ?>" class="btn btn-sm btn-danger">
+	<i class="fa fa-arrow-left"></i> Back
+</a>
+<button type="button" class="btn btn-sm btn-danger" id="reject">
+	<i class="fa fa-close"></i> Reject
+</button>
+<button type="button" class="btn btn-sm btn-success" id="approve">
+	<i class="fa fa-check"></i> Approve
+</button>
+
 <script src="<?= base_url('assets/js/number-divider.min.js') ?>"></script>
 <script type="text/javascript">
 	var url_save = siteurl + 'request_payment/save_approval_checker';
@@ -288,7 +390,7 @@ if ($type == 'expense') {
 	})
 
 	//Save
-	$(document).on('click', '#process', function(e) {
+	$(document).on('click', '#approve', function(e) {
 		var errors = "";
 		if ($("#bank_coa").val() == "0") errors = "Bank tidak boleh kosong";
 
@@ -304,14 +406,14 @@ if ($type == 'expense') {
 			},
 			function(isConfirm) {
 				if (isConfirm) {
-					var formdata = new FormData($('#frm_data')[0]);
+					var id = $('input[name="id"]').val();
 					$.ajax({
 						url: url_save,
 						dataType: "json",
 						type: 'POST',
-						data: formdata,
-						processData: false,
-						contentType: false,
+						data: {
+							'id': id
+						},
 						success: function(msg) {
 							if (msg['save'] == '1') {
 								swal({
@@ -349,9 +451,7 @@ if ($type == 'expense') {
 	});
 
 	$(document).on('click', '#reject', function(e) {
-		var errors = "";
-		if ($("#bank_coa").val() == "0") errors = "Bank tidak boleh kosong";
-
+		var id = $('input[name="id"]').val();
 		var reject_reason = $('.reject_reason').val();
 
 		if (reject_reason !== '') {
@@ -372,9 +472,11 @@ if ($type == 'expense') {
 							url: url_reject,
 							dataType: "json",
 							type: 'POST',
-							data: formdata,
-							processData: false,
-							contentType: false,
+							data: {
+								'id': id,
+								'reject_reason': reject_reason,
+								'tingkat_approval': 1
+							},
 							success: function(msg) {
 								if (msg['save'] == '1') {
 									swal({
@@ -414,6 +516,7 @@ if ($type == 'expense') {
 			return false;
 		}
 	});
+
 	$("#btnxls").click(function() {
 		$("#mytabledata").table2excel({
 			exclude: ".exclass",
