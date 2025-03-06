@@ -246,6 +246,7 @@ class Expense_report_project extends Admin_Controller
 
                 $qty_kasbon = 0;
                 $nominal_kasbon = 0;
+                $total_kasbon = 0;
 
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_subcont a');
@@ -255,6 +256,7 @@ class Expense_report_project extends Admin_Controller
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
                     $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
                 }
 
                 $datalist_item[] = [
@@ -262,7 +264,8 @@ class Expense_report_project extends Admin_Controller
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_aktifitas,
                     'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
                 ];
             }
         }
@@ -281,6 +284,7 @@ class Expense_report_project extends Admin_Controller
 
                 $qty_kasbon = 0;
                 $nominal_kasbon = 0;
+                $total_kasbon = 0;
 
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_akomodasi a');
@@ -290,6 +294,7 @@ class Expense_report_project extends Admin_Controller
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
                     $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
                 }
 
                 $datalist_item[] = [
@@ -297,7 +302,8 @@ class Expense_report_project extends Admin_Controller
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_biaya,
                     'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
                 ];
             }
         }
@@ -316,6 +322,7 @@ class Expense_report_project extends Admin_Controller
 
                 $qty_kasbon = 0;
                 $nominal_kasbon = 0;
+                $total_kasbon = 0;
 
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_others a');
@@ -325,6 +332,7 @@ class Expense_report_project extends Admin_Controller
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
                     $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
                 }
 
                 $datalist_item[] = [
@@ -332,7 +340,8 @@ class Expense_report_project extends Admin_Controller
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_biaya,
                     'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
                 ];
             }
         }
@@ -571,6 +580,7 @@ class Expense_report_project extends Admin_Controller
 
                 $qty_kasbon = 0;
                 $nominal_kasbon = 0;
+                $total_kasbon = 0;
 
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_subcont a');
@@ -580,6 +590,7 @@ class Expense_report_project extends Admin_Controller
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
                     $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
                 }
 
                 $datalist_item[] = [
@@ -587,7 +598,8 @@ class Expense_report_project extends Admin_Controller
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_aktifitas,
                     'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
                 ];
             }
 
@@ -598,12 +610,14 @@ class Expense_report_project extends Admin_Controller
 
             $no = 1;
             foreach ($get_expense_detail as $item) {
+                $qty_expense = ($item->qty_expense >= 1) ? $item->qty_expense : 1;
                 $datalist_item_expense[$item->id_detail_kasbon] = [
                     'id' => $item->id,
                     'id_detail_kasbon' => $item->id_detail_kasbon,
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
-                    'nominal_expense' => $item->nominal_expense
+                    'nominal_expense' => $item->nominal_expense,
+                    'total_expense' => ($qty_expense * $item->nominal_expense)
                 ];
             }
         }
@@ -622,6 +636,7 @@ class Expense_report_project extends Admin_Controller
 
                 $qty_kasbon = 0;
                 $nominal_kasbon = 0;
+                $total_kasbon = 0;
 
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_akomodasi a');
@@ -631,6 +646,7 @@ class Expense_report_project extends Admin_Controller
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
                     $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
                 }
 
                 $datalist_item[] = [
@@ -638,7 +654,8 @@ class Expense_report_project extends Admin_Controller
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_biaya,
                     'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
                 ];
             }
 
@@ -649,12 +666,14 @@ class Expense_report_project extends Admin_Controller
 
             $no = 1;
             foreach ($get_expense_detail as $item) {
+                $qty_expense = ($item->qty_expense >= 1) ? $item->qty_expense : 1;
                 $datalist_item_expense[$item->id_detail_kasbon] = [
                     'id' => $item->id,
                     'id_detail_kasbon' => $item->id_detail_kasbon,
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
-                    'nominal_expense' => $item->nominal_expense
+                    'nominal_expense' => $item->nominal_expense,
+                    'total_expense' => ($qty_expense * $item->nominal_expense)
                 ];
             }
         }
@@ -673,6 +692,7 @@ class Expense_report_project extends Admin_Controller
 
                 $qty_kasbon = 0;
                 $nominal_kasbon = 0;
+                $total_kasbon = 0;
 
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_others a');
@@ -682,6 +702,7 @@ class Expense_report_project extends Admin_Controller
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
                     $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
                 }
 
                 $datalist_item[] = [
@@ -689,7 +710,8 @@ class Expense_report_project extends Admin_Controller
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_biaya,
                     'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
                 ];
             }
 
@@ -700,12 +722,14 @@ class Expense_report_project extends Admin_Controller
 
             $no = 1;
             foreach ($get_expense_detail as $item) {
+                $qty_expense = ($item->qty_expense >= 1) ? $item->qty_expense : 1;
                 $datalist_item_expense[$item->id_detail_kasbon] = [
                     'id' => $item->id,
                     'id_detail_kasbon' => $item->id_detail_kasbon,
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
-                    'nominal_expense' => $item->nominal_expense
+                    'nominal_expense' => $item->nominal_expense,
+                    'total_expense' => ($qty_expense * $item->nominal_expense)
                 ];
             }
         }
@@ -1531,9 +1555,14 @@ class Expense_report_project extends Admin_Controller
             foreach ($post['detail_subcont'] as $item) {
                 $qty_kasbon = $item['qty_kasbon'];
                 $nominal_kasbon = $item['nominal_kasbon'];
+                $total_kasbon = $item['total_kasbon'];
 
                 $qty_expense = str_replace(',', '', $item['qty_expense']);
+                if($qty_expense < 1) {
+                    $qty_expense = 1;
+                }
                 $nominal_expense = str_replace(',', '', $item['nominal_expense']);
+                $total_expense = ($nominal_expense * $qty_expense);
 
                 if ($qty_expense > 0 && $nominal_expense > 0) {
                     $data_insert_detail[] = [
@@ -1544,15 +1573,15 @@ class Expense_report_project extends Admin_Controller
                         'id_penawaran' => $post['id_penawaran'],
                         'id_detail_kasbon' => $item['id_detail_kasbon'],
                         'tipe' => 1,
-                        'qty_expense' => $qty_expense,
+                        'qty_expense' => str_replace(',', '', $item['qty_expense']),
                         'nominal_expense' => $nominal_expense,
                         'created_by' => $this->auth->user_id(),
                         'created_date' => date('Y-m-d H:i:s')
                     ];
                 }
 
-                $ttl_kasbon += ($qty_kasbon * $nominal_kasbon);
-                $ttl_expense_report += ($qty_expense * $nominal_expense);
+                $ttl_kasbon += ($total_kasbon);
+                $ttl_expense_report += ($total_expense);
             }
         }
 

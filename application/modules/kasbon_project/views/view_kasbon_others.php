@@ -3,6 +3,11 @@ $ENABLE_ADD     = has_permission('Kasbon_Project.Add');
 $ENABLE_MANAGE  = has_permission('Kasbon_Project.Manage');
 $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
+
+$show_reject_reason = 'd-none';
+if($header->reject_reason !== null) {
+    $show_reject_reason = '';   
+}
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -59,6 +64,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
     .valign-middle {
         vertical-align: middle !important;
+    }
+    
+    .d-none{
+        display: none;
     }
 </style>
 
@@ -247,6 +256,17 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         </td>
                     </tr>
                 </table>
+
+                <br><br>
+
+                <table class="<?= $show_reject_reason ?>" style="width: 100%">
+                    <tr>
+                        <th style="padding: 5px;">Reject Reason</th>
+                        <td>    
+                            <textarea name="" id="" class="form-control form-control-sm" readonly><?= $header->reject_reason ?></textarea>
+                        </td>
+                    </tr>
+                </table>    
             </div>
 
             <div class="col-md-12 mt-5">

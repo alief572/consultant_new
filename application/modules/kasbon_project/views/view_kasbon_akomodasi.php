@@ -3,6 +3,11 @@ $ENABLE_ADD     = has_permission('Kasbon_Project.Add');
 $ENABLE_MANAGE  = has_permission('Kasbon_Project.Manage');
 $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
+
+$show_reject_reason = 'd-none';
+if ($header->reject_reason !== null) {
+    $show_reject_reason = '';
+}
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -123,7 +128,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         <div class="box-body">
             <table class="table custom-table">
-            <thead>
+                <thead>
                     <tr>
                         <th rowspan="2" class="text-center" valign="middle">No.</th>
                         <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
@@ -161,23 +166,23 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_budget_tambahan = 0;
                     $ttl_qty_budget_tambahan = 0;
 
-                    
+
                     foreach ($list_data_kasbon as $item) {
-                        if(isset($data_list_kasbon_akomodasi[$item->id])) {
+                        if (isset($data_list_kasbon_akomodasi[$item->id])) {
                             $no++;
-    
+
                             $qty_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['qty_pengajuan'] : 0;
                             $nominal_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['nominal_pengajuan'] : 0;
                             $total_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['total_pengajuan'] : 0;
-    
+
                             $aktual_terpakai = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['aktual_terpakai'] : 0;
                             $sisa_budget = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['sisa_budget'] : 0;
-    
+
                             $budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['budget_tambahan'] : 0;
                             $qty_budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['qty_budget_tambahan'] : 0;
-    
+
                             echo '<tr>';
-    
+
                             echo '<td class="text-center">' . $no . '</td>';
                             echo '<td>' . $item->nm_biaya . '</td>';
                             echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
@@ -190,22 +195,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             echo '<td class="text-right">' . number_format($budget_tambahan, 2) . '</td>';
                             echo '<td class="text-center">' . number_format($aktual_terpakai + $qty_budget_tambahan - $qty_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($sisa_budget + $budget_tambahan - $total_pengajuan, 2) . '</td>';
-    
+
                             echo '</tr>';
-    
+
                             $ttl_qty_peng += $qty_pengajuan;
                             $ttl_nominal_peng += $nominal_pengajuan;
                             $ttl_total_peng += $total_pengajuan;
-    
+
                             $ttl_est_qty += $item->qty_estimasi;
                             $ttl_est_price_unit += $item->price_unit_estimasi;
                             $ttl_est_total_budget += $item->total_budget_estimasi;
                             $ttl_aktual_terpakai += ($aktual_terpakai + $qty_budget_tambahan - $qty_pengajuan);
                             $ttl_sisa_budget += ($sisa_budget + $budget_tambahan - $total_pengajuan);
-    
+
                             $ttl_budget_tambahan += $budget_tambahan;
                             $ttl_qty_budget_tambahan += $qty_budget_tambahan;
-
                         }
                     }
                     ?>
@@ -260,6 +264,17 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th style="padding: 5px;">Account Name</th>
                         <td style="padding: 5px;">
                             <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>" readonly>
+                        </td>
+                    </tr>
+                </table>
+
+                <br><br>
+
+                <table class="<?= $show_reject_reason ?>" style="width: 100%">
+                    <tr>
+                        <th style="padding: 5px;">Reject Reason</th>
+                        <td>
+                            <textarea name="" id="" class="form-control form-control-sm" readonly><?= $header->reject_reason ?></textarea>
                         </td>
                     </tr>
                 </table>

@@ -7,7 +7,7 @@
  * This is Model for Request Payment
  */
 
-class Request_payment_model extends BF_Model
+class Approval_request_payment_model extends BF_Model
 {
 
     /**
