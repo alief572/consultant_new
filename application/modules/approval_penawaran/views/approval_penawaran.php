@@ -243,7 +243,7 @@ if (count($list_penawaran_lab) > 0) {
     </div>
 
     <div class="box-body">
-    <table class="table custom-table">
+        <table class="table custom-table">
             <thead>
                 <tr>
                     <th class="text-center">Activity Name</th>
@@ -390,7 +390,10 @@ if (count($list_penawaran_lab) > 0) {
         </h4>
     </div>
     <div class="box-body box_others <?= ($open_others == '') ? '' : 'd-none' ?>">
+
+
         <br>
+
         <table class="table custom-table">
             <thead>
                 <tr>
@@ -399,6 +402,7 @@ if (count($list_penawaran_lab) > 0) {
                     <th class="text-center">Price/Unit Customer</th>
                     <th class="text-center">Price/Unit Budget</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Total Budget</th>
                     <th class="text-center">Keterangan</th>
                 </tr>
             </thead>
@@ -407,6 +411,7 @@ if (count($list_penawaran_lab) > 0) {
                 $no_others = 1;
 
                 $ttl_others = 0;
+                $ttl_others_budget = 0;
                 foreach ($list_penawaran_others as $item_others) {
                     echo '<tr>';
                     echo '<td>' . $item_others->nm_biaya . '</td>';
@@ -414,10 +419,12 @@ if (count($list_penawaran_lab) > 0) {
                     echo '<td class="text-center">' . number_format($item_others->price_unit, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_others->price_unit_budget, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_others->total, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_others->total_budget, 2) . '</td>';
                     echo '<td>' . $item_others->keterangan . '</td>';
                     echo '</tr>';
 
                     $ttl_others += $item_others->total;
+                    $ttl_others_budget += $item_others->total_budget;
                 }
                 ?>
             </tbody>
@@ -427,6 +434,7 @@ if (count($list_penawaran_lab) > 0) {
                         Total
                     </th>
                     <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_others, 2) ?></th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_others_budget, 2) ?></th>
                     <th></th>
                 </tr>
             </tfoot>
@@ -462,6 +470,7 @@ if (count($list_penawaran_lab) > 0) {
                     <th class="text-center">Price/Unit Customer</th>
                     <th class="text-center">Price/Unit Budget</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Total Budget</th>
                     <th class="text-center">Keterangan</th>
                 </tr>
             </thead>
@@ -470,6 +479,7 @@ if (count($list_penawaran_lab) > 0) {
                 $no_lab = 1;
 
                 $ttl_lab = 0;
+                $ttl_lab_budget = 0;
                 foreach ($list_penawaran_lab as $item_lab) {
                     echo '<tr>';
                     echo '<td>' . $item_lab->isu_lingkungan . '</td>';
@@ -477,10 +487,12 @@ if (count($list_penawaran_lab) > 0) {
                     echo '<td class="text-center">' . number_format($item_lab->price_unit, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_lab->price_unit_budget, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_lab->total, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_lab->total_budget, 2) . '</td>';
                     echo '<td>' . $item_lab->keterangan . '</td>';
                     echo '</tr>';
 
                     $ttl_lab += $item_lab->total;
+                    $ttl_lab_budget += $item_lab->total_budget;
                 }
                 ?>
             </tbody>
@@ -490,6 +502,7 @@ if (count($list_penawaran_lab) > 0) {
                         Total
                     </th>
                     <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_lab, 2) ?></th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_lab_budget, 2) ?></th>
                     <th></th>
                 </tr>
             </tfoot>
