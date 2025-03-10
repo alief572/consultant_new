@@ -343,9 +343,10 @@ class Approval_spk_direktur extends Admin_Controller
         $this->db->where('a.id_user', $this->auth->user_id());
         $get_user = $this->db->get()->row();
 
-        $this->db->select('a.*, b.grand_total');
+        $this->db->select('a.*, b.grand_total, c.nm_paket');
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', null);
         $this->db->where('a.approval_manager_sales', 1);
@@ -353,7 +354,7 @@ class Approval_spk_direktur extends Admin_Controller
         $this->db->group_start();
         $this->db->like('a.id_spk_penawaran', $search['value'], 'both');
         $this->db->or_like('a.nm_sales', $search['value'], 'both');
-        $this->db->or_like('a.nm_project', $search['value'], 'both');
+        $this->db->or_like('c.nm_paket', $search['value'], 'both');
         $this->db->or_like('a.nm_customer', $search['value'], 'both');
         $this->db->or_like('b.grand_total', $search['value'], 'both');
         $this->db->group_end();
@@ -363,9 +364,10 @@ class Approval_spk_direktur extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*, b.grand_total');
+        $this->db->select('a.*, b.grand_total, c.nm_paket');
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', null);
         $this->db->where('a.approval_manager_sales', 1);
@@ -373,7 +375,7 @@ class Approval_spk_direktur extends Admin_Controller
         $this->db->group_start();
         $this->db->like('a.id_spk_penawaran', $search['value'], 'both');
         $this->db->or_like('a.nm_sales', $search['value'], 'both');
-        $this->db->or_like('a.nm_project', $search['value'], 'both');
+        $this->db->or_like('c.nm_paket', $search['value'], 'both');
         $this->db->or_like('a.nm_customer', $search['value'], 'both');
         $this->db->or_like('b.grand_total', $search['value'], 'both');
         $this->db->group_end();
