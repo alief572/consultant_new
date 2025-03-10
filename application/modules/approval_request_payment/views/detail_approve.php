@@ -7,7 +7,9 @@ $ENABLE_DELETE  = has_permission('Approval_Request_Payment_Management.Delete');
 $box_kasbon_subcont = 'd-none';
 $box_kasbon_akomodasi = 'd-none';
 $box_kasbon_others = 'd-none';
-$box_expense = '';
+$box_expense = 'd-none';
+
+$title_expense = (isset($title_expense)) ? $title_expense : '';
 
 if ($tipe == 'Kasbon Subcont') {
 	$box_kasbon_subcont = '';

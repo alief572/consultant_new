@@ -7,7 +7,9 @@ $ENABLE_DELETE  = has_permission('Approval_Request_Payment_Checker.Delete');
 $box_kasbon_subcont = 'd-none';
 $box_kasbon_akomodasi = 'd-none';
 $box_kasbon_others = 'd-none';
-$box_expense = '';
+$box_expense = 'd-none';
+
+$title_expense = (isset($title_expense)) ? $title_expense : '';
 
 if ($tipe == 'Kasbon Subcont') {
 	$box_kasbon_subcont = '';
@@ -383,39 +385,43 @@ if ($tipe == 'Expense') {
 				<?php $no = 0;
 				$ttl_kasbon_exp = 0;
 				$ttl_exp = 0;
-				foreach ($list_expense_detail as $item) : $no++;
-					$qty_kasbon = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['qty_kasbon'] : 0;
-					$nominal_kasbon = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['nominal_kasbon'] : 0;
-					$qty_expense = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['qty_expense'] : 0;
-					$nominal_expense = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['nominal_expense'] : 0;
+				if(isset($list_expense_detail)) {
 
+					foreach ($list_expense_detail as $item) : $no++;
+						$qty_kasbon = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['qty_kasbon'] : 0;
+						$nominal_kasbon = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['nominal_kasbon'] : 0;
+						$qty_expense = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['qty_expense'] : 0;
+						$nominal_expense = (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['nominal_expense'] : 0;
+	
+					?>
+	
+						<tr>
+							<td class="text-center"><?= $no ?></td>
+							<td class="text-left"><?= (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['nama_expense'] : '' ?></td>
+							<td class="text-center"><?= number_format($qty_kasbon, 2) ?></td>
+							<td class="text-center"><?= number_format($nominal_kasbon, 2) ?></td>
+							<td class="text-center"><?= number_format($qty_expense, 2) ?></td>
+							<td class="text-center"><?= number_format($nominal_expense, 2) ?></td>
+						</tr>
+	
+					<?php
+						if ($qty_kasbon > 0 && $qty_kasbon < 1) {
+							$ttl_kasbon_exp += $nominal_kasbon;
+						} else {
+							if ($qty_kasbon > 0) {
+								$ttl_kasbon_exp += ($nominal_kasbon * $qty_kasbon);
+							}
+						}
+						if ($qty_expense > 0 && $qty_expense < 1) {
+							$ttl_exp += $nominal_expense;
+						} else {
+							if ($qty_expense > 0) {
+								$ttl_exp += ($nominal_expense * $qty_expense);
+							}
+						}
+					endforeach; 
+				}
 				?>
-
-					<tr>
-						<td class="text-center"><?= $no ?></td>
-						<td class="text-left"><?= (!empty($list_detail_expense_detail[$item->id])) ? $list_detail_expense_detail[$item->id]['nama_expense'] : '' ?></td>
-						<td class="text-center"><?= number_format($qty_kasbon, 2) ?></td>
-						<td class="text-center"><?= number_format($nominal_kasbon, 2) ?></td>
-						<td class="text-center"><?= number_format($qty_expense, 2) ?></td>
-						<td class="text-center"><?= number_format($nominal_expense, 2) ?></td>
-					</tr>
-
-				<?php
-					if ($qty_kasbon > 0 && $qty_kasbon < 1) {
-						$ttl_kasbon_exp += $nominal_kasbon;
-					} else {
-						if ($qty_kasbon > 0) {
-							$ttl_kasbon_exp += ($nominal_kasbon * $qty_kasbon);
-						}
-					}
-					if ($qty_expense > 0 && $qty_expense < 1) {
-						$ttl_exp += $nominal_expense;
-					} else {
-						if ($qty_expense > 0) {
-							$ttl_exp += ($nominal_expense * $qty_expense);
-						}
-					}
-				endforeach; ?>
 			</tbody>
 			<tfoot>
 				<tr>
