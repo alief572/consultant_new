@@ -43,9 +43,10 @@ class Approval_project_budgeting extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*, b.nm_sales');
+        $this->db->select('a.*, b.nm_sales, c.nm_paket');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = b.id_project', 'left');
         $this->db->where('a.sts <>', 1);
         if (!empty($search)) {
             $this->db->group_start();
@@ -53,7 +54,7 @@ class Approval_project_budgeting extends Admin_Controller
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
             $this->db->or_like('b.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
-            $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->or_like('c.nm_paket', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.create_date', 'desc');
@@ -61,9 +62,10 @@ class Approval_project_budgeting extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*, b.nm_sales');
+        $this->db->select('a.*, b.nm_sales, c.nm_paket');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = b.id_project', 'left');
         $this->db->where('a.sts <>', 1);
         if (!empty($search)) {
             $this->db->group_start();
@@ -71,7 +73,7 @@ class Approval_project_budgeting extends Admin_Controller
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
             $this->db->or_like('b.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
-            $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->or_like('c.nm_paket', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.create_date', 'desc');
@@ -97,7 +99,7 @@ class Approval_project_budgeting extends Admin_Controller
                 'nm_customer' => $item->nm_customer,
                 'nm_sales' => ucfirst($item->nm_sales),
                 'nm_project_leader' => ucfirst($item->nm_project_leader),
-                'nm_project' => $item->nm_project,
+                'nm_project' => $item->nm_paket,
                 'reject_reason' => $item->reject_reason,
                 'status' => $status,
                 'option' => $option

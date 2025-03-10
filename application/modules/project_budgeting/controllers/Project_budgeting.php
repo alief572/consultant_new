@@ -481,7 +481,7 @@ class Project_budgeting extends Admin_Controller
 
         $insert_spk_budgeting = $this->db->insert('kons_tr_spk_budgeting', $data_insert);
         if (!$insert_spk_budgeting) {
-            print_r('Error 1' . $this->db->error($insert_spk_budgeting));
+            print_r('Error 1 | ' . $this->db->last_query());
             $this->db->trans_rollback();
             exit;
         }
@@ -489,7 +489,7 @@ class Project_budgeting extends Admin_Controller
         if (!empty($data_insert_konsultasi)) {
             $insert_spk_budgeting_aktifitas = $this->db->insert_batch('kons_tr_spk_budgeting_aktifitas', $data_insert_konsultasi);
             if (!$insert_spk_budgeting_aktifitas) {
-                print_r('Error 2' . $this->db->error($insert_spk_budgeting_aktifitas));
+                print_r('Error 2 | ' . $this->db->last_query());
                 $this->db->trans_rollback();
                 exit;
             }
@@ -498,7 +498,7 @@ class Project_budgeting extends Admin_Controller
         if (!empty($data_insert_akomodasi)) {
             $insert_spk_budgeting_akomodasi = $this->db->insert_batch('kons_tr_spk_budgeting_akomodasi', $data_insert_akomodasi);
             if (!$insert_spk_budgeting_akomodasi) {
-                print_r('Error 3' . $this->db->error($insert_spk_budgeting_akomodasi));
+                print_r('Error 3 | ' . $this->db->last_query());
                 $this->db->trans_rollback();
                 exit;
             }
