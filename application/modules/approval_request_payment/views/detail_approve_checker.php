@@ -452,7 +452,7 @@ if ($tipe == 'Expense') {
 	</div>
 </div>
 
-<a href="<?= base_url('request_payment/list_approve_checker') ?>" class="btn btn-sm btn-danger">
+<a href="<?= base_url('approval_request_payment/list_approve_checker') ?>" class="btn btn-sm btn-danger">
 	<i class="fa fa-arrow-left"></i> Back
 </a>
 <button type="button" class="btn btn-sm btn-danger" id="reject">
