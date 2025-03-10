@@ -51,6 +51,7 @@ class Kasbon_project extends Admin_Controller
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
+            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
             $this->db->or_like('b.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
@@ -69,6 +70,7 @@ class Kasbon_project extends Admin_Controller
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
+            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
             $this->db->or_like('b.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
@@ -254,60 +256,76 @@ class Kasbon_project extends Admin_Controller
             //     $valid_show = 0;
             // }
 
-            if ($valid_show == 1) {
-                $no++;
+            // if ($valid_show == 1) {
+            $no++;
 
-                $status = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
+            $status = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
 
-                $this->db->select('a.*');
-                $this->db->from('kons_tr_req_kasbon_project a');
-                $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
-                $this->db->where('a.sts', 0);
-                $this->db->limit(1, 0);
-                $get_req_kasbon = $this->db->get()->row();
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_req_kasbon_project a');
+            $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
+            // $this->db->where('a.sts', 0);
+            $this->db->limit(1, 0);
+            $get_req_kasbon = $this->db->get()->row();
 
-                $reject_reason = '';
-                if (!empty($get_req_kasbon)) {
-                    if ($get_req_kasbon->sts == '1' && $total_kasbon >= $total_budgeting) {
-                        $status = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($get_req_kasbon->sts == '2') {
-                        $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
+            $reject_reason = '';
+            if (!empty($get_req_kasbon)) {
+                if ($get_req_kasbon->sts == '1' && $total_kasbon >= $total_budgeting) {
+                    $status = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
                 }
-
-                $option = '<a href="' . base_url('kasbon_project/view_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info" title="View Kasbon"><i class="fa fa-eye"></i></a>';
-
-                $btn_edit = '<a href="' . base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;" title="Process Kasbon"><i class="fa fa-pencil"></i></a>';
-
-                $btn_req_app = '';
-                if ($total_kasbon_nd > 0) {
-                    $btn_req_app = '<button type="button" class="btn btn-sm btn-warning req_approval" data-id_spk_budgeting="' . $item->id_spk_budgeting . '" title="Request Approval" style="margin-left: 0.5rem;"><i class="fa fa-arrow-up"></i></button>';
+                if ($get_req_kasbon->sts == '2') {
+                    $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
                 }
-
-                if (!empty($get_req_kasbon)) {
-                    if ($get_req_kasbon->sts == 0) {
-                        $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                        $btn_req_app = '';
-                        $btn_edit = '';
-                    }
-                }
-
-                $option .= $btn_edit . ' ' . $btn_req_app;
-
-
-                $hasil[] = [
-                    'no' => $no,
-                    'id_spk_penawaran' => $item->id_spk_penawaran,
-                    'nm_customer' => $item->nm_customer,
-                    'nm_sales' => ucfirst($item->nm_sales),
-                    'nm_project_leader' => ucfirst($item->nm_project_leader),
-                    'nm_project' => $item->nm_paket,
-                    'reject_reason' => $reject_reason,
-                    'status' => $status,
-                    'option' => $option
-                ];
             }
+
+            $option = '<a href="' . base_url('kasbon_project/view_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info" title="View Kasbon"><i class="fa fa-eye"></i></a>';
+
+            $btn_edit = '<a href="' . base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" style="margin-left: 0.5rem;" title="Process Kasbon"><i class="fa fa-pencil"></i></a>';
+            if (!empty($get_req_kasbon)) {
+                if ($get_req_kasbon->sts == '1' && $total_kasbon >= $total_budgeting) {
+                    $btn_edit = '';
+                }
+                if ($get_req_kasbon->sts == '2') {
+                    $btn_edit = '';
+                }
+            }
+
+            $btn_req_app = '';
+            if ($total_kasbon_nd > 0) {
+                $btn_req_app = '<button type="button" class="btn btn-sm btn-warning req_approval" data-id_spk_budgeting="' . $item->id_spk_budgeting . '" title="Request Approval" style="margin-left: 0.5rem;"><i class="fa fa-arrow-up"></i></button>';
+            }
+            if (!empty($get_req_kasbon)) {
+                if ($get_req_kasbon->sts == '1' && $total_kasbon >= $total_budgeting) {
+                    $btn_req_app = '';
+                }
+                if ($get_req_kasbon->sts == '2') {
+                    $btn_req_app = '';
+                }
+            }
+
+            if (!empty($get_req_kasbon)) {
+                if ($get_req_kasbon->sts == 0) {
+                    $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+                    $btn_req_app = '';
+                    $btn_edit = '';
+                }
+            }
+
+            $option .= $btn_edit . ' ' . $btn_req_app;
+
+
+            $hasil[] = [
+                'no' => $no,
+                'id_spk_penawaran' => $item->id_spk_penawaran,
+                'nm_customer' => $item->nm_customer,
+                'nm_sales' => ucfirst($item->nm_sales),
+                'nm_project_leader' => ucfirst($item->nm_project_leader),
+                'nm_project' => $item->nm_paket,
+                'reject_reason' => $reject_reason,
+                'status' => $status,
+                'option' => $option
+            ];
+            // }
         }
 
         $no_all = 0;
@@ -2035,7 +2053,7 @@ class Kasbon_project extends Admin_Controller
         // $_FILES['kasbon_document']['size'] = $files['size'];
 
         // if (!$this->upload->do_upload('kasbon_document')) {
-            // $upload_po = $post['dokument_link'];
+        // $upload_po = $post['dokument_link'];
         // } else {
         //     $data_upload_po = $this->upload->data();
         //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
@@ -2311,7 +2329,7 @@ class Kasbon_project extends Admin_Controller
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
             'updated_by' => $this->auth->user_id(),
-            'updated_date' => date('Y-m-d H:i:s')            
+            'updated_date' => date('Y-m-d H:i:s')
         ], [
             'id' => $post['id_header']
         ]);
