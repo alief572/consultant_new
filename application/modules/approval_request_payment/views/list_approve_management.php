@@ -51,6 +51,7 @@ endforeach;
         </div>
         <div class="row">
             <div class="col-md-12 list_kasbon" style="display: none;">
+                <a href="<?= base_url('approval_request_payment/export_excel_kasbon_checker/?tingkat=2') ?>" class="btn btn-sm btn-success"><i class="fa fa-files"></i> Export Excel</a>
                 <h2>Request Payment Kasbon</h2>
                 <table class="table table-bordered">
                     <thead>
@@ -66,19 +67,20 @@ endforeach;
                     </thead>
                     <tbody>
                         <?php
+                        $ttl_kasbon = 0;
                         foreach ($data as $item_kasbon) :
 
                             $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc))->row();
 
                             $tipe = '';
-                            if(!empty($get_kasbon_header)) {
-                                if($get_kasbon_header->tipe == '1') {
+                            if (!empty($get_kasbon_header)) {
+                                if ($get_kasbon_header->tipe == '1') {
                                     $tipe = 'Kasbon Subcont';
                                 }
-                                if($get_kasbon_header->tipe == '2') {
+                                if ($get_kasbon_header->tipe == '2') {
                                     $tipe = 'Kasbon Akomodasi';
                                 }
-                                if($get_kasbon_header->tipe == '3') {
+                                if ($get_kasbon_header->tipe == '3') {
                                     $tipe = 'Kasbon Others';
                                 }
                             }
@@ -89,22 +91,32 @@ endforeach;
                             echo '<td>' . $item_kasbon->tgl_doc . '</td>';
                             echo '<td>' . $item_kasbon->keperluan . '</td>';
                             echo '<td>' . $tipe . '</td>';
-                            echo '<td class="text-right">'.number_format($item_kasbon->jumlah).'</td>';
+                            echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
                             echo '<td>';
                             if ($ENABLE_MANAGE) :
-                                echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment/'.urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
+                                echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
                                 echo '<i class="fa fa-check-square-o"></i>';
                                 echo ' Approve';
                                 echo '</a>';
                             endif;
                             echo '</td>';
                             echo '</tr>';
+
+                            $ttl_kasbon += $item_kasbon->jumlah;
                         endforeach;
                         ?>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" class="text-right">Grand Total</th>
+                            <th class="text-right"><?= number_format($ttl_kasbon) ?></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
             <div class="col-md-12 list_expense" style="display: none;">
+                <a href="<?= base_url('approval_request_payment/export_excel_expense_checker/?tingkat=2') ?>" class="btn btn-sm btn-success"><i class="fa fa-files"></i> Export Excel</a>
                 <h2>Request Payment Expense Report</h2>
                 <table class="table table-bordered">
                     <thead>
@@ -120,6 +132,7 @@ endforeach;
                     </thead>
                     <tbody>
                         <?php
+                        $ttl_expense = 0;
                         foreach ($data as $item_expense) :
                             if ($item_expense->tipe == 'expense') {
                                 $tipe = ucfirst($item_expense->tipe);
@@ -134,17 +147,26 @@ endforeach;
                                 echo '<td class="text-right">' . number_format($item_expense->jumlah) . '</td>';
                                 echo '<td>';
                                 if ($ENABLE_MANAGE) :
-                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-primary btn-sm">';
+                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-primary btn-sm">';
                                     echo '<i class="fa fa-check-square-o"></i>';
                                     echo ' Approve';
                                     echo '</a>';
                                 endif;
                                 echo '</td>';
                                 echo '</tr>';
+
+                                $ttl_expense += $item_expense->jumlah;
                             }
                         endforeach;
                         ?>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" class="text-right">Grand Total</th>
+                            <th class="text-right"><?= number_format($ttl_expense) ?></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

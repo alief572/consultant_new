@@ -1889,4 +1889,44 @@ class Approval_request_payment extends Admin_Controller
 	{
 		$this->Approval_request_payment_model->get_payment_list();
 	}
+
+	public function export_excel_kasbon_checker() {
+		$tingkat = $this->input->get('tingkat');
+		
+		if($tingkat !== '1') {
+			$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker = 1');
+		} else {
+			$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker IS NULL');
+		}
+
+		$list_no_invoice = [];
+		$this->db->select('id, invoice_no');
+		$this->db->from('tr_invoice_po');
+		$get_invoice_no = $this->db->get()->result();
+		foreach ($get_invoice_no as $item_no_invoice) {
+			$list_no_invoice[$item_no_invoice->id] = $item_no_invoice->invoice_no;
+		}
+
+		$this->load->view('excel_kasbon_app', array('data' => $data, 'tingkat' => $tingkat));
+	}
+
+	public function export_excel_expense_checker() {
+		$tingkat = $this->input->get('tingkat');
+		
+		if($tingkat !== '1') {
+			$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker = 1');
+		} else {
+			$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker IS NULL');
+		}
+
+		$list_no_invoice = [];
+		$this->db->select('id, invoice_no');
+		$this->db->from('tr_invoice_po');
+		$get_invoice_no = $this->db->get()->result();
+		foreach ($get_invoice_no as $item_no_invoice) {
+			$list_no_invoice[$item_no_invoice->id] = $item_no_invoice->invoice_no;
+		}
+
+		$this->load->view('excel_expense_app', array('data' => $data, 'tingkat' => $tingkat));
+	}
 }
