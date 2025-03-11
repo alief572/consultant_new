@@ -189,6 +189,13 @@ class Approval_project_budgeting extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_spk_budgeting = $this->db->get()->row();
 
+        $this->db->select('a.*, c.divisi as jabatan_pic, c.hp as kontak_pic');
+        $this->db->from('kons_tr_spk_penawaran a');
+        $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
+        $this->db->join('customer_pic c', 'c.id_pic = b.id_pic', 'left');
+        $this->db->where('a.id_spk_penawaran', $get_spk_budgeting->id_spk_penawaran);
+        $get_spk = $this->db->get()->row();
+
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
         $get_all_marketing = $this->db->get()->result();
@@ -221,6 +228,7 @@ class Approval_project_budgeting extends Admin_Controller
 
         $data = [
             'id_spk_budgeting' => $id_spk_budgeting,
+            'list_spk_penawaran' => $get_spk,
             'list_budgeting' => $get_spk_budgeting,
             'list_all_marketing' => $get_all_marketing,
             'list_budgeting_aktifitas' => $get_spk_budgeting_aktifitas,
