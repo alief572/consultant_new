@@ -462,6 +462,16 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         </div>
         <div class="box-body">
             <div class="col-md-4">
+                <table class="table">
+                    <tr>
+                        <th class="text-left">Total Project :</th>
+                        <!-- <th class="text-center"></th> -->
+                        <th class="text-right">Rp. <?= number_format($list_spk_penawaran->nilai_kontrak, 2) ?></th>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-12"></div>
+            <div class="col-md-4">
                 <h4 class="semi-bold">Before</h4>
                 <table class="table custom-table-no">
                     <thead>
