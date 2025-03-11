@@ -446,6 +446,16 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         </div>
         <div class="box-body">
             <div class="col-md-4">
+                <table class="table">
+                    <tr>
+                        <th class="text-left">Total Project :</th>
+                        <!-- <th class="text-center"></th> -->
+                        <th class="text-right">Rp. <?= number_format($list_spk_penawaran->nilai_kontrak, 2) ?></th>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-12"></div>
+            <div class="col-md-4">
                 <h4 class="semi-bold">Before</h4>
                 <table class="table custom-table-no">
                     <thead>
@@ -553,56 +563,56 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         <tr>
                             <td>Mandays Subcont</td>
                             <td class="text-right summary_mandays_subcont">
-                                <?php 
-                                    if($list_budgeting->mandays_subcont_result > 0) {
-                                        echo '<span style="color: #66ff66;">'.number_format($list_budgeting->mandays_subcont_result, 2).'</span>';
-                                    } else if($list_budgeting->mandays_subcont_result < 0) {
-                                        echo '<span style="color: #ff0000;">('.number_format($list_budgeting->mandays_subcont_result, 2).')</span>';
-                                    } else {
-                                        echo number_format($list_budgeting->mandays_subcont_result, 2);
-                                    }
+                                <?php
+                                if ($list_budgeting->mandays_subcont_result > 0) {
+                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->mandays_subcont_result, 2) . '</span>';
+                                } else if ($list_budgeting->mandays_subcont_result < 0) {
+                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->mandays_subcont_result, 2) . ')</span>';
+                                } else {
+                                    echo number_format($list_budgeting->mandays_subcont_result, 2);
+                                }
                                 ?>
                             </td>
                         </tr>
                         <tr>
                             <td>Biaya Subcont</td>
                             <td class="text-right summary_biaya_subcont">
-                                <?php 
-                                    if($list_budgeting->biaya_subcont_result > 0) {
-                                        echo '<span style="color: #66ff66;">'.number_format($list_budgeting->biaya_subcont_result, 2).'</span>';
-                                    } else if($list_budgeting->biaya_subcont_result < 0) {
-                                        echo '<span style="color: #ff0000;">('.number_format($list_budgeting->biaya_subcont_result, 2).')</span>';
-                                    } else {
-                                        echo number_format($list_budgeting->biaya_subcont_result, 2);
-                                    }
+                                <?php
+                                if ($list_budgeting->biaya_subcont_result > 0) {
+                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_subcont_result, 2) . '</span>';
+                                } else if ($list_budgeting->biaya_subcont_result < 0) {
+                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_subcont_result, 2) . ')</span>';
+                                } else {
+                                    echo number_format($list_budgeting->biaya_subcont_result, 2);
+                                }
                                 ?>
                             </td>
                         </tr>
                         <tr>
                             <td>Biaya Akomodasi</td>
                             <td class="text-right summary_biaya_akomodasi">
-                                <?php 
-                                    if($list_budgeting->biaya_akomodasi_result > 0) {
-                                        echo '<span style="color: #66ff66;">'.number_format($list_budgeting->biaya_akomodasi_result, 2).'</span>';
-                                    } else if($list_budgeting->biaya_akomodasi_result < 0) {
-                                        echo '<span style="color: #ff0000;">('.number_format($list_budgeting->biaya_akomodasi_result, 2).')</span>';
-                                    } else {
-                                        echo number_format($list_budgeting->biaya_akomodasi_result, 2);
-                                    }
+                                <?php
+                                if ($list_budgeting->biaya_akomodasi_result > 0) {
+                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_akomodasi_result, 2) . '</span>';
+                                } else if ($list_budgeting->biaya_akomodasi_result < 0) {
+                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_akomodasi_result, 2) . ')</span>';
+                                } else {
+                                    echo number_format($list_budgeting->biaya_akomodasi_result, 2);
+                                }
                                 ?>
                             </td>
                         </tr>
                         <tr>
                             <td>Biaya Others</td>
                             <td class="text-right summary_biaya_others">
-                                <?php 
-                                    if($list_budgeting->biaya_others_result > 0) {
-                                        echo '<span style="color: #66ff66;">'.number_format($list_budgeting->biaya_others_result, 2).'</span>';
-                                    } else if($list_budgeting->biaya_others_result < 0) {
-                                        echo '<span style="color: #ff0000;">('.number_format($list_budgeting->biaya_others_result, 2).')</span>';
-                                    } else {
-                                        echo number_format($list_budgeting->biaya_others_result, 2);
-                                    }
+                                <?php
+                                if ($list_budgeting->biaya_others_result > 0) {
+                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_others_result, 2) . '</span>';
+                                } else if ($list_budgeting->biaya_others_result < 0) {
+                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_others_result, 2) . ')</span>';
+                                } else {
+                                    echo number_format($list_budgeting->biaya_others_result, 2);
+                                }
                                 ?>
                             </td>
                         </tr>
@@ -611,14 +621,14 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right summary_total_pengeluaran">
-                                <?php 
-                                    if(($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result) > 0) {
-                                        echo '<span style="color: #66ff66;">'.number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result, 2).'</span>';
-                                    } else if(($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result) < 0) {
-                                        echo '<span style="color: #ff0000;">('.number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result, 2).')</span>';
-                                    } else {
-                                        echo number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result, 2);
-                                    }
+                                <?php
+                                if (($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result) > 0) {
+                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result, 2) . '</span>';
+                                } else if (($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result) < 0) {
+                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result, 2) . ')</span>';
+                                } else {
+                                    echo number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result, 2);
+                                }
                                 ?>
                             </th>
                         </tr>

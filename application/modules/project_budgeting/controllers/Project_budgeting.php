@@ -263,9 +263,9 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_spk_budgeting = $this->db->get()->row();
 
-        $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR . '.employees a');
-        $this->db->where('a.flag_active', 'Y');
+        $this->db->select('a.*');
+        $this->db->from('employee a');
+        $this->db->where('a.deleted', 'N');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('a.*, c.mandays as mandays_def');
@@ -287,20 +287,12 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_spk_budgeting_others = $this->db->get()->result();
 
-        $this->db->select('a.nm_paket');
-            $this->db->from('kons_master_konsultasi_header a');
-            $this->db->where('a.id_konsultasi_h', $get_spk_budgeting->id_project);
-            $get_package = $this->db->get()->row();
-
-            $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
-
         $data = [
             'list_budgeting' => $get_spk_budgeting,
             'list_all_marketing' => $get_all_marketing,
             'list_budgeting_aktifitas' => $get_spk_budgeting_aktifitas,
             'list_budgeting_akomodasi' => $get_spk_budgeting_akomodasi,
-            'list_budgeting_others' => $get_spk_budgeting_others,
-            'nm_paket' => $nm_paket
+            'list_budgeting_others' => $get_spk_budgeting_others
         ];
 
         $this->template->set($data);
