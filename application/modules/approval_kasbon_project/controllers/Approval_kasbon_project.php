@@ -240,7 +240,7 @@ class Approval_kasbon_project extends Admin_Controller
 
         $get_header_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_kasbon))->row();
         
-        $get_user = $this->db->get_where('users', array('id_user' => $this->auth->user_id()))->row();
+        $get_user = $this->db->get_where('users', array('id_user' => $get_header_kasbon->created_by))->row();
 
         $nm_user = (!empty($get_user)) ? $get_user->nm_lengkap : '';
 
