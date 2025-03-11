@@ -9,6 +9,11 @@ $box_kasbon_akomodasi = 'd-none';
 $box_kasbon_others = 'd-none';
 $box_expense = 'd-none';
 
+$tipe2 = $tipe;
+if($tipe !== 'Expense') {
+	$tipe2 = 'Kasbon';
+}
+
 $title_expense = (isset($title_expense)) ? $title_expense : '';
 
 if ($tipe == 'Kasbon Subcont') {
@@ -448,6 +453,17 @@ if ($tipe == 'Expense') {
 				<label for="">Reject Reason</label>
 				<textarea class="form-control form-control-sm reject_reason" name="reject_reason"></textarea>
 			</div>
+		</div>
+		<div class="col-md-6">
+			<table class="table">
+				<tr>
+					<th>Tgl Approve <br> <?= $tipe2 ?> oleh Direktur</th>
+					<th>:</th>
+					<th>
+						<?= date('d F Y H:i:s', strtotime($tgl_approve_direktur)) ?>
+					</th>
+				</tr>
+			</table>
 		</div>
 	</div>
 </div>

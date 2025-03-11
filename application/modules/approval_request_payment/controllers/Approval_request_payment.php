@@ -344,8 +344,13 @@ class Approval_request_payment extends Admin_Controller
 				'list_detail_expense_detail' => $list_detail_expense_detail
 			];
 		}
+
+		
+		$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
+
 		$this->template->title('Approval Request Payment Direktur');
 		$this->template->set($data);
+		$this->template->set('tgl_approve_direktur', $get_request_payment->created_on);
 		$this->template->render('detail_approve');
 	}
 
@@ -487,9 +492,11 @@ class Approval_request_payment extends Admin_Controller
 			];
 		}
 
+		$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
 
 		$this->template->title('Approval Request Payment Finance');
 		$this->template->set($data);
+		$this->template->set('tgl_approve_direktur', $get_request_payment->created_on);
 		$this->template->render('detail_approve_checker');
 	}
 

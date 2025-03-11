@@ -94,7 +94,7 @@ endforeach;
                             echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
                             echo '<td>';
                             if ($ENABLE_MANAGE) :
-                                echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
+                                echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
                                 echo '<i class="fa fa-check-square-o"></i>';
                                 echo ' Approve';
                                 echo '</a>';
@@ -147,7 +147,7 @@ endforeach;
                                 echo '<td class="text-right">' . number_format($item_expense->jumlah) . '</td>';
                                 echo '<td>';
                                 if ($ENABLE_MANAGE) :
-                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-primary btn-sm">';
+                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-primary btn-sm">';
                                     echo '<i class="fa fa-check-square-o"></i>';
                                     echo ' Approve';
                                     echo '</a>';
