@@ -53,6 +53,7 @@ endforeach;
         </div>
         <div class="row">
             <div class="col-md-12 list_kasbon" style="display: none;">
+                <a href="<?= base_url('approval_request_payment/export_excel_kasbon_checker/?tingkat=1') ?>" class="btn btn-sm btn-success"><i class="fa fa-files"></i> Export Excel</a>
                 <h2>Request Payment Kasbon</h2>
                 <table class="table table-bordered">
                     <thead>
@@ -68,6 +69,7 @@ endforeach;
                     </thead>
                     <tbody>
                         <?php
+                        $ttl_kasbon = 0;
                         foreach ($data as $item_kasbon) :
 
                             $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc))->row();
@@ -101,17 +103,27 @@ endforeach;
                             endif;
                             echo '</td>';
                             echo '</tr>';
+
+                            $ttl_kasbon += $item_kasbon->jumlah;
                         endforeach;
                         ?>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" class="text-right">Grand Total</th>
+                            <th class="text-right"><?= number_format($ttl_kasbon) ?></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
             <div class="col-md-12 list_expense" style="display: none;">
+                <a href="<?= base_url('approval_request_payment/export_excel_expense_checker/?tingkat=1') ?>" class="btn btn-sm btn-success"><i class="fa fa-files"></i> Export Excel</a>
                 <h2>Request Payment Expense Report</h2>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th class="text-center">No. Kasbon</th>
+                            <th class="text-center">No. Expense</th>
                             <th class="text-center">Request By</th>
                             <th class="text-center">Tanggal Pengajuan</th>
                             <th class="text-center">Deskripsi Pengajuan</th>
@@ -122,6 +134,7 @@ endforeach;
                     </thead>
                     <tbody>
                         <?php
+                        $ttl_expense = 0;
                         foreach ($data as $item_expense) :
                             if ($item_expense->tipe == 'expense') {
                                 $tipe = ucfirst($item_expense->tipe);
@@ -143,10 +156,19 @@ endforeach;
                                 endif;
                                 echo '</td>';
                                 echo '</tr>';
+
+                                $ttl_expense += $item_expense->jumlah;
                             }
                         endforeach;
                         ?>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" class="text-right">Grand Total</th>
+                            <th class="text-right"><?= number_format($ttl_expense) ?></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
