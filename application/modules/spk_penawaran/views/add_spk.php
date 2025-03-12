@@ -203,7 +203,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         <div class="box-body">
             <table border="0" style="width: 100%">
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top" width="120">
+                    <td class="pd-5 semi-bold" valign="top" width="135">
                         Project
                     </td>
                     <td class="pd-5" width="390" valign="top">
@@ -217,9 +217,9 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <td class="pd-5" width="390" valign="top" rowspan="2">
                         <textarea name="" id="" class="form-control form-control-sm" readonly><?= $nm_paket ?></textarea>
                     </td> -->
-                    <td class="pd-5 semi-bold" valign="top" width="120">Project Leader</td>
+                    <td class="pd-5 semi-bold" valign="top" width="135">Project Leader <span class="text-red">*</span></td>
                     <td class="pd-5" width="390" valign="top">
-                        <select name="project_leader" id="" class="form-control form-control-sm select_project_leader">
+                        <select name="project_leader" id="" class="form-control form-control-sm select_project_leader" required>
                             <option value="">- Select Project Leader -</option>
                             <?php
                             foreach ($list_all_marketing as $item) {
@@ -232,7 +232,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <td></td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top" width="120">Konsultan 1</td>
+                    <td class="pd-5 semi-bold" valign="top" width="135">Konsultan 1</td>
                     <td class="pd-5" width="390" valign="top">
                         <select name="konsultan_1" id="" class="form-control form-control-sm select_konsultan_1">
                             <option value="">- Select Konsultan 1 -</option>
@@ -247,7 +247,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <td></td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top" width="120">Konsultan 2</td>
+                    <td class="pd-5 semi-bold" valign="top" width="135">Konsultan 2</td>
                     <td class="pd-5" width="390" valign="top">
                         <select name="konsultan_2" id="" class="form-control form-control-sm select_konsultan_2">
                             <option value="">- Select Konsultan 2 -</option>

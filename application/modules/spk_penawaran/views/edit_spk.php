@@ -245,7 +245,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                     <td class="pd-5" width="390" valign="top" rowspan="2">
                         <textarea name="" id="" class="form-control form-control-sm" readonly><?= $nm_paket ?></textarea>
                     </td> -->
-                    <td class="pd-5 semi-bold" valign="top" width="120">Project Leader</td>
+                    <td class="pd-5 semi-bold" valign="top" width="120">Project Leader <span class="text-red">*</span></td>
                     <td class="pd-5" width="390" valign="top">
                         <select name="project_leader" id="" class="form-control form-control-sm select_project_leader">
                             <option value="">- Select Project Leader -</option>
@@ -266,7 +266,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 <tr>
                     <td class="pd-5 semi-bold" valign="top" width="120">Konsultan 1</td>
                     <td class="pd-5" width="390" valign="top">
-                        <select name="konsultan_1" id="" class="form-control form-control-sm select_konsultan_1">
+                        <select name="konsultan_1" id="" class="form-control form-control-sm select_konsultan_1" required>
                             <option value="">- Select Konsultan 1 -</option>
                             <?php
                             foreach ($list_all_marketing as $item) {
