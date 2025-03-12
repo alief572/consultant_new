@@ -60,7 +60,7 @@ if (count($list_penawaran_lab) > 0) {
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold">Customer</td>
+                    <td class="pd-5 semi-bold">Customer <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390">
                         <select name="customer" id="" class="form-control form-control-sm change_customer select_customer" required>
                             <option value="">- Select Customer -</option>
@@ -75,7 +75,7 @@ if (count($list_penawaran_lab) > 0) {
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold">Sales</td>
+                    <td class="pd-5 semi-bold">Sales <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390">
                         <select name="marketing" id="" class="form-control form-control-sm select_marketing">
                             <option value="">- Select Sales -</option>
@@ -102,7 +102,7 @@ if (count($list_penawaran_lab) > 0) {
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top">Informasi Awal</td>
+                    <td class="pd-5 semi-bold" valign="top">Informasi Awal <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
                         <table style="width: 100%;" border="0">
                             <tr>
@@ -178,7 +178,7 @@ if (count($list_penawaran_lab) > 0) {
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold">Consultation Package</td>
+                    <td class="pd-5 semi-bold">Consultation Package <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390">
                         <select name="consultation_package" class="form-control form-control-sm change_package select_package" required>
                             <option value="">- Select Consultation Package -</option>
@@ -210,7 +210,7 @@ if (count($list_penawaran_lab) > 0) {
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top">Divisi</td>
+                    <td class="pd-5 semi-bold" valign="top">Divisi <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
                         <input type="hidden" name="nm_divisi" class="nm_divisi" value="<?= $list_penawaran->nm_divisi ?>">
                         <select name="divisi" class="form-control form-control-sm change_divisi select_divisi" required>

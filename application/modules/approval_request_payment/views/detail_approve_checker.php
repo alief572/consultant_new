@@ -139,6 +139,13 @@ if ($tipe == 'Expense') {
 					<textarea name="" id="" class="form-control form-control-sm" readonly><?= $data_spk_penawaran->nm_customer . ', ' . $data_spk_penawaran->id_spk_penawaran . ', ' . $tipe ?></textarea>
 				</td>
 			</tr>
+			<tr>
+				<th class="pd-5 valign-top" width="150">Keterangan</th>
+				<td class="pd-5 valign-top" width="400"><?= $data_kasbon_header->deskripsi ?></td>
+				<th class="pd-5 valign-top" width="150"></th>
+				<td class="pd-5 valign-top" width="400">
+				</td>
+			</tr>
 		</table>
 	</div>
 </div>
