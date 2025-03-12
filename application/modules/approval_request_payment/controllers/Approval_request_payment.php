@@ -334,11 +334,18 @@ class Approval_request_payment extends Admin_Controller
 				$title_expense = 'Expense Others';
 			}
 
+			$this->db->select('a.*');
+			$this->db->from('kons_tr_kasbon_project_header a');
+			$this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id');
+			$this->db->where('b.id', $id);
+			$get_kasbon = $this->db->get()->row();
+
 			$data = [
 				'id' => $id,
 				'id_spk_penawaran' => $id_spk_penawaran,
 				'data_spk_penawaran' => $get_spk_penawaran,
 				'list_expense_detail' => $get_expense_detail,
+				'data_kasbon_header' => $get_kasbon,
 				'tipe' => $tipe,
 				'title_expense' => $title_expense,
 				'list_detail_expense_detail' => $list_detail_expense_detail
@@ -481,11 +488,18 @@ class Approval_request_payment extends Admin_Controller
 				$title_expense = 'Expense Others';
 			}
 
+			$this->db->select('a.*');
+			$this->db->from('kons_tr_kasbon_project_header a');
+			$this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id');
+			$this->db->where('b.id', $id);
+			$get_kasbon = $this->db->get()->row();
+
 			$data = [
 				'id' => $id,
 				'id_spk_penawaran' => $id_spk_penawaran,
 				'data_spk_penawaran' => $get_spk_penawaran,
 				'list_expense_detail' => $get_expense_detail,
+				'data_kasbon_header' => $get_kasbon,
 				'tipe' => $tipe,
 				'title_expense' => $title_expense,
 				'list_detail_expense_detail' => $list_detail_expense_detail

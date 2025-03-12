@@ -48,13 +48,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <td class="pd-5" width="390" valign="top">
                         <input type="text" name="" id="" class="form-control form-control-sm" readonly>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Date</td>
+                    <td class="pd-5 semi-bold" valign="top">Date <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
                         <input type="date" name="tgl_quotation" id="" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top">Customer</td>
+                    <td class="pd-5 semi-bold" valign="top">Customer <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
                         <select name="customer" id="" class="form-control form-control-sm change_customer select_customer" required>
                             <option value="">- Select Customer -</option>
@@ -65,7 +65,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Sales</td>
+                    <td class="pd-5 semi-bold" valign="top">Sales <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
                         <select name="marketing" id="" class="form-control form-control-sm select_marketing">
                             <option value="">- Select Sales -</option>
@@ -88,12 +88,12 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top">Informasi Awal</td>
+                    <td class="pd-5 semi-bold" valign="top">Informasi Awal <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
                         <table style="width: 100%;" border="0">
                             <tr>
                                 <td style="padding: 0.2rem;">
-                                    <input type="checkbox" name="check_info_awal_sales" id="" class="check_info_awal_sales"> Sales
+                                    <input type="checkbox" name="check_info_awal_sales" id="" class="check_info_awal_sales"> Sales 
                                 </td>
                                 <td style="padding: 0.2rem;">
                                     <select name="informasi_awal_sales" id="" class="form-control form-control-sm informasi_awal_sales">
@@ -145,7 +145,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top">Consultation Package</td>
+                    <td class="pd-5 semi-bold" valign="top">Consultation Package <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
                         <select name="consultation_package" class="form-control form-control-sm change_package select_package" required>
                             <option value="">- Select Consultation Package -</option>
@@ -162,7 +162,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     </td>
                 </tr>
                 <tr>
-                    <td class="pd-5 semi-bold" valign="top">Divisi</td>
+                    <td class="pd-5 semi-bold" valign="top">Divisi <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
                         <input type="hidden" name="nm_divisi" class="nm_divisi" value="">
                         <select name="divisi" class="form-control form-control-sm change_divisi select_divisi" required>
