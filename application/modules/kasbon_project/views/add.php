@@ -170,6 +170,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -236,6 +237,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -325,6 +327,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -387,6 +390,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'status'
                 },
                 {
+                    data: 'reject_reason'
+                },
+                {
                     data: 'option'
                 }
             ]
@@ -429,6 +435,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'status'
                 },
                 {
+                    data: 'reject_reason'
+                },
+                {
                     data: 'option'
                 }
             ]
@@ -469,6 +478,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'status'
+                },
+                {
+                    data: 'reject_reason'
                 },
                 {
                     data: 'option'

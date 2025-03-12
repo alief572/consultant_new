@@ -572,6 +572,14 @@ class Kasbon_project extends Admin_Controller
             if ($item->sts == '1') {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
+            if($item->sts_reject !== null || $item->sts_reject_manage !== null) {
+                if($item->sts_reject !== null) {
+                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
+                }
+                if($item->sts_reject_manage !== null) {
+                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
+                }
+            }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
@@ -676,6 +684,7 @@ class Kasbon_project extends Admin_Controller
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'total' => number_format($item->grand_total, 2),
                 'status' => $sts,
+                'reject_reason' => $item->reject_reason,
                 'option' => $option
             ];
 
@@ -747,6 +756,15 @@ class Kasbon_project extends Admin_Controller
             }
             if ($item->sts == '1') {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+            }
+
+            if($item->sts_reject !== null || $item->sts_reject_manage !== null) {
+                if($item->sts_reject !== null) {
+                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
+                }
+                if($item->sts_reject_manage !== null) {
+                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
+                }
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
@@ -837,6 +855,7 @@ class Kasbon_project extends Admin_Controller
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'total' => number_format($item->grand_total, 2),
                 'status' => $sts,
+                'reject_reason' => $item->reject_reason,
                 'option' => $option
             ];
 
@@ -909,6 +928,15 @@ class Kasbon_project extends Admin_Controller
             if ($item->sts == '1') {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
+            if($item->sts_reject !== null || $item->sts_reject_manage !== null) {
+                if($item->sts_reject !== null) {
+                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
+                }
+                if($item->sts_reject_manage !== null) {
+                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
+                }
+            }
+
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
@@ -997,6 +1025,7 @@ class Kasbon_project extends Admin_Controller
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
                 'status' => $sts,
+                'reject_reason' => $item->reject_reason,
                 'option' => $option
             ];
 
@@ -3034,6 +3063,8 @@ class Kasbon_project extends Admin_Controller
             print_r($this->db->error($insert_req));
             exit;
         }
+
+        $update_kasbon_header = $this->db->update('kons_tr_kasbon_project_header', ['sts_reject' => null, 'sts_reject_manage' => null, 'reject_reason' => null], ['id_spk_budgeting' => $id_spk_budgeting, 'sts' => null]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
