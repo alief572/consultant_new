@@ -19,6 +19,8 @@ class Penawaran extends Admin_Controller
     protected $managePermission = 'Penawaran.Manage';
     protected $deletePermission = 'Penawaran.Delete';
 
+    protected $is_admin;
+
     public function __construct()
     {
         parent::__construct();
@@ -26,6 +28,8 @@ class Penawaran extends Admin_Controller
         $this->template->page_icon('fa fa-cubes');
         $this->load->library('upload');
         date_default_timezone_set('Asia/Bangkok');
+
+        $this->is_admin = $this->auth->is_admin();
     }
 
     public function index()
@@ -375,7 +379,7 @@ class Penawaran extends Admin_Controller
                 ';
             }
 
-            if ($this->managePermission && $item->sts_quot == '2' && ($item->sts_deal == null || $item->sts_deal == '')) {
+            if ($this->managePermission && $item->sts_quot == '2' && ($item->sts_deal == null || $item->sts_deal == '') && ($this->auth->user_id() == '92' || $this->is_admin)) {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
                         <a href="javascript:void(0);" class="btn btn-sm btn-warning deal_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
