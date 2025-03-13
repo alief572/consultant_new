@@ -767,6 +767,8 @@ class Expense_report_project extends Admin_Controller
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
+        $this->db->join('kons_tr_kasbon_project_header d', 'd.id_spk_budgeting = a.id_spk_budgeting');
+        $this->db->where('d.sts', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
@@ -785,6 +787,8 @@ class Expense_report_project extends Admin_Controller
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
+        $this->db->join('kons_tr_kasbon_project_header d', 'd.id_spk_budgeting = a.id_spk_budgeting');
+        $this->db->where('d.sts', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
@@ -827,7 +831,7 @@ class Expense_report_project extends Admin_Controller
                 $valid_show = 0;
             }
 
-            $no++;
+
 
             $this->db->select('a.*');
             $this->db->from('kons_tr_expense_report_project_header a');
@@ -867,15 +871,25 @@ class Expense_report_project extends Admin_Controller
                 }
             }
 
-            $hasil[] = [
-                'no' => $no,
-                'id_spk_penawaran' => $item->id_spk_penawaran,
-                'nm_customer' => $item->nm_customer,
-                'nm_sales' => ucfirst($item->nm_sales),
-                'nm_project_leader' => ucfirst($item->nm_project_leader),
-                'nm_project' => $item->nama_project,
-                'option' => $option
-            ];
+            $count_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting, 'sts' => 1))->num_rows();
+
+            $this->db->select('a.id as val');
+            $this->db->from('kons_tr_expense_report_project_header a');
+            $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+            $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+            $count_expense = $this->db->get()->num_rows();
+
+
+            $no++;
+                $hasil[] = [
+                    'no' => $no,
+                    'id_spk_penawaran' => $item->id_spk_penawaran,
+                    'nm_customer' => $item->nm_customer,
+                    'nm_sales' => ucfirst($item->nm_sales),
+                    'nm_project_leader' => ucfirst($item->nm_project_leader),
+                    'nm_project' => $item->nama_project,
+                    'option' => $option
+                ];
         }
 
         echo json_encode([
@@ -1558,7 +1572,7 @@ class Expense_report_project extends Admin_Controller
                 $total_kasbon = $item['total_kasbon'];
 
                 $qty_expense = str_replace(',', '', $item['qty_expense']);
-                if($qty_expense < 1) {
+                if ($qty_expense < 1) {
                     $qty_expense = 1;
                 }
                 $nominal_expense = str_replace(',', '', $item['nominal_expense']);
