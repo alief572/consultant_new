@@ -178,12 +178,7 @@ if($tipe == '3') {
             <div class="row">
                 <div class="col-md-6">
                     <table style="width: 100%">
-                        <tr>
-                            <th style="padding: 5px;">Document</th>
-                            <td style="padding: 5px;">
-                                <input type="file" name="kasbon_document" id="" class="form-control form-control-sm">
-                            </td>
-                        </tr>
+                       
                         <tr>
                             <th style="padding: 5px;">Bank</th>
                             <td style="padding: 5px;">
