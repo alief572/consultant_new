@@ -163,31 +163,16 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
         <br><br>
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <table style="width: 100%">
+                    <tr>
+                        <th colspan="4">Informasi Bank Sentral</th>
+                    </tr>
                     <tr>
                         <th style="padding: 5px;">Bank</th>
                         <td style="padding: 5px;">
                             <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>" readonly>
                         </td>
-                    </tr>
-                    <tr>
-                        <th style="padding: 5px;">Bank Number</th>
-                        <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>" readonly>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th style="padding: 5px;">Account Name</th>
-                        <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>" readonly>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="col-md-6">
-                <table style="width: 100%">
-                    <tr>
                         <th style="padding: 5px;">Bukti Pengembalian</th>
                         <td style="padding: 5px;">
                             <input type="file" name="bukti_pengembalian[]" id="" class="form-control form-control-sm" multiple disabled>
@@ -199,6 +184,22 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                             }
                             ?>
                         </td>
+                    </tr>
+                    <tr>
+                        <th style="padding: 5px;">Bank Number</th>
+                        <td style="padding: 5px;">
+                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>" readonly>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th style="padding: 5px;">Account Name</th>
+                        <td style="padding: 5px;">
+                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>" readonly>
+                        </td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 </table>
             </div>
