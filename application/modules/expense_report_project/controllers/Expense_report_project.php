@@ -998,30 +998,30 @@ class Expense_report_project extends Admin_Controller
 
                 if ($check_expense->row()->sts_req == null && $check_expense->row()->sts == null) {
                     $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                        <a href="' . base_url('expense_report_project/edit_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-pencil"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Edit </span>
-                    </div>
-                ';
+                        <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                            <a href="' . base_url('expense_report_project/edit_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
+                                <div class="col-12 dropdown-item">
+                                <b>
+                                    <i class="fa fa-pencil"></i>
+                                </b>
+                                </div>
+                            </a>
+                            <span style="font-weight: 500"> Edit </span>
+                        </div>
+                    ';
 
                     $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                        <a href="javascript:void();" class="btn btn-sm btn-danger del_expense" data-id_kasbon="' . $item->id . '" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-trash"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Delete </span>
-                    </div>
-                ';
+                        <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                            <a href="javascript:void();" class="btn btn-sm btn-danger del_expense" data-id_kasbon="' . $item->id . '" style="color: #000000">
+                                <div class="col-12 dropdown-item">
+                                <b>
+                                    <i class="fa fa-trash"></i>
+                                </b>
+                                </div>
+                            </a>
+                            <span style="font-weight: 500"> Delete </span>
+                        </div>
+                    ';
                 }
             } else {
                 $option .= '
@@ -1192,34 +1192,32 @@ class Expense_report_project extends Admin_Controller
                     </div>
                 ';
 
-                if ($check_expense->row()->sts_req == '0' && $check_expense->row()->sts == '0') {
+                if ($check_expense->row()->sts_req == null && $check_expense->row()->sts == null) {
                     $option .= '
                         <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                            <a href="javascript:void(0);" class="btn btn-sm btn-primary req_approval" style="color: #000000" data-id="' . $item->id . '" title="Request Approval">
+                            <a href="' . base_url('expense_report_project/edit_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
                                 <div class="col-12 dropdown-item">
                                 <b>
-                                    <i class="fa fa-check"></i>
+                                    <i class="fa fa-pencil"></i>
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Req. Approval </span>
+                            <span style="font-weight: 500"> Edit </span>
                         </div>
                     ';
-                }
 
-                if ($check_expense->row()->sts_req == '0' && $check_expense->row()->sts == '0') {
                     $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                        <a href="' . base_url('expense_report_project/edit_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-pencil"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Edit </span>
-                    </div>
-                ';
+                        <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                            <a href="javascript:void();" class="btn btn-sm btn-danger del_expense" data-id_kasbon="' . $item->id . '" style="color: #000000">
+                                <div class="col-12 dropdown-item">
+                                <b>
+                                    <i class="fa fa-trash"></i>
+                                </b>
+                                </div>
+                            </a>
+                            <span style="font-weight: 500"> Delete </span>
+                        </div>
+                    ';
                 }
             } else {
                 $option .= '
@@ -1232,35 +1230,6 @@ class Expense_report_project extends Admin_Controller
                             </div>
                         </a>
                         <span style="font-weight: 500"> Add Expense </span>
-                    </div>
-                ';
-            }
-
-
-            if ($item->sts !== '1' && $item->sts_req !== '1') {
-                $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_kasbon_subcont" style="color: #000000" data-id="' . $item->id . '">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-trash"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Delete </span>
-                    </div>
-                ';
-
-                $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                        <a href="' . base_url('kasbon_project/edit_kasbon_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-pencil"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Edit </span>
                     </div>
                 ';
             }
@@ -1388,34 +1357,32 @@ class Expense_report_project extends Admin_Controller
                     </div>
                 ';
 
-                if ($check_expense->row()->sts_req == '0' && $check_expense->row()->sts == '0') {
+                if ($check_expense->row()->sts_req == null && $check_expense->row()->sts == null) {
                     $option .= '
                         <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                            <a href="javascript:void(0);" class="btn btn-sm btn-primary req_approval" style="color: #000000" data-id="' . $item->id . '" title="Request Approval">
+                            <a href="' . base_url('expense_report_project/edit_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
                                 <div class="col-12 dropdown-item">
                                 <b>
-                                    <i class="fa fa-check"></i>
+                                    <i class="fa fa-pencil"></i>
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Req. Approval </span>
+                            <span style="font-weight: 500"> Edit </span>
                         </div>
                     ';
-                }
 
-                if ($check_expense->row()->sts_req == '0' && $check_expense->row()->sts == '0') {
                     $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                        <a href="' . base_url('expense_report_project/edit_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-pencil"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Edit </span>
-                    </div>
-                ';
+                        <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                            <a href="javascript:void();" class="btn btn-sm btn-danger del_expense" data-id_kasbon="' . $item->id . '" style="color: #000000">
+                                <div class="col-12 dropdown-item">
+                                <b>
+                                    <i class="fa fa-trash"></i>
+                                </b>
+                                </div>
+                            </a>
+                            <span style="font-weight: 500"> Delete </span>
+                        </div>
+                    ';
                 }
             } else {
                 $option .= '
