@@ -374,6 +374,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                         <th class="text-center" width="150">Mandays Subcont</th>
                         <th class="text-center" width="150">Mandays Rate Subcont</th>
                         <th class="text-center" width="200">Price</th>
+                        <th class="text-center" width="200">Description</th>
                     </tr>
                 </thead>
                 <tbody class="list_subcont">
@@ -390,6 +391,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                             echo '<td class="text-center">' . number_format($item->mandays_subcont) . '</td>';
                             echo '<td class="text-right">' . number_format($item->price_subcont, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($item->total_subcont, 2) . '</td>';
+                            echo '<td class="text-left">' . $item->keterangan . '</td>';
                             echo '</tr>';
 
                             $total_mandays_subcont += $item->mandays_subcont;
@@ -402,6 +404,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                     <tr>
                         <td colspan="4" class="text-right">Grand Total</td>
                         <td class="text-right td_grand_total_subcont"><?= number_format($total_activity, 2) ?></td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>

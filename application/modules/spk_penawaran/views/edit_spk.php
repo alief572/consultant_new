@@ -407,6 +407,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                         <th class="text-center" width="150">Mandays Subcont</th>
                         <th class="text-center" width="150">Mandays Rate Subcont</th>
                         <th class="text-center" width="200">Price</th>
+                        <th class="text-center" width="200">Description</th>
                         <th class="text-center" width="100">Option</th>
                     </tr>
                 </thead>
@@ -424,6 +425,9 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                         </td>
                         <td>
                             <input type="text" name="subcont_new_price" id="" class="form-control form-control-sm text-right auto_num" readonly>
+                        </td>
+                        <td>
+                            <textarea class="form-control form-control-sm" name="subcont_description"></textarea>
                         </td>
                         <td class="text-center">
                             <button type="button" class="btn btn-sm btn-success add_new_subcont">
@@ -458,6 +462,10 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                             echo number_format($item->total_subcont, 2);
                             echo '<input type="hidden" name="subcont[' . $no_subcont . '][subcont_new_price]" value="' . $item->total_subcont . '">';
                             echo '</td>';
+                            echo '<td>';
+                            echo $item->keterangan;
+                            echo '<input type="hidden" name="subcont[' . $no_subcont . '][subcont_description]" value="' . $item->keterangan . '">';
+                            echo '</td>';
                             echo '<td class="text-center">';
                             echo '<button type="button" class="btn btn-sm btn-danger del_subcont" title="Delete Subcont" data-no="' . $no_subcont . '"><i class="fa fa-trash"></i></button>';
                             echo '</td>';
@@ -473,7 +481,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                     <tr>
                         <td colspan="4" class="text-right">Grand Total</td>
                         <td class="text-right td_grand_total_subcont"><?= number_format($total_activity, 2) ?></td>
-                        <td></td>
+                        <td colspan="2"></td>
                     </tr>
                 </tbody>
             </table>
@@ -1272,6 +1280,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
         var subcont_mandays = get_num($('input[name="subcont_new_mandays"]').val());
         var subcont_rate = get_num($('input[name="subcont_new_rate"]').val());
         var subcont_price = get_num($('input[name="subcont_new_price"]').val());
+        var subcont_description = $('textarea[name="subcont_description"]').val();
 
         if (subcont_price <= 0) {
             swal({
@@ -1311,6 +1320,11 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
             hasil += '<td class="text-right">';
             hasil += number_format(subcont_price, 2);
             hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new_price]" value="' + subcont_price + '">';
+            hasil += '</td>';
+
+            hasil += '<td>';
+            hasil += subcont_description;
+            hasil += '<input type="hidden" class="form-control form-control-sm" name="subcont[' + no_subcont + '][subcont_description]" value="' + subcont_description + '">';
             hasil += '</td>';
 
             hasil += '<td class="text-center">';

@@ -363,6 +363,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                         <th class="text-center" width="150">Mandays Subcont</th>
                         <th class="text-center" width="150">Mandays Rate Subcont</th>
                         <th class="text-center" width="200">Price</th>
+                        <th class="text-center" width="200">Description</th>
                         <th class="text-center" width="100">Option</th>
                     </tr>
                 </thead>
@@ -381,6 +382,9 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                         <td>
                             <input type="text" name="subcont_new_price" id="" class="form-control form-control-sm text-right auto_num" readonly>
                         </td>
+                        <td>
+                            <textarea class="form-control form-control-sm" name="subcont_description"></textarea>
+                        </td>
                         <td class="text-center">
                             <button type="button" class="btn btn-sm btn-success add_new_subcont">
                                 <i class="fa fa-plus"></i> Add
@@ -393,7 +397,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <tr>
                         <td colspan="4" class="text-right">Grand Total</td>
                         <td class="text-right td_grand_total_subcont">0.00</td>
-                        <td></td>
+                        <td colspan="2"></td>
                     </tr>
                 </tbody>
             </table>
@@ -1003,6 +1007,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         var subcont_mandays = get_num($('input[name="subcont_new_mandays"]').val());
         var subcont_rate = get_num($('input[name="subcont_new_rate"]').val());
         var subcont_price = get_num($('input[name="subcont_new_price"]').val());
+        var subcont_description = $('textarea[name="subcont_description"]').val();
 
         if (subcont_price <= 0) {
             swal({
@@ -1042,6 +1047,11 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
             hasil += '<td class="text-right">';
             hasil += number_format(subcont_price, 2);
             hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new_price]" value="' + subcont_price + '">';
+            hasil += '</td>';
+
+            hasil += '<td>';
+            hasil += subcont_description;
+            hasil += '<input type="hidden" class="form-control form-control-sm" name="subcont[' + no_subcont + '][subcont_description]" value="' + subcont_description + '">';
             hasil += '</td>';
 
             hasil += '<td class="text-center">';
