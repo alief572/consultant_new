@@ -1138,6 +1138,7 @@ class SPK_penawaran extends Admin_Controller
                     'mandays_subcont' => $item['subcont_new_mandays'],
                     'price_subcont' => $item['subcont_new_rate'],
                     'total_subcont' => $item['subcont_new_price'],
+                    'keterangan' => $item['subcont_description'],
                     'dibuat_oleh' => $this->auth->user_id(),
                     'dibuat_tgl' => date('Y-m-d H:i:s')
                 ];
@@ -1381,6 +1382,7 @@ class SPK_penawaran extends Admin_Controller
                     'mandays_subcont' => $item['subcont_new_mandays'],
                     'price_subcont' => $item['subcont_new_rate'],
                     'total_subcont' => $item['subcont_new_price'],
+                    'keterangan' => $item['subcont_description'],
                     'dibuat_oleh' => $this->auth->user_id(),
                     'dibuat_tgl' => date('Y-m-d H:i:s')
                 ];

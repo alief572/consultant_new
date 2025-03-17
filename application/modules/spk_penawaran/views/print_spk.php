@@ -113,6 +113,40 @@
 </table>
 <br><br>
 
+<h3>Detail Subcont</h3>
+<hr>
+<table width="100%" class="table table-bordered" border="1">
+    <thead>
+        <tr>
+            <th class="text-center" width="20">No.</th>
+            <th class="text-center" width="200">Activity Name</th>
+            <th class="text-center" width="150">Mandays Subcont</th>
+            <th class="text-center" width="150">Mandays Rate Subcont</th>
+            <th class="text-center" width="200">Price</th>
+            <th class="text-center" width="200">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+
+        $no_subcont = 1;
+        foreach ($list_spk_penawaran_subcont as $item) {
+            echo '<tr class="tr_list_subcont tr_list_subcont_' . $no_subcont . '">';
+            echo '<td class="text-center">' . $no_subcont . '</td>';
+            echo '<td>' . $item->nm_aktifitas . '</td>';
+            echo '<td class="text-center">' . number_format($item->mandays_subcont) . '</td>';
+            echo '<td class="text-right">' . number_format($item->price_subcont, 2) . '</td>';
+            echo '<td class="text-right">' . number_format($item->total_subcont, 2) . '</td>';
+            echo '<td class="text-left">' . $item->keterangan . '</td>';
+            echo '</tr>';
+
+            $no_subcont++;
+        }
+        ?>
+    </tbody>
+</table>
+<br><br>
+
 <h3>Detail Akomodasi</h3>
 <hr>
 <table width="100%" class="table table-bordered" border="1">
