@@ -44,6 +44,7 @@ if (count($list_penawaran_lab) > 0) {
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 
 <form action="" method="post" class="form-data" enctype="multipart/form-data">
+    <input type="hidden" name="revisi" value="<?= $list_penawaran->revisi ?>">
     <div class="box">
 
         <!-- /.box-header -->

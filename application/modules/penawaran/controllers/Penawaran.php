@@ -433,6 +433,7 @@ class Penawaran extends Admin_Controller
                 'nm_paket' => $nm_paket,
                 'nm_customer' => $nm_customer,
                 'grand_total' => number_format($item->grand_total),
+                'revisi' => $item->revisi,
                 'status_cust' => $status_cust,
                 'status_quot' => $status_quot,
                 'option' => $option
@@ -1063,6 +1064,7 @@ class Penawaran extends Admin_Controller
                 'mandays_rate' => $post['ttl_mandays_rate'],
                 'sts_quot' => 1,
                 'sts_deal' => null,
+                'revisi' => ($post['revisi'] + 1),
                 'updated_by' => $this->auth->user_id(),
                 'updated_date' => date('Y-m-d H:i:s')
             ];
@@ -1081,6 +1083,7 @@ class Penawaran extends Admin_Controller
                 'nilai_disc' => str_replace(',', '', $post['nilai_disc']),
                 'tipe_informasi_awal' => $tipe_info_awal,
                 'detail_informasi_awal' => $detail_info_awal,
+                'revisi' => ($post['revisi'] + 1),
                 'updated_by' => $this->auth->user_id(),
                 'updated_date' => date('Y-m-d H:i:s')
             ];
