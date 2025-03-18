@@ -213,6 +213,7 @@ if (count($list_penawaran_lab) > 0) {
                             }
                         }
                         ?>
+                        <option value="5" <?= ($list_penawaran->id_divisi == 5) ? 'selected' : '' ?>>Kalibrasi</option>
                     </select>
                 </td>
                 <td class="pd-5 semi-bold">Upload PO</td>
