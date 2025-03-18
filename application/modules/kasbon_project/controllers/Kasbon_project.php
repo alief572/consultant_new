@@ -264,7 +264,7 @@ class Kasbon_project extends Admin_Controller
             $this->db->select('a.*');
             $this->db->from('kons_tr_req_kasbon_project a');
             $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
-            // $this->db->where('a.sts', 0);
+            $this->db->where('a.sts', 0);
             $this->db->limit(1, 0);
             $get_req_kasbon = $this->db->get()->row();
 
