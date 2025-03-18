@@ -800,6 +800,7 @@ class Penawaran extends Admin_Controller
         }
 
         $id_penawaran = generateNoPenawaran($employee_code, $tipe_penawaran);
+        $id_history = $this->Penawaran_model->generate_history_id();
 
         $arr_insert = [
             'id_quotation' => $id_penawaran,
@@ -911,6 +912,44 @@ class Penawaran extends Admin_Controller
             print_r('error_insert 1');
             print_r($this->db->last_query());
             exit;
+        } else {
+            $arr_insert_history_penawaran = [
+                'id_history' => $id_history,
+                'id_quotation' => $id_penawaran,
+                'tipe_penawaran' => $tipe_penawaran,
+                'tgl_quotation' => $post['tgl_quotation'],
+                'id_customer' => $post['customer'],
+                'id_marketing' => $post['marketing'],
+                'nm_pic' => $post['pic'],
+                'address' => $post['address'],
+                'id_paket' => $post['consultation_package'],
+                'upload_proposal' => $filenames,
+                'upload_tahapan' => $filenames_tahapan,
+                'upload_po' => $filenames_po,
+                'sts_cust' => $sts_cust,
+                'sts_quot' => 1,
+                'grand_total' => $grand_total,
+                'ppn' => $ppn,
+                'persen_disc' => str_replace(',', '', $post['persen_disc']),
+                'nilai_disc' => str_replace(',', '', $post['nilai_disc']),
+                'tipe_informasi_awal' => $tipe_info_awal,
+                'detail_informasi_awal' => $detail_info_awal,
+                'id_divisi' => $post['divisi'],
+                'nm_divisi' => $post['nm_divisi'],
+                'total_mandays' => $post['ttl_total_mandays'],
+                'mandays_subcont' => $post['ttl_mandays_subcont'],
+                'mandays_tandem' => $post['ttl_mandays_tandem'],
+                'mandays_internal' => $post['ttl_total_mandays'],
+                'mandays_rate' => $post['ttl_mandays_rate'],
+                'input_by' => $this->auth->user_id(),
+                'input_date' => date('Y-m-d H:i:s')
+            ];
+
+            $insert_history_penawaran = $this->db->insert('kons_tr_penawaran_history', $arr_insert_history_penawaran);
+            if(!$insert_history_penawaran) {
+                print_r($this->db->error($insert_history_penawaran));
+                exit;
+            }
         }
         $insert_penawaran_aktifitas = $this->db->insert_batch('kons_tr_penawaran_aktifitas', $arr_insert_act);
         if (!$insert_penawaran_aktifitas) {
@@ -918,7 +957,35 @@ class Penawaran extends Admin_Controller
             print_r('error_insert 2');
             print_r($this->db->error($insert_penawaran_aktifitas));
             exit;
+        } else {
+            if(isset($post['dt_act'])) {
+                $arr_insert_history_act = [];
+                foreach ($post['dt_act'] as $item_act) {
+                    $arr_insert_history_act[] = [
+                        'id_history' => $id_history,
+                        'id_penawaran' => $id_penawaran,
+                        'id_aktifitas' => $item_act['nm_aktifitas'],
+                        'mandays' => str_replace(',', '',  $item_act['mandays']),
+                        'mandays_rate' => str_replace(',', '',  $item_act['mandays_rate']),
+                        'mandays_subcont' => str_replace(',', '',  $item_act['mandays_subcont']),
+                        'mandays_rate_subcont' => str_replace(',', '',  $item_act['mandays_rate_subcont']),
+                        'mandays_tandem' => str_replace(',', '',  $item_act['mandays_tandem']),
+                        'mandays_rate_tandem' => str_replace(',', '',  $item_act['mandays_rate_tandem']),
+                        'harga_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
+                        'total_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
+                        'input_by' => $this->auth->user_id(),
+                        'input_date' => date('Y-m-d H:i:s')
+                    ];
+                }
+
+                $insert_history_act = $this->db->insert_batch('kons_tr_penawaran_aktifitas_history', $arr_insert_history_act);
+                if(!$insert_history_act) {
+                    print_r($this->db->error($insert_history_act));
+                    exit;
+                }
+            }
         }
+
         if (!empty($arr_insert_ako)) {
             $insert_penawaran_akomodasi = $this->db->insert_batch('kons_tr_penawaran_akomodasi', $arr_insert_ako);
             if (!$insert_penawaran_akomodasi) {
@@ -926,8 +993,32 @@ class Penawaran extends Admin_Controller
                 print_r('error_insert 3');
                 print_r($this->db->error($insert_penawaran_aktifitas));
                 exit;
+            } else {
+                if (isset($post['dt_ako'])) {
+                    $arr_insert_history_akomodasi = [];
+                    foreach ($post['dt_ako'] as $item_ako) {
+                        $arr_insert_history_akomodasi[] = [
+                            'id_history' => $id_history,
+                            'id_penawaran' => $id_penawaran,
+                            'id_item' => $item_ako['id_akomodasi'],
+                            'qty' => str_replace(',', '', $item_ako['qty_akomodasi']),
+                            'price_unit' => str_replace(',', '', $item_ako['harga_akomodasi']),
+                            'total' => str_replace(',', '', $item_ako['total_akomodasi']),
+                            'keterangan' => $item_ako['keterangan_akomodasi'],
+                            'input_by' => $this->auth->user_id(),
+                            'input_date' => date('Y-m-d H:i:s')
+                        ];
+                    }
+    
+                    $insert_history_ako = $this->db->insert_batch('kons_tr_penawaran_akomodasi_history', $arr_insert_history_akomodasi);
+                    if(!$insert_history_ako) {
+                        print_r($this->db->error($insert_history_ako));
+                        exit;
+                    }
+                }
             }
         }
+
         if (!empty($arr_insert_oth)) {
             $insert_penawaran_others = $this->db->insert_batch('kons_tr_penawaran_others', $arr_insert_oth);
             if (!$insert_penawaran_others) {
@@ -935,6 +1026,31 @@ class Penawaran extends Admin_Controller
                 print_r('error_insert 4');
                 print_r($this->db->error($insert_penawaran_others));
                 exit;
+            } else {
+                if(isset($post['dt_oth'])) {
+                    $arr_insert_history_others = [];
+                    foreach ($post['dt_oth'] as $item_oth) {
+                        $arr_insert_history_others[] = [
+                            'id_history' => $id_history,
+                            'id_penawaran' => $id_penawaran,
+                            'id_item' => $item_oth['id_others'],
+                            'qty' => str_replace(',', '', $item_oth['qty_others']),
+                            'price_unit' => str_replace(',', '', $item_oth['harga_others']),
+                            'total' => str_replace(',', '', $item_oth['total_others']),
+                            'price_unit_budget' => str_replace(',', '', $item_oth['harga_others_budget']),
+                            'total_budget' => (str_replace(',', '', $item_oth['total_budget_others'])),
+                            'keterangan' => $item_oth['keterangan_others'],
+                            'input_by' => $this->auth->user_id(),
+                            'input_date' => date('Y-m-d H:i:s')
+                        ];
+                    }
+    
+                    $insert_history_oth = $this->db->insert_batch('kons_tr_penawaran_others_history', $arr_insert_history_others);
+                    if(!$insert_history_oth) {
+                        print_r($this->db->error($insert_history_oth));
+                        exit;
+                    }
+                }
             }
         }
         if (!empty($arr_insert_lab)) {
@@ -944,6 +1060,31 @@ class Penawaran extends Admin_Controller
                 print_r('error_insert 4');
                 print_r($this->db->error($insert_penawaran_lab));
                 exit;
+            } else {
+                if(isset($post['dt_lab'])) {
+                    $arr_insert_history_lab = [];
+                    foreach ($post['dt_lab'] as $item_lab) {
+                        $arr_insert_history_lab[] = [
+                            'id_history' => $id_history,
+                            'id_penawaran' => $id_penawaran,
+                            'id_item' => $item_lab['id_lab'],
+                            'qty' => str_replace(',', '', $item_lab['qty_lab']),
+                            'price_unit' => str_replace(',', '', $item_lab['harga_lab']),
+                            'total' => str_replace(',', '', $item_lab['total_lab']),
+                            'price_unit_budget' => str_replace(',', '', $item_lab['harga_lab_budget']),
+                            'total_budget' => (str_replace(',', '', $item_lab['total_lab_budget'])),
+                            'keterangan' => $item_lab['keterangan_lab'],
+                            'input_by' => $this->auth->user_id(),
+                            'input_date' => date('Y-m-d H:i:s')
+                        ];
+                    }
+
+                    $insert_history_lab = $this->db->insert_batch('kons_tr_penawaran_lab_history', $arr_insert_history_lab);
+                    if(!$insert_history_lab) {
+                        print_r($this->db->error($insert_history_lab));
+                        exit;
+                    }
+                }
             }
         }
 

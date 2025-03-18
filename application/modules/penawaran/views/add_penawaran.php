@@ -1458,7 +1458,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             });
                         } else {
                             swal({
-                                type: 'failed',
+                                type: 'warning',
                                 title: 'Failed !',
                                 text: result.msg
                             });
