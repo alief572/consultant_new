@@ -1274,7 +1274,7 @@ class Penawaran extends Admin_Controller
                 exit;
             }
         } else {
-            if ($post['dt_oth']) {
+            if (isset($post['dt_oth'])) {
                 $arr_insert_history_others = [];
                 foreach ($post['dt_oth'] as $item_oth) {
                     $arr_insert_history_others[] = [
@@ -1305,7 +1305,7 @@ class Penawaran extends Admin_Controller
                 exit;
             }
         } else {
-            if ($post['dt_lab']) {
+            if (isset($post['dt_lab'])) {
                 $arr_insert_history_lab = [];
                 foreach ($post['dt_lab'] as $item_lab) {
                     $arr_insert_lab[] = [
