@@ -41,6 +41,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <th align="center">Package</th>
                     <th align="center">Customer</th>
                     <th align="center">Grand Total</th>
+                    <th align="center">Revisi</th>
                     <th align="center">Status Cust.</th>
                     <th align="center">Status Quot.</th>
                     <th align="center">Action</th>
@@ -194,6 +195,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 },
                 {
                     data: 'grand_total'
+                },
+                {
+                    data: 'revisi'
                 },
                 {
                     data: 'status_cust'
