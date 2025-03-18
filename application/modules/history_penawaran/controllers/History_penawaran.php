@@ -41,38 +41,35 @@ class History_penawaran extends Admin_Controller
         $this->template->render('index');
     }
 
-    public function view_penawaran($id_penawaran)
+    public function view_penawaran($id_history)
     {
-        $id_penawaran = urldecode($id_penawaran);
-        $id_penawaran = str_replace('|', '/', $id_penawaran);
-
-        $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $id_penawaran])->row();
+        $get_penawaran = $this->db->get_where('kons_tr_penawaran_history', ['id_history' => $id_history])->row();
 
         $this->db->select('a.*, b.nm_aktifitas as nama_aktifitas, COUNT(c.id_chk_point) AS jml_check_point');
-        $this->db->from('kons_tr_penawaran_aktifitas a');
+        $this->db->from('kons_tr_penawaran_aktifitas_history a');
         $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
         $this->db->join('kons_master_check_point c', 'c.id_aktifitas = a.id_aktifitas', 'left');
-        $this->db->where('a.id_penawaran', $id_penawaran);
+        $this->db->where('a.id_history', $id_history);
         $this->db->group_by('a.id');
         $this->db->order_by('a.id', 'asc');
         $get_penawaran_aktifitas = $this->db->get()->result();
 
         $this->db->select('a.*, b.nm_biaya');
-        $this->db->from('kons_tr_penawaran_akomodasi a');
+        $this->db->from('kons_tr_penawaran_akomodasi_history a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
-        $this->db->where('a.id_penawaran', $id_penawaran);
+        $this->db->where('a.id_history', $id_history);
         $get_penawaran_akomodasi = $this->db->get()->result();
 
         $this->db->select('a.*, b.nm_biaya');
-        $this->db->from('kons_tr_penawaran_others a');
+        $this->db->from('kons_tr_penawaran_others_history a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
-        $this->db->where('a.id_penawaran', $id_penawaran);
+        $this->db->where('a.id_history', $id_history);
         $get_penawaran_others = $this->db->get()->result();
 
         $this->db->select('a.*, b.isu_lingkungan');
-        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->from('kons_tr_penawaran_lab_history a');
         $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
-        $this->db->where('a.id_penawaran', $id_penawaran);
+        $this->db->where('a.id_history', $id_history);
         $get_penawaran_lab = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -155,7 +152,7 @@ class History_penawaran extends Admin_Controller
             $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
             $this->db->group_end();
         }
-        $this->db->group_by('a.id_quotation');
+        $this->db->group_by('a.id_history');
         $this->db->order_by('a.input_date', 'desc');
         $this->db->limit($length, $start);
 
@@ -179,7 +176,7 @@ class History_penawaran extends Admin_Controller
             $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
             $this->db->group_end();
         }
-        $this->db->group_by('a.id_quotation');
+        $this->db->group_by('a.id_history');
 
         $get_data_all = $this->db->get();
 
@@ -188,7 +185,7 @@ class History_penawaran extends Admin_Controller
         $no = ($start + 1);
         foreach ($get_data->result() as $item) {
 
-            $option = '<a href="'.base_url('history_penawaran/view_penawaran/'. urlencode(str_replace('/', '|', $item->id_quotation))).'" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-eye"></i></a>';
+            $option = '<a href="'.base_url('history_penawaran/view_penawaran/'. $item->id_history) .'" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-eye"></i></a>';
 
 
             // $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
