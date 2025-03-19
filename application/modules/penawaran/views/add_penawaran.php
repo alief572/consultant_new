@@ -611,7 +611,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         foreach ($list_aktifitas as $item) {
         ?>
 
-            hasil += '<option value="<?= $item->id_aktifitas ?>"><?= str_replace("'", "", $item->nm_aktifitas) ?></option>';
+            hasil += '<option value="<?= $item->id_aktifitas ?>"><?= str_replace("'", "", str_replace(["\r\n", "\r", "\n"], '', $item->nm_aktifitas)) ?></option>';
 
         <?php
         }
