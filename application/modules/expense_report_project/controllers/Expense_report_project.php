@@ -1566,6 +1566,21 @@ class Expense_report_project extends Admin_Controller
             }
         }
 
+        // $data_insert_header = [
+        //     'id' => $id,
+        //     'id_header' => $post['id_header'],
+        //     'total_expense_report' => $ttl_expense_report,
+        //     'total_kasbon' => $ttl_kasbon,
+        //     'selisih' => ($ttl_kasbon - $ttl_expense_report),
+        //     'tipe' => $post['tipe'],
+        //     'document_link' => $upload_po,
+        //     'bank' => $post['kasbon_bank'],
+        //     'bank_number' => $post['kasbon_bank_number'],
+        //     'bank_account' => $post['kasbon_bank_account'],
+        //     'created_by' => $this->auth->user_id(),
+        //     'created_date' => date('Y-m-d H:i:s')
+        // ];
+
         $data_insert_header = [
             'id' => $id,
             'id_header' => $post['id_header'],
@@ -1574,9 +1589,6 @@ class Expense_report_project extends Admin_Controller
             'selisih' => ($ttl_kasbon - $ttl_expense_report),
             'tipe' => $post['tipe'],
             'document_link' => $upload_po,
-            'bank' => $post['kasbon_bank'],
-            'bank_number' => $post['kasbon_bank_number'],
-            'bank_account' => $post['kasbon_bank_account'],
             'created_by' => $this->auth->user_id(),
             'created_date' => date('Y-m-d H:i:s')
         ];
@@ -1734,27 +1746,45 @@ class Expense_report_project extends Admin_Controller
             $this->db->delete('kons_tr_expense_report_bukti_pengembalian', ['id_header_expense' => $post['id_expense']]);
         }
 
+        // $data_insert_header = [
+        //     'total_expense_report' => $ttl_expense_report,
+        //     'total_kasbon' => $ttl_kasbon,
+        //     'selisih' => ($ttl_kasbon - $ttl_expense_report),
+        //     'tipe' => $post['tipe'],
+        //     'document_link' => $upload_po,
+        //     'bank' => $post['kasbon_bank'],
+        //     'bank_number' => $post['kasbon_bank_number'],
+        //     'bank_account' => $post['kasbon_bank_account'],
+        //     'updated_by' => $this->auth->user_id(),
+        //     'updated_date' => date('Y-m-d H:i:s')
+        // ];
         $data_insert_header = [
             'total_expense_report' => $ttl_expense_report,
             'total_kasbon' => $ttl_kasbon,
             'selisih' => ($ttl_kasbon - $ttl_expense_report),
             'tipe' => $post['tipe'],
             'document_link' => $upload_po,
-            'bank' => $post['kasbon_bank'],
-            'bank_number' => $post['kasbon_bank_number'],
-            'bank_account' => $post['kasbon_bank_account'],
             'updated_by' => $this->auth->user_id(),
             'updated_date' => date('Y-m-d H:i:s')
         ];
         if (empty($upload_po)) {
+            // $data_insert_header = [
+            //     'total_expense_report' => $ttl_expense_report,
+            //     'total_kasbon' => $ttl_kasbon,
+            //     'selisih' => ($ttl_kasbon - $ttl_expense_report),
+            //     'tipe' => $post['tipe'],
+            //     'bank' => $post['kasbon_bank'],
+            //     'bank_number' => $post['kasbon_bank_number'],
+            //     'bank_account' => $post['kasbon_bank_account'],
+            //     'updated_by' => $this->auth->user_id(),
+            //     'updated_date' => date('Y-m-d H:i:s')
+            // ];
+
             $data_insert_header = [
                 'total_expense_report' => $ttl_expense_report,
                 'total_kasbon' => $ttl_kasbon,
                 'selisih' => ($ttl_kasbon - $ttl_expense_report),
                 'tipe' => $post['tipe'],
-                'bank' => $post['kasbon_bank'],
-                'bank_number' => $post['kasbon_bank_number'],
-                'bank_account' => $post['kasbon_bank_account'],
                 'updated_by' => $this->auth->user_id(),
                 'updated_date' => date('Y-m-d H:i:s')
             ];
