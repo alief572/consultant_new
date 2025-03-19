@@ -572,11 +572,11 @@ class Kasbon_project extends Admin_Controller
             if ($item->sts == '1') {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
-            if($item->sts_reject !== null || $item->sts_reject_manage !== null) {
-                if($item->sts_reject !== null) {
+            if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
+                if ($item->sts_reject !== null) {
                     $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
                 }
-                if($item->sts_reject_manage !== null) {
+                if ($item->sts_reject_manage !== null) {
                     $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
                 }
             }
@@ -758,11 +758,11 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
 
-            if($item->sts_reject !== null || $item->sts_reject_manage !== null) {
-                if($item->sts_reject !== null) {
+            if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
+                if ($item->sts_reject !== null) {
                     $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
                 }
-                if($item->sts_reject_manage !== null) {
+                if ($item->sts_reject_manage !== null) {
                     $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
                 }
             }
@@ -928,11 +928,11 @@ class Kasbon_project extends Admin_Controller
             if ($item->sts == '1') {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
-            if($item->sts_reject !== null || $item->sts_reject_manage !== null) {
-                if($item->sts_reject !== null) {
+            if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
+                if ($item->sts_reject !== null) {
                     $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
                 }
-                if($item->sts_reject_manage !== null) {
+                if ($item->sts_reject_manage !== null) {
                     $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
                 }
             }
@@ -1212,10 +1212,10 @@ class Kasbon_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_kasbon_subcont = $this->db->get()->result();
 
-        $nilai_kasbon_on_proses = 0;
+        $nilai_kasbon_aktual = 0;
         foreach ($get_kasbon_subcont as $item) {
             if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses += $item->total_pengajuan;
+                $nilai_kasbon_aktual += $item->total_pengajuan;
             }
         }
 
@@ -1224,10 +1224,10 @@ class Kasbon_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_kasbon_akomodasi = $this->db->get()->result();
 
-        $nilai_kasbon_on_proses_akomodasi = 0;
+        $nilai_kasbon_aktual_akomodasi = 0;
         foreach ($get_kasbon_akomodasi as $item) {
             if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses_akomodasi += $item->total_pengajuan;
+                $nilai_kasbon_aktual_akomodasi += $item->total_pengajuan;
             }
         }
 
@@ -1236,10 +1236,10 @@ class Kasbon_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_kasbon_others = $this->db->get()->result();
 
-        $nilai_kasbon_on_proses_others = 0;
+        $nilai_kasbon_aktual_others = 0;
         foreach ($get_kasbon_others as $item) {
             if ($item->sts !== '1') {
-                $nilai_kasbon_on_proses_others += $item->total_pengajuan;
+                $nilai_kasbon_aktual_others += $item->total_pengajuan;
             }
         }
 
@@ -1251,9 +1251,9 @@ class Kasbon_project extends Admin_Controller
             'budget_akomodasi' => $budget_akomodasi,
             'budget_others' => $budget_others,
             'list_kasbon_subcont' => $get_kasbon_subcont,
-            'nilai_kasbon_on_proses' => $nilai_kasbon_on_proses,
-            'nilai_kasbon_on_proses_akomodasi' => $nilai_kasbon_on_proses_akomodasi,
-            'nilai_kasbon_on_proses_others' => $nilai_kasbon_on_proses_others
+            'nilai_kasbon_aktual' => $nilai_kasbon_aktual,
+            'nilai_kasbon_aktual_akomodasi' => $nilai_kasbon_aktual_akomodasi,
+            'nilai_kasbon_aktual_others' => $nilai_kasbon_aktual_others
         ];
 
         $this->template->set($data);
@@ -2839,13 +2839,40 @@ class Kasbon_project extends Admin_Controller
     {
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
 
+        $nilai_budget_subcont = 0;
+        $nilai_budget_akomodasi = 0;
+        $nilai_budget_others = 0;
+
+        $this->db->select('a.total_aktifitas_final');
+        $this->db->from('kons_tr_spk_budgeting_aktifitas a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_subcont = $this->db->get()->result();
+
+        $this->db->select('a.total_final');
+        $this->db->from('kons_tr_spk_budgeting_akomodasi a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_akomodasi = $this->db->get()->result();
+
+        $this->db->select('a.total_final');
+        $this->db->from('kons_tr_spk_budgeting_others a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_others = $this->db->get()->result();
+
+        foreach ($get_budget_subcont as $item_subcont) :
+            $nilai_budget_subcont += $item_subcont->total_aktifitas_final;
+        endforeach;
+
+        foreach ($get_budget_akomodasi as $item_akomodasi) :
+            $nilai_budget_akomodasi += $item_akomodasi->total_final;
+        endforeach;
+
+        foreach ($get_budget_others as $item_others) :
+            $nilai_budget_others += $item_others->total_final;
+        endforeach;
+
         $nilai_budget_subcont_on_process = 0;
         $nilai_budget_akomodasi_on_process = 0;
         $nilai_budget_others_on_process = 0;
-
-        // $get_nilai_budget_subcont_on_process = $this->db->get_where('kons_tr_kasbon_project_subcont', ['id_spk_budgeting' => $id_spk_budgeting, 'sts <>' => 1])->result();
-        // $get_nilai_budget_akomodasi_on_process = $this->db->get_where('kons_tr_kasbon_project_akomodasi', ['id_spk_budgeting' => $id_spk_budgeting, 'sts <>' => 1])->result();
-        // $get_nilai_budget_others_on_process = $this->db->get_where('kons_tr_kasbon_project_others', ['id_spk_budgeting' => $id_spk_budgeting, 'sts <>' => 1])->result();
 
         $this->db->select('a.total_pengajuan');
         $this->db->from('kons_tr_kasbon_project_subcont a');
@@ -2876,9 +2903,12 @@ class Kasbon_project extends Admin_Controller
         }
 
         echo json_encode([
-            'nilai_budget_subcont' => $nilai_budget_subcont_on_process,
-            'nilai_budget_akomodasi' => $nilai_budget_akomodasi_on_process,
-            'nilai_budget_others' => $nilai_budget_others_on_process
+            'nilai_budget_subcont' => $nilai_budget_subcont,
+            'nilai_budget_akomodasi' => $nilai_budget_akomodasi,
+            'nilai_budget_others' => $nilai_budget_others,
+            'nilai_budget_subcont_aktual' => $nilai_budget_subcont_on_process,
+            'nilai_budget_akomodasi_aktual' => $nilai_budget_akomodasi_on_process,
+            'nilai_budget_others_aktual' => $nilai_budget_others_on_process
         ]);
     }
 

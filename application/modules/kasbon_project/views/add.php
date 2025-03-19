@@ -142,12 +142,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>On Process</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_subcont_on_process">Rp. <?= number_format($nilai_kasbon_on_proses) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_subcont_aktual">Rp. <?= number_format($nilai_kasbon_aktual) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_subcont_sisa">Rp. <?= number_format($budget_subcont - $nilai_kasbon_aktual) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -209,12 +225,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>On Process</h4>
+                                    <h4>Aktual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_akomodasi_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_akomodasi) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_akomodasi_aktual">Rp. <?= number_format($nilai_kasbon_aktual_akomodasi) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_akomodasi_sisa">Rp. <?= number_format($budget_akomodasi - $nilai_kasbon_aktual_akomodasi) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -299,12 +331,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>On Process</h4>
+                                    <h4>Aktual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_others_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_others) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_others_aktual">Rp. <?= number_format($nilai_kasbon_aktual_others) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_others_sisa">Rp. <?= number_format($budget_others - $nilai_kasbon_aktual_others) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -561,9 +609,14 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             cache: false,
             dataType: 'json',
             success: function(result) {
-                $('.budget_subcont_on_process').html('Rp. ' + number_format(result.nilai_budget_subcont));
-                $('.budget_akomodasi_on_process').html('Rp. ' + number_format(result.nilai_budget_akomodasi));
-                $('.budget_others_on_process').html('Rp. ' + number_format(result.nilai_budget_others));
+                $('.budget_subcont_aktual').html('Rp. ' + number_format(result.nilai_budget_subcont_aktual));
+                $('.budget_subcont_sisa').html('Rp. ' + number_format(result.nilai_budget_subcont - result.nilai_budget_subcont_aktual));
+
+                $('.budget_akomodasi_aktual').html('Rp. ' + number_format(result.nilai_budget_akomodasi_aktual));
+                $('.budget_akomodasi_sisa').html('Rp. ' + number_format(result.nilai_budget_akomodasi - result.nilai_budget_akomodasi_aktual));
+
+                $('.budget_others_aktual').html('Rp. ' + number_format(result.nilai_budget_others_aktual));
+                $('.budget_others_sisa').html('Rp. ' + number_format(result.nilai_budget_others - result.nilai_budget_others_aktual));
             },
             error: function(result) {
 
