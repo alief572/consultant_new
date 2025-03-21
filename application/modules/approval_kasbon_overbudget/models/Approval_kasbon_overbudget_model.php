@@ -69,6 +69,29 @@ class Approval_kasbon_overbudget_model extends BF_Model
                             a.id_penawaran LIKE "%' . $search['value'] . '%" OR
                             b.nm_customer LIKE "%' . $search['value'] . '%"
                         )
+                    
+                    UNION ALL
+
+                    SELECT
+                        a.id_request_ovb as id_request_ovb, 
+                        a.id_spk_budgeting as id_spk_budgeting,
+                        a.id_spk_penawaran as id_spk_penawaran,
+                        a.sts as sts,
+                        a.id_penawaran as id_penawaran,
+                        b.nm_customer as nama_customer,
+                        SUM(c.pengajuan_budget) as nominal,
+                        "3" as tipe
+                    FROM
+                        kons_tr_kasbon_req_ovb_others_header a
+                        LEFT JOIN kons_tr_spk_penawaran b ON b.id_spk_penawaran = a.id_spk_penawaran
+                        LEFT JOIN kons_tr_kasbon_req_ovb_others_detail c ON c.id_request_ovb = a.id_request_ovb
+                    WHERE
+                        a.sts IS NULL AND (
+                            a.id_spk_budgeting LIKE "%' . $search['value'] . '%" OR
+                            a.id_spk_penawaran LIKE "%' . $search['value'] . '%" OR
+                            a.id_penawaran LIKE "%' . $search['value'] . '%" OR
+                            b.nm_customer LIKE "%' . $search['value'] . '%"
+                        )
             ) z
              WHERE
                 z.id_request_ovb IS NOT NULL AND
