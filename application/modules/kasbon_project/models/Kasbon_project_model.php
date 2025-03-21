@@ -68,4 +68,18 @@ class Kasbon_project_model extends BF_Model
 
         return $kode_trans;
     }
+
+    public function generate_id_req_ovb_subcont()
+    {
+        $Ym             = date('ym');
+        $srcMtr            = "SELECT MAX(id_request_ovb) as maxP FROM kons_tr_kasbon_req_ovb_subcont_header WHERE id_request_ovb LIKE '%/REQ/OVB/S/" . date('Y') . "%' ";
+        $resultMtr        = $this->db->query($srcMtr)->result_array();
+        $angkaUrut2        = $resultMtr[0]['maxP'];
+        $urutan2        = (int)substr($angkaUrut2, 0, 4);
+        $urutan2++;
+        $urut2            = sprintf('%04s', $urutan2);
+        $kode_trans        = $urut2 . '/REQ/OVB/S/' . date('Y');
+
+        return $kode_trans;
+    }
 }

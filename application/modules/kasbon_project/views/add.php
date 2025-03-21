@@ -194,6 +194,29 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
             </tbody>
         </table>
+
+        <br><br>
+
+        <h4 style="font-weight: 800;">
+            Overbudget Subcont
+        </h4>
+        <a href="<?= base_url('kasbon_project/add_request_budget_subcont/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Overbudget
+        </a>
+        <table class="table custom-table mt-5" id="table_ovb_subcont" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">ID Request</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -400,6 +423,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         DataTables_kasbon_akomodasi();
         DataTables_kasbon_others();
         DataTables_ovb_akomodasi();
+        DataTables_ovb_subcont();
     });
 
     function DataTables_kasbon_subcont(view = null) {
@@ -547,6 +571,42 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             serverSide: true,
             ajax: {
                 url: siteurl + active_controller + 'get_data_ovb_akomodasi',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_request_ovb'
+                },
+                {
+                    data: 'amount'
+                },
+                {
+                    data: 'sts'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
+    function DataTables_ovb_subcont(view = null) {
+        var dataTables_ovb_akomodasi = $('#table_ovb_subcont').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_ovb_akomodasi.destroy();
+        dataTables_ovb_akomodasi = $('#table_ovb_subcont').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_ovb_subcont',
                 type: "POST",
                 dataType: "JSON",
                 data: function(d) {
