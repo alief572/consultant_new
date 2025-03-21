@@ -15,44 +15,130 @@ class Approval_kasbon_overbudget_model extends BF_Model
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.id_request_ovb, a.id_spk_budgeting, a.id_spk_penawaran, a.sts, a.id_penawaran, b.nm_customer as nama_customer, SUM(c.pengajuan_budget) as nominal');
-        $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_header a');
-        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran');
-        $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_detail c', 'c.id_request_ovb = a.id_request_ovb');
-        $this->db->where('a.sts', null);
-        $this->db->or_where('a.sts', 2);
-        if (!empty($search)) {
-            $this->db->group_start();
-            $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
-            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
-            $this->db->or_like('a.id_penawaran', $search['value'], 'both');
-            $this->db->or_like('b.nm_customer', $search['value'], 'both');
-            $this->db->group_end();
-        }
-        $this->db->group_by('a.id_request_ovb');
-        $this->db->order_by('a.id_request_ovb', 'desc');
-        $this->db->limit($length, $start);
+        $query_get_data = '
+            SELECT
+                z.id_request_ovb,
+                z.id_spk_budgeting,
+                z.id_spk_penawaran,
+                z.sts,
+                z.id_penawaran,
+                z.nama_customer,
+                z.nominal,
+                z.tipe
+            FROM (
+                    SELECT
+                        a.id_request_ovb as id_request_ovb, 
+                        a.id_spk_budgeting as id_spk_budgeting,
+                        a.id_spk_penawaran as id_spk_penawaran,
+                        a.sts as sts,
+                        a.id_penawaran as id_penawaran,
+                        b.nm_customer as nama_customer,
+                        SUM(c.pengajuan_budget) as nominal,
+                        "2" as tipe
+                    FROM
+                        kons_tr_kasbon_req_ovb_akomodasi_header a
+                        LEFT JOIN kons_tr_spk_penawaran b ON b.id_spk_penawaran = a.id_spk_penawaran
+                        LEFT JOIN kons_tr_kasbon_req_ovb_akomodasi_detail c ON c.id_request_ovb = a.id_request_ovb
+                    WHERE
+                        a.sts IS NULL AND (
+                            a.id_spk_budgeting LIKE "%' . $search['value'] . '%" OR
+                            a.id_spk_penawaran LIKE "%' . $search['value'] . '%" OR
+                            a.id_penawaran LIKE "%' . $search['value'] . '%" OR
+                            b.nm_customer LIKE "%' . $search['value'] . '%"
+                        )
+                    
+                    UNION ALL
 
-        $get_data = $this->db->get();
+                    SELECT
+                        a.id_request_ovb as id_request_ovb, 
+                        a.id_spk_budgeting as id_spk_budgeting,
+                        a.id_spk_penawaran as id_spk_penawaran,
+                        a.sts as sts,
+                        a.id_penawaran as id_penawaran,
+                        b.nm_customer as nama_customer,
+                        SUM(c.pengajuan_budget) as nominal,
+                        "1" as tipe
+                    FROM
+                        kons_tr_kasbon_req_ovb_subcont_header a
+                        LEFT JOIN kons_tr_spk_penawaran b ON b.id_spk_penawaran = a.id_spk_penawaran
+                        LEFT JOIN kons_tr_kasbon_req_ovb_subcont_detail c ON c.id_request_ovb = a.id_request_ovb
+                    WHERE
+                        a.sts IS NULL AND (
+                            a.id_spk_budgeting LIKE "%' . $search['value'] . '%" OR
+                            a.id_spk_penawaran LIKE "%' . $search['value'] . '%" OR
+                            a.id_penawaran LIKE "%' . $search['value'] . '%" OR
+                            b.nm_customer LIKE "%' . $search['value'] . '%"
+                        )
+            ) z
+             WHERE
+                z.id_request_ovb IS NOT NULL AND
+                z.id_request_ovb <> ""
+             GROUP BY z.id_request_ovb
+             ORDER BY z.id_request_ovb DESC
+             LIMIT ' . $length . ' OFFSET ' . $start;
+        $get_data = $this->db->query($query_get_data);
 
-        $this->db->select('a.id_request_ovb, a.id_spk_budgeting, a.id_spk_penawaran, a.sts, a.id_penawaran, b.nm_customer as nama_customer, SUM(c.pengajuan_budget) as nominal');
-        $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_header a');
-        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran');
-        $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_detail c', 'c.id_request_ovb = a.id_request_ovb');
-        $this->db->where('a.sts', null);
-        $this->db->or_where('a.sts', 2);
-        if (!empty($search)) {
-            $this->db->group_start();
-            $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
-            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
-            $this->db->or_like('a.id_penawaran', $search['value'], 'both');
-            $this->db->or_like('b.nm_customer', $search['value'], 'both');
-            $this->db->group_end();
-        }
-        $this->db->group_by('a.id_request_ovb');
-        $this->db->order_by('a.id_request_ovb', 'desc');
+        $query_get_data_all = '
+            SELECT
+                z.id_request_ovb,
+                z.id_spk_budgeting,
+                z.id_spk_penawaran,
+                z.sts,
+                z.id_penawaran,
+                z.nama_customer,
+                z.nominal,
+                z.tipe
+            FROM (
+                    SELECT
+                        a.id_request_ovb as id_request_ovb, 
+                        a.id_spk_budgeting as id_spk_budgeting,
+                        a.id_spk_penawaran as id_spk_penawaran,
+                        a.sts as sts,
+                        a.id_penawaran as id_penawaran,
+                        b.nm_customer as nama_customer,
+                        SUM(c.pengajuan_budget) as nominal,
+                        "2" as tipe
+                    FROM
+                        kons_tr_kasbon_req_ovb_akomodasi_header a
+                        LEFT JOIN kons_tr_spk_penawaran b ON b.id_spk_penawaran = a.id_spk_penawaran
+                        LEFT JOIN kons_tr_kasbon_req_ovb_akomodasi_detail c ON c.id_request_ovb = a.id_request_ovb
+                    WHERE
+                        a.sts IS NULL AND (
+                            a.id_spk_budgeting LIKE "%' . $search['value'] . '%" OR
+                            a.id_spk_penawaran LIKE "%' . $search['value'] . '%" OR
+                            a.id_penawaran LIKE "%' . $search['value'] . '%" OR
+                            b.nm_customer LIKE "%' . $search['value'] . '%"
+                        )
+                    
+                    UNION ALL
 
-        $get_data_all = $this->db->get();
+                    SELECT
+                        a.id_request_ovb as id_request_ovb, 
+                        a.id_spk_budgeting as id_spk_budgeting,
+                        a.id_spk_penawaran as id_spk_penawaran,
+                        a.sts as sts,
+                        a.id_penawaran as id_penawaran,
+                        b.nm_customer as nama_customer,
+                        SUM(c.pengajuan_budget) as nominal,
+                        "1" as tipe
+                    FROM
+                        kons_tr_kasbon_req_ovb_subcont_header a
+                        LEFT JOIN kons_tr_spk_penawaran b ON b.id_spk_penawaran = a.id_spk_penawaran
+                        LEFT JOIN kons_tr_kasbon_req_ovb_subcont_detail c ON c.id_request_ovb = a.id_request_ovb
+                    WHERE
+                        a.sts IS NULL AND (
+                            a.id_spk_budgeting LIKE "%' . $search['value'] . '%" OR
+                            a.id_spk_penawaran LIKE "%' . $search['value'] . '%" OR
+                            a.id_penawaran LIKE "%' . $search['value'] . '%" OR
+                            b.nm_customer LIKE "%' . $search['value'] . '%"
+                        )
+            ) z
+             WHERE
+                z.id_request_ovb IS NOT NULL AND
+                z.id_request_ovb <> ""
+             GROUP BY z.id_request_ovb
+             ORDER BY z.id_request_ovb DESC';
+        $get_data_all = $this->db->query($query_get_data_all);
 
         $hasil = array();
 
@@ -60,17 +146,17 @@ class Approval_kasbon_overbudget_model extends BF_Model
         foreach ($get_data->result_array() as $item) {
             $no++;
 
-            $view = '<button type"button" class="btn btn-sm btn-info detail" data-id="' . $item['id_request_ovb'] . '" data-tipe="2" title="View Overbudget"><i class="fa fa-eye"></i></button>';
+            $view = '<button type"button" class="btn btn-sm btn-info detail" data-id="' . $item['id_request_ovb'] . '" data-tipe="'.$item['tipe'].'" title="View Overbudget"><i class="fa fa-eye"></i></button>';
 
-            $approval = '<button type="button" class="btn btn-sm btn-success approval" data-id="' . $item['id_request_ovb'] . '" data-tipe="2" title="Approve Overbudget"><i class="fa fa-check"></i></button>';
+            $approval = '<button type="button" class="btn btn-sm btn-success approval" data-id="' . $item['id_request_ovb'] . '" data-tipe="' . $item['tipe'] . '" title="Approve Overbudget"><i class="fa fa-check"></i></button>';
 
             $option = $view . ' ' . $approval;
 
             $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-            if($item['sts'] == 1) {
+            if ($item['sts'] == 1) {
                 $status = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
-            if($item['sts'] == 2) {
+            if ($item['sts'] == 2) {
                 $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
             }
 

@@ -103,14 +103,14 @@ class Approval_kasbon_project extends Admin_Controller
 
             $keterangan = (!empty($get_header_kasbon)) ? $get_header_kasbon->deskripsi : '';
             $tipe = '';
-            if(!empty($get_header_kasbon)) {
-                if($get_header_kasbon->tipe == '1') {
+            if (!empty($get_header_kasbon)) {
+                if ($get_header_kasbon->tipe == '1') {
                     $tipe = 'Subcont';
                 }
-                if($get_header_kasbon->tipe == '2') {
+                if ($get_header_kasbon->tipe == '2') {
                     $tipe = 'Akomodasi';
                 }
-                if($get_header_kasbon->tipe == '3') {
+                if ($get_header_kasbon->tipe == '3') {
                     $tipe = 'Others';
                 }
             }
@@ -186,6 +186,21 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->where('c.sts', null);
         $get_ovb_akomodasi = $this->db->get()->result();
 
+        $this->db->select('a.id_aktifitas, a.qty_budget_tambahan, a.budget_tambahan, a.pengajuan_budget');
+        $this->db->from('kons_tr_kasbon_req_ovb_subcont_detail a');
+        $this->db->join('kons_tr_kasbon_req_ovb_subcont_header b', 'b.id_request_ovb = a.id_request_ovb', 'left');
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts', '1');
+        $get_ovb_subcont = $this->db->get()->result();
+
+        foreach ($get_ovb_subcont as $item_ovb_subcont) :
+            $data_overbudget_subcont[$item_ovb_subcont->id_aktifitas] = [
+                'qty_budget_tambahan' => $item_ovb_subcont->qty_budget_tambahan,
+                'budget_tambahan' => $item_ovb_subcont->budget_tambahan,
+                'pengajuan_budget' => $item_ovb_subcont->pengajuan_budget
+            ];
+        endforeach;
+
         $data = [
             'id_kasbon' => $id_kasbon,
             'id_spk_budgeting' => $id_spk_budgeting,
@@ -194,7 +209,8 @@ class Approval_kasbon_project extends Admin_Controller
             'list_kasbon_subcont' => $get_kasbon_subcont,
             'list_kasbon_akomodasi' => $get_kasbon_akomodasi,
             'list_kasbon_others' => $get_kasbon_others,
-            'list_ovb_akomodasi' => $get_ovb_akomodasi
+            'list_ovb_akomodasi' => $get_ovb_akomodasi,
+            'data_overbudget_subcont' => $data_overbudget_subcont
         ];
 
         $this->template->set($data);
@@ -239,7 +255,7 @@ class Approval_kasbon_project extends Admin_Controller
         $id_kasbon = $this->input->post('id_kasbon');
 
         $get_header_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_kasbon))->row();
-        
+
         $get_user = $this->db->get_where('users', array('id_user' => $get_header_kasbon->created_by))->row();
 
         $nm_user = (!empty($get_user)) ? $get_user->nm_lengkap : '';
@@ -261,7 +277,7 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->trans_begin();
 
         $insert_req_payment = $this->db->insert('request_payment', $data_insert_req_payment);
-        if(!$insert_req_payment) {
+        if (!$insert_req_payment) {
             $this->db->trans_rollback();
 
             print_r($this->db->error($insert_req_payment));
