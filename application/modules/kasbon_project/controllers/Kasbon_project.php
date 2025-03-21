@@ -146,6 +146,30 @@ class Kasbon_project extends Admin_Controller
                 $total_budgeting += $item_ovb->budget_tambahan;
             }
 
+            $this->db->select('a.budget_tambahan');
+            $this->db->from('kons_tr_kasbon_req_ovb_subcont_detail a');
+            $this->db->join('kons_tr_kasbon_req_ovb_subcont_header b', 'b.id_request_ovb = a.id_request_ovb');
+            $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+            $this->db->where('b.sts', 1);
+            $get_ovb_kasbon_subcont = $this->db->get()->result();
+
+            foreach ($get_ovb_kasbon_subcont as $item_ovb) {
+                $total_budgeting += $item_ovb->budget_tambahan;
+            }
+
+            $this->db->select('a.budget_tambahan');
+            $this->db->from('kons_tr_kasbon_req_ovb_others_detail a');
+            $this->db->join('kons_tr_kasbon_req_ovb_others_header b', 'b.id_request_ovb = a.id_request_ovb');
+            $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
+            $this->db->where('b.sts', 1);
+            $get_ovb_kasbon_others = $this->db->get()->result();
+
+            foreach ($get_ovb_kasbon_others as $item_ovb) {
+                $total_budgeting += $item_ovb->budget_tambahan;
+            }
+
+            
+
             $total_kasbon = 0;
 
             $sql_total_kasbon = '
@@ -1165,6 +1189,131 @@ class Kasbon_project extends Admin_Controller
         ]);
     }
 
+    public function get_data_ovb_others()
+    {
+        $draw = $this->input->post('draw');
+        $start = $this->input->post('start');
+        $length = $this->input->post('length');
+        $search = $this->input->post('search');
+        $id_spk_budgeting = $this->input->post('id_spk_budgeting');
+        $view = $this->input->post('view');
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_req_ovb_others_header a');
+        $this->db->where('a.tipe', '3');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->group_end();
+        }
+        $this->db->group_by('a.id_request_ovb');
+        $this->db->order_by('a.created_date', 'desc');
+        $this->db->limit($length, $start);
+
+        $get_data = $this->db->get();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_req_ovb_others_header a');
+        $this->db->where('a.tipe', '3');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->group_end();
+        }
+        $this->db->group_by('a.id_request_ovb');
+        $this->db->order_by('a.created_date', 'desc');
+
+        $get_data_all = $this->db->get();
+
+        $hasil = [];
+
+        $no = ($start + 1);
+
+        foreach ($get_data->result_array() as $item) {
+
+            $this->db->select('IF(SUM(a.budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan)) as amount');
+            $this->db->from('kons_tr_kasbon_req_ovb_others_detail a');
+            $this->db->where('a.id_request_ovb', $item['id_request_ovb']);
+            $get_amount = $this->db->get()->row_array();
+
+            $option = '
+                <div class="btn-group">
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-accent text-primary dropdown-toggle"
+                        title="Actions"
+                        data-toggle="dropdown"
+                        id="dropdownMenu' . $no . '"
+                        aria-expanded="false">
+                        <i class="fa fa-cogs"></i> <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+            ';
+
+            $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="' . base_url('kasbon_project/view_request_budget_others/' . urlencode(str_replace('/', '|', $item['id_request_ovb']))) . '" class="btn btn-sm btn-info" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-eye"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> View </span>
+                    </div>
+                ';
+
+            if ($item['sts'] !== '1') {
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_ovb_others" style="color: #000000" data-id_request_ovb="' . $item['id_request_ovb'] . '">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-trash"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Delete </span>
+                    </div>
+                ';
+            }
+
+            $option .= '</div>';
+
+            if ($view == 'view') {
+                $option = '';
+            }
+
+            $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+            if ($item['sts'] == '1') {
+                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+            }
+            if ($item['sts'] == '2') {
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+            }
+
+
+            $hasil[] = [
+                'no' => $no,
+                'id_request_ovb' => $item['id_request_ovb'],
+                'amount' => number_format($get_amount['amount'], 2),
+                'sts' => $sts,
+                'option' => $option
+            ];
+
+            $no++;
+        }
+
+        echo json_encode([
+            'draw' => intval($draw),
+            'recordsTotal' => $get_data_all->num_rows(),
+            'recordsFiltered' => $get_data_all->num_rows(),
+            'data' => $hasil
+        ]);
+    }
+
     public function get_data_ovb_subcont()
     {
         $draw = $this->input->post('draw');
@@ -1342,6 +1491,15 @@ class Kasbon_project extends Admin_Controller
         $get_budget_others = $this->db->get()->row();
         $budget_others = $get_budget_others->budget_others;
 
+        $this->db->select('SUM(b.budget_tambahan) as total_ovb_others');
+        $this->db->from('kons_tr_kasbon_req_ovb_others_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_others_detail b', 'b.id_request_ovb = a.id_request_ovb', 'left');
+        $this->db->where('a.tipe', 3);
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_ovb_others = $this->db->get()->row();
+
+        $budget_others += $get_budget_ovb_others->total_ovb_others;
+
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_subcont a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -1515,6 +1673,69 @@ class Kasbon_project extends Admin_Controller
 
         $this->template->set($data);
         $this->template->render('view_request_budget_akomodasi');
+    }
+
+    public function view_request_budget_subcont($id_request_ovb)
+    {
+        $id_request_ovb = urldecode($id_request_ovb);
+        $id_request_ovb = str_replace('|', '/', $id_request_ovb);
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_req_ovb_subcont_header a');
+        $this->db->where('a.id_request_ovb', $id_request_ovb);
+        $get_data_ovb_header = $this->db->get()->row_array();
+
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->where('a.id_spk_budgeting', $get_data_ovb_header['id_spk_budgeting']);
+        $get_budgeting = $this->db->get()->row();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_req_ovb_subcont_detail a');
+        $this->db->where('a.id_request_ovb', $id_request_ovb);
+        $get_data_ovb = $this->db->get()->result_array();
+
+        $data = [
+            'id_spk_budgeting' => $get_data_ovb_header['id_spk_budgeting'],
+            'list_budgeting' => $get_budgeting,
+            'list_data_ovb' => $get_data_ovb
+        ];
+
+        $this->template->set($data);
+        $this->template->render('view_request_budget_subcont');
+    }
+
+    public function view_request_budget_others($id_request_ovb)
+    {
+        $id_request_ovb = urldecode($id_request_ovb);
+        $id_request_ovb = str_replace('|', '/', $id_request_ovb);
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_req_ovb_others_header a');
+        $this->db->where('a.id_request_ovb', $id_request_ovb);
+        $get_data_ovb_header = $this->db->get()->row_array();
+
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->where('a.id_spk_budgeting', $get_data_ovb_header['id_spk_budgeting']);
+        $get_budgeting = $this->db->get()->row();
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_kasbon_req_ovb_others_detail a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_request_ovb', $id_request_ovb);
+        $get_data_ovb = $this->db->get()->result_array();
+
+        $data = [
+            'id_spk_budgeting' => $get_data_ovb_header['id_spk_budgeting'],
+            'list_budgeting' => $get_budgeting,
+            'list_data_ovb' => $get_data_ovb
+        ];
+
+        $this->template->set($data);
+        $this->template->render('view_request_budget_others');
     }
 
     public function add_kasbon_subcont($id_spk_budgeting)
@@ -1946,12 +2167,30 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $this->db->select('a.id_item, a.qty_budget_tambahan, a.budget_tambahan, a.pengajuan_budget, c.id_others');
+        $this->db->from('kons_tr_kasbon_req_ovb_others_detail a');
+        $this->db->join('kons_tr_kasbon_req_ovb_others_header b', 'b.id_request_ovb = a.id_request_ovb', 'left');
+        $this->db->join('kons_tr_spk_budgeting_others c', 'c.id = a.id_detail', 'left');
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts', '1');
+        $get_ovb_others = $this->db->get()->result();
+
+        $data_overbudget_others = [];
+        foreach ($get_ovb_others as $item_ovb_others) :
+            $data_overbudget_others[$item_ovb_others->id_others] = [
+                'qty_budget_tambahan' => $item_ovb_others->qty_budget_tambahan,
+                'budget_tambahan' => $item_ovb_others->budget_tambahan,
+                'pengajuan_budget' => $item_ovb_others->pengajuan_budget
+            ];
+        endforeach;
+
 
         $data = [
             'id_spk_budgeting' => $id_spk_budgeting,
             'list_budgeting' => $get_budgeting,
             'list_others' => $get_data_others,
-            'data_kasbon_others' => $data_kasbon_others
+            'data_kasbon_others' => $data_kasbon_others,
+            'data_overbudget_others' => $data_overbudget_others
         ];
 
         $this->template->set($data);
@@ -3181,6 +3420,86 @@ class Kasbon_project extends Admin_Controller
         ]);
     }
 
+    public function del_ovb_subcont()
+    {
+        $id_request_ovb = $this->input->post('id_request_ovb');
+
+        $this->db->trans_begin();
+
+        $del_request_ovb_header = $this->db->delete('kons_tr_kasbon_req_ovb_subcont_header', ['id_request_ovb' => $id_request_ovb]);
+        if (!$del_request_ovb_header) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->error($del_request_ovb_header));
+            exit;
+        }
+
+        $del_request_ovb_detail = $this->db->delete('kons_tr_kasbon_req_ovb_subcont_detail', ['id_request_ovb' => $id_request_ovb]);
+        if (!$del_request_ovb_detail) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->error($del_request_ovb_detail));
+            exit;
+        }
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $pesan = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $pesan = 'Data has been deleted !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
+    }
+
+    public function del_ovb_others()
+    {
+        $id_request_ovb = $this->input->post('id_request_ovb');
+
+        $this->db->trans_begin();
+
+        $del_request_ovb_header = $this->db->delete('kons_tr_kasbon_req_ovb_others_header', ['id_request_ovb' => $id_request_ovb]);
+        if (!$del_request_ovb_header) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->error($del_request_ovb_header));
+            exit;
+        }
+
+        $del_request_ovb_detail = $this->db->delete('kons_tr_kasbon_req_ovb_others_detail', ['id_request_ovb' => $id_request_ovb]);
+        if (!$del_request_ovb_detail) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->error($del_request_ovb_detail));
+            exit;
+        }
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $pesan = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $pesan = 'Data has been deleted !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
+    }
+
     public function approval_req_ovb()
     {
         $id_request_ovb = $this->input->post('id_request_ovb');
@@ -3374,6 +3693,110 @@ class Kasbon_project extends Admin_Controller
             }
 
             $insert_detail = $this->db->insert_batch('kons_tr_kasbon_req_ovb_subcont_detail', $data_detail);
+            if (!$insert_detail) {
+                $this->db->trans_rollback();
+
+                print_r('Query Detail - ' . $this->db->error($insert_detail));
+                exit;
+            }
+        }
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $pesan = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $pesan = 'Data has been saved !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'pesan' => $pesan
+        ]);
+    }
+
+    public function add_request_budget_others($id_spk_budgeting)
+    {
+        $id_spk_budgeting = urldecode($id_spk_budgeting);
+        $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
+
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_list_spk_budgeting = $this->db->get()->row();
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_spk_budgeting_others a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_list_kasbon_others = $this->db->get()->result();
+
+        $data = [
+            'list_budgeting' => $get_list_spk_budgeting,
+            'list_kasbon_akomodasi' => $get_list_kasbon_others
+        ];
+
+        $this->template->set($data);
+        $this->template->render('add_request_budget_others');
+    }
+
+    public function save_request_budget_others() {
+        $post = $this->input->post();
+
+        $this->db->trans_begin();
+
+        $id_request_ovb = $this->Kasbon_project_model->generate_id_req_ovb_others();
+
+        $data_header = [
+            'id_request_ovb' => $id_request_ovb,
+            'id_spk_budgeting' => $post['id_spk_budgeting'],
+            'id_spk_penawaran' => $post['id_spk_penawaran'],
+            'id_penawaran' => $post['id_penawaran'],
+            'tipe' => 3,
+            'created_by' => $this->auth->user_id(),
+            'created_date' => date('Y-m-d H:i:s')
+        ];
+
+        $data_detail = [];
+        if (isset($post['req_others'])) {
+            foreach ($post['req_others'] as $item) {
+                $qty_budget_tambahan = str_replace(',', '', $item['qty_budget_tambahan']);
+                $budget_tambahan = str_replace(',', '', $item['budget_tambahan']);
+                if ($qty_budget_tambahan > 0) {
+                    $data_detail[] = [
+                        'id_request_ovb' => $id_request_ovb,
+                        'id_detail' => $item['id_detail'],
+                        'id_item' => $item['id_item'],
+                        'nm_item' => $item['nm_item'],
+                        'qty_estimasi' => str_replace(',', '', $item['qty_estimasi']),
+                        'price_unit_estimasi' => str_replace(',', '', $item['price_unit_estimasi']),
+                        'total_budget_estimasi' => str_replace(',', '', $item['total_budget']),
+                        'qty_budget_tambahan' => str_replace(',', '', $item['qty_budget_tambahan']),
+                        'budget_tambahan' => str_replace(',', '', $item['budget_tambahan']),
+                        'pengajuan_budget' => str_replace(',', '', $item['pengajuan_new_budget']),
+                        'reason' => $item['reason'],
+                        'created_by' => $this->auth->user_id(),
+                        'created_date' => date('Y-m-d H:i:s')
+                    ];
+                }
+            }
+        }
+
+        if (!empty($data_detail)) {
+            $insert_header = $this->db->insert('kons_tr_kasbon_req_ovb_others_header', $data_header);
+            if (!$insert_header) {
+                $this->db->trans_rollback();
+
+                print_r('Query Header - ' . $this->db->error($insert_header));
+                exit;
+            }
+
+            $insert_detail = $this->db->insert_batch('kons_tr_kasbon_req_ovb_others_detail', $data_detail);
             if (!$insert_detail) {
                 $this->db->trans_rollback();
 

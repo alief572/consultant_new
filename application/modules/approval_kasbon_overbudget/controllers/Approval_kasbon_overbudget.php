@@ -55,6 +55,12 @@ class Approval_kasbon_overbudget extends Admin_Controller
             $this->db->where('a.id_request_ovb', $id);
             $get_data = $this->db->get()->result_array();
         }
+        if($tipe == '3') {
+            $this->db->select('a.id, a.id_request_ovb, a.id_aktifitas as id_item, a.nm_item as nm_item, a.qty_budget_tambahan, a.budget_tambahan, a.pengajuan_budget, a.reason');
+            $this->db->from('kons_tr_kasbon_req_ovb_others_detail a');
+            $this->db->where('a.id_request_ovb', $id);
+            $get_data = $this->db->get()->result_array();
+        }
 
         $this->template->render('detail_akomodasi', array('list_data' => $get_data));
     }
@@ -77,6 +83,12 @@ class Approval_kasbon_overbudget extends Admin_Controller
             $this->db->where('a.id_request_ovb', $id);
             $get_data = $this->db->get()->result_array();
         }
+        if($tipe == '3') {
+            $this->db->select('a.id, a.id_request_ovb, a.id_item as id_item, a.nm_item as nm_item, a.qty_budget_tambahan, a.budget_tambahan, a.pengajuan_budget, a.reason');
+            $this->db->from('kons_tr_kasbon_req_ovb_others_detail a');
+            $this->db->where('a.id_request_ovb', $id);
+            $get_data = $this->db->get()->result_array();
+        }
         $this->template->render('approval_akomodasi', array('list_data' => $get_data, 'id' => $id));
     }
 
@@ -87,6 +99,7 @@ class Approval_kasbon_overbudget extends Admin_Controller
 
         $this->db->update('kons_tr_kasbon_req_ovb_akomodasi_header', array('sts' => 1), array('id_request_ovb' => $id));
         $this->db->update('kons_tr_kasbon_req_ovb_subcont_header', array('sts' => 1), array('id_request_ovb' => $id));
+        $this->db->update('kons_tr_kasbon_req_ovb_others_header', array('sts' => 1), array('id_request_ovb' => $id));
 
         if($this->db->trans_status() === false) {
             $this->db->trans_rollback();
