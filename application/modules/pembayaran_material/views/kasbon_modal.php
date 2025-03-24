@@ -35,5 +35,9 @@
             <label for="">Bukti Transfer <span style="color: red;">*</span></label>
             <input type="file" name="bukti_transfer" id="" class="form-control form-control-sm" required>
         </div>
+        <div class="form-group">
+            <label for="">Upload Document <span style="color: red;">*</span></label>
+            <input type="file" name="upload_document" id="" class="form-control form-control-sm" required>
+        </div>
     </div>
 </form>
