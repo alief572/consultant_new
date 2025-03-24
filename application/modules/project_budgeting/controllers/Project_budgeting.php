@@ -297,6 +297,7 @@ class Project_budgeting extends Admin_Controller
         $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
 
         $data = [
+            'list_spk_penawaran' => $get_spk,
             'list_budgeting' => $get_spk_budgeting,
             'list_all_marketing' => $get_all_marketing,
             'list_budgeting_aktifitas' => $get_spk_budgeting_aktifitas,
