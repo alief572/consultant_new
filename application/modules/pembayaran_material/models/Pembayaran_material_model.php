@@ -2,10 +2,10 @@
 class Pembayaran_material_model extends BF_Model
 {
 
-	protected $viewPermission   = 'Incoming_Stok.View';
-	protected $addPermission    = 'Incoming_Stok.Add';
-	protected $managePermission = 'Incoming_Stok.Manage';
-	protected $deletePermission = 'Incoming_Stok.Delete';
+	protected $viewPermission   = 'Payment.View';
+	protected $addPermission    = 'Payment.Add';
+	protected $managePermission = 'Payment.Manage';
+	protected $deletePermission = 'Payment.Delete';
 
 	public function __construct()
 	{
