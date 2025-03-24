@@ -3,10 +3,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $data_status = array();
 class Pembayaran_material extends Admin_Controller
 {
-	protected $viewPermission   = 'Incoming_Stok.View';
-	protected $addPermission    = 'Incoming_Stok.Add';
-	protected $managePermission = 'Incoming_Stok.Manage';
-	protected $deletePermission = 'Incoming_Stok.Delete';
+	protected $viewPermission   = 'Payment.View';
+	protected $addPermission    = 'Payment.Add';
+	protected $managePermission = 'Payment.Manage';
+	protected $deletePermission = 'Payment.Delete';
 
 	public function __construct()
 	{
