@@ -27,6 +27,7 @@ header("Content-Disposition: attachment; filename=Approval Request Payment Kasbo
                 <th align="center">Tanggal Pengajuan</th>
                 <th align="center">Deskripsi Pengajuan</th>
                 <th align="center">Kategori</th>
+                <th align="center">Keperluan</th>
                 <th align="center">Nilai Pengajuan</th>
             </tr>
         </thead>
@@ -36,6 +37,8 @@ header("Content-Disposition: attachment; filename=Approval Request Payment Kasbo
             foreach ($data as $item_kasbon) :
 
                 $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc))->row();
+
+                $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', array('id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran))->row();
 
                 $tipe = '';
                 if (!empty($get_kasbon_header)) {
@@ -56,6 +59,7 @@ header("Content-Disposition: attachment; filename=Approval Request Payment Kasbo
                 echo '<td>' . $item_kasbon->tgl_doc . '</td>';
                 echo '<td>' . $item_kasbon->keperluan . '</td>';
                 echo '<td>' . $tipe . '</td>';
+                echo '<td>' . $get_spk_penawaran->nm_customer . ', ' . $get_kasbon_header->id_spk_penawaran . ', ' . $tipe . '</td>';
                 echo '<td align="right">' . number_format($item_kasbon->jumlah) . '</td>';
                 echo '</tr>';
 
