@@ -337,6 +337,8 @@ class Pembayaran_material_model extends BF_Model
 				$action = '<button type="button" class="btn btn-sm btn-success payment" data-id="' . $item->id . '" data-no="' . $no . '" data-tipe="' . $item->tipe . '"><i class="fa fa-money"></i> Pay</button>';
 				if ($item->status == '2') {
 					$action = '<button type="button" class="btn btn-sm btn-danger revisi" data-id="' . $item->id . '" data-no="' . $no . '"><i class="fa fa-arrow-left"></i> Revision</button>';
+
+					$action .= ' <a href="'.base_url('pembayaran_material/print2/'.$item->id).'" class="btn btn-sm btn-info" title="Print Payment" target="_blank"><i class="fa fa-print"></i> Print</a>';
 				}
 			}
 

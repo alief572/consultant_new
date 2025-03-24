@@ -2368,14 +2368,15 @@ class Pembayaran_material extends Admin_Controller
 		}
 	}
 
-	public function payment_modal() {
+	public function payment_modal()
+	{
 		$id = $this->input->post('id');
 
 		$get_payment = $this->db->get_where('payment_approve', array('id' => $id))->row();
-	
+
 		$get_coa_bank = $this->db->select('a.no_perkiraan, a.nama')->from('coa_master a')->like('a.no_perkiraan', '1101-02-', 'both')->not_like('a.no_perkiraan', '00', 'both')->get()->result();
 
-		if($get_payment->tipe == 'kasbon') {
+		if ($get_payment->tipe == 'kasbon') {
 			$get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $get_payment->no_doc))->row();
 
 			$this->template->set('data_kasbon', $get_kasbon_header);
@@ -2383,7 +2384,7 @@ class Pembayaran_material extends Admin_Controller
 			$this->template->set('list_coa_bank', $get_coa_bank);
 			$this->template->render('kasbon_modal');
 		}
-		if($get_payment->tipe == 'expense') {
+		if ($get_payment->tipe == 'expense') {
 			$get_expense_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $get_payment->no_doc))->row();
 
 			$this->template->set('data_expense', $get_expense_header);
@@ -2393,22 +2394,35 @@ class Pembayaran_material extends Admin_Controller
 		}
 	}
 
-	public function save_payment() {
+	public function save_payment()
+	{
 		$post = $this->input->post();
 
 		$this->load->library('upload');
 
 		$config['upload_path'] = './uploads/bukti_pembayaran/';
-        $config['allowed_types'] = '*';
-        $config['remove_spaces'] = TRUE;
-        $config['encrypt_name'] = TRUE;
+		$config['allowed_types'] = '*';
+		$config['remove_spaces'] = TRUE;
+		$config['encrypt_name'] = TRUE;
 
 		$bukti_transfer = '';
 		$this->upload->initialize($config);
-        if ($this->upload->do_upload('bukti_transfer')) {
-            $uploadData = $this->upload->data();
-            $bukti_transfer = $uploadData['file_name'];
-        }
+		if ($this->upload->do_upload('bukti_transfer')) {
+			$uploadData = $this->upload->data();
+			$bukti_transfer = $uploadData['file_name'];
+		}
+
+		$config2['upload_path'] = './uploads/upload_document_payment/';
+		$config2['allowed_types'] = '*';
+		$config2['remove_spaces'] = TRUE;
+		$config2['encrypt_name'] = TRUE;
+
+		$upload_document = '';
+		$this->upload->initialize($config2);
+		if ($this->upload->do_upload('upload_document')) {
+			$uploadData = $this->upload->data();
+			$upload_document = $uploadData['file_name'];
+		}
 
 		$data_update = [
 			'status' => 2,
@@ -2416,14 +2430,15 @@ class Pembayaran_material extends Admin_Controller
 			'tanggal_pembayaran' => $post['tanggal_pembayaran'],
 			'id_bank_pembayaran' => $post['bank'],
 			'keterangan_pembayaran' => $post['keterangan'],
-			'bukti_transfer' => $bukti_transfer
+			'bukti_transfer' => $bukti_transfer,
+			'upload_document' => $upload_document
 		];
 
 		$this->db->trans_begin();
 
 		$this->db->update('payment_approve', $data_update, array('id' => $post['no_payment']));
 
-		if($this->db->trans_status() === false) {
+		if ($this->db->trans_status() === false) {
 			$this->db->trans_rollback();
 
 			$valid = 0;
@@ -2441,7 +2456,8 @@ class Pembayaran_material extends Admin_Controller
 		]);
 	}
 
-	public function revisi_payment() {
+	public function revisi_payment()
+	{
 		$id = $this->input->post('id');
 
 		$this->db->trans_begin();
@@ -2451,12 +2467,13 @@ class Pembayaran_material extends Admin_Controller
 			'tanggal_pembayaran' => null,
 			'id_bank_pembayaran' => null,
 			'bukti_transfer' => null,
+			'upload_document' => null,
 			'keterangan_pembayaran' => null,
 			'status' => 1
 		);
 		$this->db->update('payment_approve', $data_update, array('id' => $id));
 
-		if($this->db->trans_status() === false) {
+		if ($this->db->trans_status() === false) {
 			$this->db->trans_rollback();
 
 			$valid = 0;
@@ -2474,7 +2491,46 @@ class Pembayaran_material extends Admin_Controller
 		]);
 	}
 
-	public function get_data_payment() {
+	public function print2($id)
+	{
+		ob_clean();
+		ob_start();
+		$this->auth->restrict($this->managePermission);
+		$id = $this->uri->segment(3);
+		$data['data_payment'] = $this->db->get_where('payment_approve', array('id' => $id))->row();
+		if($data['data_payment']->tipe == 'kasbon') {
+			$get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $data['data_payment']->no_doc))->row();
+			if($get_kasbon_header->tipe == '1') {
+				$tipe = 'Kasbon Subcont';
+			}
+			if($get_kasbon_header->tipe == '2') {
+				$tipe = 'Kasbon Akomodasi';
+			}
+			if($get_kasbon_header->tipe == '3') {
+				$tipe = 'Kasbon Others';
+			}
+		} else {
+			$tipe = ucfirst($data['data_payment']->tipe);
+		}
+		$data['tipe'] = $tipe;
+		
+		$get_coa = $this->db->get_where('coa_master', array('no_perkiraan' => $data['data_payment']->id_bank_pembayaran))->row();
+
+		$data['nm_bank'] = (!empty($get_coa)) ? $data['data_payment']->id_bank_pembayaran.' - '.$get_coa->nama : '';
+		
+		$this->load->view('print', $data);
+		$html = ob_get_contents();
+
+		require_once('./assets/html2pdf/html2pdf/html2pdf.class.php');
+		$html2pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8', array(0, 0, 0, 0));
+		$html2pdf->pdf->SetDisplayMode('fullpage');
+		$html2pdf->WriteHTML($html);
+		ob_end_clean();
+		$html2pdf->Output('Print Payment (' . $id . ').pdf', 'I');
+	}
+
+	public function get_data_payment()
+	{
 		$this->Pembayaran_material_model->get_data_payment();
 	}
 }
