@@ -2374,7 +2374,7 @@ class Pembayaran_material extends Admin_Controller
 
 		$get_payment = $this->db->get_where('payment_approve', array('id' => $id))->row();
 
-		$get_coa_bank = $this->db->select('a.no_perkiraan, a.nama')->from('coa_master a')->like('a.no_perkiraan', '1101-02-', 'both')->not_like('a.no_perkiraan', '00', 'both')->get()->result();
+		$get_coa_bank = $this->db->select('a.no_perkiraan, a.nama')->from('coa_master a')->like('a.nama', 'Bank ', 'after')->get()->result();
 
 		if ($get_payment->tipe == 'kasbon') {
 			$get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $get_payment->no_doc))->row();
