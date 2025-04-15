@@ -1436,15 +1436,15 @@ if (count($list_penawaran_lab) > 0) {
 
         // alert(mandays_rate);
 
-        $('.ttl_total_mandays').html(number_format(ttl_total_mandays));
+        $('.ttl_total_mandays').html(number_format(ttl_total_mandays, 2));
         $('input[name="ttl_total_mandays"]').val(ttl_total_mandays);
-        $('.ttl_mandays_tandem').html(number_format(ttl_mandays_tandem));
+        $('.ttl_mandays_tandem').html(number_format(ttl_mandays_tandem, 2));
         $('input[name="ttl_mandays_tandem"]').val(ttl_mandays_tandem);
-        $('.ttl_mandays_subcont').html(number_format(ttl_mandays_subcont));
+        $('.ttl_mandays_subcont').html(number_format(ttl_mandays_subcont, 2));
         $('input[name="ttl_mandays_subcont"]').val(ttl_mandays_subcont);
         // $('.ttl_mandays_internal').html(number_format(ttl_mandays_internal));
         // $('input[name="ttl_mandays_internal"]').val(ttl_mandays_internal);
-        $('.ttl_mandays_rate').html('Rp. ' + number_format(mandays_rate));
+        $('.ttl_mandays_rate').html('Rp. ' + number_format(mandays_rate, 2));
         $('input[name="ttl_mandays_rate"]').val(mandays_rate);
 
     }
