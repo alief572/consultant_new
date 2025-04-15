@@ -550,7 +550,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Total Mandays</td>
                     <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays) ?>" readonly>
+                        <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays, 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Subcont</td>
                     <td class="pd-5" valign="top">
@@ -561,7 +561,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Subcont</td>
                     <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right total_mandays_subcont" value="<?= $total_mandays_subcont ?>" readonly>
+                        <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right total_mandays_subcont" value="<?= number_format($total_mandays_subcont, 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Others</td>
                     <td class="pd-5" valign="top">
@@ -574,7 +574,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Tandem</td>
                     <td class="pd-5" valign="top">
-                        <input type="text" name="mandays_tandem" id="" class="form-control form-control-sm text-right " value="<?= number_format($total_mandays_tandem) ?>" readonly>
+                        <input type="text" name="mandays_tandem" id="" class="form-control form-control-sm text-right " value="<?= number_format($total_mandays_tandem, 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Lab</td>
                     <td class="pd-5" valign="top">

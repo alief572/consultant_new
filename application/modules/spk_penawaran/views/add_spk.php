@@ -462,7 +462,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Total Mandays</td>
                     <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays) ?>" readonly>
+                        <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays, 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Subcont</td>
                     <td class="pd-5" valign="top">
@@ -473,7 +473,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Subcont</td>
                     <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right total_mandays_subcont" value="<?= $total_mandays_subcont ?>" readonly>
+                        <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right total_mandays_subcont" value="<?= number_format($total_mandays_subcont, 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Others</td>
                     <td class="pd-5" valign="top">
@@ -486,7 +486,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Tandem</td>
                     <td class="pd-5" valign="top">
-                        <input type="text" name="mandays_tandem" id="" class="form-control form-control-sm text-right " value="<?= number_format($total_mandays_tandem) ?>" readonly>
+                        <input type="text" name="mandays_tandem" id="" class="form-control form-control-sm text-right " value="<?= number_format($total_mandays_tandem, 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Lab</td>
                     <td class="pd-5" valign="top">
@@ -869,7 +869,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         }
 
         $('.biaya_subcont').val(number_format(ttl_subcont, 2));
-        $('.total_mandays_subcont').val(mandays_subcont);
+        $('.total_mandays_subcont').val(number_format(mandays_subcont, 2));
         $('.ttl_total_subcont').html(number_format(ttl_subcont, 2));
 
         $('input[name="nilai_kontrak_bersih"]').val(number_format((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_lab), 2));
