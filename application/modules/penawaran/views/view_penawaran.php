@@ -634,7 +634,7 @@ if (count($list_penawaran_lab) > 0) {
                     <td class="text-center">:</td>
                     <td class="text-right">
                         <input type="hidden" name="ttl_total_mandays" value="<?= $list_penawaran->total_mandays ?>">
-                        <span class="ttl_total_mandays"><?= number_format($list_penawaran->total_mandays) ?></span>
+                        <span class="ttl_total_mandays"><?= number_format($list_penawaran->total_mandays, 2) ?></span>
                     </td>
                 </tr>
                 <tr>
@@ -642,7 +642,7 @@ if (count($list_penawaran_lab) > 0) {
                     <td class="text-center">:</td>
                     <td class="text-right">
                         <input type="hidden" name="ttl_mandays_tandem" value="<?= $list_penawaran->mandays_tandem ?>">
-                        <span class="ttl_mandays_tandem"><?= number_format($list_penawaran->mandays_tandem) ?></span>
+                        <span class="ttl_mandays_tandem"><?= number_format($list_penawaran->mandays_tandem, 2) ?></span>
                     </td>
                 </tr>
                 <tr>
@@ -650,7 +650,7 @@ if (count($list_penawaran_lab) > 0) {
                     <td class="text-center">:</td>
                     <td class="text-right">
                         <input type="hidden" name="ttl_mandays_subcont" value="<?= $list_penawaran->mandays_subcont ?>">
-                        <span class="ttl_mandays_subcont"><?= number_format($list_penawaran->mandays_subcont) ?></span>
+                        <span class="ttl_mandays_subcont"><?= number_format($list_penawaran->mandays_subcont, 2) ?></span>
                     </td>
                 </tr>
                 <tr>
