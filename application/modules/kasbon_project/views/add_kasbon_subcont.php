@@ -170,7 +170,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         $budget_tambahan = (isset($data_overbudget_subcont[$item->id_aktifitas]['budget_tambahan'])) ? $data_overbudget_subcont[$item->id_aktifitas]['budget_tambahan'] : 0;
 
                         $pengajuan_budget = (isset($data_overbudget_subcont[$item->id_aktifitas]['pengajuan_budget'])) ? $data_overbudget_subcont[$item->id_aktifitas]['pengajuan_budget'] : 0;
-                        
+
 
                         $aktual_terpakai = (isset($data_kasbon_subcont[$item->id_aktifitas]['ttl_qty_pengajuan'])) ? $data_kasbon_subcont[$item->id_aktifitas]['ttl_qty_pengajuan'] : 0;
                         $sisa_budget = (isset($data_kasbon_subcont[$item->id_aktifitas]['ttl_total_pengajuan'])) ? (($item->mandays_rate_subcont_final * $item->mandays_subcont_final) - $data_kasbon_subcont[$item->id_aktifitas]['ttl_total_pengajuan']) : ($item->mandays_rate_subcont_final * $item->mandays_subcont_final);
@@ -209,7 +209,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" value="'.$item->mandays_rate_subcont_final.'" data-no="' . $no . '" data-budget="' . ($item->mandays_rate_subcont_final) . '" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" value="' . $item->mandays_rate_subcont_final . '" data-no="' . $no . '" data-budget="' . ($item->mandays_rate_subcont_final) . '" ' . $readonly . '>';
                         echo '</td>';
 
                         echo '<td>';
@@ -247,11 +247,83 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     }
                     ?>
                 </tbody>
+                <tbody>
+                    <?php
+                    foreach ($data_ovb_subcont_custom as $item) {
+
+                        $qty_used = (isset($data_kasbon_custom[$item->id])) ? $data_kasbon_custom[$item->id]['qty_pengajuan'] : 0;
+                        $sisa_budget = (isset($data_kasbon_custom[$item->id])) ? $data_kasbon_custom[$item->id]['total_pengajuan'] : 0;
+
+                        $readonly = '';
+                        if (($item->total_budget - $sisa_budget) <= 0) {
+                            $readonly = 'readonly';
+                        }
+
+                        echo '<tr>';
+
+                        echo '<td class="text-center">';
+                        echo $no;
+                        echo '<input type="hidden" name="subcont_custom[' . $no . '][id]" value="' . $item->id . '">';
+                        echo '<input type="hidden" name="subcont_custom[' . $no . '][id_spk_budgeting]" value="' . $item->id_spk_budgeting . '">';
+                        echo '<input type="hidden" name="subcont_custom[' . $no . '][id_spk_penawaran]" value="' . $item->id_spk_penawaran . '">';
+                        echo '<input type="hidden" name="subcont_custom[' . $no . '][id_penawaran]" value="' . $item->id_penawaran . '">';
+                        echo '</td>';
+                        echo '<td>';
+                        echo $item->nm_item;
+                        echo '<input type="hidden" name="subcont_custom[' . $no . '][nm_item]" value="' . $item->nm_item . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo '<input type="hidden" name="subcont_custom[' . $no . '][estimasi_qty]" value="' . $item->estimasi_qty . '">';
+                        echo number_format($item->estimasi_qty, 2);
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo '<input type="hidden" name="subcont_custom[' . $no . '][price_unit_estimasi]" value="' . $item->estimasi_harga . '">';
+                        echo number_format($item->estimasi_harga, 2);
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo '<input type="hidden" name="subcont_custom[' . $no . '][total_estimasi]" value="' . $item->estimasi_total . '">';
+                        echo number_format($item->estimasi_total, 2);
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo '<input type="number" class="form-control form-control-sm text-right" name="subcont_custom[' . $no . '][qty_budget]" value="0" min="0" onchange="hitung_all_pengajuan()" ' . $readonly . '>';
+                        echo '</td>';
+                        echo '<td class="text-right">';
+                        echo '<input type="text" class="form-control form-control-sm text-right auto_num hitung_per_price_custom" name="subcont_custom[' . $no . '][nominal_budget]" value="' . $item->price_budget . '" data-no="' . $no . '" data-budget="' . $item->price_budget . '" ' . $readonly . '>';
+                        echo '</td>';
+                        echo '<td class="text-right">';
+                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="subcont_custom[' . $no . '][total_budget]" value="0" readonly>';
+                        echo '</td>';
+                        echo '<td class="text-center">' . number_format(0) . '</td>';
+                        echo '<td class="text-right">' . number_format(0, 2) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_budget - $qty_used, 2) . '</td>';
+                        echo '<td class="text-right">';
+                        echo number_format($item->total_budget - $sisa_budget, 2);
+                        echo '<input type="hidden" name="subcont_custom[' . $no . '][aktual_terpakai]" value="' . ($item->qty_budget - $qty_used) . '">';
+                        echo '<input type="hidden" name="subcont_custom[' . $no . '][sisa_budget]" value="' . ($item->total_budget - $sisa_budget) . '">';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_est_qty += $item->estimasi_qty;
+                        $ttl_est_price_unit += $item->estimasi_harga;
+                        $ttl_est_total_budget += ($item->estimasi_total);
+
+                        $ttl_aktual_terpakai += ($item->qty_budget - $qty_used);
+                        $ttl_sisa_budget += ($item->total_budget - $sisa_budget);
+
+                        $no++;
+                    }
+                    ?>
+                </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="2" class="text-center">Total</td>
                         <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
-                        <td class="text-center"><?= number_format($ttl_est_price_unit, 2) ?></td>
+                        <td class="text-center"></td>
                         <td class="text-center"><?= number_format($ttl_est_total_budget, 2) ?></td>
                         <td class="text-center ttl_qty_pengajuan">0</td>
                         <td class="text-center"></td>
@@ -352,25 +424,55 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         var ttl_total = 0;
 
         for (i = 1; i <= no; i++) {
-            var qty_pengajuan = $('input[name="detail_subcont[' + i + '][qty_pengajuan]"]').val();
+            if ($('input[name="detail_subcont[' + i + '][qty_pengajuan]"]').length > 0) {
+                var qty_pengajuan = $('input[name="detail_subcont[' + i + '][qty_pengajuan]"]').val();
+            } else {
+                var qty_pengajuan = 0;
+            }
+
             if (isNaN(qty_pengajuan) || qty_pengajuan == '') {
                 qty_pengajuan = 0;
             } else {
                 qty_pengajuan = parseFloat(qty_pengajuan);
             }
 
-            var nominal_pengajuan = get_num($('input[name="detail_subcont[' + i + '][nominal_pengajuan]"]').val());
-            if(qty_pengajuan < 1) {
-                var total_pengajuan = get_num($('input[name="detail_subcont['+i+'][total_pengajuan]"]').val());
+            if ($('input[name="detail_subcont[' + i + '][nominal_pengajuan]"]').length > 0) {
+                var nominal_pengajuan = $('input[name="detail_subcont[' + i + '][nominal_pengajuan]"]').val();
+            } else {
+                var nominal_pengajuan = 0;
+            }
+            if (qty_pengajuan < 1) {
+                var total_pengajuan = get_num($('input[name="detail_subcont[' + i + '][total_pengajuan]"]').val());
             } else {
                 var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
             }
 
-            $('input[name="detail_subcont[' + i + '][total_pengajuan]"]').autoNumeric('set', total_pengajuan);
+            if ($('input[name="subcont_custom[' + i + '][qty_budget]"]').length > 0) {
+                var qty_pengajuan_custom = $('input[name="subcont_custom[' + i + '][qty_budget]"]').val();
+            } else {
+                var qty_pengajuan_custom = 0;
+            }
 
-            ttl_qty += qty_pengajuan;
-            ttl_price += nominal_pengajuan;
-            ttl_total += total_pengajuan;
+            if (isNaN(qty_pengajuan_custom) || qty_pengajuan_custom == '') {
+                qty_pengajuan_custom = 0;
+            } else {
+                qty_pengajuan_custom = parseFloat(qty_pengajuan_custom);
+            }
+
+            if ($('input[name="subcont_custom[' + i + '][nominal_budget]"]').length > 0) {
+                var nominal_pengajuan_custom = get_num($('input[name="subcont_custom[' + i + '][nominal_budget]"]').val());
+            } else {
+                var nominal_pengajuan_custom = 0;
+            }
+
+            var total_pengajuan_custom = (nominal_pengajuan_custom * qty_pengajuan_custom);
+
+            $('input[name="detail_subcont[' + i + '][total_pengajuan]"]').autoNumeric('set', total_pengajuan);
+            $('input[name="subcont_custom[' + i + '][total_budget]"]').autoNumeric('set', total_pengajuan_custom);
+
+            ttl_qty += (qty_pengajuan + qty_pengajuan_custom);
+            ttl_price += (nominal_pengajuan + nominal_pengajuan_custom);
+            ttl_total += (total_pengajuan + total_pengajuan_custom);
         }
 
         $('.ttl_pengajuan').html(number_format(ttl_total));
@@ -383,10 +485,24 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         var pengajuan = get_num($(this).val());
 
         var qty = (pengajuan / budget);
-        
-        
-        $('input[name="detail_subcont['+no+'][qty_pengajuan]"]').val(qty);
-        $('input[name="detail_subcont['+no+'][total_pengajuan]"]').autoNumeric('set', pengajuan);
+
+
+        $('input[name="detail_subcont[' + no + '][qty_pengajuan]"]').val(qty);
+        $('input[name="detail_subcont[' + no + '][total_pengajuan]"]').autoNumeric('set', pengajuan);
+
+        hitung_all_pengajuan();
+    });
+
+    $(document).on('change', '.hitung_per_price_custom', function() {
+        var no = $(this).data('no');
+        var budget = $(this).data('budget');
+        var pengajuan = get_num($(this).val());
+
+        var qty = (pengajuan / budget);
+
+
+        $('input[name="subcont_custom[' + no + '][qty_budget]"]').val(qty);
+        $('input[name="subcont_custom[' + no + '][total_budget]"]').autoNumeric('set', pengajuan);
 
         hitung_all_pengajuan();
     });
@@ -405,10 +521,19 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             var price_unit_estimasi = get_num($('input[name="detail_subcont[' + i + '][price_unit_estimasi]"]').val());
             var sisa_budget = get_num($('input[name="detail_subcont[' + i + '][sisa_budget]"]').val());
 
-            if(qty_pengajuan > 0 && qty_pengajuan < 1) {
+            var qty_pengajuan_custom = get_num($('input[name="subcont_custom[' + i + '][qty_budget]"]').val());
+            var nominal_pengajuan_custom = get_num($('input[name="subcont_custom[' + i + '][price_budget]"]').val());
+            var total_pengajuan_custom = get_num($('input[name="subcont_custom[' + i + '][total_budget]"]').val());
+            var sisa_budget_custom = get_num($('input[name="subcont_custom[' + i + '][sisa_budget]"]').val());
+
+            if (qty_pengajuan > 0 && qty_pengajuan < 1) {
                 qty_pengajuan = 1;
             }
-            if (valid == '1' && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
+            if (qty_pengajuan_custom > 0 && qty_pengajuan_custom < 1) {
+                qty_pengajuan_custom = 1;
+            }
+
+            if (valid == '1' && ((nominal_pengajuan * qty_pengajuan) > sisa_budget || (nominal_pengajuan_custom * qty_pengajuan_custom) > sisa_budget_custom)) {
                 valid = 0;
             }
         }

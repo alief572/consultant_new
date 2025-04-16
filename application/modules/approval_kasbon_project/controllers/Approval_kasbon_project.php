@@ -162,7 +162,14 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_subcont a');
         $this->db->where('a.id_header', $id_kasbon);
         $this->db->where('a.sts', null);
+        $this->db->where('a.custom_subcont', '0');
         $get_kasbon_subcont = $this->db->get()->result();
+
+        $this->db->from('kons_tr_kasbon_project_subcont a');
+        $this->db->where('a.id_header', $id_kasbon);
+        $this->db->where('a.sts', null);
+        $this->db->where('a.custom_subcont', '1');
+        $get_kasbon_subcont_custom = $this->db->get()->result();
 
         $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_kasbon_project_akomodasi a');
@@ -225,6 +232,7 @@ class Approval_kasbon_project extends Admin_Controller
             'tipe' => $get_header->tipe,
             'list_budgeting' => $get_budgeting,
             'list_kasbon_subcont' => $get_kasbon_subcont,
+            'list_kasbon_subcont_custom' => $get_kasbon_subcont_custom,
             'list_kasbon_akomodasi' => $get_kasbon_akomodasi,
             'list_kasbon_others' => $get_kasbon_others,
             'list_ovb_akomodasi' => $get_ovb_akomodasi,

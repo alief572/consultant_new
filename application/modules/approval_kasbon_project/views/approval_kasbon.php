@@ -190,6 +190,34 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         }
         ?>
       </tbody>
+      <tbody>
+        <?php 
+          foreach ($list_kasbon_subcont_custom as $item) {
+            $no++;
+  
+            echo '<tr>';
+  
+            echo '<td class="text-center">' . $no . '</td>';
+            echo '<td class="text-left">' . $item->nm_aktifitas . '</td>';
+            echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+            echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+            echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+            echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
+            echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+            echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
+            echo '<td class="text-center">' . number_format(0, 2) . '</td>';
+            echo '<td class="text-right">' . number_format(0, 2) . '</td>';
+            echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
+            echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
+            echo '</tr>';
+  
+            $ttl_estimasi_subcont += $item->total_budget_estimasi;
+            $ttl_pengajuan_subcont += $item->total_pengajuan;
+            $ttl_aktual_subcont += ($item->aktual_terpakai - $item->qty_pengajuan);
+            $ttl_sisa_subcont += ($item->sisa_budget - $item->total_pengajuan);
+          }
+        ?>
+      </tbody>
       <tfoot>
         <tr>
           <th colspan="4" class="text-right">Grand Total</th>

@@ -74,13 +74,19 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         </div>
 
         <div class="box-body">
+            <button type="button" class="btn btn-sm btn-success" onclick="add_custom_subcont()">
+                <i class="fa fa-plus"></i> Add Over Budget Item
+            </button>
+            <br><br>
             <table class="table custom-table">
                 <thead>
                     <tr>
                         <th rowspan="2" class="text-center valign-middle">No</th>
                         <th rowspan="2" class="text-center valign-middle">Item</th>
                         <th colspan="3" class="text-center valign-middle">Estimasi</th>
-                        <th colspan="4" class="text-center valign-middle">Pengajuan</th>
+                        <th colspan="3" class="text-center valign-middle">Pengajuan</th>
+                        <th rowspan="2" class="text-center valign-middle">Reason</th>
+                        <th rowspan="2" class="text-center valign-middle"></th>
                     </tr>
                     <tr>
                         <th class="text-center valign-middle">Qty</th>
@@ -89,15 +95,15 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th class="text-center valign-middle">Qty Budget Tambahan</th>
                         <th class="text-center valign-middle">Budget Tambahan</th>
                         <th class="text-center valign-middle">Pengajuan New Budget</th>
-                        <th class="text-center valign-middle">Reason</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    $no = 1;
+                    $no = 0;
 
                     $ttl_total_budget_estimasi = 0;
                     foreach ($list_kasbon_subcont as $item) {
+                        $no++;
                         echo '<tr>';
 
                         echo '<td class="text-center">';
@@ -128,7 +134,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="req_subcont[' . $no . '][budget_tambahan]" value="'.$item->mandays_rate_subcont_final.'" readonly>';
+                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="req_subcont[' . $no . '][budget_tambahan]" value="' . $item->mandays_rate_subcont_final . '" readonly>';
                         echo '</td>';
 
                         echo '<td>';
@@ -139,18 +145,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<input type="text" class="form-control form-control-sm" name="req_subcont[' . $no . '][reason]">';
                         echo '</td>';
 
+                        echo '<td></td>';
+
                         echo '</tr>';
 
                         $ttl_total_budget_estimasi += $item->total_aktifitas_final;
-
-                        $no++;
                     }
                     ?>
+                </tbody>
+                <tbody class="list_custom_subcont">
+
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="text-center">
+                        <td class="text-center ttl_estimasi">
                             <?= number_format($ttl_total_budget_estimasi, 2) ?>
                         </td>
                         <td colspan="2"></td>
@@ -158,8 +167,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             <?= number_format($ttl_total_budget_estimasi, 2) ?>
                         </td>
                         <td>
-
                         </td>
+                        <td></td>
                     </tr>
                 </tfoot>
             </table>
@@ -179,6 +188,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script>
+    var no = "<?= $no ?>";
+
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
     });
@@ -236,6 +247,104 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         }
 
         $('.ttl_new_budget').html(number_format(ttl_pengajuan_new_budget, 2));
+    }
+
+    function add_custom_subcont() {
+
+        no++;
+        var html = '<tr class="custom_subcont_' + no + '">';
+
+        html += '<td class="text-center">' + no + '</td>';
+
+        html += '<td class="text-left">';
+        html += '<input type="hidden" name="custom_subcont[' + no + '][id_spk_budgeting]" value="<?= $list_budgeting->id_spk_budgeting ?>">';
+        html += '<input type="hidden" name="custom_subcont[' + no + '][id_spk_penawaran]" value="<?= $list_budgeting->id_spk_penawaran ?>">';
+        html += '<input type="hidden" name="custom_subcont[' + no + '][id_penawaran]" value="<?= $list_budgeting->id_penawaran ?>">';
+        html += '<input type="text" class="form-control form-control-sm" name="custom_subcont[' + no + '][nm_item]">';
+        html += '</td>';
+
+        html += '<td class="text-left">';
+        html += '<input type="number" class="form-control form-control-sm text-right" name="custom_subcont[' + no + '][estimasi_qty]" min="0" value="0" onchange="hitung_custom_subcont_est(' + no + ')">';
+        html += '</td>';
+
+        html += '<td class="text-left">';
+        html += '<input type="text" class="form-control form-control-sm text-right auto_num" name="custom_subcont[' + no + '][estimasi_harga]" onchange="hitung_custom_subcont_est(' + no + ')">';
+        html += '</td>';
+
+        html += '<td class="text-left">';
+        html += '<input type="text" class="form-control form-control-sm text-right" name="custom_subcont[' + no + '][estimasi_total]" readonly>';
+        html += '</td>';
+
+        html += '<td class="text-left">';
+        html += '<input type="number" class="form-control form-control-sm text-right" name="custom_subcont[' + no + '][qty_budget_tambahan]" min="0" value="0" onchange="hitung_custom_subcont_budget(' + no + ');">';
+        html += '</td>';
+
+        html += '<td class="text-left">';
+        html += '<input type="text" class="form-control form-control-sm text-right auto_num" name="custom_subcont[' + no + '][price_budget_tambahan]" onchange="hitung_custom_subcont_budget(' + no + ');">';
+        html += '</td>';
+
+        html += '<td class="text-left">';
+        html += '<input type="text" class="form-control form-control-sm text-right auto_num" name="custom_subcont[' + no + '][total_budget_tambahan]" readonly>';
+        html += '</td>';
+
+        html += '<td class="text-left">';
+        html += '<textarea class="form-control form-control-sm" name="custom_subcont[' + no + '][reason]"></textarea>';
+        html += '</td>';
+
+        html += '<td class="text-center">';
+        html += '<button type="button" class="btn btn-sm btn-danger" onclick="del_custom_subcont('+no+')"><i class="fa fa-trash"></i></button>';
+        html += '</td>';
+
+        html += '</tr>';
+
+        $('.list_custom_subcont').append(html);
+        $('.auto_num').autoNumeric();
+    }
+
+    function hitung_custom_subcont_est(no) {
+        var estimasi_qty = get_num($('input[name="custom_subcont[' + no + '][estimasi_qty]"]').val());
+        var estimasi_harga = get_num($('input[name="custom_subcont[' + no + '][estimasi_harga]"]').val());
+
+        var estimasi_total = parseFloat(estimasi_qty * estimasi_harga);
+
+        $('input[name="custom_subcont[' + no + '][estimasi_total]"]').val(number_format(estimasi_total, 2));
+
+        hitung_est_total();
+    }
+
+    function hitung_est_total() {
+        var total_estimasi = 0;
+        for(i = 1; i <= no; i++){
+            var estimasi_total = get_num($('input[name="custom_subcont[' + i + '][estimasi_total]"]').val());
+            total_estimasi += estimasi_total;
+        }
+        $('.ttl_estimasi').html(number_format(total_estimasi, 2));
+    }
+
+    function hitung_custom_subcont_budget(no) {
+        var qty_budget_tambahan = get_num($('input[name="custom_subcont[' + no + '][qty_budget_tambahan]"]').val());
+        var price_budget_tambahan = get_num($('input[name="custom_subcont[' + no + '][price_budget_tambahan]"]').val());
+
+        var total_budget_tambahan = parseFloat(qty_budget_tambahan * price_budget_tambahan);
+
+        $('input[name="custom_subcont[' + no + '][total_budget_tambahan]"]').val(number_format(total_budget_tambahan, 2));
+
+        hitung_total_budget();
+    }
+
+    function hitung_total_budget() {
+        var total_budget = 0;
+        for(i = 1; i <= no; i++){
+            var total_budget_tambahan = get_num($('input[name="custom_subcont[' + i + '][total_budget_tambahan]"]').val());
+            total_budget += total_budget_tambahan;
+        }
+        $('.ttl_new_budget').html(number_format(total_budget, 2)); 
+    }
+
+    function del_custom_subcont(no) {
+        $('.custom_subcont_' + no).remove();
+        hitung_est_total();
+        hitung_total_budget();
     }
 
     $(document).on('submit', '#frm-data', function(e) {
