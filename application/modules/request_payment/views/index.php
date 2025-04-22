@@ -103,7 +103,7 @@ $ENABLE_VIEW    = has_permission('Request_Payment.View');
 						</tr>
 					</thead>
 					<tbody class="list_req_payment">
-						
+
 					</tbody>
 					<tbody>
 						<tr class="exclass">
