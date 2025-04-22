@@ -234,6 +234,22 @@ if ($tipe == 'Expense') {
             </table>
         </div>
     </div>
+
+    <div class="box">
+        <div class="box-body">
+            <div style="width: 50% !important;">
+                <table style="width: 100%;">
+                    <tr>
+                        <th>Tgl Approve <?= $tipe2 ?> oleh Direktur</th>
+                        <th>:</th>
+                        <th>
+                            <?= date('d F Y H:i:s', strtotime($tgl_approve_direktur)) ?>
+                        </th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

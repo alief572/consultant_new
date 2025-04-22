@@ -1997,6 +1997,8 @@ class Approval_request_payment extends Admin_Controller
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_others = $this->db->get()->result();
 
+			$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
+
 			$data = [
 				'id' => $id,
 				'id_spk_penawaran' => $id_spk_penawaran,
@@ -2005,7 +2007,8 @@ class Approval_request_payment extends Admin_Controller
 				'data_kasbon_subcont' => $get_kasbon_subcont,
 				'data_kasbon_akomodasi' => $get_kasbon_akomodasi,
 				'data_kasbon_others' => $get_kasbon_others,
-				'tipe' => $tipe
+				'tipe' => $tipe,
+				'tgl_approve_direktur' => $get_request_payment->created_on
 			];
 		} else {
 			$this->db->select('a.*, b.id_spk_penawaran');
@@ -2201,6 +2204,8 @@ class Approval_request_payment extends Admin_Controller
 		$this->db->where('b.id', $id);
 		$get_kasbon = $this->db->get()->row();
 
+		$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
+
 		$data = [
 			'id' => $id,
 			'id_spk_penawaran' => $id_spk_penawaran,
@@ -2209,10 +2214,10 @@ class Approval_request_payment extends Admin_Controller
 			'data_kasbon_header' => $get_kasbon,
 			'tipe' => $tipe,
 			'title_expense' => $title_expense,
-			'list_detail_expense_detail' => $list_detail_expense_detail
+			'list_detail_expense_detail' => $list_detail_expense_detail,
+			'tgl_approve_direktur' => $get_request_payment->created_on
 		];
-
-		$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
+		$this->template->set('tgl_approve_direktur', $get_request_payment->created_on);
 
 		$today = date('l, d F Y [H:i:s]');
 
