@@ -519,7 +519,12 @@ class Approval_spk_direktur extends Admin_Controller
 
             $nm_marketing = $item->nm_sales;
 
-            $nm_paket = $item->nm_project;
+            $this->db->select('a.nm_paket');
+            $this->db->from('kons_master_konsultasi_header a');
+            $this->db->where('a.id_konsultasi_h', $item->id_project);
+            $get_nm_paket = $this->db->get()->row_array();
+
+            $nm_paket = (!empty($get_nm_paket['nm_paket'])) ? $get_nm_paket['nm_paket'] : '';
 
             $nm_customer = $item->nm_customer;
 

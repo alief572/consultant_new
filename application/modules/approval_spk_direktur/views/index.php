@@ -107,6 +107,8 @@ $ENABLE_DELETE  = has_permission('Direktur.Delete');
         // dataTables.destroy();
 
         var dataTables = $('#table_penawaran').dataTable({
+            processing: true,
+            serverSide: true,
             ajax: {
                 url: siteurl + active_controller + 'get_data_spk',
                 type: "POST",
