@@ -11,10 +11,10 @@ $count_periodik = 0;
 $count_pembayaran_po = 0;
 
 foreach ($data as $item) :
-    if ($item->tipe == 'kasbon') {
+    if ($item->tipe == 'kasbon' && $item->status !== '2' && is_null($item->app_checker)) {
         $count_kasbon += 1;
     }
-    if ($item->tipe == 'expense') {
+    if ($item->tipe == 'expense' && $item->status !== '2' && is_null($item->app_checker)) {
         $count_expense += 1;
     }
 
@@ -55,7 +55,7 @@ endforeach;
             <div class="col-md-12 list_kasbon" style="display: none;">
                 <a href="<?= base_url('approval_request_payment/export_excel_kasbon_checker/?tingkat=1') ?>" class="btn btn-sm btn-success"><i class="fa fa-files"></i> Export Excel</a>
                 <h2>Request Payment Kasbon</h2>
-                <table class="table table-bordered">
+                <table class="table table-bordered" style="width: 100%;" id="example_kasbon">
                     <thead>
                         <tr>
                             <th class="text-center">No. Kasbon</th>
@@ -96,9 +96,15 @@ endforeach;
                             echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
                             echo '<td>';
                             if ($ENABLE_MANAGE) :
-                                echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
-                                echo '<i class="fa fa-check-square-o"></i>';
-                                echo ' Approve';
+                                if (($item_kasbon->status !== '2' && is_null($item_kasbon->app_checker))) :
+                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
+                                    echo '<i class="fa fa-check-square-o"></i>';
+                                    echo ' Approve';
+                                    echo '</a>';
+                                endif;
+
+                                echo ' <a href="' . base_url('approval_request_payment/print_kasbon/' . str_replace('/', '|', $item_kasbon->no_doc)) . '" class="btn btn-sm btn-info" title="Print PDF">';
+                                echo '<i class="fa fa-print"></i>';
                                 echo '</a>';
                             endif;
                             echo '</td>';
@@ -120,7 +126,7 @@ endforeach;
             <div class="col-md-12 list_expense" style="display: none;">
                 <a href="<?= base_url('approval_request_payment/export_excel_expense_checker/?tingkat=1') ?>" class="btn btn-sm btn-success"><i class="fa fa-files"></i> Export Excel</a>
                 <h2>Request Payment Expense Report</h2>
-                <table class="table table-bordered">
+                <table class="table table-bordered" style="width: 100%;" id="example_expense">
                     <thead>
                         <tr>
                             <th class="text-center">No. Expense</th>
@@ -149,9 +155,15 @@ endforeach;
                                 echo '<td class="text-right">' . number_format($item_expense->jumlah) . '</td>';
                                 echo '<td>';
                                 if ($ENABLE_MANAGE) :
-                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-primary btn-sm">';
-                                    echo '<i class="fa fa-check-square-o"></i>';
-                                    echo ' Approve';
+                                    if (($item_expense->status !== '2' && is_null($item_expense->app_checker))) :
+                                        echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-primary btn-sm">';
+                                        echo '<i class="fa fa-check-square-o"></i>';
+                                        echo ' Approve';
+                                        echo '</a>';
+                                    endif;
+
+                                    echo ' <a href="' . base_url('approval_request_payment/print_expense/' . str_replace('/', '|', $item_expense->no_doc)) . '" class="btn btn-sm btn-info" title="Print PDF">';
+                                    echo '<i class="fa fa-print"></i>';
                                     echo '</a>';
                                 endif;
                                 echo '</td>';
@@ -197,6 +209,17 @@ endforeach;
 </div>
 <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
 <script type="text/javascript">
+    $('#example_kasbon').dataTable({
+        order: [
+            [6, 'desc']
+        ]
+    });
+    $('#example_expense').dataTable({
+        order: [
+            [6, 'desc']
+        ]
+    });
+
     function trshowall() {
         $(".trows").removeClass("hidden");
     }

@@ -205,6 +205,69 @@ if ($header->reject_reason !== null) {
                     }
                     ?>
                 </tbody>
+                <tbody>
+                    <?php
+                    if (!empty($data_list_kasbon_subcont_custom)) :
+                        foreach ($data_list_kasbon_subcont_custom as $item) :
+                            $no++;
+
+                            echo '<tr>';
+                            
+                            echo '<td class="text-center">';
+                            echo $no;
+                            echo '</td>';
+
+                            echo '<td>';
+                            echo $item->nm_aktifitas;
+                            echo '</td>';
+
+                            echo '<td class="text-center">';
+                            echo number_format($item->qty_estimasi);
+                            echo '</td>';
+
+                            echo '<td class="text-right">';
+                            echo number_format($item->price_unit_estimasi, 2);
+                            echo '</td>';
+
+                            echo '<td class="text-right">';
+                            echo number_format($item->total_budget_estimasi, 2);
+                            echo '</td>';
+
+                            echo '<td class="text-center">';
+                            echo number_format($item->qty_pengajuan);
+                            echo '</td>';
+
+                            echo '<td class="text-right">';
+                            echo number_format($item->nominal_pengajuan, 2);
+                            echo '</td>';
+
+                            echo '<td class="text-right">';
+                            echo number_format($item->total_pengajuan, 2);
+                            echo '</td>';
+
+                            echo '<td class="text-center">';
+                            echo number_format($item->aktual_terpakai, 2);
+                            echo '</td>';
+
+                            echo '<td class="text-right">';
+                            echo number_format($item->sisa_budget, 2);
+                            echo '</td>';
+
+                            echo '</tr>';
+
+                            $ttl_qty_peng += $item->qty_pengajuan;
+                            $ttl_nominal_peng += $item->nominal_pengajuan;
+                            $ttl_total_peng += $item->total_pengajuan;
+
+                            $ttl_est_qty += $item->qty_estimasi;
+                            $ttl_est_price_unit += $item->price_unit_estimasi;
+                            $ttl_est_total_budget += $item->total_budget_estimasi;
+                            $ttl_aktual_terpakai += ($item->aktual_terpakai);
+                            $ttl_sisa_budget += ($item->sisa_budget);
+                        endforeach;
+                    endif;
+                    ?>
+                </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="2" class="text-center">Total</td>

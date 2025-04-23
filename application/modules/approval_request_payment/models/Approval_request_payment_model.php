@@ -151,7 +151,11 @@ class Approval_request_payment_model extends BF_Model
     /* EDITED BY HIKMAT A.R [18-08-2022] */
     public function GetListDataApproval($where = '')
     {
-        $data    = $this->db->query("SELECT a.* FROM request_payment a WHERE " . $where . " order by tanggal desc, tipe ,id")->result();
+        if($where !== '') {
+            $data    = $this->db->query("SELECT a.* FROM request_payment a WHERE " . $where . " order by no_doc DESC")->result();
+        } else {
+            $data    = $this->db->query("SELECT a.* FROM request_payment a order by no_doc DESC")->result();
+        }
         return $data;
     }
 
