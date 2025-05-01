@@ -1366,11 +1366,11 @@ class Approval_expense_report_project extends Admin_Controller
         foreach($get_expense_report_req_app as $item) {
             $this->db->update('kons_tr_expense_report_project_header', ['sts' => 1, 'sts_req' => null, 'reject_reason' => ''], ['id' => $item->id]);
 
-            $get_user = $this->db->get_where('users', array('id_user' => $item->created_by))->row();
+            $get_user = $this->db->get_where('users', array('id_user' => $this->auth->user_id()))->row();
 
             $this->db->insert('request_payment', array(
                 'no_doc' => $item->id,
-                'nama' => $get_user->nama_lengkap,
+                'nama' => $get_user->nm_lengkap,
                 'tgl_doc' => date('Y-m-d', strtotime($item->created_date)),
                 'keperluan' => $item->deskripsi,
                 'tipe' => 'expense',

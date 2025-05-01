@@ -103,7 +103,7 @@ endforeach;
                                     echo '</a>';
                                 endif;
 
-                                echo ' <a href="' . base_url('approval_request_payment/print_kasbon/' . str_replace('/', '|', $item_kasbon->no_doc)) . '" class="btn btn-sm btn-info" title="Print PDF">';
+                                echo ' <a href="' . base_url('approval_request_payment/print_kasbon/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
                                 echo '<i class="fa fa-print"></i>';
                                 echo '</a>';
                             endif;
@@ -162,7 +162,7 @@ endforeach;
                                         echo '</a>';
                                     endif;
 
-                                    echo ' <a href="' . base_url('approval_request_payment/print_expense/' . str_replace('/', '|', $item_expense->no_doc)) . '" class="btn btn-sm btn-info" title="Print PDF">';
+                                    echo ' <a href="' . base_url('approval_request_payment/print_expense/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
                                     echo '<i class="fa fa-print"></i>';
                                     echo '</a>';
                                 endif;
