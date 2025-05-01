@@ -1958,6 +1958,7 @@ class Approval_request_payment extends Admin_Controller
 		$id = urldecode($id);
 		$id = str_replace('|', '/', $id);
 
+
 		$get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id))->row();
 
 		if (!empty($get_kasbon_header)) {

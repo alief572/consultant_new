@@ -768,14 +768,14 @@ class Expense_report_project extends Admin_Controller
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->join('kons_tr_kasbon_project_header d', 'd.id_spk_budgeting = a.id_spk_budgeting');
+        $this->db->join('users e', 'e.id_user = d.created_by', 'left');
         $this->db->where('d.sts', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('b.nm_sales', $search['value'], 'both');
-            $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
             $this->db->or_like('c.nm_paket', $search['value'], 'both');
+            $this->db->or_like('e.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.create_date', 'desc');
@@ -788,14 +788,14 @@ class Expense_report_project extends Admin_Controller
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->join('kons_tr_kasbon_project_header d', 'd.id_spk_budgeting = a.id_spk_budgeting');
+        $this->db->join('users e', 'e.id_user = d.created_by', 'left');
         $this->db->where('d.sts', 1);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('b.nm_sales', $search['value'], 'both');
-            $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
             $this->db->or_like('c.nm_paket', $search['value'], 'both');
+            $this->db->or_like('e.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.create_date', 'desc');
@@ -804,7 +804,7 @@ class Expense_report_project extends Admin_Controller
 
         $hasil = [];
 
-        $no = 0;
+        $no = (0 + $start);
         foreach ($get_data->result() as $item) {
 
             $valid_show = 1;
@@ -879,23 +879,33 @@ class Expense_report_project extends Admin_Controller
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             $count_expense = $this->db->get()->num_rows();
 
+            $this->db->select('a.nm_lengkap');
+            $this->db->from('users a');
+            $this->db->join('kons_tr_kasbon_project_header b', 'b.created_by = a.id_user');
+            $this->db->where('b.id_spk_penawaran', $item->id_spk_penawaran);
+            $this->db->group_by('b.created_by');
+            $get_pic_kasbon = $this->db->get()->result();
+
+            $pic_kasbon = [];
+            foreach($get_pic_kasbon as $item_pic_kasbon) :
+                $pic_kasbon[] = ucfirst($item_pic_kasbon->nm_lengkap);
+            endforeach;
 
             $no++;
-                $hasil[] = [
-                    'no' => $no,
-                    'id_spk_penawaran' => $item->id_spk_penawaran,
-                    'nm_customer' => $item->nm_customer,
-                    'nm_sales' => ucfirst($item->nm_sales),
-                    'nm_project_leader' => ucfirst($item->nm_project_leader),
-                    'nm_project' => $item->nama_project,
-                    'option' => $option
-                ];
+            $hasil[] = [
+                'no' => $no,
+                'id_spk_penawaran' => $item->id_spk_penawaran,
+                'nm_customer' => $item->nm_customer,
+                'pic_kasbon' => implode(', ',$pic_kasbon),
+                'nm_project' => $item->nama_project,
+                'option' => $option
+            ];
         }
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $no,
-            'recordsFiltered' => $no,
+            'recordsTotal' => $get_data_all->num_rows(),
+            'recordsFiltered' => $get_data_all->num_rows(),
             'data' => $hasil
         ]);
     }

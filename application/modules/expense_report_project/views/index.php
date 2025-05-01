@@ -31,8 +31,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <th align="center">No</th>
                     <th align="center">Nomor SPK</th>
                     <th align="center">Customer</th>
-                    <th align="center">Sales</th>
-                    <th align="center">Project Leader</th>
+                    <th align="center">PIC Kasbon</th>
                     <th align="center">Package</th>
                     <th align="center">Action</th>
                 </tr>
@@ -172,17 +171,14 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     data: 'nm_customer'
                 },
                 {
-                    data: 'nm_sales'
-                },
-                {
-                    data: 'nm_project_leader'
+                    data: 'pic_kasbon'
                 },
                 {
                     data: 'nm_project'
                 },
                 {
                     data: 'option'
-                }
+                },
             ],
             responsive: true,
             processing: true,

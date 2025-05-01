@@ -2884,6 +2884,7 @@ class Kasbon_project extends Admin_Controller
                         'id_spk_budgeting' => $post['id_spk_budgeting'],
                         'id_spk_penawaran' => $post['id_spk_penawaran'],
                         'id_penawaran' => $post['id_penawaran'],
+                        'id_akomodasi' => $item['id_akomodasi'],
                         'id_item' => $item['id_item'],
                         'nm_item' => $item['nm_item'],
                         'qty_pengajuan' => $qty_pengajuan,

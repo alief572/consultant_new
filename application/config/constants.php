@@ -88,4 +88,5 @@ define('DBHRIS', 'hr_ori');
 define('DBERP', 'origa_dev');
 define('DBACC', 'gl_origa');
 define('DBHR', 'hr_sentral');
+define('DBSF', 'db_sendigs_finance');
 define('FILE_ALLOW', 'doc|docx|xls|xlsx|ppt|pptx|7z|zip|rar|jpeg|jpg|gif|bmp|png');
