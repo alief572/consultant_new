@@ -5,10 +5,10 @@ $ENABLE_VIEW    = has_permission('Expense_Report_Project.View');
 $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
 $title_header = 'Subcont';
-if($tipe == '2') {
+if ($tipe == '2') {
     $title_header = 'Akomodasi';
 }
-if($tipe == '3') {
+if ($tipe == '3') {
     $title_header = 'Others';
 }
 ?>
@@ -95,6 +95,7 @@ if($tipe == '3') {
                         <th class="text-center" rowspan="2">Item</th>
                         <th class="text-center" colspan="2">Kasbon</th>
                         <th class="text-center" colspan="2">Expense Report</th>
+                        <th class="text-center" rowspan="2">Keterangan</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
@@ -123,6 +124,7 @@ if($tipe == '3') {
 
                         $qty_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['qty_expense'] : 0;
                         $nominal_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['nominal_expense'] : 0;
+                        $keterangan = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['keterangan'] : '';
 
                         echo '<tr>';
 
@@ -151,6 +153,10 @@ if($tipe == '3') {
                         echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $nominal_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
                         echo '</td>';
 
+                        echo '<td width="200">';
+                        echo '<textarea class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][keterangan]" ' . $readonly_nominal . '>' . $keterangan . '</textarea>';
+                        echo '</td>';
+
                         echo '</tr>';
 
                         $ttl_kasbon += ($qty_expense * $nominal_expense);
@@ -164,14 +170,17 @@ if($tipe == '3') {
                     <tr>
                         <td colspan="5" class="text-right">Total Kasbon</td>
                         <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td colspan="5" class="text-right">Total Expense Report</td>
                         <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td colspan="5" class="text-right">Selisih</td>
                         <td class="text-right col_selisih"><?= number_format($header->selisih, 2) ?></td>
+                        <td></td>
                     </tr>
                 </tfoot>
             </table>
@@ -181,14 +190,20 @@ if($tipe == '3') {
             <div class="row">
                 <div class="col-md-6">
                     <table style="width: 100%">
-                        <!-- <tr>
-                            <th colspan="4">Informasi Bank Sentral</th>
-                        </tr> -->
                         <tr>
-                            <!-- <th style="padding: 5px;">Bank</th>
+                            <th style="padding: 5px;">Bukti Penggunaan</th>
                             <td style="padding: 5px;">
-                                <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>">
-                            </td> -->
+                                <input type="file" name="bukti_penggunaan[]" id="" class="form-control form-control-sm" multiple>
+                                <?php
+                                if (count($list_bukti_penggunaan) > 0) {
+                                    echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup2">';
+                                    echo '<i class="fa fa-list"></i> List Bukti Penggunaan';
+                                    echo '</button>';
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                        <tr>
                             <th style="padding: 5px;">Bukti Pengembalian</th>
                             <td style="padding: 5px;">
                                 <input type="file" name="bukti_pengembalian[]" id="" class="form-control form-control-sm" multiple>
@@ -201,22 +216,14 @@ if($tipe == '3') {
                                 ?>
                             </td>
                         </tr>
-                        <!-- <tr>
-                            <th style="padding: 5px;">Bank Number</th>
-                            <td style="padding: 5px;">
-                                <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>">
-                            </td>
-                            <td></td>
-                            <td></td>
-                        </tr>
                         <tr>
-                            <th style="padding: 5px;">Account Name</th>
-                            <td style="padding: 5px;">
-                                <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>">
+                            <th>
+                                Keterangan Kurang Bayar
+                            </th>
+                            <td>
+                                <textarea class="form-control form-control-sm" name="keterangan_kurang_bayar"><?= $header->keterangan_kurang_bayar ?></textarea>
                             </td>
-                            <td></td>
-                            <td></td>
-                        </tr> -->
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -243,6 +250,7 @@ if($tipe == '3') {
                         <tr>
                             <th>No.</th>
                             <th>Document Link</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -252,6 +260,47 @@ if($tipe == '3') {
                             echo '<tr>';
                             echo '<td class="text-center">' . $no . '</td>';
                             echo '<td><a href="' . base_url($item->document_link) . '" target="_blank">' . $item->document_link . '</a></td>';
+                            echo '<td>';
+                            echo '<button type="button" class="btn btn-sm btn-danger del_bukti_pengembalian" data-id="' . $item->id . '" title="Delete Bukti Pengembalian"><i class="fa fa-trash"></i></button>';
+                            echo '</td>';
+                            echo '</tr>';
+
+                            $no++;
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-default fade" id="dialog-popup2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style='width:70%; '>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel"><span class="fa fa-users"></span>&nbsp;List Bukti Peggunaan</h4>
+            </div>
+            <div class="modal-body" id="ModalView">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Document Link</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $no = 1;
+                        foreach ($list_bukti_penggunaan as $item) {
+                            echo '<tr>';
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td><a href="' . base_url($item->upload_file) . '" target="_blank">' . $item->upload_file . '</a></td>';
+                            echo '<td>';
+                            echo '<button type="button" class="btn btn-sm btn-danger del_bukti_penggunaan" title="Delete" data-id="' . $item->id . '"><i class="fa fa-trash"></i></button>';
+                            echo '</td>';
                             echo '</tr>';
 
                             $no++;
@@ -270,6 +319,100 @@ if($tipe == '3') {
 <script>
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
+    });
+
+    $(document).on('click', '.del_bukti_penggunaan', function() {
+        var id = $(this).data('id');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_bukti_penggunaan',
+                    data: {
+                        'id': id
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: 'Data has been deleted !'
+                            }, function() {
+                                location.reload();
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: 'Please try again later !'
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_bukti_pengembalian', function() {
+        var id = $(this).data('id');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_bukti_pengembalian',
+                    data: {
+                        'id': id
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: 'Data has been deleted !'
+                            }, function() {
+                                location.reload();
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: 'Please try again later !'
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
     });
 
     $(document).on('submit', '#frm-data', function(e) {

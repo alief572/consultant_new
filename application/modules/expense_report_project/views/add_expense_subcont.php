@@ -5,10 +5,10 @@ $ENABLE_VIEW    = has_permission('Expense_Report_Project.View');
 $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
 $title_header = 'Subcont';
-if($tipe == '2') {
+if ($tipe == '2') {
     $title_header = 'Akomodasi';
 }
-if($tipe == '3') {
+if ($tipe == '3') {
     $title_header = 'Others';
 }
 ?>
@@ -94,6 +94,7 @@ if($tipe == '3') {
                         <th class="text-center" rowspan="2">Item</th>
                         <th class="text-center" colspan="2">Kasbon</th>
                         <th class="text-center" colspan="2">Expense Report</th>
+                        <th class="text-center" rowspan="2">Keterangan</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
@@ -145,7 +146,11 @@ if($tipe == '3') {
 
                         echo '<td width="200">';
                         echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $item['nominal_kasbon'] . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
-                        echo '<input type="hidden" class="form-control form-control-sm" name="detail_subcont['.$item['no'].'][total_kasbon]" value="'.$item['total_kasbon'].'">';
+                        echo '<input type="hidden" class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][total_kasbon]" value="' . $item['total_kasbon'] . '">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<textarea class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][keterangan]" '.$readonly_nominal.'></textarea>';
                         echo '</td>';
 
                         echo '</tr>';
@@ -161,15 +166,19 @@ if($tipe == '3') {
                     <tr>
                         <td colspan="5" class="text-right">Total Kasbon</td>
                         <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td colspan="5" class="text-right">Total Expense Report</td>
                         <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td colspan="5" class="text-right">Selisih</td>
                         <td class="text-right col_selisih">0.00</td>
+                        <td></td>
                     </tr>
+
                 </tfoot>
             </table>
 
@@ -178,40 +187,26 @@ if($tipe == '3') {
             <div class="row">
                 <div class="col-md-6">
                     <table style="width: 100%">
-                        <!-- <tr>
-                            <th colspan="4">
-                                Informasi Bank Sentral
-                            </th>
-                        </tr> -->
                         <tr>
-                            <!-- <th style="padding: 5px;">Bank</th>
+                            <th style="padding: 5px;">Bukti Penggunaan</th>
                             <td style="padding: 5px;">
-                                <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -">
-                            </td> -->
+                                <input type="file" name="bukti_penggunaan[]" id="" class="form-control form-control-sm" multiple>
+                            </td>
+                        </tr>
+                        <tr>
                             <th style="padding: 5px;">Bukti Pengembalian</th>
                             <td style="padding: 5px;">
                                 <input type="file" name="bukti_pengembalian[]" id="" class="form-control form-control-sm" multiple>
                             </td>
-                        </tr>
-                        <!-- <tr>
-                            <th style="padding: 5px;">Bank Number</th>
-                            <td style="padding: 5px;">
-                                <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -">
-                            </td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        </tr>   
                         <tr>
-                            <th style="padding: 5px;">Account Name</th>
-                            <td style="padding: 5px;">
-                                <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -">
+                            <th>
+                                Keterangan Kurang Bayar
+                            </th>
+                            <td>
+                                <textarea class="form-control form-control-sm" name="keterangan_kurang_bayar"></textarea>
                             </td>
-                            <td></td>
-                            <td></td>
                         </tr>
-                        <tr>
-                            
-                        </tr> -->
                     </table>
                 </div>
             </div>
@@ -332,13 +327,13 @@ if($tipe == '3') {
 
         for (i = 1; i <= count_no; i++) {
             var qty_kasbon = get_num($('input[name="detail_subcont[' + i + '][qty_kasbon]"]').val());
-            if(qty_kasbon < 1) {
+            if (qty_kasbon < 1) {
                 qty_kasbon = 1;
             }
             var nominal_kasbon = get_num($('input[name="detail_subcont[' + i + '][nominal_kasbon]"]').val());
 
             var qty_expense = get_num($('input[name="detail_subcont[' + i + '][qty_expense]"]').val());
-            if(qty_expense < 1) {
+            if (qty_expense < 1) {
                 qty_expense = 1;
             }
             var nominal_expense = get_num($('input[name="detail_subcont[' + i + '][nominal_expense]"]').val());

@@ -2207,18 +2207,35 @@ class Approval_request_payment extends Admin_Controller
 
 		$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
 
-		$data = [
-			'id' => $id,
-			'id_spk_penawaran' => $id_spk_penawaran,
-			'data_spk_penawaran' => $get_spk_penawaran,
-			'list_expense_detail' => $get_expense_detail,
-			'data_kasbon_header' => $get_kasbon,
-			'tipe' => $tipe,
-			'title_expense' => $title_expense,
-			'list_detail_expense_detail' => $list_detail_expense_detail,
-			'tgl_approve_direktur' => $get_request_payment->created_on
-		];
-		$this->template->set('tgl_approve_direktur', $get_request_payment->created_on);
+
+		if (empty($get_request_payment)) {
+			$get_bukti_penggunaan = $this->db->get_where('kons_tr_bukti_penggunaan_expense', array('id_header_expense' => $id))->result();
+
+			$data = [
+				'id' => $id,
+				'id_spk_penawaran' => $id_spk_penawaran,
+				'data_spk_penawaran' => $get_spk_penawaran,
+				'list_expense_detail' => $get_expense_detail,
+				'data_kasbon_header' => $get_kasbon,
+				'tipe' => $tipe,
+				'title_expense' => $title_expense,
+				'list_detail_expense_detail' => $list_detail_expense_detail,
+				'list_bukti_penggunaan' => $get_bukti_penggunaan
+			];
+		} else {
+			$data = [
+				'id' => $id,
+				'id_spk_penawaran' => $id_spk_penawaran,
+				'data_spk_penawaran' => $get_spk_penawaran,
+				'list_expense_detail' => $get_expense_detail,
+				'data_kasbon_header' => $get_kasbon,
+				'tipe' => $tipe,
+				'title_expense' => $title_expense,
+				'list_detail_expense_detail' => $list_detail_expense_detail,
+				'tgl_approve_direktur' => $get_request_payment->created_on
+			];
+			$this->template->set('tgl_approve_direktur', $get_request_payment->created_on);
+		}
 
 		$today = date('l, d F Y [H:i:s]');
 
@@ -2226,10 +2243,11 @@ class Approval_request_payment extends Admin_Controller
 		$mpdf = new mPDF('', '', '', '', '', '', '', '', '', '');
 		$mpdf->SetImportUse();
 		$mpdf->RestartDocTemplate();
+		// $show = $this->load->view('print_expense', $data);
 		$show = $this->template->load_view('print_expense', $data);
 		$this->mpdf->AddPage('L', 'A4', 'en');
 		$footer = 'Printed by : ' . ucfirst(strtolower($this->auth->user_name())) . ', ' . $today . ' / ' . $id . '';
-		// $mpdf->SetWatermarkText('ORI Group');
+		$mpdf->SetWatermarkText('ORI Group');
 		$mpdf->showWatermarkText = true;
 		$mpdf->SetTitle($id . "/" . date('ymdhis'));
 		$mpdf->AddPage();

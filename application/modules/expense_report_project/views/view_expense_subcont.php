@@ -85,6 +85,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <th class="text-center" rowspan="2">Item</th>
                     <th class="text-center" colspan="2">Kasbon</th>
                     <th class="text-center" colspan="2">Expense Report</th>
+                    <th class="text-center" rowspan="2">Keterangan</th>
                 </tr>
                 <tr>
                     <th class="text-center">Qty</th>
@@ -107,6 +108,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     $qty_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['qty_expense'] : 0;
                     $nominal_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['nominal_expense'] : 0;
                     $total_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['total_expense'] : 0;
+                    $keterangan = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['keterangan'] : '';
 
                     echo '<tr>';
 
@@ -135,6 +137,10 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $nominal_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
                     echo '</td>';
 
+                    echo '<td width="200">';
+                    echo '<textarea class="form-control form-control-sm" readonly>' . $keterangan . '</textarea>';
+                    echo '</td>';
+
                     echo '</tr>';
 
                     $ttl_kasbon += ($item['total_kasbon']);
@@ -148,14 +154,17 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 <tr>
                     <td colspan="5" class="text-right">Total Kasbon</td>
                     <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td colspan="5" class="text-right">Total Expense Report</td>
                     <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td colspan="5" class="text-right">Selisih</td>
                     <td class="text-right col_selisih"><?= number_format($header->selisih, 2) ?></td>
+                    <td></td>
                 </tr>
             </tfoot>
         </table>
@@ -165,17 +174,9 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
         <div class="row">
             <div class="col-md-6">
                 <table style="width: 100%">
-                    <!-- <tr>
-                        <th colspan="4">Informasi Bank Sentral</th>
-                    </tr> -->
                     <tr>
-                        <!-- <th style="padding: 5px;">Bank</th>
-                        <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>" readonly>
-                        </td> -->
                         <th style="padding: 5px;">Bukti Pengembalian</th>
                         <td style="padding: 5px;">
-                            <input type="file" name="bukti_pengembalian[]" id="" class="form-control form-control-sm" multiple disabled>
                             <?php
                             if (count($list_bukti_pengembalian) > 0) {
                                 echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup">';
@@ -185,22 +186,18 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                             ?>
                         </td>
                     </tr>
-                    <!-- <tr>
-                        <th style="padding: 5px;">Bank Number</th>
+                    <tr>
+                        <th style="padding: 5px;">Bukti Penggunaan</th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>" readonly>
+                            <?php
+                            if (count($list_bukti_penggunaan) > 0) {
+                                echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup2">';
+                                echo '<i class="fa fa-list"></i> List Bukti Penggunaan';
+                                echo '</button>';
+                            }
+                            ?>
                         </td>
-                        <td></td>
-                        <td></td>
-                    </tr> -->
-                    <!-- <tr>
-                        <th style="padding: 5px;">Account Name</th>
-                        <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>" readonly>
-                        </td>
-                        <td></td>
-                        <td></td>
-                    </tr> -->
+                    </tr>
                 </table>
             </div>
         </div>
@@ -232,6 +229,40 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                             echo '<tr>';
                             echo '<td class="text-center">' . $no . '</td>';
                             echo '<td><a href="' . base_url($item->document_link) . '" target="_blank">' . $item->document_link . '</a></td>';
+                            echo '</tr>';
+
+                            $no++;
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-default fade" id="dialog-popup2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style='width:70%; '>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel"><span class="fa fa-users"></span>&nbsp;List Bukti Penggunaan</h4>
+            </div>
+            <div class="modal-body" id="ModalView">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Document Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $no = 1;
+                        foreach ($list_bukti_penggunaan as $item) {
+                            echo '<tr>';
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td><a href="' . base_url($item->upload_file) . '" target="_blank">' . $item->upload_file . '</a></td>';
                             echo '</tr>';
 
                             $no++;

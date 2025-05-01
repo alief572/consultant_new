@@ -374,6 +374,11 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_header_expense', $get_header->id);
         $get_bukti_pengembalian = $this->db->get()->result();
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_bukti_penggunaan_expense a');
+        $this->db->where('a.id_header_expense', $get_header->id);
+        $get_bukti_penggunaan = $this->db->get()->result();
+
         $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header a', ['a.id' => $id_header])->row();
 
         $datalist_item = [];
@@ -424,7 +429,8 @@ class Expense_report_project extends Admin_Controller
                     'id_detail_kasbon' => $item->id_detail_kasbon,
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
-                    'nominal_expense' => $item->nominal_expense
+                    'nominal_expense' => $item->nominal_expense,
+                    'keterangan' => $item->keterangan
                 ];
             }
         }
@@ -475,7 +481,8 @@ class Expense_report_project extends Admin_Controller
                     'id_detail_kasbon' => $item->id_detail_kasbon,
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
-                    'nominal_expense' => $item->nominal_expense
+                    'nominal_expense' => $item->nominal_expense,
+                    'keterangan' => $item->keterangan
                 ];
             }
         }
@@ -526,7 +533,8 @@ class Expense_report_project extends Admin_Controller
                     'id_detail_kasbon' => $item->id_detail_kasbon,
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
-                    'nominal_expense' => $item->nominal_expense
+                    'nominal_expense' => $item->nominal_expense,
+                    'keterangan' => $item->keterangan
                 ];
             }
         }
@@ -534,6 +542,7 @@ class Expense_report_project extends Admin_Controller
         $data = [
             'header' => $get_header,
             'list_bukti_pengembalian' => $get_bukti_pengembalian,
+            'list_bukti_penggunaan' => $get_bukti_penggunaan,
             'datalist_item' => $datalist_item,
             'datalist_item_expense' => $datalist_item_expense,
             'id_spk_budgeting' => $get_kasbon_header->id_spk_budgeting,
@@ -561,6 +570,11 @@ class Expense_report_project extends Admin_Controller
         $this->db->from('kons_tr_expense_report_bukti_pengembalian a');
         $this->db->where('a.id_header_expense', $get_header->id);
         $get_bukti_pengembalian = $this->db->get()->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_bukti_penggunaan_expense a');
+        $this->db->where('a.id_header_expense', $get_header->id);
+        $get_bukti_penggunaan = $this->db->get()->result();
 
         $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header a', ['a.id' => $id_header])->row();
 
@@ -617,6 +631,7 @@ class Expense_report_project extends Admin_Controller
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
                     'nominal_expense' => $item->nominal_expense,
+                    'keterangan' => $item->keterangan,
                     'total_expense' => ($qty_expense * $item->nominal_expense)
                 ];
             }
@@ -673,6 +688,7 @@ class Expense_report_project extends Admin_Controller
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
                     'nominal_expense' => $item->nominal_expense,
+                    'keterangan' => $item->keterangan,
                     'total_expense' => ($qty_expense * $item->nominal_expense)
                 ];
             }
@@ -729,6 +745,7 @@ class Expense_report_project extends Admin_Controller
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
                     'nominal_expense' => $item->nominal_expense,
+                    'keterangan' => $item->keterangan,
                     'total_expense' => ($qty_expense * $item->nominal_expense)
                 ];
             }
@@ -737,6 +754,7 @@ class Expense_report_project extends Admin_Controller
         $data = [
             'header' => $get_header,
             'list_bukti_pengembalian' => $get_bukti_pengembalian,
+            'list_bukti_penggunaan' => $get_bukti_penggunaan,
             'datalist_item' => $datalist_item,
             'datalist_item_expense' => $datalist_item_expense,
             'id_spk_budgeting' => $get_kasbon_header->id_spk_budgeting,
@@ -1502,13 +1520,14 @@ class Expense_report_project extends Admin_Controller
         //     $upload_po = 'uploads/expense_report_project/' . $data_upload_po['file_name'];
         // }
 
+        $data_bukti_penggunaan = [];
         $data_bukti_pengembalian = [];
 
         $files2 = $_FILES['bukti_pengembalian'];
         $file_count2 = count($files2['name']);
 
         $config2['upload_path'] = './uploads/bukti_pengembalian_expense_report/'; //path folder
-        $config2['allowed_types'] = '*'; //type yang dapat diakses bisa anda sesuaikan
+        $config2['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
         $config2['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
         $config2['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
         $config2['remove_spaces'] = TRUE; // Remove spaces from the file name.
@@ -1531,6 +1550,39 @@ class Expense_report_project extends Admin_Controller
                 $data_bukti_pengembalian[] = [
                     'id_header_expense' => $id,
                     'document_link' => 'uploads/bukti_pengembalian_expense_report/' . $data['file_name'],
+                    'created_by' => $this->auth->user_id(),
+                    'created_date' => date('Y-m-d H:i:s')
+                ];
+            }
+        }
+
+        $config3['upload_path'] = './uploads/bukti_penggunaan_expense/'; //path folder
+        $config3['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
+        $config3['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
+        $config3['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
+        $config3['remove_spaces'] = TRUE; // Remove spaces from the file name.
+
+        // $this->load->library('upload', $config);
+        $this->upload->initialize($config3);
+
+        $files3 = $_FILES['bukti_penggunaan'];
+        $file_count3 = count($files3['name']);
+
+        for ($i = 0; $i < $file_count3; $i++) {
+            $_FILES['bukti_penggunaan']['name'] = $files3['name'][$i];
+            $_FILES['bukti_penggunaan']['type'] = $files3['type'][$i];
+            $_FILES['bukti_penggunaan']['tmp_name'] = $files3['tmp_name'][$i];
+            $_FILES['bukti_penggunaan']['error'] = $files3['error'][$i];
+            $_FILES['bukti_penggunaan']['size'] = $files3['size'][$i];
+
+            // Reinitialize the upload class for each file
+            if ($this->upload->do_upload('bukti_penggunaan')) {
+                // Handle success (save file information or any other action)
+                $data2 = $this->upload->data();
+
+                $data_bukti_penggunaan[] = [
+                    'id_header_expense' => $id,
+                    'upload_file' => 'uploads/bukti_penggunaan_expense/' . $data2['file_name'],
                     'created_by' => $this->auth->user_id(),
                     'created_date' => date('Y-m-d H:i:s')
                 ];
@@ -1566,6 +1618,7 @@ class Expense_report_project extends Admin_Controller
                         'tipe' => 1,
                         'qty_expense' => str_replace(',', '', $item['qty_expense']),
                         'nominal_expense' => $nominal_expense,
+                        'keterangan' => $item['keterangan'],
                         'created_by' => $this->auth->user_id(),
                         'created_date' => date('Y-m-d H:i:s')
                     ];
@@ -1591,12 +1644,17 @@ class Expense_report_project extends Admin_Controller
         //     'created_date' => date('Y-m-d H:i:s')
         // ];
 
+        $selisih = ($ttl_kasbon - $ttl_expense_report);
+        // if(($ttl_kasbon - $ttl_expense_report) <= 0) {
+        //     $selisih = ($ttl_expense_report - $ttl_kasbon);
+        // }
+
         $data_insert_header = [
             'id' => $id,
             'id_header' => $post['id_header'],
             'total_expense_report' => $ttl_expense_report,
             'total_kasbon' => $ttl_kasbon,
-            'selisih' => ($ttl_kasbon - $ttl_expense_report),
+            'selisih' => $selisih,
             'tipe' => $post['tipe'],
             'document_link' => $upload_po,
             'created_by' => $this->auth->user_id(),
@@ -1629,6 +1687,19 @@ class Expense_report_project extends Admin_Controller
             }
         }
 
+        // print_r($data_bukti_penggunaan);
+        // exit;
+
+        if(!empty($data_bukti_penggunaan)) {
+            $insert_bukti_penggunaan = $this->db->insert_batch('kons_tr_bukti_penggunaan_expense', $data_bukti_penggunaan);
+            if (!$insert_bukti_penggunaan) {
+                $this->db->trans_rollback();
+
+                print_r('error insert bukti penggunaan : ' . $this->db->last_query());
+                exit;
+            }
+        }
+
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
@@ -1656,7 +1727,7 @@ class Expense_report_project extends Admin_Controller
         $id = $post['id_expense'];
 
         $config['upload_path'] = './uploads/expense_report_project/'; //path folder
-        $config['allowed_types'] = '*'; //type yang dapat diakses bisa anda sesuaikan
+        $config['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
         $config['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
         $config['remove_spaces'] = TRUE; // Remove spaces from the file name.
@@ -1666,27 +1737,14 @@ class Expense_report_project extends Admin_Controller
 
         $upload_po = '';
 
-        // $files = $_FILES['kasbon_document'];
-        // $file_count = count($files['name']);
-
-        // $_FILES['kasbon_document']['name'] = $files['name'];
-        // $_FILES['kasbon_document']['type'] = $files['type'];
-        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        // $_FILES['kasbon_document']['error'] = $files['error'];
-        // $_FILES['kasbon_document']['size'] = $files['size'];
-
-        // if ($this->upload->do_upload('kasbon_document')) {
-        //     $data_upload_po = $this->upload->data();
-        //     $upload_po = 'uploads/expense_report_project/' . $data_upload_po['file_name'];
-        // }
-
+        $data_bukti_penggunaan = [];
         $data_bukti_pengembalian = [];
 
         $files2 = $_FILES['bukti_pengembalian'];
         $file_count2 = count($files2['name']);
 
         $config2['upload_path'] = './uploads/bukti_pengembalian_expense_report/'; //path folder
-        $config2['allowed_types'] = '*'; //type yang dapat diakses bisa anda sesuaikan
+        $config2['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
         $config2['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
         $config2['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
         $config2['remove_spaces'] = TRUE; // Remove spaces from the file name.
@@ -1709,6 +1767,39 @@ class Expense_report_project extends Admin_Controller
                 $data_bukti_pengembalian[] = [
                     'id_header_expense' => $id,
                     'document_link' => 'uploads/bukti_pengembalian_expense_report/' . $data['file_name'],
+                    'created_by' => $this->auth->user_id(),
+                    'created_date' => date('Y-m-d H:i:s')
+                ];
+            }
+        }
+
+        $files3 = $_FILES['bukti_penggunaan'];
+        $file_count3 = count($files3['name']);
+
+        $confi3['upload_path'] = './uploads/bukti_penggunaan_expense/'; //path folder
+        $confi3['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
+        $confi3['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
+        $confi3['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
+        $confi3['remove_spaces'] = TRUE; // Remove spaces from the file name.
+
+        $this->load->library('upload', $confi3);
+        $this->upload->initialize($confi3);
+
+        for ($i = 0; $i < $file_count3; $i++) {
+            $_FILES['bukti_penggunaan']['name'] = $files3['name'][$i];
+            $_FILES['bukti_penggunaan']['type'] = $files3['type'][$i];
+            $_FILES['bukti_penggunaan']['tmp_name'] = $files3['tmp_name'][$i];
+            $_FILES['bukti_penggunaan']['error'] = $files3['error'][$i];
+            $_FILES['bukti_penggunaan']['size'] = $files3['size'][$i];
+
+            // Reinitialize the upload class for each file
+            if ($this->upload->do_upload('bukti_penggunaan')) {
+                // Handle success (save file information or any other action)
+                $data = $this->upload->data();
+
+                $data_bukti_penggunaan[] = [
+                    'id_header_expense' => $id,
+                    'upload_file' => 'uploads/bukti_penggunaan_expense/' . $data['file_name'],
                     'created_by' => $this->auth->user_id(),
                     'created_date' => date('Y-m-d H:i:s')
                 ];
@@ -1739,6 +1830,7 @@ class Expense_report_project extends Admin_Controller
                         'tipe' => $post['tipe'],
                         'qty_expense' => $qty_expense,
                         'nominal_expense' => $nominal_expense,
+                        'keterangan' => $item['keterangan'],
                         'created_by' => $this->auth->user_id(),
                         'created_date' => date('Y-m-d H:i:s')
                     ];
@@ -1752,22 +1844,10 @@ class Expense_report_project extends Admin_Controller
         if (!empty($data_insert_detail)) {
             $this->db->delete('kons_tr_expense_report_project_detail', ['id_header_expense' => $post['id_expense']]);
         }
-        if (!empty($data_bukti_pengembalian)) {
-            $this->db->delete('kons_tr_expense_report_bukti_pengembalian', ['id_header_expense' => $post['id_expense']]);
-        }
-
-        // $data_insert_header = [
-        //     'total_expense_report' => $ttl_expense_report,
-        //     'total_kasbon' => $ttl_kasbon,
-        //     'selisih' => ($ttl_kasbon - $ttl_expense_report),
-        //     'tipe' => $post['tipe'],
-        //     'document_link' => $upload_po,
-        //     'bank' => $post['kasbon_bank'],
-        //     'bank_number' => $post['kasbon_bank_number'],
-        //     'bank_account' => $post['kasbon_bank_account'],
-        //     'updated_by' => $this->auth->user_id(),
-        //     'updated_date' => date('Y-m-d H:i:s')
-        // ];
+        // if (!empty($data_bukti_pengembalian)) {
+        //     $this->db->delete('kons_tr_expense_report_bukti_pengembalian', ['id_header_expense' => $post['id_expense']]);
+        // }
+        
         $data_insert_header = [
             'total_expense_report' => $ttl_expense_report,
             'total_kasbon' => $ttl_kasbon,
@@ -1795,6 +1875,7 @@ class Expense_report_project extends Admin_Controller
                 'total_kasbon' => $ttl_kasbon,
                 'selisih' => ($ttl_kasbon - $ttl_expense_report),
                 'tipe' => $post['tipe'],
+                'keterangan_kurang_bayar' => $post['keterangan_kurang_bayar'],
                 'updated_by' => $this->auth->user_id(),
                 'updated_date' => date('Y-m-d H:i:s')
             ];
@@ -1824,6 +1905,16 @@ class Expense_report_project extends Admin_Controller
                 $this->db->trans_rollback();
 
                 print_r('error insert bukti pengembalian : ' . $this->db->error($insert_bukti_pengembalian));
+                exit;
+            }
+        }
+
+        if (!empty($data_bukti_penggunaan)) {
+            $insert_bukti_penggunaan = $this->db->insert_batch('kons_tr_bukti_penggunaan_expense', $data_bukti_penggunaan);
+            if (!$insert_bukti_penggunaan) {
+                $this->db->trans_rollback();
+
+                print_r('error insert bukti penggunaan : ' . $this->db->error($insert_bukti_penggunaan));
                 exit;
             }
         }
@@ -1934,6 +2025,10 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->trans_begin();
 
+        $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', array('id_header' => $id))->row();
+
+
+        $this->db->delete('kons_tr_bukti_penggunaan_expense', array('id_header_expense' => $get_expense->id));
         $this->db->delete('kons_tr_expense_report_project_header', array('id_header' => $id));
         $this->db->delete('kons_tr_expense_report_project_detail', array('id_header_kasbon' => $id));
 
@@ -2003,6 +2098,50 @@ class Expense_report_project extends Admin_Controller
             'nilai_budget_subcont' => $nilai_kasbon_on_proses,
             'nilai_budget_akomodasi' => $nilai_kasbon_on_proses_akomodasi,
             'nilai_budget_others' => $nilai_kasbon_on_proses_others
+        ]);
+    }
+
+    public function del_bukti_penggunaan() {
+        $id = $this->input->post('id');
+
+        $this->db->trans_begin();
+
+        $del_bukti_penggunaan = $this->db->delete('kons_tr_bukti_penggunaan_expense', array('id' => $id));
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+        }
+
+        echo json_encode([
+            'status' => $valid
+        ]);
+    }
+
+    public function del_bukti_pengembalian() {
+        $id = $this->input->post('id');
+
+        $this->db->trans_begin();
+
+        $del_bukti_penggunaan = $this->db->delete('kons_tr_expense_report_bukti_pengembalian', array('id' => $id));
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+        }
+
+        echo json_encode([
+            'status' => $valid
         ]);
     }
 
