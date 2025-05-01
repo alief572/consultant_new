@@ -23,6 +23,13 @@ if ($tipe == 'Kasbon Others') {
 if ($tipe == 'Expense') {
     $box_expense = '';
 }
+
+$d_none = '';
+$d_none2 = 'style="display: none;"';
+if(empty($tgl_approve_direktur)) {
+    $d_none = 'style="display: none;"';
+    $d_none2 = '';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -235,7 +242,7 @@ if ($tipe == 'Expense') {
         </div>
     </div>
 
-    <div class="box">
+    <div class="box" <?= $d_none ?>>
         <div class="box-body">
             <div style="width: 50% !important;">
                 <table style="width: 100%;">
@@ -247,6 +254,18 @@ if ($tipe == 'Expense') {
                         </th>
                     </tr>
                 </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="box" style="padding-top: 3vh;">
+        <div class="box-body">
+            <div style="width: 50% !important;">
+                <?php 
+                    foreach($list_bukti_penggunaan as $item) :
+                        echo '<img src="'.base_url($item->upload_file).'" img="500">';
+                    endforeach;
+                ?>
             </div>
         </div>
     </div>

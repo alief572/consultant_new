@@ -364,15 +364,15 @@ class Approval_kasbon_project extends Admin_Controller
         //     exit;
         // }
 
-        $insert_sendigs_kasbon = $this->db->insert(DBSF.'.tr_kasbon', $data_insert_sendigs_kasbon);
+        // $insert_sendigs_kasbon = $this->db->insert(DBSF.'.tr_kasbon', $data_insert_sendigs_kasbon);
 
-        $update_req = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id' => $id_kasbon]);
-        if (!$update_req) {
-            $this->db->trans_rollback();
+        // $update_req = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id' => $id_kasbon]);
+        // if (!$update_req) {
+        //     $this->db->trans_rollback();
 
-            print_r($this->db->error($update_req));
-            exit;
-        }
+        //     print_r($this->db->error($update_req));
+        //     exit;
+        // }
 
         $update_req = $this->db->update('kons_tr_req_kasbon_project', ['sts' => 1], ['id_kasbon' => $id_kasbon, 'sts' => 0]);
         if (!$update_req) {

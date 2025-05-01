@@ -80,7 +80,7 @@ class Monitoring_expense_model extends BF_Model
             
             $keperluan = $item['nm_customer'].', '.$item['id_spk_penawaran'].', '.$tipe_kasbon;
 
-            $action = '<a href="javascript:void(0);" class="btn btn-sm btn-info" title="Print Expense"><i class="fa fa-print"></i></a>';
+            $action = '<a href="'.base_url('approval_request_payment/print_expense/'.str_replace('/', '|', $item['id'])).'" class="btn btn-sm btn-info" title="Print Expense"><i class="fa fa-print"></i></a>';
 
             $hasil[] = [
                 'no' => $no,
