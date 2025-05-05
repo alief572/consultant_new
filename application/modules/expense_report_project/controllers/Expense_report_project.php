@@ -790,7 +790,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('d.sts', 1);
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
+            $this->db->like('a.id_spk_penawaran', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
             $this->db->or_like('c.nm_paket', $search['value'], 'both');
             $this->db->or_like('e.nm_lengkap', $search['value'], 'both');
@@ -810,7 +810,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('d.sts', 1);
         if (!empty($search)) {
             $this->db->group_start();
-            $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
+            $this->db->like('a.id_spk_penawaran', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
             $this->db->or_like('c.nm_paket', $search['value'], 'both');
             $this->db->or_like('e.nm_lengkap', $search['value'], 'both');
