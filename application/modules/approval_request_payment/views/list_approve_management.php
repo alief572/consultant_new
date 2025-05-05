@@ -99,6 +99,17 @@ endforeach;
                                 echo ' Approve';
                                 echo '</a>';
                             endif;
+
+                            if ($get_kasbon_header->tipe == '1') {
+                                $link_view = base_url('kasbon_project/view_kasbon_subcont/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                            }
+                            if ($get_kasbon_header->tipe == '2') {
+                                $link_view = base_url('kasbon_project/view_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                            }
+                            if ($get_kasbon_header->tipe == '3') {
+                                $link_view = base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                            }
+                            echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Kasbon" target="_blank"><i class="fa fa-eye"></i></a>';
                             echo '</td>';
                             echo '</tr>';
 

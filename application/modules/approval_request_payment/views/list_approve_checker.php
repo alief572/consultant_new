@@ -106,6 +106,17 @@ endforeach;
                                 echo ' <a href="' . base_url('approval_request_payment/print_kasbon/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
                                 echo '<i class="fa fa-print"></i>';
                                 echo '</a>';
+
+                                if ($get_kasbon_header->tipe == '1') {
+                                    $link_view = base_url('kasbon_project/view_kasbon_subcont/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                }
+                                if ($get_kasbon_header->tipe == '2') {
+                                    $link_view = base_url('kasbon_project/view_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                }
+                                if ($get_kasbon_header->tipe == '3') {
+                                    $link_view = base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                }
+                                echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Kasbon" target="_blank"><i class="fa fa-eye"></i></a>';
                             endif;
                             echo '</td>';
                             echo '</tr>';
@@ -144,7 +155,7 @@ endforeach;
                         foreach ($data as $item_expense) :
                             if ($item_expense->tipe == 'expense') {
                                 $tipe = ucfirst($item_expense->tipe);
-                                $get_expense = $this->db->get_where('tr_expense', ['no_doc' => $item_expense->no_doc])->row_array();
+                                $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $item_expense->no_doc])->row();
 
                                 echo '<tr>';
                                 echo '<td>' . $item_expense->no_doc . '</td>';
@@ -165,6 +176,8 @@ endforeach;
                                     echo ' <a href="' . base_url('approval_request_payment/print_expense/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
                                     echo '<i class="fa fa-print"></i>';
                                     echo '</a>';
+
+                                    echo ' <a href="'.base_url('expense_report_project/view_expense_subcont/'.urlencode(str_replace('/', '|', $get_expense->id_header))).'" class="btn btn-sm btn-info" title="View Expense" target="_blank"><i class="fa fa-eye"></i></a>';
                                 endif;
                                 echo '</td>';
                                 echo '</tr>';
