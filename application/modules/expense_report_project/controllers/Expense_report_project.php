@@ -796,6 +796,7 @@ class Expense_report_project extends Admin_Controller
             $this->db->or_like('e.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
+        $this->db->group_by('a.id_spk_penawaran');
         $this->db->order_by('a.create_date', 'desc');
         $this->db->limit($length, $start);
 
@@ -816,6 +817,7 @@ class Expense_report_project extends Admin_Controller
             $this->db->or_like('e.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
+        $this->db->group_by('a.id_spk_penawaran');
         $this->db->order_by('a.create_date', 'desc');
 
         $get_data_all = $this->db->get();
