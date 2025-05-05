@@ -930,6 +930,8 @@ class Approval_expense_report_project extends Admin_Controller
                 $option = '';
             }
 
+            $action = '<a href="'.base_url('expense_report_project/view_expense_subcont/'.urlencode(str_replace('/', '|', $item->id))).'" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-eye"></i></a>';
+
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
@@ -1127,6 +1129,8 @@ class Approval_expense_report_project extends Admin_Controller
                 $option = '';
             }
 
+            $action = '<a href="'.base_url('expense_report_project/view_expense_subcont/'.urlencode(str_replace('/', '|', $item->id))).'" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-eye"></i></a>';
+
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
@@ -1134,7 +1138,8 @@ class Approval_expense_report_project extends Admin_Controller
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'total' => number_format($item->grand_total, 2),
                 'status' => $sts,
-                'option' => $option
+                'option' => $option,
+                'action' => $action
             ];
 
             $no++;
@@ -1324,6 +1329,8 @@ class Approval_expense_report_project extends Admin_Controller
                 $option = '';
             }
 
+            $action = '<a href="'.base_url('expense_report_project/view_expense_subcont/'.urlencode(str_replace('/', '|', $item->id))).'" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-eye"></i></a>';
+
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
@@ -1331,7 +1338,8 @@ class Approval_expense_report_project extends Admin_Controller
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
                 'status' => $sts,
-                'option' => $option
+                'option' => $option,
+                'action' => $action
             ];
 
             $no++;
