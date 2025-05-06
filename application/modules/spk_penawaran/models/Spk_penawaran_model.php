@@ -16,7 +16,7 @@ class Spk_penawaran_model extends BF_Model
     function generate_id_spk_penawaran()
     {
         $Ym             = date('ym');
-        $srcMtr            = "SELECT MAX(id_spk_penawaran) as maxP FROM kons_tr_spk_penawaran WHERE id_spk_penawaran LIKE '%/STM/MKT-SPK/" . int_to_roman(date('m')) . "/" . date('y') . "%' ";
+        $srcMtr            = "SELECT MAX(id_spk_penawaran) as maxP FROM kons_tr_spk_penawaran WHERE id_spk_penawaran LIKE '%/" . date('y') . "%' ";
         $resultMtr        = $this->db->query($srcMtr)->result_array();
         $angkaUrut2        = $resultMtr[0]['maxP'];
         $urutan2        = (int)substr($angkaUrut2, 0, 3);
