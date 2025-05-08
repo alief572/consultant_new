@@ -12,7 +12,11 @@ $count_pembayaran_po = 0;
 
 foreach ($data as $item) :
     if ($item->tipe == 'kasbon' && $item->status !== '2' && is_null($item->app_checker)) {
-        $count_kasbon += 1;
+        $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item->no_doc))->row();
+
+        if (!empty($get_kasbon_header)) {
+            $count_kasbon += 1;
+        }
     }
     if ($item->tipe == 'expense' && $item->status !== '2' && is_null($item->app_checker)) {
         $count_expense += 1;
