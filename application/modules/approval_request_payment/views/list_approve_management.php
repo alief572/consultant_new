@@ -12,7 +12,11 @@ $count_pembayaran_po = 0;
 
 foreach ($data as $item) :
     if ($item->tipe == 'kasbon') {
-        $count_kasbon += 1;
+        $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item->no_doc))->row();
+
+        if(!empty($get_kasbon_header)) {
+            $count_kasbon += 1;
+        }
     }
     if ($item->tipe == 'expense') {
         $count_expense += 1;
