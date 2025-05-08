@@ -154,7 +154,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 </thead>
                 <tbody>
                     <?php
-                    $no = 1;
+                    $no = 0;
 
                     $ttl_est_qty = 0;
                     $ttl_est_price_unit = 0;
@@ -164,6 +164,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_sisa_budget = 0;
 
                     foreach ($list_subcont as $item) {
+
+                        $no++;
 
                         $qty_budget_tambahan = (isset($data_overbudget_subcont[$item->id_aktifitas]['qty_budget_tambahan'])) ? $data_overbudget_subcont[$item->id_aktifitas]['qty_budget_tambahan'] : 0;
 
@@ -243,7 +245,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         $ttl_aktual_terpakai += ($item->mandays_subcont_final - $aktual_terpakai + $qty_budget_tambahan);
                         $ttl_sisa_budget += ($sisa_budget + ($qty_budget_tambahan * $budget_tambahan));
 
-                        $no++;
+                        // $no++;
                     }
                     ?>
                 </tbody>
@@ -437,7 +439,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             }
 
             if ($('input[name="detail_subcont[' + i + '][nominal_pengajuan]"]').length > 0) {
-                var nominal_pengajuan = $('input[name="detail_subcont[' + i + '][nominal_pengajuan]"]').val();
+                var nominal_pengajuan = get_num($('input[name="detail_subcont[' + i + '][nominal_pengajuan]"]').val());
             } else {
                 var nominal_pengajuan = 0;
             }
