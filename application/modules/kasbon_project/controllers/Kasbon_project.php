@@ -2409,7 +2409,7 @@ class Kasbon_project extends Admin_Controller
         $no = 1;
         if (isset($post['detail_subcont'])) {
             foreach ($post['detail_subcont'] as $item) {
-                if (isset($item['id_spk_budgeting']) && str_replace(',', '', $item['qty_pengajuan']) > 0 && str_replace(',', '', $item['nominal_pengajuan'])) {
+                if (str_replace(',', '', $item['qty_pengajuan']) > 0 && str_replace(',', '', $item['nominal_pengajuan']) > 0) {
                     $data_insert_detail[] = [
                         'id_header' => $id_header,
                         'id_spk_budgeting' => $post['id_spk_budgeting'],
@@ -2486,14 +2486,14 @@ class Kasbon_project extends Admin_Controller
         $insert_kasbon_header = $this->db->insert('kons_tr_kasbon_project_header', $data_insert_header);
         if (!$insert_kasbon_header) {
             $this->db->trans_rollback();
-            print_r($this->db->last_query());
+            print_r($this->db->error($insert_kasbon_header));
             exit;
         }
 
         $insert_kasbon_subcont = $this->db->insert_batch('kons_tr_kasbon_project_subcont', $data_insert_detail);
         if (!$insert_kasbon_subcont) {
             $this->db->trans_rollback();
-            print_r($this->db->last_query());
+            print_r($data_insert_detail);
             exit;
         }
 
