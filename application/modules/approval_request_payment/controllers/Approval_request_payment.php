@@ -1915,11 +1915,13 @@ class Approval_request_payment extends Admin_Controller
 	{
 		$tingkat = $this->input->get('tingkat');
 
-		if ($tingkat !== '1') {
-			$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker = 1');
-		} else {
-			$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker IS NULL');
-		}
+		// if ($tingkat !== '1') {
+		// 	$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker = 1');
+		// } else {
+		// 	$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker IS NULL');
+		// }
+
+		$data = $this->Approval_request_payment_model->GetListDataApproval('a.app_checker = 1');
 
 		$list_no_invoice = [];
 		$this->db->select('id, invoice_no');
