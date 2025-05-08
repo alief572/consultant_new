@@ -72,48 +72,50 @@ endforeach;
 
                             $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc))->row();
 
-                            $tipe = '';
                             if (!empty($get_kasbon_header)) {
+                                $tipe = '';
+                                if (!empty($get_kasbon_header)) {
+                                    if ($get_kasbon_header->tipe == '1') {
+                                        $tipe = 'Kasbon Subcont';
+                                    }
+                                    if ($get_kasbon_header->tipe == '2') {
+                                        $tipe = 'Kasbon Akomodasi';
+                                    }
+                                    if ($get_kasbon_header->tipe == '3') {
+                                        $tipe = 'Kasbon Others';
+                                    }
+                                }
+
+                                echo '<tr>';
+                                echo '<td>' . $item_kasbon->no_doc . '</td>';
+                                echo '<td>' . $item_kasbon->nama . '</td>';
+                                echo '<td>' . $item_kasbon->tgl_doc . '</td>';
+                                echo '<td>' . $item_kasbon->keperluan . '</td>';
+                                echo '<td>' . $tipe . '</td>';
+                                echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
+                                echo '<td>';
+                                if ($ENABLE_MANAGE) :
+                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
+                                    echo '<i class="fa fa-check-square-o"></i>';
+                                    echo ' Approve';
+                                    echo '</a>';
+                                endif;
+
                                 if ($get_kasbon_header->tipe == '1') {
-                                    $tipe = 'Kasbon Subcont';
+                                    $link_view = base_url('kasbon_project/view_kasbon_subcont/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
                                 }
                                 if ($get_kasbon_header->tipe == '2') {
-                                    $tipe = 'Kasbon Akomodasi';
+                                    $link_view = base_url('kasbon_project/view_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
                                 }
                                 if ($get_kasbon_header->tipe == '3') {
-                                    $tipe = 'Kasbon Others';
+                                    $link_view = base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
                                 }
-                            }
+                                echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Kasbon" target="_blank"><i class="fa fa-eye"></i></a>';
+                                echo '</td>';
+                                echo '</tr>';
 
-                            echo '<tr>';
-                            echo '<td>' . $item_kasbon->no_doc . '</td>';
-                            echo '<td>' . $item_kasbon->nama . '</td>';
-                            echo '<td>' . $item_kasbon->tgl_doc . '</td>';
-                            echo '<td>' . $item_kasbon->keperluan . '</td>';
-                            echo '<td>' . $tipe . '</td>';
-                            echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
-                            echo '<td>';
-                            if ($ENABLE_MANAGE) :
-                                echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
-                                echo '<i class="fa fa-check-square-o"></i>';
-                                echo ' Approve';
-                                echo '</a>';
-                            endif;
-
-                            if ($get_kasbon_header->tipe == '1') {
-                                $link_view = base_url('kasbon_project/view_kasbon_subcont/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                $ttl_kasbon += $item_kasbon->jumlah;
                             }
-                            if ($get_kasbon_header->tipe == '2') {
-                                $link_view = base_url('kasbon_project/view_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
-                            }
-                            if ($get_kasbon_header->tipe == '3') {
-                                $link_view = base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
-                            }
-                            echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Kasbon" target="_blank"><i class="fa fa-eye"></i></a>';
-                            echo '</td>';
-                            echo '</tr>';
-
-                            $ttl_kasbon += $item_kasbon->jumlah;
                         endforeach;
                         ?>
                     </tbody>
