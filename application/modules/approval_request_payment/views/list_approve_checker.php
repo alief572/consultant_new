@@ -74,59 +74,61 @@ endforeach;
 
                             $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc))->row();
 
-                            $tipe = '';
-                            $link_view = '';
                             if (!empty($get_kasbon_header)) {
-                                if ($get_kasbon_header->tipe == '1') {
-                                    $tipe = 'Kasbon Subcont';
-                                }
-                                if ($get_kasbon_header->tipe == '2') {
-                                    $tipe = 'Kasbon Akomodasi';
-                                }
-                                if ($get_kasbon_header->tipe == '3') {
-                                    $tipe = 'Kasbon Others';
-                                }
+                                $tipe = '';
+                                $link_view = '';
+                                if (!empty($get_kasbon_header)) {
+                                    if ($get_kasbon_header->tipe == '1') {
+                                        $tipe = 'Kasbon Subcont';
+                                    }
+                                    if ($get_kasbon_header->tipe == '2') {
+                                        $tipe = 'Kasbon Akomodasi';
+                                    }
+                                    if ($get_kasbon_header->tipe == '3') {
+                                        $tipe = 'Kasbon Others';
+                                    }
 
 
 
-                                if ($get_kasbon_header->tipe == '1') {
-                                    $link_view = base_url('kasbon_project/view_kasbon_subcont/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    if ($get_kasbon_header->tipe == '1') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_subcont/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
+                                    if ($get_kasbon_header->tipe == '2') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
+                                    if ($get_kasbon_header->tipe == '3') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
                                 }
-                                if ($get_kasbon_header->tipe == '2') {
-                                    $link_view = base_url('kasbon_project/view_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
-                                }
-                                if ($get_kasbon_header->tipe == '3') {
-                                    $link_view = base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
-                                }
-                            }
 
-                            echo '<tr>';
-                            echo '<td>' . $item_kasbon->no_doc . '</td>';
-                            echo '<td>' . $item_kasbon->nama . '</td>';
-                            echo '<td>' . $item_kasbon->tgl_doc . '</td>';
-                            echo '<td>' . $item_kasbon->keperluan . '</td>';
-                            echo '<td>' . $tipe . '</td>';
-                            echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
-                            echo '<td>';
-                            if ($ENABLE_MANAGE) :
-                                if (($item_kasbon->status !== '2' && is_null($item_kasbon->app_checker))) :
-                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
-                                    echo '<i class="fa fa-check-square-o"></i>';
-                                    echo ' Approve';
+                                echo '<tr>';
+                                echo '<td>' . $item_kasbon->no_doc . '</td>';
+                                echo '<td>' . $item_kasbon->nama . '</td>';
+                                echo '<td>' . $item_kasbon->tgl_doc . '</td>';
+                                echo '<td>' . $item_kasbon->keperluan . '</td>';
+                                echo '<td>' . $tipe . '</td>';
+                                echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
+                                echo '<td>';
+                                if ($ENABLE_MANAGE) :
+                                    if (($item_kasbon->status !== '2' && is_null($item_kasbon->app_checker))) :
+                                        echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
+                                        echo '<i class="fa fa-check-square-o"></i>';
+                                        echo ' Approve';
+                                        echo '</a>';
+                                    endif;
+
+                                    echo ' <a href="' . base_url('approval_request_payment/print_kasbon/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
+                                    echo '<i class="fa fa-print"></i>';
                                     echo '</a>';
+
+
+                                    echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Kasbon" target="_blank"><i class="fa fa-eye"></i></a>';
                                 endif;
+                                echo '</td>';
+                                echo '</tr>';
 
-                                echo ' <a href="' . base_url('approval_request_payment/print_kasbon/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
-                                echo '<i class="fa fa-print"></i>';
-                                echo '</a>';
-
-
-                                echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Kasbon" target="_blank"><i class="fa fa-eye"></i></a>';
-                            endif;
-                            echo '</td>';
-                            echo '</tr>';
-
-                            $ttl_kasbon += $item_kasbon->jumlah;
+                                $ttl_kasbon += $item_kasbon->jumlah;
+                            }
                         endforeach;
                         ?>
                     </tbody>
