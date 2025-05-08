@@ -75,6 +75,7 @@ endforeach;
                             $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc))->row();
 
                             $tipe = '';
+                            $link_view = '';
                             if (!empty($get_kasbon_header)) {
                                 if ($get_kasbon_header->tipe == '1') {
                                     $tipe = 'Kasbon Subcont';
@@ -84,6 +85,18 @@ endforeach;
                                 }
                                 if ($get_kasbon_header->tipe == '3') {
                                     $tipe = 'Kasbon Others';
+                                }
+
+
+
+                                if ($get_kasbon_header->tipe == '1') {
+                                    $link_view = base_url('kasbon_project/view_kasbon_subcont/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                }
+                                if ($get_kasbon_header->tipe == '2') {
+                                    $link_view = base_url('kasbon_project/view_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                }
+                                if ($get_kasbon_header->tipe == '3') {
+                                    $link_view = base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
                                 }
                             }
 
@@ -107,15 +120,7 @@ endforeach;
                                 echo '<i class="fa fa-print"></i>';
                                 echo '</a>';
 
-                                if ($get_kasbon_header->tipe == '1') {
-                                    $link_view = base_url('kasbon_project/view_kasbon_subcont/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
-                                }
-                                if ($get_kasbon_header->tipe == '2') {
-                                    $link_view = base_url('kasbon_project/view_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
-                                }
-                                if ($get_kasbon_header->tipe == '3') {
-                                    $link_view = base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
-                                }
+
                                 echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Kasbon" target="_blank"><i class="fa fa-eye"></i></a>';
                             endif;
                             echo '</td>';
@@ -177,7 +182,7 @@ endforeach;
                                     echo '<i class="fa fa-print"></i>';
                                     echo '</a>';
 
-                                    echo ' <a href="'.base_url('expense_report_project/view_expense_subcont/'.urlencode(str_replace('/', '|', $get_expense->id_header))).'" class="btn btn-sm btn-info" title="View Expense" target="_blank"><i class="fa fa-eye"></i></a>';
+                                    echo ' <a href="' . base_url('expense_report_project/view_expense_subcont/' . urlencode(str_replace('/', '|', $get_expense->id_header))) . '" class="btn btn-sm btn-info" title="View Expense" target="_blank"><i class="fa fa-eye"></i></a>';
                                 endif;
                                 echo '</td>';
                                 echo '</tr>';
