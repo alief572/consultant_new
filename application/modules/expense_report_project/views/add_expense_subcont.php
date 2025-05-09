@@ -94,7 +94,7 @@ if ($tipe == '3') {
                         <th class="text-center" rowspan="2">Item</th>
                         <th class="text-center" colspan="2">Kasbon</th>
                         <th class="text-center" colspan="2">Expense Report</th>
-                        <th class="text-center" rowspan="2">Keterangan</th>
+                        <th class="text-center" rowspan="2" width="30%">Keterangan</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
