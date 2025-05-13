@@ -1430,33 +1430,7 @@ class Expense_report_project extends Admin_Controller
             }
 
 
-            if ($item->sts !== '1' && $item->sts_req !== '1') {
-                $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_kasbon_subcont" style="color: #000000" data-id="' . $item->id . '">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-trash"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Delete </span>
-                    </div>
-                ';
-
-                $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-                        <a href="' . base_url('kasbon_project/edit_kasbon_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-pencil"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Edit </span>
-                    </div>
-                ';
-            }
+            
 
             $option .= '</div>';
 
