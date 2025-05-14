@@ -383,7 +383,7 @@ class Approval_kasbon_project extends Admin_Controller
         if(!$insert_sendigs_kasbon) {
             $this->db->trans_rollback();
 
-            print_r($this->db->error($insert_sendigs_kasbon));
+            print_r($this->db->last_query());
             exit;
         }
 
@@ -391,7 +391,7 @@ class Approval_kasbon_project extends Admin_Controller
         if (!$update_req) {
             $this->db->trans_rollback();
 
-            print_r($this->db->error($update_req));
+            print_r($this->db->last_query());
             exit;
         }
 
@@ -399,7 +399,7 @@ class Approval_kasbon_project extends Admin_Controller
         if (!$update_req) {
             $this->db->trans_rollback();
 
-            print_r($this->db->error($update_req));
+            print_r($this->db->last_query());
             exit;
         }
 
