@@ -305,35 +305,35 @@ class Approval_kasbon_project extends Admin_Controller
 
         $no_doc = '';
         $newcode = '';
-		$data = $this->db->get_where(DBSF.'.ms_generate', array('tipe' => 'format_kasbon'))->row();
-		if ($data !== false) {
-			if (stripos($data->info, 'YEAR', 0) !== false) {
-				if ($data->info3 != date("Y")) {
-					$years = date("Y");
-					$number = 1;
-					$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
-				} else {
-					$years = $data->info3;
-					$number = ($data->info2 + 1);
-					$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
-				}
-				$newcode = str_ireplace('XXXX', $newnumber, $data->info);
-				$newcode = str_ireplace('YEAR', $years, $newcode);
-				$newdata = array('info2' => $number, 'info3' => $years);
-			} else {
-				$number = ($data->info2 + 1);
-				$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
-				$newcode = str_ireplace('XXXX', $newnumber, $data->info);
-				$newdata = array('info2' => $number);
-			}
-			$this->db->update(DBSF.'.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
+        $data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => 'format_kasbon'))->row();
+        if ($data !== false) {
+            if (stripos($data->info, 'YEAR', 0) !== false) {
+                if ($data->info3 != date("Y")) {
+                    $years = date("Y");
+                    $number = 1;
+                    $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                } else {
+                    $years = $data->info3;
+                    $number = ($data->info2 + 1);
+                    $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                }
+                $newcode = str_ireplace('XXXX', $newnumber, $data->info);
+                $newcode = str_ireplace('YEAR', $years, $newcode);
+                $newdata = array('info2' => $number, 'info3' => $years);
+            } else {
+                $number = ($data->info2 + 1);
+                $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                $newcode = str_ireplace('XXXX', $newnumber, $data->info);
+                $newdata = array('info2' => $number);
+            }
+            $this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
 
-			$no_doc = $newcode;
-		} else {
-			return false;
-		}
+            $no_doc = $newcode;
+        } else {
+            return false;
+        }
 
-        
+
 
         $project = '';
         if ($get_header_kasbon->tipe == '1') :
@@ -379,8 +379,8 @@ class Approval_kasbon_project extends Admin_Controller
         //     exit;
         // }
 
-        $insert_sendigs_kasbon = $this->db->insert(DBSF.'.tr_kasbon', $data_insert_sendigs_kasbon);
-        if(!$insert_sendigs_kasbon) {
+        $insert_sendigs_kasbon = $this->db->insert(DBSF . '.tr_kasbon', $data_insert_sendigs_kasbon);
+        if (!$insert_sendigs_kasbon) {
             $this->db->trans_rollback();
 
             print_r($this->db->last_query());
