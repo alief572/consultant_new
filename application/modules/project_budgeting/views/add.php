@@ -449,6 +449,86 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
     <div class="box">
         <div class="box-header">
+            <h4 style="font-weight: 600;">Lab</h4>
+        </div>
+        <div class="box-body">
+            <table class="table custom-table-no" border="0">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">No.</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Item</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Keterangan</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Estimasi</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Final</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Action</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $no_lab = 1;
+
+                    $ttl_qty_lab = 0;
+                    $ttl_price_lab = 0;
+                    $ttl_total_lab = 0;
+
+                    foreach ($list_lab as $item) {
+                        echo '<tr class="tr_lab_' . $no_lab . '">';
+
+                        echo '<td class="text-center">' . $no_lab . ' <input type="hidden" name="lab_final[' . $no_lab . '][id_lab]" value="' . $item->id . '"></td>';
+                        echo '<td>' . $item->nm_item . '</td>';
+                        echo '<td>' . $item->keterangan . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->price_unit_budget) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->total_budget) . '</td>';
+                        echo '<td>';
+                        echo '<input type="text" name="lab_final[' . $no_lab . '][qty]" class="form-control form-control-sm text-right auto_num" value="' . $item->qty . '" onchange="hitung_total_lab();">';
+                        echo '</td>';
+                        echo '<td>';
+                        echo '<input type="text" name="lab_final[' . $no_lab . '][price_unit]" class="form-control form-control-sm text-right auto_num" value="' . $item->price_unit_budget . '" onchange="hitung_total_lab();">';
+                        echo '</td>';
+                        echo '<td>';
+                        echo '<input type="text" name="lab_final[' . $no_lab . '][total]" class="form-control form-control-sm text-right auto_num" value="' . $item->total_budget . '" onchange="hitung_total_lab();">';
+                        echo '</td>';
+                        echo '<td>';
+                        echo '<button type="button" class="btn btn-sm btn-danger del_lab" data-no="' . $no_lab . '"><i class="fa fa-trash"></i></button>';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_qty_lab += $item->qty;
+                        $ttl_price_lab += $item->price_unit_budget;
+                        $ttl_total_lab += $item->total_budget;
+
+                        $no_lab++;
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3"></th>
+                        <th class="text-center"><?= number_format($ttl_qty_lab) ?></th>
+                        <th class="text-center"><?= number_format($ttl_price_lab, 2) ?></th>
+                        <th class="text-center"><?= number_format($ttl_total_lab, 2) ?></th>
+                        <th class="text-right ttl_qty_lab"><?= number_format($ttl_qty_lab) ?></th>
+                        <th class="text-right ttl_price_lab"><?= number_format($ttl_price_lab, 2) ?></th>
+                        <th class="text-right ttl_total_lab"><?= number_format($ttl_total_lab, 2) ?></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
             <h4 class="semi-bold">
                 Summary & Compare
 
@@ -509,12 +589,19 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 <input type="hidden" name="ttl_total_others_before" value="<?= $ttl_total_others ?>">
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Lab</td>
+                            <td class="text-right">
+                                <?= number_format($ttl_total_lab, 2) ?>
+                                <input type="hidden" name="ttl_total_lab_before" value="<?= $ttl_total_lab ?>">
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right">
-                                <?= number_format(($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others), 2) ?>
+                                <?= number_format(($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab), 2) ?>
                                 <input type="hidden" name="grand_total_pengeluaran_before" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others) ?>">
                             </th>
                         </tr>
@@ -555,12 +642,18 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 <?= number_format($ttl_total_others, 2) ?>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Lab</td>
+                            <td class="text-right summary_biaya_lab">
+                                <?= number_format($ttl_total_lab, 2) ?>
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right summary_total_pengeluaran">
-                                <?= number_format(($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others), 2) ?>
+                                <?= number_format(($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab), 2) ?>
                             </th>
                         </tr>
                     </tfoot>
@@ -597,6 +690,12 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         <tr>
                             <td>Biaya Others</td>
                             <td class="text-right summary_biaya_others_result">
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Biaya Lab</td>
+                            <td class="text-right summary_biaya_lab_result">
                                 0
                             </td>
                         </tr>
@@ -637,7 +736,8 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             <input type="hidden" name="summary_biaya_subcont" value="<?= $ttl_subcont ?>">
             <input type="hidden" name="summary_biaya_akomodasi" value="<?= $ttl_total_akomodasi ?>">
             <input type="hidden" name="summary_biaya_others" value="<?= $ttl_total_others ?>">
-            <input type="hidden" name="summary_total_pengeluaran" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others) ?>">
+            <input type="hidden" name="summary_biaya_lab" value="<?= $ttl_total_lab ?>">
+            <input type="hidden" name="summary_total_pengeluaran" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab) ?>">
 
             <div style="float: right; margin-top: 1rem;">
                 <a href="<?= base_url('project_budgeting') ?>" class="btn btn-sm btn-danger">
@@ -740,15 +840,16 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         var summary_biaya_subcont = get_num($('.summary_biaya_subcont').html());
         var summary_biaya_akomodasi = get_num($('.summary_biaya_akomodasi').html());
         var summary_biaya_others = get_num($('.summary_biaya_others').html());
+        var summary_biaya_lab = get_num($('.summary_biaya_lab').html());
 
-        var grand_total_pengeluaran = (summary_biaya_act + summary_biaya_tandem + summary_biaya_subcont + summary_biaya_akomodasi + summary_biaya_others);
+        var grand_total_pengeluaran = (summary_biaya_act + summary_biaya_tandem + summary_biaya_subcont + summary_biaya_akomodasi + summary_biaya_others + summary_biaya_lab);
 
         $('.summary_total_pengeluaran').html(number_format(grand_total_pengeluaran, 2));
         $('input[name="summary_total_pengeluaran"]').val(grand_total_pengeluaran);
 
         var nilai_project = parseFloat("<?= $list_penawaran->grand_total ?>");
 
-        var nilai_kontrak_bersih = (nilai_project - summary_biaya_tandem - summary_biaya_subcont - summary_biaya_akomodasi - summary_biaya_others);
+        var nilai_kontrak_bersih = (nilai_project - summary_biaya_tandem - summary_biaya_subcont - summary_biaya_akomodasi - summary_biaya_others - summary_biaya_lab);
 
         $('.nilai_kontrak_bersih').val(number_format(nilai_kontrak_bersih, 2));
 
@@ -891,6 +992,37 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         hitung_compare();
     }
 
+    function hitung_total_lab() {
+        var no_ako = "<?= $no_others ?>";
+        var no_ako = parseFloat(no_ako);
+
+        var total_qty = 0;
+        var total_price = 0;
+        var total_oth = 0;
+
+        for (i = 1; i <= no_ako; i++) {
+            var qty = get_num($('input[name="lab_final[' + i + '][qty]"]').val());
+            var price_unit = get_num($('input[name="lab_final[' + i + '][price_unit]"]').val());
+            var total = (price_unit * qty);
+
+            $('input[name="lab_final[' + i + '][total]"]').val(number_format(total, 2));
+
+            total_qty += qty;
+            total_price += price_unit;
+            total_oth += (price_unit * qty);
+        }
+
+        $('.ttl_qty_lab').html(number_format(total_qty));
+        $('.ttl_price_lab').html(number_format(total_price, 2));
+        $('.ttl_total_lab').html(number_format(total_oth, 2));
+
+        $('.summary_biaya_lab').html(number_format(total_oth, 2));
+
+        hitung_all();
+        hitung_compare();
+    }
+
+
     function hitung_compare() {
         var no_act = "<?= $no_aktifitas ?>";
         var no_act = parseFloat(no_act);
@@ -901,10 +1033,14 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         var no_oth = "<?= $no_others ?>";
         var no_oth = parseFloat(no_oth);
 
+        var no_lab = "<?= $no_lab ?>";
+        var no_lab = parseFloat(no_lab);
+
         var ttl_mandays_subcont = 0;
         var ttl_subcont = 0;
         var ttl_akomodasi = 0;
         var ttl_others = 0;
+        var ttl_lab = 0;
 
         for (i = 1; i <= no_act; i++) {
             var mandays_subcont = get_num($('input[name="subcont_final[' + i + '][mandays_subcont]"]').val());
@@ -926,17 +1062,25 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             ttl_others += nilai_others;
         }
 
+        for (i = 1; i <= no_lab; i++) {
+            var nilai_lab = get_num($('input[name="lab_final[' + i + '][total]"]').val());
+
+            ttl_lab += nilai_lab;
+        }
+
         var ttl_mandays_subcont_before = get_num($('input[name="ttl_mandays_subcont_before"]').val());
         var ttl_subcont_before = get_num($('input[name="ttl_subcont_before"]').val());
         var ttl_total_akomodasi_before = get_num($('input[name="ttl_total_akomodasi_before"]').val());
         var ttl_total_others_before = get_num($('input[name="ttl_total_others_before"]').val());
+        var ttl_total_lab_before = get_num($('input[name="ttl_total_lab_before"]').val());
         var grand_total_pengeluaran_before = get_num($('input[name="grand_total_pengeluaran_before"]').val());
 
         var selisih_mandays_subcont = (ttl_mandays_subcont - ttl_mandays_subcont_before);
         var selisih_subcont = (ttl_subcont - ttl_subcont_before);
         var selisih_total_akomodasi = (ttl_akomodasi - ttl_total_akomodasi_before);
         var selisih_total_others = (ttl_others - ttl_total_others_before);
-        var selisih_grand_total_pengeluaran = (selisih_subcont + selisih_total_akomodasi + selisih_total_others);
+        var selisih_total_lab = (ttl_lab - ttl_total_lab_before);
+        var selisih_grand_total_pengeluaran = (selisih_subcont + selisih_total_akomodasi + selisih_total_others + selisih_total_lab);
 
         if (selisih_mandays_subcont > 0) {
             $('.summary_mandays_subcont_result').html('<span style="color: #66ff66;">' + number_format(selisih_mandays_subcont, 2) + '</span>');
@@ -970,6 +1114,14 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             $('.summary_biaya_others_result').html(number_format(selisih_total_others, 2));
         }
 
+        if (selisih_total_lab > 0) {
+            $('.summary_biaya_lab_result').html('<span style="color: #66ff66;">' + number_format(selisih_total_lab, 2) + '</span>');
+        } else if (selisih_total_lab < 0) {
+            $('.summary_biaya_lab_result').html('<span style="color: #ff0000;">(' + number_format(selisih_total_lab, 2) + ')</span>');
+        } else {
+            $('.summary_biaya_lab_result').html(number_format(selisih_total_lab, 2));
+        }
+
         if (selisih_grand_total_pengeluaran > 0) {
             $('.summary_total_pengeluaran_result').html('<span style="color: #66ff66;">' + number_format(selisih_grand_total_pengeluaran, 2) + '</span>');
         } else if (selisih_grand_total_pengeluaran < 0) {
@@ -982,6 +1134,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         $('input[name="summary_biaya_subcont_result_value"]').val(selisih_subcont);
         $('input[name="summary_biaya_akomodasi_result_value"]').val(selisih_total_akomodasi);
         $('input[name="summary_biaya_others_result_value"]').val(selisih_total_others);
+        $('input[name="summary_biaya_lab_result_value"]').val(selisih_total_lab);
     }
 
     // function hitung_subcont() {

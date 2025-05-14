@@ -225,11 +225,11 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
         $get_others = $this->db->get()->result();
 
-        // print_r($this->db->last_query());
-        // exit;
-
-        // print_r($get_all_marketing);
-        // exit;
+        $this->db->select('a.id, a.id_penawaran, a.qty, a.price_unit, a.total, a.price_unit_budget, a.total_budget, a.keterangan, b.isu_lingkungan as nm_item');
+        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
+        $get_lab = $this->db->get()->result();
 
         $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
@@ -245,6 +245,7 @@ class Project_budgeting extends Admin_Controller
             'list_akomodasi' => $get_akomodasi,
             'list_others' => $get_others,
             'list_penawaran' => $get_penawaran,
+            'list_lab' => $get_lab,
             'nm_paket' => $nm_paket
         ];
 
@@ -361,6 +362,7 @@ class Project_budgeting extends Admin_Controller
             'biaya_subcont' => $post['summary_biaya_subcont'],
             'biaya_akomodasi' => $post['summary_biaya_akomodasi'],
             'biaya_others' => $post['summary_biaya_others'],
+            'biaya_lab' => $post['summary_biaya_lab'],
             'nilai_kontrak_bersih' => $get_spk_penawaran->nilai_kontrak_bersih,
             'mandays_rate' => $get_spk_penawaran->mandays_rate,
             'ppn' => $get_penawaran->ppn,
@@ -479,6 +481,15 @@ class Project_budgeting extends Admin_Controller
                     'create_by' => $this->auth->user_id(),
                     'create_date' => date('Y-m-d H:i:s')
                 ];
+            }
+        }
+
+        $data_insert_lab = [];
+        if(isset($post['lab_final'])) {
+            foreach($post['lab_final'] as $item) {
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_penawaran_lab a');
+                $this->db->where('a.id', $item['']);
             }
         }
 
