@@ -1286,42 +1286,85 @@ class Approval_expense_report_project extends Admin_Controller
             $this->db->where('a.id', $item->id_header);
             $get_header_kasbon = $this->db->get()->row();
 
-            $arr_insert_expense[] = [
-                'no_doc' => $no_doc,
-                'tgl_doc' => date('Y-m-d'),
-                'nama' => $get_user->nm_lengkap,
-                'approval' => $get_user->nm_lengkap,
-                'status' => 1,
-                'created_by' => $this->auth->user_id(),
-                'created_on' => date('Y-m-d H:i:s'),
-                'jumlah' => $item->total_expense_report,
-                'informasi' => $get_header_kasbon->deskripsi,
-                'bank_id' => $get_header_kasbon->bank,
-                'accnumber' => $get_header_kasbon->bank_number,
-                'accname' => $get_header_kasbon->bank_account,
-                'id_kasbon' => $item->id_header,
-                'project_consultant' => 1,
-                'no_expense_consultant' => $item->id
-            ];
+            if($item->selisih < 0) {
+                $arr_insert_expense[] = [
+                    'no_doc' => $no_doc,
+                    'tgl_doc' => date('Y-m-d'),
+                    'nama' => $get_user->nm_lengkap,
+                    'approval' => $get_user->nm_lengkap,
+                    'status' => 1,
+                    'created_by' => $this->auth->user_id(),
+                    'created_on' => date('Y-m-d H:i:s'),
+                    'jumlah' => ($item->selisih * -1),
+                    'informasi' => $get_header_kasbon->deskripsi,
+                    'bank_id' => $get_header_kasbon->bank,
+                    'accnumber' => $get_header_kasbon->bank_number,
+                    'accname' => $get_header_kasbon->bank_account,
+                    'id_kasbon' => $item->id_header,
+                    'project_consultant' => 1,
+                    'no_expense_consultant' => $item->id
+                ];
+            }
+
         }
 
         $arr_insert_expense_detail = [];
 
         foreach ($get_expense_report_req_app_detail as $item) {
-            $arr_insert_expense_detail[] = [
-                'tanggal' => date('Y-m-d'),
-                'no_doc' => $no_doc,
-                'deskripsi' => $item->keterangan,
-                'qty' => $item->qty_expense,
-                'harga' => $item->nominal_expense,
-                'total_harga' => ($item->qty_expense * $item->nominal_expense),
-                'keterangan' => $item->keterangan,
-                'status' => 2,
-                'expense' => ($item->qty_expense * $item->nominal_expense),
-                'created_by' => $get_user->nm_lengkap,
-                'created_on' => date('Y-m-d H:i:s')
-            ];
+
+            if($item->tipe == '1') {
+                $this->db->select('a.qty_expense, a.nominal_expense, (a.qty_expense * a.nominal_expense) as total_expense, b.qty_pengajuan as qty_kasbon, b.nominal_pengajuan as nominal_kasbon, b.total_pengajuan as total_kasbon');
+                $this->db->from('kons_tr_expense_report_project_detail a');
+                $this->db->join('kons_tr_kasbon_project_subcont b', 'b.id_header = a.id_header_kasbon');
+                $this->db->join('kons_tr_spk_budgeting_aktifitas c', 'c.id = a.id_detail_kasbon AND c.id_spk_budgeting = a.id_spk_budgeting');
+                $this->db->where('a.id', $item->id);
+                $get_selisih_expense = $this->db->get()->row();
+            }
+
+            if($item->tipe == '2') {
+                 $this->db->select('a.qty_expense, a.nominal_expense, (a.qty_expense * a.nominal_expense) as total_expense, b.qty_pengajuan as qty_kasbon, b.nominal_pengajuan as nominal_kasbon, b.total_pengajuan as total_kasbon');
+                $this->db->from('kons_tr_expense_report_project_detail a');
+                $this->db->join('kons_tr_kasbon_project_akomodasi b', 'b.id_header = a.id_header_kasbon');
+                $this->db->join('kons_tr_spk_budgeting_akomodasi c', 'c.id = a.id_detail_kasbon AND c.id_spk_budgeting = a.id_spk_budgeting');
+                $this->db->where('a.id', $item->id);
+                $get_selisih_expense = $this->db->get()->row();
+            }
+
+            if($item->tipe == '3') {
+                 $this->db->select('a.qty_expense, a.nominal_expense, (a.qty_expense * a.nominal_expense) as total_expense, b.qty_pengajuan as qty_kasbon, b.nominal_pengajuan as nominal_kasbon, b.total_pengajuan as total_kasbon');
+                $this->db->from('kons_tr_expense_report_project_detail a');
+                $this->db->join('kons_tr_kasbon_project_others b', 'b.id_header = a.id_header_kasbon');
+                $this->db->join('kons_tr_spk_budgeting_akomodasi c', 'c.id = a.id_detail_kasbon AND c.id_spk_budgeting = a.id_spk_budgeting');
+                $this->db->where('a.id', $item->id);
+                $get_selisih_expense = $this->db->get()->row();
+            }
+
+            if(!empty($get_selisih_expense)) {
+
+                $selisih_expense_kasbon = ($get_selisih_expense->total_kasbon - $get_selisih_expense->total_expense);
+                if($selisih_expense_kasbon < 0) {
+                    $selisih_expense_kasbon = ($selisih_expense_kasbon * -1);
+                    $arr_insert_expense_detail[] = [
+                        'tanggal' => date('Y-m-d'),
+                        'no_doc' => $no_doc,
+                        'deskripsi' => $item->keterangan,
+                        'qty' => $item->qty_expense,
+                        'harga' => $item->nominal_expense,
+                        'total_harga' => $selisih_expense_kasbon,
+                        'keterangan' => $item->keterangan,
+                        'status' => 2,
+                        'expense' => $selisih_expense_kasbon,
+                        'created_by' => $get_user->nm_lengkap,
+                        'created_on' => date('Y-m-d H:i:s')
+                    ];
+                }
+
+            }
+            
         }
+
+        // print_r($arr_insert_expense_detail);
+        // exit;
 
         if (!empty($arr_insert_expense)) {
             $insert_sendigs_expense = $this->db->insert_batch(DBSF . '.tr_expense', $arr_insert_expense);
