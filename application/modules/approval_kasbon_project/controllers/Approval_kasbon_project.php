@@ -115,6 +115,9 @@ class Approval_kasbon_project extends Admin_Controller
                 if ($get_header_kasbon->tipe == '3') {
                     $tipe = 'Others';
                 }
+                if ($get_header_kasbon->tipe == '4') {
+                    $tipe = 'Lab';
+                }
             }
             $nominal = (!empty($get_header_kasbon)) ? $get_header_kasbon->grand_total : 0;
 
@@ -187,6 +190,13 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->where('a.sts', null);
         $get_kasbon_others = $this->db->get()->result();
 
+        $this->db->select('a.*, b.isu_lingkungan as nm_biaya');
+        $this->db->from('kons_tr_kasbon_project_lab a');
+        $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_header', $id_kasbon);
+        $this->db->where('a.sts', null);
+        $get_kasbon_lab = $this->db->get()->result();
+
         $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
@@ -228,6 +238,23 @@ class Approval_kasbon_project extends Admin_Controller
             ];
         endforeach;
 
+        $this->db->select('a.qty_budget_tambahan, a.budget_tambahan, a.pengajuan_budget, c.id_lab');
+        $this->db->from('kons_tr_kasbon_req_ovb_lab_detail a');
+        $this->db->join('kons_tr_kasbon_req_ovb_lab_header b', 'b.id_request_ovb = a.id_request_ovb', 'left');
+        $this->db->join('kons_tr_spk_budgeting_lab c', 'c.id = a.id_detail');
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts', '1');
+        $get_ovb_lab = $this->db->get()->result();
+
+        $data_overbudget_lab = [];
+        foreach ($get_ovb_lab as $item_ovb_lab) :
+            $data_overbudget_lab[$item_ovb_lab->id_lab] = [
+                'qty_budget_tambahan' => $item_ovb_lab->qty_budget_tambahan,
+                'budget_tambahan' => $item_ovb_lab->budget_tambahan,
+                'pengajuan_budget' => $item_ovb_lab->pengajuan_budget
+            ];
+        endforeach;
+
         $data = [
             'id_kasbon' => $id_kasbon,
             'id_spk_budgeting' => $id_spk_budgeting,
@@ -237,9 +264,11 @@ class Approval_kasbon_project extends Admin_Controller
             'list_kasbon_subcont_custom' => $get_kasbon_subcont_custom,
             'list_kasbon_akomodasi' => $get_kasbon_akomodasi,
             'list_kasbon_others' => $get_kasbon_others,
+            'list_kasbon_lab' => $get_kasbon_lab,
             'list_ovb_akomodasi' => $get_ovb_akomodasi,
             'data_overbudget_subcont' => $data_overbudget_subcont,
-            'data_overbudget_others' => $data_overbudget_others
+            'data_overbudget_others' => $data_overbudget_others,
+            'data_overbudget_lab' => $data_overbudget_lab
         ];
 
         $this->template->set($data);

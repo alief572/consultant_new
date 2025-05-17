@@ -400,6 +400,91 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
   </div>
 </div>
 
+<div class="box <?= ($tipe !== '4') ? 'd-none' : '' ?>">
+  <div class="box-header">
+    <h4>List Lab</h4>
+    <hr>
+  </div>
+
+  <div class="box-body">
+    <table class="table custom-table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="text-center" valign="middle">No.</th>
+          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+          <th colspan="2" class="text-center">Estimasi</th>
+          <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
+          <th colspan="3" class="text-center">Pengajuan</th>
+          <th rowspan="2" class="text-center" valign="middle">Qty Tambahan</th>
+          <th rowspan="2" class="text-center" valign="middle">Budget Tambahan</th>
+          <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
+          <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
+        </tr>
+        <tr>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Pengajuan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        $ttl_estimasi_lab = 0;
+        $ttl_pengajuan_lab = 0;
+        $ttl_aktual_lab = 0;
+        $ttl_sisa_lab = 0;
+
+        $no = 0;
+        foreach ($list_kasbon_lab as $item) {
+          $no++;
+
+          $qty_tambahan = (isset($data_overbudget_lab[$item->id_lab])) ? $data_overbudget_lab[$item->id_lab]['qty_budget_tambahan'] : 0;
+          $nominal_tambahan = (isset($data_overbudget_lab[$item->id_lab])) ? $data_overbudget_lab[$item->id_lab]['budget_tambahan'] : 0;
+
+          echo '<tr>';
+
+          echo '<td class="text-center">' . $no . '</td>';
+          echo '<td class="text-left">' . $item->nm_biaya . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+          echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($qty_tambahan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($nominal_tambahan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan + $qty_tambahan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
+          echo '</tr>';
+
+          $ttl_estimasi_lab += $item->total_budget_estimasi;
+          $ttl_pengajuan_lab += $item->total_pengajuan;
+          $ttl_aktual_lab += ($item->aktual_terpakai - $item->qty_pengajuan + $qty_tambahan);
+          $ttl_sisa_lab += ($item->sisa_budget - $item->total_pengajuan);
+        }
+        ?>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="4" class="text-right">Grand Total</th>
+          <th class="text-right"><?= number_format($ttl_estimasi_lab, 2) ?></th>
+          <th colspan="2"></th>
+          <th class="text-right"><?= number_format($ttl_pengajuan_lab, 2) ?></th>
+          <th></th>
+          <th></th>
+          <th class="text-center"><?= number_format($ttl_aktual_lab, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_sisa_lab, 2) ?></th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <br><br>
+
+
+  </div>
+</div>
+
 <div class="box">
   <div class="box-body">
     <div class="col-md-6">

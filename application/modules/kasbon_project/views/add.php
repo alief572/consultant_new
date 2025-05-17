@@ -452,7 +452,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;">Rp. <?= number_format(0) ?></h3>
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_lab) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -468,7 +468,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_others_aktual">Rp. <?= number_format(0) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_lab_aktual">Rp. <?= number_format($nilai_kasbon_aktual_lab) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -484,7 +484,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_others_sisa">Rp. <?= number_format(0) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_lab_sisa">Rp. <?= number_format($budget_lab - $nilai_kasbon_aktual_lab) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -554,9 +554,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         DataTables_kasbon_subcont();
         DataTables_kasbon_akomodasi();
         DataTables_kasbon_others();
+        DataTables_kasbon_lab();
         DataTables_ovb_akomodasi();
         DataTables_ovb_subcont();
         DataTables_ovb_others();
+        DataTables_ovb_lab();
     });
 
     function DataTables_kasbon_subcont(view = null) {
@@ -659,6 +661,51 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             serverSide: true,
             ajax: {
                 url: siteurl + active_controller + 'get_data_kasbon_others',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'req_number'
+                },
+                {
+                    data: 'nm_biaya'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'reject_reason'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
+    function DataTables_kasbon_lab(view = null) {
+        var dataTables_kasbon_lab = $('#table_kasbon_lab').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_kasbon_lab.destroy();
+        dataTables_kasbon_lab = $('#table_kasbon_lab').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_kasbon_lab',
                 type: "POST",
                 dataType: "JSON",
                 data: function(d) {
@@ -802,6 +849,42 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     }
 
+    function DataTables_ovb_lab(view = null) {
+        var dataTables_ovb_akomodasi = $('#table_ovb_lab').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_ovb_akomodasi.destroy();
+        dataTables_ovb_akomodasi = $('#table_ovb_lab').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_ovb_lab',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_request_ovb'
+                },
+                {
+                    data: 'amount'
+                },
+                {
+                    data: 'sts'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
     function number_format(number, decimals, dec_point, thousands_sep) {
         // Strip all characters but numerical ones.
         number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
@@ -846,6 +929,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                 $('.budget_others_aktual').html('Rp. ' + number_format(result.nilai_budget_others_aktual));
                 $('.budget_others_sisa').html('Rp. ' + number_format(result.nilai_budget_others - result.nilai_budget_others_aktual));
+
+                $('.budget_lab_aktual').html('Rp. ' + number_format(result.nilai_budget_lab_aktual));
+                $('.budget_lab_sisa').html('Rp. ' + number_format(result.nilai_budget_lab));
             },
             error: function(result) {
 
@@ -975,6 +1061,54 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                                 text: result.pesan
                             }, function(lanjut) {
                                 DataTables_kasbon_others();
+                                hitung_all_budget_process();
+                            });
+                        } else {
+                            swal({
+                                type: 'error',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_kasbon_lab', function() {
+        var id_kasbon_lab = $(this).data('id');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_kasbon_lab',
+                    data: {
+                        'id_kasbon_lab': id_kasbon_lab
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                DataTables_kasbon_lab();
                                 hitung_all_budget_process();
                             });
                         } else {
@@ -1205,6 +1339,55 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_ovb_subcont',
+                    data: {
+                        'id_request_ovb': id_request_ovb
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(result) {
+                        if (result.status == 1) {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                location.reload();
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_ovb_lab', function(e) {
+        e.preventDefault();
+
+        var id_request_ovb = $(this).data('id_request_ovb');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_ovb_lab',
                     data: {
                         'id_request_ovb': id_request_ovb
                     },
