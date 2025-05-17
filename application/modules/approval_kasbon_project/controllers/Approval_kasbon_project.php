@@ -59,6 +59,7 @@ class Approval_kasbon_project extends Admin_Controller
             $this->db->or_like('b.nm_project', $search['value'], 'both');
             $this->db->group_end();
         }
+        $this->db->group_by('a.id_kasbon');
         $this->db->order_by('a.created_date', 'desc');
         $this->db->limit($length, $start);
 
@@ -80,6 +81,7 @@ class Approval_kasbon_project extends Admin_Controller
             $this->db->or_like('b.nm_project', $search['value'], 'both');
             $this->db->group_end();
         }
+        $this->db->group_by('a.id_kasbon');
         $this->db->order_by('a.created_date', 'desc');
 
         $get_data_all = $this->db->get();

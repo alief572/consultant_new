@@ -219,6 +219,13 @@ class Approval_project_budgeting extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_spk_budgeting_others = $this->db->get()->result();
 
+        $this->db->select('a.*, b.keterangan');
+        $this->db->from('kons_tr_spk_budgeting_lab a');
+        $this->db->join('kons_tr_penawaran_lab b', 'b.id_item = a.id_item');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.id_penawaran', $get_spk_budgeting->id_penawaran);
+        $get_spk_budgeting_lab = $this->db->get()->result();
+
         $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
         $this->db->where('a.id_konsultasi_h', $get_spk_budgeting->id_project);
@@ -234,6 +241,7 @@ class Approval_project_budgeting extends Admin_Controller
             'list_budgeting_aktifitas' => $get_spk_budgeting_aktifitas,
             'list_budgeting_akomodasi' => $get_spk_budgeting_akomodasi,
             'list_budgeting_others' => $get_spk_budgeting_others,
+            'list_budgeting_lab' => $get_spk_budgeting_lab,
             'nm_paket' => $nm_paket
         ];
 

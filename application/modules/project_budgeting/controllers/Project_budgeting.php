@@ -290,6 +290,13 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_spk_budgeting_others = $this->db->get()->result();
 
+        $this->db->select('a.*, b.keterangan');
+        $this->db->from('kons_tr_spk_budgeting_lab a');
+        $this->db->join('kons_tr_penawaran_lab b', 'b.id_item = a.id_item');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.id_penawaran', $get_spk_budgeting->id_penawaran);
+        $get_spk_budgeting_lab = $this->db->get()->result();
+
         $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
         $this->db->where('a.id_konsultasi_h', $get_spk->id_project);
@@ -304,10 +311,12 @@ class Project_budgeting extends Admin_Controller
             'list_budgeting_aktifitas' => $get_spk_budgeting_aktifitas,
             'list_budgeting_akomodasi' => $get_spk_budgeting_akomodasi,
             'list_budgeting_others' => $get_spk_budgeting_others,
+            'list_budgeting_lab' => $get_spk_budgeting_lab,
             'nm_paket' => $nm_paket
         ];
 
         $this->template->set($data);
+        $this->template->title('Project Budgeting');
         $this->template->render('view');
     }
 
@@ -331,6 +340,7 @@ class Project_budgeting extends Admin_Controller
         $this->db->delete('kons_tr_spk_budgeting_akomodasi', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
         $this->db->delete('kons_tr_spk_budgeting_aktifitas', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
         $this->db->delete('kons_tr_spk_budgeting_others', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
+        $this->db->delete('kons_tr_spk_budgeting_lab', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
 
         $id_spk_budgeting = $this->Project_budgeting_model->generate_id_spk_budgeting();
 
@@ -371,10 +381,12 @@ class Project_budgeting extends Admin_Controller
             'biaya_subcont_before' => $post['ttl_subcont_before'],
             'biaya_akomodasi_before' => $post['ttl_total_akomodasi_before'],
             'biaya_others_before' => $post['ttl_total_others_before'],
+            'biaya_lab_before' => $post['ttl_total_lab_before'],
             'mandays_subcont_after' => $post['summary_mandays_subcont'],
             'biaya_subcont_after' => $post['summary_biaya_subcont_after'],
             'biaya_akomodasi_after' => $post['summary_biaya_akomodasi_after'],
             'biaya_others_after' => $post['summary_biaya_others_after'],
+            'biaya_lab_after' => $post['summary_biaya_lab_after'],
             'mandays_subcont_result' => $post['summary_mandays_subcont_result_value'],
             'biaya_subcont_result' => $post['summary_biaya_subcont_result_value'],
             'biaya_akomodasi_result' => $post['summary_biaya_akomodasi_result_value'],
@@ -485,11 +497,31 @@ class Project_budgeting extends Admin_Controller
         }
 
         $data_insert_lab = [];
-        if(isset($post['lab_final'])) {
-            foreach($post['lab_final'] as $item) {
-                $this->db->select('a.*');
+        if (isset($post['lab_final'])) {
+            foreach ($post['lab_final'] as $item) {
+                $this->db->select('a.*, b.isu_lingkungan');
                 $this->db->from('kons_tr_penawaran_lab a');
-                $this->db->where('a.id', $item['']);
+                $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+                $this->db->where('a.id', $item['id_lab']);
+                $get_lab = $this->db->get()->row();
+
+                $data_insert_lab[] = [
+                    'id_spk_budgeting' => $id_spk_budgeting,
+                    'id_spk_penawaran' => $post['id_spk_penawaran'],
+                    'id_penawaran' => $get_spk_penawaran->id_penawaran,
+                    'id_lab' => $item['id_lab'],
+                    'id_item' => $get_lab->id_item,
+                    'nm_item' => $get_lab->isu_lingkungan,
+                    'qty_estimasi' => $get_lab->qty,
+                    'price_unit_estimasi' => $get_lab->price_unit,
+                    'total_estimasi' => $get_lab->total,
+                    'qty_final' => str_replace(',', '', $item['qty']),
+                    'price_unit_final' => str_replace(',', '', $item['price_unit']),
+                    'total_final' => str_replace(',', '', $item['total']),
+                    'keterangan' => $get_lab->keterangan,
+                    'create_by' => $this->auth->user_id(),
+                    'create_date' => date('Y-m-d H:i:s')
+                ];
             }
         }
 
@@ -527,6 +559,15 @@ class Project_budgeting extends Admin_Controller
             }
         }
 
+        if (!empty($data_insert_lab)) {
+            $insert_spk_budgeting_lab = $this->db->insert_batch('kons_tr_spk_budgeting_lab', $data_insert_lab);
+            if (!$insert_spk_budgeting_lab) {
+                print_r($this->db->last_query());
+                $this->db->trans_rollback();
+                exit;
+            }
+        }
+
         if ($this->db->trans_status() ===  false) {
             $this->db->trans_rollback();
             $valid = 0;
@@ -549,6 +590,7 @@ class Project_budgeting extends Admin_Controller
 
         $this->db->trans_begin();
 
+        $this->db->delete('kons_tr_spk_budgeting_lab', ['id_spk_budgeting' => $id]);
         $this->db->delete('kons_tr_spk_budgeting_others', ['id_spk_budgeting' => $id]);
         $this->db->delete('kons_tr_spk_budgeting_akomodasi', ['id_spk_budgeting' => $id]);
         $this->db->delete('kons_tr_spk_budgeting_aktifitas', ['id_spk_budgeting' => $id]);

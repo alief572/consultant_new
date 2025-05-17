@@ -716,11 +716,13 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             <input type="hidden" name="summary_biaya_subcont_after" value="<?= $ttl_subcont ?>">
             <input type="hidden" name="summary_biaya_akomodasi_after" value="<?= $ttl_total_akomodasi ?>">
             <input type="hidden" name="summary_biaya_others_after" value="<?= $ttl_total_others ?>">
+            <input type="hidden" name="summary_biaya_lab_after" value="<?= $ttl_total_lab ?>">
 
             <input type="hidden" name="summary_mandays_subcont_result_value" value="0">
             <input type="hidden" name="summary_biaya_subcont_result_value" value="0">
             <input type="hidden" name="summary_biaya_akomodasi_result_value" value="0">
             <input type="hidden" name="summary_biaya_others_result_value" value="0">
+            <input type="hidden" name="summary_biaya_lab_result_value" value="0">
 
             <br><br>
 
@@ -993,14 +995,14 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
     }
 
     function hitung_total_lab() {
-        var no_ako = "<?= $no_others ?>";
-        var no_ako = parseFloat(no_ako);
+        var no_lab = "<?= $no_lab ?>";
+        var no_lab = parseFloat(no_lab);
 
         var total_qty = 0;
         var total_price = 0;
-        var total_oth = 0;
+        var total_lab = 0;
 
-        for (i = 1; i <= no_ako; i++) {
+        for (i = 1; i <= no_lab; i++) {
             var qty = get_num($('input[name="lab_final[' + i + '][qty]"]').val());
             var price_unit = get_num($('input[name="lab_final[' + i + '][price_unit]"]').val());
             var total = (price_unit * qty);
@@ -1009,14 +1011,15 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
             total_qty += qty;
             total_price += price_unit;
-            total_oth += (price_unit * qty);
+            total_lab += (price_unit * qty);
         }
 
         $('.ttl_qty_lab').html(number_format(total_qty));
         $('.ttl_price_lab').html(number_format(total_price, 2));
-        $('.ttl_total_lab').html(number_format(total_oth, 2));
+        $('.ttl_total_lab').html(number_format(total_lab, 2));
 
-        $('.summary_biaya_lab').html(number_format(total_oth, 2));
+        $('.summary_biaya_lab').html(number_format(total_lab, 2));
+        $('input[name="summary_biaya_lab"]').val(total_lab);
 
         hitung_all();
         hitung_compare();
