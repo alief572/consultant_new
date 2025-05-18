@@ -32,7 +32,7 @@ class Kasbon_project extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Kasbon Project');
+        $this->template->title('Pengajuan');
         $this->template->render('index');
     }
 
@@ -1930,6 +1930,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan');
         $this->template->render('add');
     }
 
@@ -2260,6 +2261,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Subcont');
         $this->template->render('add_kasbon_subcont');
     }
 
@@ -2321,6 +2323,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Subcont');
         $this->template->render('edit_kasbon_subcont');
     }
 
@@ -2386,6 +2389,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Subcont');
         $this->template->render('view_kasbon_subcont');
     }
 
@@ -2446,6 +2450,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Akomodasi');
         $this->template->render('add_kasbon_akomodasi');
     }
 
@@ -2524,6 +2529,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Akomodasi');
         $this->template->render('view_kasbon_akomodasi');
     }
 
@@ -2601,6 +2607,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Akomodasi');
         $this->template->render('edit_kasbon_akomodasi');
     }
 
@@ -2662,6 +2669,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Others');
         $this->template->render('add_kasbon_others');
     }
 
@@ -2725,6 +2733,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Others');
         $this->template->render('add_kasbon_lab');
     }
 
@@ -2777,6 +2786,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Others');
         $this->template->render('view_kasbon_others');
     }
 
@@ -2829,6 +2839,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Lab');
         $this->template->render('view_kasbon_lab');
     }
 
@@ -2858,7 +2869,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_others a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_header);
-        $this->db->group_by('a.id_item');
+        // $this->db->group_by('a.id_item');
         $get_data_kasbon = $this->db->get()->result();
 
         $list_arr_kasbon = [];
@@ -2881,6 +2892,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Lab');
         $this->template->render('edit_kasbon_others');
     }
 
@@ -2910,7 +2922,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_lab a');
         $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_header);
-        $this->db->group_by('a.id_item');
+        // $this->db->group_by('a.id_item');
         $get_data_kasbon = $this->db->get()->result();
 
         $list_arr_kasbon = [];
@@ -2933,6 +2945,7 @@ class Kasbon_project extends Admin_Controller
         ];
 
         $this->template->set($data);
+        $this->template->title('Pengajuan Lab');
         $this->template->render('edit_kasbon_lab');
     }
 
@@ -3077,6 +3090,7 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
+            'metode_pembayaran' => $post['metode_pembayaran'],
             'created_by' => $this->auth->user_id(),
             'created_date' => date('Y-m-d H:i:s')
         ];
@@ -3154,6 +3168,7 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
+            'metode_pembayaran' => $post['metode_pembayaran'],
             'updated_by' => $this->auth->user_id(),
             'updated_date' => date('Y-m-d H:i:s')
         ], [
@@ -3330,6 +3345,7 @@ class Kasbon_project extends Admin_Controller
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
             'sts_req_payment' => '',
+            'metode_pembayaran' => $post['metode_pembayaran'],
             'created_by' => $this->auth->user_id(),
             'created_date' => date('Y-m-d H:i:s')
         ];
@@ -3451,6 +3467,7 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
+            'metode_pembayaran' => $post['metode_pembayaran'],
             'updated_by' => $this->auth->user_id(),
             'updated_date' => date('Y-m-d H:i:s')
         ], [
@@ -3585,6 +3602,7 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
+            'metode_pembayaran' => $post['metode_pembayaran'],
             'created_by' => $this->auth->user_id(),
             'created_date' => date('Y-m-d H:i:s')
         ];
@@ -3707,6 +3725,7 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
+            'metode_pembayaran' => $post['metode_pembayaran'],
             'created_by' => $this->auth->user_id(),
             'created_date' => date('Y-m-d H:i:s')
         ];
@@ -3823,6 +3842,7 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
+            'metode_pembayaran' => $post['metode_pembayaran'],
             'updated_by' => $this->auth->user_id(),
             'updated_date' => date('Y-m-d H:i:s')
         ];
@@ -3943,6 +3963,7 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
+            'metode_pembayaran' => $post['metode_pembayaran'],
             'updated_by' => $this->auth->user_id(),
             'updated_date' => date('Y-m-d H:i:s')
         ];

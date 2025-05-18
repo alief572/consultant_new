@@ -8,6 +8,17 @@ $show_reject_reason = 'd-none';
 if($header->reject_reason !== null) {
     $show_reject_reason = '';   
 }
+
+$metode_pembayaran = '';
+if($header->metode_pembayaran == '1') {
+    $metode_pembayaran = 'Kasbon';
+}
+if($header->metode_pembayaran == '2') {
+    $metode_pembayaran = 'Direct Payment';
+}
+if($header->metode_pembayaran == '3') {
+    $metode_pembayaran = 'PO';
+}
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -120,6 +131,11 @@ if($header->reject_reason !== null) {
                     <td class="pd-5 valign-top" width="400"><?= date('d F Y', strtotime($header->tgl)) ?></td>
                     <th class="pd-5 valign-top" width="150">Description</th>
                     <td class="pd-5 valign-top" width="400"><?= $header->deskripsi ?></td>
+                </tr>
+                <tr>
+                    <th class="pd-5 valign-top" width="150">Metode Pembayaran</th>
+                    <td class="pd-5 valign-top" width="400"><?= $metode_pembayaran ?></td>
+                    <th colspan="2"></th>
                 </tr>
             </table>
         </div>

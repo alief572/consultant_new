@@ -32,7 +32,7 @@ class Approval_kasbon_project extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Approval Kasbon Project');
+        $this->template->title('Approval Pengajuan');
         $this->template->render('index');
     }
 
@@ -255,10 +255,13 @@ class Approval_kasbon_project extends Admin_Controller
             ];
         endforeach;
 
+        $get_header = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id_kasbon])->row();
+
         $data = [
             'id_kasbon' => $id_kasbon,
             'id_spk_budgeting' => $id_spk_budgeting,
             'tipe' => $get_header->tipe,
+            'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_kasbon_subcont' => $get_kasbon_subcont,
             'list_kasbon_subcont_custom' => $get_kasbon_subcont_custom,
@@ -271,7 +274,19 @@ class Approval_kasbon_project extends Admin_Controller
             'data_overbudget_lab' => $data_overbudget_lab
         ];
 
+        $metode_pembayaran = '';
+        if ($get_header->metode_pembayaran == '1') {
+            $metode_pembayaran = 'Kasbon';
+        }
+        if ($get_header->metode_pembayaran == '2') {
+            $metode_pembayaran = 'Direct Payment';
+        }
+        if ($get_header->metode_pembayaran == '3') {
+            $metode_pembayaran = 'PO';
+        }
+
         $this->template->set($data);
+        $this->template->title('Approval Pengajuan '.$metode_pembayaran);
         $this->template->render('approval_kasbon');
     }
 

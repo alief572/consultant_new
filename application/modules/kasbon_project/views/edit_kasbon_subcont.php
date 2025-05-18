@@ -122,6 +122,17 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <textarea name="deskripsi" id="" class="form-control form-control-sm"><?= $header->deskripsi ?></textarea>
                     </td>
                 </tr>
+                <tr>
+                    <th class="pd-5 valign-top" width="150">Metode Pembayaran</th>
+                    <td class="pd-5 valign-top" width="400">
+                        <select name="metode_pembayaran" class="form-control form-control-sm">
+                            <option value="1" <?= ($header->metode_pembayaran == '1') ? 'selected' : '' ?>>Kasbon</option>
+                            <option value="2" <?= ($header->metode_pembayaran == '2') ? 'selected' : '' ?>>Direct Payment</option>
+                            <option value="3" <?= ($header->metode_pembayaran == '3') ? 'selected' : '' ?>>PO</option>
+                        </select>
+                    </td>
+                    <th colspan="2"></th>
+                </tr>
             </table>
         </div>
     </div>

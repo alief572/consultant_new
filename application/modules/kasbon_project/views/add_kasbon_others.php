@@ -119,6 +119,17 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <textarea name="deskripsi" id="" class="form-control form-control-sm"></textarea>
                     </td>
                 </tr>
+                <tr>
+                    <th class="pd-5 valign-top" width="150">Metode Pembayaran</th>
+                    <td class="pd-5 valign-top" width="400">
+                        <select name="metode_pembayaran" class="form-control form-control-sm">
+                            <option value="1">Kasbon</option>
+                            <option value="2">Direct Payment</option>
+                            <option value="3">PO</option>
+                        </select>
+                    </td>
+                    <th colspan="2"></th>
+                </tr>
             </table>
         </div>
     </div>
@@ -399,7 +410,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             var price_unit_estimasi = get_num($('input[name="detail_others[' + i + '][price_unit_estimasi]"]').val());
             var sisa_budget = get_num($('input[name="detail_others[' + i + '][sisa_budget]"]').val());
 
-            if(qty_pengajuan > 0 && qty_pengajuan < 1) {
+            if (qty_pengajuan > 0 && qty_pengajuan < 1) {
                 qty_pengajuan = 1;
             }
             if (valid == '1' && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {

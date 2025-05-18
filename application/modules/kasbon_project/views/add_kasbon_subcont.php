@@ -112,7 +112,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     </td>
                 </tr>
                 <tr>
-                    <th class="pd-5 valign-top" width="150">Tanggal</th>
+                    <th class="pd-5 valign-top" width="150">Tgl</th>
                     <td class="pd-5 valign-top" width="400">
                         <input type="date" name="tgl" id="" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
                     </td>
@@ -120,6 +120,17 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <td class="pd-5 valign-top" width="400">
                         <textarea name="deskripsi" id="" class="form-control form-control-sm"></textarea>
                     </td>
+                </tr>
+                <tr>
+                    <th class="pd-5 valign-top" width="150">Metode Pembayaran</th>
+                    <td class="pd-5 valign-top" width="400">
+                        <select name="metode_pembayaran" class="form-control form-control-sm">
+                            <option value="1">Kasbon</option>
+                            <option value="2">Direct Payment</option>
+                            <option value="3">PO</option>
+                        </select>
+                    </td>
+                    <th colspan="2"></th>
                 </tr>
             </table>
         </div>

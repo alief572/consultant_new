@@ -3,6 +3,17 @@ $ENABLE_ADD     = has_permission('Kasbon_Project.Add');
 $ENABLE_MANAGE  = has_permission('Kasbon_Project.Manage');
 $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
+
+$metode_pembayaran = '';
+if ($header->metode_pembayaran == '1') {
+  $metode_pembayaran = 'Kasbon';
+}
+if ($header->metode_pembayaran == '2') {
+  $metode_pembayaran = 'Direct Payment';
+}
+if ($header->metode_pembayaran == '3') {
+  $metode_pembayaran = 'PO';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -121,6 +132,17 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <th class="pd-5 valign-top" width="150"></th>
         <td class="pd-5 valign-top" width="400"></td>
       </tr>
+      <tr>
+        <th class="pd-5 valign-top" width="150">Tanggal</th>
+        <td class="pd-5 valign-top" width="400"><?= date('d F Y', strtotime($header->tgl)) ?></td>
+        <th class="pd-5 valign-top" width="150">Description</th>
+        <td class="pd-5 valign-top" width="400"><?= $header->deskripsi ?></td>
+      </tr>
+      <tr>
+        <th class="pd-5 valign-top" width="150">Metode Pembayaran</th>
+        <td class="pd-5 valign-top" width="400"><?= $metode_pembayaran ?></td>
+        <th colspan="2"></th>
+      </tr>
     </table>
   </div>
 </div>
@@ -191,31 +213,31 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         ?>
       </tbody>
       <tbody>
-        <?php 
-          foreach ($list_kasbon_subcont_custom as $item) {
-            $no++;
-  
-            echo '<tr>';
-  
-            echo '<td class="text-center">' . $no . '</td>';
-            echo '<td class="text-left">' . $item->nm_aktifitas . '</td>';
-            echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
-            echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
-            echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
-            echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
-            echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
-            echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-            echo '<td class="text-center">' . number_format(0, 2) . '</td>';
-            echo '<td class="text-right">' . number_format(0, 2) . '</td>';
-            echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
-            echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
-            echo '</tr>';
-  
-            $ttl_estimasi_subcont += $item->total_budget_estimasi;
-            $ttl_pengajuan_subcont += $item->total_pengajuan;
-            $ttl_aktual_subcont += ($item->aktual_terpakai - $item->qty_pengajuan);
-            $ttl_sisa_subcont += ($item->sisa_budget - $item->total_pengajuan);
-          }
+        <?php
+        foreach ($list_kasbon_subcont_custom as $item) {
+          $no++;
+
+          echo '<tr>';
+
+          echo '<td class="text-center">' . $no . '</td>';
+          echo '<td class="text-left">' . $item->nm_aktifitas . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+          echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format(0, 2) . '</td>';
+          echo '<td class="text-right">' . number_format(0, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
+          echo '</tr>';
+
+          $ttl_estimasi_subcont += $item->total_budget_estimasi;
+          $ttl_pengajuan_subcont += $item->total_pengajuan;
+          $ttl_aktual_subcont += ($item->aktual_terpakai - $item->qty_pengajuan);
+          $ttl_sisa_subcont += ($item->sisa_budget - $item->total_pengajuan);
+        }
         ?>
       </tbody>
       <tfoot>

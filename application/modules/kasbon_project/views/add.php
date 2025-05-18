@@ -119,7 +119,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <table border="0" style="width: 100%;">
             <tr>
                 <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Biaya Subcont</h4>
+                    <h4 style="font-weight: 800;">Pengajuan Subcont</h4>
                 </th>
                 <th class="pd-5">
                     <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
@@ -225,7 +225,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <table border="0" style="width: 100%;">
             <tr>
                 <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Akomodasi</h4>
+                    <h4 style="font-weight: 800;">Pengajuan Akomodasi</h4>
                 </th>
                 <th class="pd-5">
                     <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
@@ -331,7 +331,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <table border="0" style="width: 100%;">
             <tr>
                 <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Others</h4>
+                    <h4 style="font-weight: 800;">Pengajuan Others</h4>
                 </th>
                 <th class="pd-5">
                     <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
