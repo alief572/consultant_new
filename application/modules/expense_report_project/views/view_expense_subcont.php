@@ -3,6 +3,17 @@ $ENABLE_ADD     = has_permission('Expense_Report_Project.Add');
 $ENABLE_MANAGE  = has_permission('Expense_Report_Project.Manage');
 $ENABLE_VIEW    = has_permission('Expense_Report_Project.View');
 $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
+
+$title_header = 'Subcont';
+if ($tipe == '2') {
+    $title_header = 'Akomodasi';
+}
+if ($tipe == '3') {
+    $title_header = 'Others';
+}
+if ($tipe == '4') {
+    $title_header = 'Lab';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -74,7 +85,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 <input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
 <div class="box">
     <div class="box-header">
-        <h3>List Item Subcont</h3>
+        <h3>List Item <?= $title_header ?></h3>
     </div>
 
     <div class="box-body" style="z-index: 1 !important;">

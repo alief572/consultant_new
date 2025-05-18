@@ -376,6 +376,9 @@ class Approval_kasbon_project extends Admin_Controller
         if ($get_header_kasbon->tipe == '3') :
             $project = 'Others';
         endif;
+        if ($get_header_kasbon->tipe == '4') :
+            $project = 'Lab';
+        endif;
 
         $data_insert_sendigs_kasbon = [
             'no_doc' => $no_doc,
@@ -439,6 +442,8 @@ class Approval_kasbon_project extends Admin_Controller
         $update_req_akomodasi = $this->db->update('kons_tr_kasbon_project_akomodasi', ['sts' => 1], ['id_header' => $id_kasbon]);
 
         $update_req_others = $this->db->update('kons_tr_kasbon_project_others', ['sts' => 1], ['id_header' => $id_kasbon]);
+
+        $update_req_lab = $this->db->update('kons_tr_kasbon_project_lab', ['sts' => 1], ['id_header' => $id_kasbon]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

@@ -11,6 +11,9 @@ if ($tipe == '2') {
 if ($tipe == '3') {
     $title_header = 'Others';
 }
+if ($tipe == '4') {
+    $title_header = 'Lab';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">

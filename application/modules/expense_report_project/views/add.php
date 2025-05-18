@@ -300,6 +300,69 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <table border="0" style="width: 100%;">
+            <tr>
+                <th class="pd-5" width="700">
+                    <h4 style="font-weight: 800;">Lab</h4>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_lab) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>On Process</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_lab_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_lab) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box-body">
+        <table class="table custom-table mt-5" id="table_kasbon_lab" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
         <a href="<?= base_url('expense_report_project') ?>" class="btn btn-sm btn-danger">
             <i class="fa fa-arrow-left"></i> Back
         </a>
@@ -316,6 +379,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
         DataTables_kasbon_subcont();
         DataTables_kasbon_akomodasi();
         DataTables_kasbon_others();
+        DataTables_kasbon_lab();
         DataTables_ovb_akomodasi();
     });
 
@@ -445,6 +509,48 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
         });
     }
 
+    function DataTables_kasbon_lab(view = null) {
+        var dataTables_kasbon_lab = $('#table_kasbon_lab').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_kasbon_lab.destroy();
+        dataTables_kasbon_lab = $('#table_kasbon_lab').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_kasbon_lab',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'req_number'
+                },
+                {
+                    data: 'nm_biaya'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
     function DataTables_ovb_akomodasi(view = null) {
         var dataTables_ovb_akomodasi = $('#table_ovb_akomodasi').DataTable();
 
@@ -517,6 +623,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 $('.budget_subcont_on_process').html('Rp. ' + number_format(result.nilai_budget_subcont));
                 $('.budget_akomodasi_on_process').html('Rp. ' + number_format(result.nilai_budget_akomodasi));
                 $('.budget_others_on_process').html('Rp. ' + number_format(result.nilai_budget_others));
+                $('.budget_lab_on_process').html('Rp. ' + number_format(result.nilai_budget_lab));
             },
             error: function(result) {
 
@@ -553,6 +660,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                                 DataTables_kasbon_subcont();
                                 DataTables_kasbon_akomodasi();
                                 DataTables_kasbon_others();
+                                DataTables_kasbon_lab();
                                 DataTables_ovb_akomodasi();
                             });
                         } else {
