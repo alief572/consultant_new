@@ -507,10 +507,11 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 <tr>
                     <?php
                     $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity - $nilai_lab);
+                    $mandays_rate = ($total_mandays > 0) ? ($nilai_kontrak_bersih / $total_mandays) : 0;
                     ?>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                     <td class="pd-5" valign="top">
-                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($nilai_kontrak_bersih / ($total_mandays), 2) ?>" readonly>
+                        <input type="text" name="mandays_rate" id="" class="form-control form-control-sm text-right total_mandays_rate" value="<?= number_format($mandays_rate, 2) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Tandem</td>
                     <td class="pd-5" valign="top">
