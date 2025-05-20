@@ -2287,7 +2287,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->where('a.mandays_rate_subcont_final >', 0);
         $get_data_subcont = $this->db->get()->result();
 
-        $this->db->select('a.id_aktifitas, a.qty_pengajuan, a.nominal_pengajuan, a.total_pengajuan, a.aktual_terpakai, a.sisa_budget, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
+        $this->db->select('a.id_aktifitas, a.qty_pengajuan, a.nominal_pengajuan, a.total_pengajuan, a.aktual_terpakai, a.sisa_budget, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan, a.qty_estimasi, a.price_unit_estimasi, a.total_budget_estimasi, a.qty_terpakai, a.nominal_terpakai, a.total_terpakai, a.qty_overbudget, a.nominal_overbudget, a.total_overbudget');
         $this->db->from('kons_tr_kasbon_project_subcont a');
         $this->db->where('a.id_spk_budgeting', $get_kasbon_subcont->id_spk_budgeting);
         $this->db->group_by('a.id_aktifitas');
@@ -2301,8 +2301,17 @@ class Kasbon_project extends Admin_Controller
                 'qty_pengajuan' => $item->qty_pengajuan,
                 'nominal_pengajuan' => $item->nominal_pengajuan,
                 'total_pengajuan' => $item->total_pengajuan,
+                'qty_estimasi' => $item->qty_estimasi,
+                'nominal_estimasi' => $item->price_unit_estimasi,
+                'total_estimasi' => $item->total_budget_estimasi,
                 'aktual_terpakai' => $item->aktual_terpakai,
-                'sisa_budget' => $item->sisa_budget
+                'sisa_budget' => $item->sisa_budget,
+                'qty_terpakai' => $item->qty_terpakai,
+                'nominal_terpakai' => $item->nominal_terpakai,
+                'total_terpakai' => $item->total_terpakai,
+                'qty_overbudget' => $item->qty_overbudget,
+                'nominal_overbudget' => $item->nominal_overbudget,
+                'total_overbudget' => $item->total_overbudget
             ];
         }
 
@@ -2370,7 +2379,13 @@ class Kasbon_project extends Admin_Controller
                 'price_unit_estimasi' => $item->price_unit_estimasi,
                 'total_budgeting_estimasi' => $item->total_budget_estimasi,
                 'aktual_terpakai' => $item->aktual_terpakai,
-                'sisa_budget' => $item->sisa_budget
+                'sisa_budget' => $item->sisa_budget,
+                'qty_terpakai' => $item->qty_terpakai,
+                'nominal_terpakai' => $item->nominal_terpakai,
+                'total_terpakai' => $item->total_terpakai,
+                'qty_overbudget' => $item->qty_overbudget,
+                'nominal_overbudget' => $item->nominal_overbudget,
+                'total_overbudget' => $item->total_overbudget
             ];
         }
 
@@ -2773,7 +2788,13 @@ class Kasbon_project extends Admin_Controller
                 'nominal_pengajuan' => $item->nominal_pengajuan,
                 'total_pengajuan' => $item->total_pengajuan,
                 'aktual_terpakai' => $item->aktual_terpakai,
-                'sisa_budget' => $item->sisa_budget
+                'sisa_budget' => $item->sisa_budget,
+                'qty_terpakai' => $item->qty_terpakai,
+                'nominal_terpakai' => $item->nominal_terpakai,
+                'total_terpakai' => $item->total_terpakai,
+                'qty_overbudget' => $item->qty_overbudget,
+                'nominal_overbudget' => $item->nominal_overbudget,
+                'total_overbudget' => $item->total_overbudget
             ];
         }
 
@@ -2821,12 +2842,18 @@ class Kasbon_project extends Admin_Controller
 
         $list_arr_kasbon = [];
         foreach ($get_data_kasbon as $item) {
-            $list_arr_kasbon[$item->id_item] = [
+            $list_arr_kasbon[$item->id_lab] = [
                 'qty_pengajuan' => $item->qty_pengajuan,
                 'nominal_pengajuan' => $item->nominal_pengajuan,
                 'total_pengajuan' => $item->total_pengajuan,
                 'aktual_terpakai' => $item->aktual_terpakai,
-                'sisa_budget' => $item->sisa_budget
+                'sisa_budget' => $item->sisa_budget,
+                'qty_terpakai' => $item->qty_terpakai,
+                'nominal_terpakai' => $item->nominal_terpakai,
+                'total_terpakai' => $item->total_terpakai,
+                'qty_overbudget' => $item->qty_overbudget,
+                'nominal_overbudget' => $item->nominal_overbudget,
+                'total_overbudget' => $item->total_overbudget
             ];
         }
 
@@ -2879,7 +2906,13 @@ class Kasbon_project extends Admin_Controller
                 'nominal_pengajuan' => $item->nominal_pengajuan,
                 'total_pengajuan' => $item->total_pengajuan,
                 'aktual_terpakai' => $item->aktual_terpakai,
-                'sisa_budget' => $item->sisa_budget
+                'sisa_budget' => $item->sisa_budget,
+                'qty_terpakai' => $item->qty_terpakai,
+                'nominal_terpakai' => $item->nominal_terpakai,
+                'total_terpakai' => $item->total_terpakai,
+                'qty_overbudget' => $item->qty_overbudget,
+                'nominal_overbudget' => $item->nominal_overbudget,
+                'total_overbudget' => $item->total_overbudget
             ];
         }
 
@@ -2912,9 +2945,9 @@ class Kasbon_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $get_header->id_spk_budgeting);
         $get_budgeting = $this->db->get()->row();
 
-        $this->db->select('a.*, b.nm_biaya');
+        $this->db->select('a.*, b.isu_lingkungan as nm_biaya');
         $this->db->from('kons_tr_spk_budgeting_lab a');
-        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_spk_budgeting', $get_header->id_spk_budgeting);
         $get_data_lab = $this->db->get()->result();
 
@@ -2932,7 +2965,13 @@ class Kasbon_project extends Admin_Controller
                 'nominal_pengajuan' => $item->nominal_pengajuan,
                 'total_pengajuan' => $item->total_pengajuan,
                 'aktual_terpakai' => $item->aktual_terpakai,
-                'sisa_budget' => $item->sisa_budget
+                'sisa_budget' => $item->sisa_budget,
+                'qty_terpakai' => $item->qty_terpakai,
+                'nominal_terpakai' => $item->nominal_terpakai,
+                'total_terpakai' => $item->total_terpakai,
+                'qty_overbudget' => $item->qty_overbudget,
+                'nominal_overbudget' => $item->nominal_overbudget,
+                'total_overbudget' => $item->total_overbudget
             ];
         }
 
@@ -3036,6 +3075,12 @@ class Kasbon_project extends Admin_Controller
                         'total_budget_estimasi' => $item['total_estimasi'],
                         'aktual_terpakai' => $item['aktual_terpakai'],
                         'sisa_budget' => $item['sisa_budget'],
+                        'qty_terpakai' => $item['qty_terpakai'],
+                        'nominal_terpakai' => $item['nominal_terpakai'],
+                        'total_terpakai' => $item['total_terpakai'],
+                        'qty_overbudget' => $item['qty_overbudget'],
+                        'nominal_overbudget' => $item['nominal_overbudget'],
+                        'total_overbudget' => $item['total_overbudget'],
                         'created_by' => $this->auth->user_id(),
                         'created_date' => date('Y-m-d H:i:s')
                     ];
@@ -3050,6 +3095,7 @@ class Kasbon_project extends Admin_Controller
         if (isset($post['subcont_custom'])) {
             foreach ($post['subcont_custom'] as $item) {
                 if (str_replace(',', '', $item['qty_budget']) > 0 && str_replace(',', '', $item['nominal_budget'])) {
+
                     $data_insert_detail[] = [
                         'id_header' => $id_header,
                         'id_spk_budgeting' => $post['id_spk_budgeting'],
@@ -3065,6 +3111,12 @@ class Kasbon_project extends Admin_Controller
                         'total_budget_estimasi' => $item['total_estimasi'],
                         'aktual_terpakai' => $item['aktual_terpakai'],
                         'sisa_budget' => $item['sisa_budget'],
+                        'qty_terpakai' => $item['qty_terpakai'],
+                        'nominal_terpakai' => $item['nominal_terpakai'],
+                        'total_terpakai' => $item['total_terpakai'],
+                        'qty_overbudget' => $item['qty_overbudget'],
+                        'nominal_overbudget' => $item['nominal_overbudget'],
+                        'total_overbudget' => $item['total_overbudget'],
                         'created_by' => $this->auth->user_id(),
                         'created_date' => date('Y-m-d H:i:s'),
                         'custom_subcont' => 1
@@ -3193,7 +3245,7 @@ class Kasbon_project extends Admin_Controller
 
                 $qty_estimasi = str_replace(',', '', $item['qty_estimasi']);
                 $price_unit_estimasi = str_replace(',', '', $item['price_unit_estimasi']);
-                $total_estimasi = str_replace(',', '', $item['total_estimasi']);
+                $total_estimasi = str_replace(',', '', $item['total_budget_estimasi']);
 
                 if ($qty_pengajuan > 0 && $nominal_pengajuan > 0) {
                     $data_insert_detail[] = [
@@ -3211,6 +3263,12 @@ class Kasbon_project extends Admin_Controller
                         'total_budget_estimasi' => $total_estimasi,
                         'aktual_terpakai' => $item['aktual_terpakai'],
                         'sisa_budget' => $item['sisa_budget'],
+                        'qty_terpakai' => $item['qty_terpakai'],
+                        'nominal_terpakai' => $item['price_unit_terpakai'],
+                        'total_terpakai' => $item['total_budget_terpakai'],
+                        'qty_overbudget' => $item['qty_overbudget'],
+                        'nominal_overbudget' => $item['price_unit_overbudget'],
+                        'total_overbudget' => $item['total_budget_overbudget'],
                         'created_by' => $this->auth->user_id(),
                         'created_date' => date('Y-m-d H:i:s')
                     ];
@@ -3247,6 +3305,12 @@ class Kasbon_project extends Admin_Controller
                             'total_budget_estimasi' => $total_estimasi,
                             'aktual_terpakai' => $item['aktual_terpakai'],
                             'sisa_budget' => $item['sisa_budget'],
+                            'qty_terpakai' => $item['qty_terpakai'],
+                            'nominal_terpakai' => $item['price_unit_terpakai'],
+                            'total_terpakai' => $item['total_budget_terpakai'],
+                            'qty_overbudget' => $item['qty_overbudget'],
+                            'nominal_overbudget' => $item['price_unit_overbudget'],
+                            'total_overbudget' => $item['total_budget_overbudget'],
                             'created_by' => $this->auth->user_id(),
                             'created_date' => date('Y-m-d H:i:s'),
                             'custom_subcont' => 1
@@ -3381,6 +3445,12 @@ class Kasbon_project extends Admin_Controller
                     'budget_tambahan' => $item['budget_tambahan'],
                     'aktual_terpakai' => $item['aktual_terpakai'],
                     'sisa_budget' => $item['sisa_budget'],
+                    'qty_terpakai' => $item['qty_terpakai'],
+                    'nominal_terpakai' => $item['nominal_terpakai'],
+                    'total_terpakai' => $item['total_terpakai'],
+                    'qty_overbudget' => $item['qty_overbudget'],
+                    'nominal_overbudget' => $item['nominal_overbudget'],
+                    'total_overbudget' => $item['total_overbudget'],
                     'created_by' => $this->auth->user_id(),
                     'created_date' => date('Y-m-d H:i:s')
                 ];
@@ -3511,6 +3581,12 @@ class Kasbon_project extends Admin_Controller
                         'budget_tambahan' => $item['budget_tambahan'],
                         'aktual_terpakai' => $item['aktual_terpakai'],
                         'sisa_budget' => $item['sisa_budget'],
+                        'qty_terpakai' => $item['qty_terpakai'],
+                        'nominal_terpakai' => $item['nominal_terpakai'],
+                        'total_terpakai' => $item['total_terpakai'],
+                        'qty_overbudget' => $item['qty_overbudget'],
+                        'nominal_overbudget' => $item['nominal_overbudget'],
+                        'total_overbudget' => $item['total_overbudget'],
                         'created_by' => $this->auth->user_id(),
                         'created_date' => date('Y-m-d H:i:s')
                     ];
@@ -3636,6 +3712,12 @@ class Kasbon_project extends Admin_Controller
                     'total_budget_estimasi' => $item['total_estimasi'],
                     'aktual_terpakai' => $item['aktual_terpakai'],
                     'sisa_budget' => $item['sisa_budget'],
+                    'qty_terpakai' => $item['qty_terpakai'],
+                    'nominal_terpakai' => $item['price_unit_terpakai'],
+                    'total_terpakai' => $item['total_terpakai'],
+                    'qty_overbudget' => $item['qty_overbudget'],
+                    'nominal_overbudget' => $item['nominal_overbudget'],
+                    'total_overbudget' => $item['total_overbudget'],
                     'created_by' => $this->auth->user_id(),
                     'created_date' => date('Y-m-d H:i:s')
                 ];
@@ -3759,6 +3841,12 @@ class Kasbon_project extends Admin_Controller
                     'total_budget_estimasi' => $item['total_estimasi'],
                     'aktual_terpakai' => $item['aktual_terpakai'],
                     'sisa_budget' => $item['sisa_budget'],
+                    'qty_terpakai' => $item['qty_terpakai'],
+                    'nominal_terpakai' => $item['price_unit_terpakai'],
+                    'total_terpakai' => $item['total_terpakai'],
+                    'qty_overbudget' => $item['qty_overbudget'],
+                    'nominal_overbudget' => $item['nominal_overbudget'],
+                    'total_overbudget' => $item['total_overbudget'],
                     'created_by' => $this->auth->user_id(),
                     'created_date' => date('Y-m-d H:i:s')
                 ];
@@ -3871,6 +3959,12 @@ class Kasbon_project extends Admin_Controller
                     'total_budget_estimasi' => $item['total_budget_estimasi'],
                     'aktual_terpakai' => $item['aktual_terpakai'],
                     'sisa_budget' => $item['sisa_budget'],
+                    'qty_terpakai' => $item['qty_terpakai'],
+                    'nominal_terpakai' => $item['nominal_terpakai'],
+                    'total_terpakai' => $item['total_terpakai'],
+                    'qty_overbudget' => $item['qty_overbudget'],
+                    'nominal_overbudget' => $item['nominal_overbudget'],
+                    'total_overbudget' => $item['total_overbudget'],
                     'created_by' => $this->auth->user_id(),
                     'created_date' => date('Y-m-d H:i:s')
                 ];
@@ -3992,6 +4086,12 @@ class Kasbon_project extends Admin_Controller
                     'total_budget_estimasi' => $item['total_budget_estimasi'],
                     'aktual_terpakai' => $item['aktual_terpakai'],
                     'sisa_budget' => $item['sisa_budget'],
+                    'qty_terpakai' => $item['qty_terpakai'],
+                    'nominal_terpakai' => $item['nominal_terpakai'],
+                    'total_terpakai' => $item['total_terpakai'],
+                    'qty_overbudget' => $item['qty_overbudget'],
+                    'nominal_overbudget' => $item['nominal_overbudget'],
+                    'total_overbudget' => $item['total_overbudget'],
                     'created_by' => $this->auth->user_id(),
                     'created_date' => date('Y-m-d H:i:s')
                 ];
@@ -4234,36 +4334,80 @@ class Kasbon_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budget_subcont = $this->db->get()->result();
 
+        $this->db->select('(b.qty_budget_tambahan * b.budget_tambahan) as ttl');
+        $this->db->from('kons_tr_kasbon_req_ovb_subcont_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_subcont_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.sts', 1);
+        $get_ovb_subcont = $this->db->get()->result();
+
         $this->db->select('a.total_final');
         $this->db->from('kons_tr_spk_budgeting_akomodasi a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budget_akomodasi = $this->db->get()->result();
+
+        $this->db->select('(b.qty_budget_tambahan * b.budget_tambahan) as ttl');
+        $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.sts', 1);
+        $get_ovb_akomodasi = $this->db->get()->result();
 
         $this->db->select('a.total_final');
         $this->db->from('kons_tr_spk_budgeting_others a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budget_others = $this->db->get()->result();
 
+        $this->db->select('(b.qty_budget_tambahan * b.budget_tambahan) as ttl');
+        $this->db->from('kons_tr_kasbon_req_ovb_others_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_others_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.sts', 1);
+        $get_ovb_others = $this->db->get()->result();
+
         $this->db->select('a.total_final');
         $this->db->from('kons_tr_spk_budgeting_lab a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_budget_lab = $this->db->get()->result();
 
+        $this->db->select('(b.qty_budget_tambahan * b.budget_tambahan) as ttl');
+        $this->db->from('kons_tr_kasbon_req_ovb_lab_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_lab_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.sts', 1);
+        $get_ovb_lab = $this->db->get()->result();
+
         foreach ($get_budget_subcont as $item_subcont) :
             $nilai_budget_subcont += $item_subcont->total_aktifitas_final;
         endforeach;
+
+        foreach ($get_ovb_subcont as $item_ovb_subcont) {
+            $nilai_budget_subcont += $item_ovb_subcont->ttl;
+        }
 
         foreach ($get_budget_akomodasi as $item_akomodasi) :
             $nilai_budget_akomodasi += $item_akomodasi->total_final;
         endforeach;
 
+        foreach ($get_ovb_akomodasi as $item_ovb_akomodasi) {
+            $nilai_budget_akomodasi += $item_ovb_akomodasi->ttl;
+        }
+
         foreach ($get_budget_others as $item_others) :
             $nilai_budget_others += $item_others->total_final;
         endforeach;
 
+        foreach ($get_ovb_others as $item_ovb_others) {
+            $nilai_budget_others += $item_ovb_others->ttl;
+        }
+
         foreach ($get_budget_lab as $item_lab) :
             $nilai_budget_lab += $item_lab->total_final;
         endforeach;
+
+        foreach ($get_ovb_lab as $item_ovb_lab) {
+            $nilai_budget_lab += $item_ovb_lab->ttl;
+        }
 
         $nilai_budget_subcont_on_process = 0;
         $nilai_budget_akomodasi_on_process = 0;

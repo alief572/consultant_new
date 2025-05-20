@@ -5,18 +5,18 @@ $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
 $show_reject_reason = 'd-none';
-if($header->reject_reason !== null) {
-    $show_reject_reason = '';   
+if ($header->reject_reason !== null) {
+    $show_reject_reason = '';
 }
 
 $metode_pembayaran = '';
-if($header->metode_pembayaran == '1') {
+if ($header->metode_pembayaran == '1') {
     $metode_pembayaran = 'Kasbon';
 }
-if($header->metode_pembayaran == '2') {
+if ($header->metode_pembayaran == '2') {
     $metode_pembayaran = 'Direct Payment';
 }
-if($header->metode_pembayaran == '3') {
+if ($header->metode_pembayaran == '3') {
     $metode_pembayaran = 'PO';
 }
 ?>
@@ -76,8 +76,8 @@ if($header->metode_pembayaran == '3') {
     .valign-middle {
         vertical-align: middle !important;
     }
-    
-    .d-none{
+
+    .d-none {
         display: none;
     }
 </style>
@@ -143,24 +143,116 @@ if($header->metode_pembayaran == '3') {
 
     <div class="box">
         <div class="box-header">
-            <h4 style="font-weight: 800;">List Item Lab</h4>
+            <h4 style="font-weight: 800;">Informasi Pengajuan</h4>
         </div>
 
         <div class="box-body">
             <table class="table custom-table">
                 <thead>
                     <tr>
-                        <th rowspan="2" class="text-center" valign="middle">No.</th>
-                        <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
-                        <th colspan="2" class="text-center">Estimasi</th>
-                        <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
-                        <th colspan="3" class="text-center">Pengajuan</th>
-                        <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
-                        <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
+                        <th rowspan="2" class="text-center">No.</th>
+                        <th rowspan="2" class="text-center">Item</th>
+                        <th colspan="3" class="text-center">Estimasi</th>
+                        <th colspan="3" class="text-center">Terpakai</th>
+                        <th colspan="3" class="text-center">Overbudget</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Price / Unit</th>
+                        <th class="text-center">Total Budget</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price / Unit</th>
+                        <th class="text-center">Total Terpakai</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Budget</th>
+                        <th class="text-center">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $no = 0;
+
+                    $ttl_qty_estimasi = 0;
+                    $ttl_total_estimasi = 0;
+                    $ttl_qty_terpakai = 0;
+                    $ttl_total_terpakai = 0;
+                    $ttl_qty_overbudget = 0;
+                    $ttl_total_overbudget = 0;
+
+                    foreach ($list_data_lab as $item) {
+                        if (isset($list_arr_kasbon[$item->id_lab])) {
+                            $no++;
+
+                            $qty_terpakai = (isset($list_arr_kasbon[$item->id_lab]['qty_terpakai'])) ? $list_arr_kasbon[$item->id_lab]['qty_terpakai'] : 0;
+                            $nominal_terpakai = (isset($list_arr_kasbon[$item->id_lab]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id_lab]['nominal_terpakai'] : 0;
+                            $total_terpakai = (isset($list_arr_kasbon[$item->id_lab]['total_terpakai'])) ? $list_arr_kasbon[$item->id_lab]['total_terpakai'] : 0;
+
+                            $qty_overbudget = (isset($list_arr_kasbon[$item->id_lab]['qty_overbudget'])) ? $list_arr_kasbon[$item->id_lab]['qty_overbudget'] : 0;
+                            $nominal_overbudget = (isset($list_arr_kasbon[$item->id_lab]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id_lab]['nominal_overbudget'] : 0;
+                            $total_overbudget = (isset($list_arr_kasbon[$item->id_lab]['total_overbudget'])) ? $list_arr_kasbon[$item->id_lab]['total_overbudget'] : 0;
+
+                            echo '<tr>';
+
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td>' . $item->nm_biaya . '</td>';
+                            echo '<td class="text-center">' . number_format($item->qty_estimasi, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($item->total_estimasi, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_terpakai, 2) . '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-center">' . number_format($qty_overbudget, 2) . '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
+                            echo '</td>';
+
+                            echo '</tr>';
+
+                            $ttl_qty_estimasi += $item->qty_estimasi;
+                            $ttl_total_estimasi += $item->total_estimasi;
+                            $ttl_qty_terpakai += $qty_terpakai;
+                            $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
+                            $ttl_qty_overbudget += $qty_overbudget;
+                            $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
+                        }
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-center">Grand Total</th>
+                        <th class="text-center"><?= number_format($ttl_qty_estimasi, 2) ?></th>
+                        <th></th>
+                        <th class="text-right"><?= number_format($ttl_total_estimasi, 2) ?></th>
+                        <th class="text-center"><?= number_format($ttl_qty_terpakai, 2) ?></th>
+                        <th></th>
+                        <th class="text-right"><?= number_format($ttl_total_terpakai, 2) ?></th>
+                        <th class="text-center"><?= number_format($ttl_qty_overbudget, 2) ?></th>
+                        <th></th>
+                        <th class="text-right"><?= number_format($ttl_total_overbudget, 2) ?></th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <br><br>
+
+            <h4 style="font-weight: 800;">Pengajuan</h4>
+
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="text-center">No</th>
+                        <th rowspan="2" class="text-center">Item</th>
+                        <th colspan="3" class="text-center">Pengajuan</th>
+                    </tr>
+                    <tr>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Price / Unit</th>
                         <th class="text-center">Total Pengajuan</th>
@@ -169,90 +261,33 @@ if($header->metode_pembayaran == '3') {
                 <tbody>
                     <?php
                     $no = 0;
-
-                    $ttl_qty_peng = 0;
-                    $ttl_nominal_peng = 0;
-                    $ttl_total_peng = 0;
-
-                    $ttl_est_qty = 0;
-                    $ttl_est_price_unit = 0;
-                    $ttl_est_total_budget = 0;
-
-                    $ttl_aktual_terpakai = 0;
-                    $ttl_sisa_budget = 0;
-
                     foreach ($list_data_lab as $item) {
-                        if(isset($list_arr_kasbon[$item->id_item])) {
+                        if (isset($list_arr_kasbon[$item->id_lab])) {
                             $no++;
-    
-                            $qty_pengajuan = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['qty_pengajuan'] : 0;
-                            $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['nominal_pengajuan'] : 0;
-                            $total_pengajuan = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['total_pengajuan'] : 0;
-                            $aktual_terpakai = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['aktual_terpakai'] : 0;
-                            $sisa_budget = (isset($list_arr_kasbon[$item->id_item])) ? $list_arr_kasbon[$item->id_item]['sisa_budget'] : 0;
-    
+
+                            $qty_pengajuan = (isset($list_arr_kasbon[$item->id_lab]['qty_pengajuan'])) ? $list_arr_kasbon[$item->id_lab]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_lab]['nominal_pengajuan'])) ? $list_arr_kasbon[$item->id_lab]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($list_arr_kasbon[$item->id_lab]['total_pengajuan'])) ? $list_arr_kasbon[$item->id_lab]['total_pengajuan'] : 0;
+
                             echo '<tr>';
-    
+
                             echo '<td class="text-center">' . $no . '</td>';
-                            echo '<td>' . $item->nm_item . '</td>';
-                            echo '<td class="text-center">' . number_format($item->qty_final) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->price_unit_final, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->total_final, 2) . '</td>';
+                            echo '<td>' . $item->nm_biaya . '</td>';
                             echo '<td class="text-center">' . number_format($qty_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($aktual_terpakai - $qty_pengajuan, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($sisa_budget - $total_pengajuan, 2) . '</td>';
-    
-                            echo '</tr>';
-    
-                            $ttl_qty_peng += $qty_pengajuan;
-                            $ttl_nominal_peng += $nominal_pengajuan;
-                            $ttl_total_peng += $total_pengajuan;
-    
-                            $ttl_est_qty += $item->qty_final;
-                            $ttl_est_price_unit += $item->price_unit_final;
-                            $ttl_est_total_budget += $item->total_final;
-    
-                            $ttl_aktual_terpakai += ($aktual_terpakai - $qty_pengajuan);
-                            $ttl_sisa_budget += ($sisa_budget - $total_pengajuan);
 
+                            echo '</tr>';
                         }
                     }
                     ?>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="2" class="text-center">Total</td>
-                        <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
-                        <td class="text-right"><?= number_format($ttl_est_price_unit, 2) ?></td>
-                        <td class="text-right"><?= number_format($ttl_est_total_budget, 2) ?></td>
-                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_peng, 2) ?></td>
-                        <td class="text-right"></td>
-                        <td class="text-right ttl_pengajuan"><?= number_format($ttl_total_peng, 2) ?></td>
-                        <td class="text-center"><?= number_format($ttl_aktual_terpakai, 2) ?></td>
-                        <td class="text-right"><?= number_format($ttl_sisa_budget, 2) ?></td>
-                    </tr>
-                </tfoot>
             </table>
 
             <br><br>
 
             <div class="col-md-6">
                 <table style="width: 100%">
-                    <tr>
-                        <th style="padding: 5px;">Document</th>
-                        <td style="padding: 5px;">
-                            <input type="file" name="kasbon_document" id="" class="form-control form-control-sm" disabled>
-                            <?php
-                            if (file_exists('./' . $header->dokument_link) && $header->dokument_link !== '') {
-                                echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-sm btn-primary" target="_blank">
-                                        <i class="fa fa-download"></i> Download
-                                    </a>';
-                            }
-                            ?>
-                        </td>
-                    </tr>
                     <tr>
                         <th style="padding: 5px;">Bank</th>
                         <td style="padding: 5px;">
@@ -278,11 +313,11 @@ if($header->metode_pembayaran == '3') {
                 <table class="<?= $show_reject_reason ?>" style="width: 100%">
                     <tr>
                         <th style="padding: 5px;">Reject Reason</th>
-                        <td>    
+                        <td>
                             <textarea name="" id="" class="form-control form-control-sm" readonly><?= $header->reject_reason ?></textarea>
                         </td>
                     </tr>
-                </table>    
+                </table>
             </div>
 
             <div class="col-md-12 mt-5">

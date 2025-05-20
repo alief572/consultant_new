@@ -10,13 +10,13 @@ if ($header->reject_reason !== null) {
 }
 
 $metode_pembayaran = '';
-if($header->metode_pembayaran == '1') {
+if ($header->metode_pembayaran == '1') {
     $metode_pembayaran = 'Kasbon';
 }
-if($header->metode_pembayaran == '2') {
+if ($header->metode_pembayaran == '2') {
     $metode_pembayaran = 'Direct Payment';
 }
-if($header->metode_pembayaran == '3') {
+if ($header->metode_pembayaran == '3') {
     $metode_pembayaran = 'PO';
 }
 ?>
@@ -142,43 +142,41 @@ if($header->metode_pembayaran == '3') {
 
     <div class="box">
         <div class="box-header">
-            <h4 style="font-weight: 800;">List Item Subcont</h4>
+            <h4 style="font-weight: 800;">Informasi Pengajuan</h4>
         </div>
 
         <div class="box-body">
             <table class="table custom-table">
                 <thead>
                     <tr>
-                        <th rowspan="2" class="text-center" valign="middle">No.</th>
-                        <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
-                        <th colspan="2" class="text-center">Estimasi</th>
-                        <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
-                        <th colspan="3" class="text-center">Pengajuan</th>
-                        <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
-                        <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
+                        <th rowspan="2" class="text-center">No.</th>
+                        <th rowspan="2" class="text-center">Item</th>
+                        <th colspan="3" class="text-center">Estimasi</th>
+                        <th colspan="3" class="text-center">Terpakai</th>
+                        <th colspan="3" class="text-center">Overbudget</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Price / Unit</th>
+                        <th class="text-center">Total Budget</th>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Price / Unit</th>
-                        <th class="text-center">Total Pengajuan</th>
+                        <th class="text-center">Total Terpakai</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Budget</th>
+                        <th class="text-center">Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     $no = 0;
 
-                    $ttl_qty_peng = 0;
-                    $ttl_nominal_peng = 0;
-                    $ttl_total_peng = 0;
-
-                    $ttl_est_qty = 0;
-                    $ttl_est_price_unit = 0;
-                    $ttl_est_total_budget = 0;
-
-                    $ttl_aktual_terpakai = 0;
-                    $ttl_sisa_budget = 0;
+                    $ttl_qty_estimasi = 0;
+                    $ttl_total_estimasi = 0;
+                    $ttl_qty_terpakai = 0;
+                    $ttl_total_terpakai = 0;
+                    $ttl_qty_overbudget = 0;
+                    $ttl_total_overbudget = 0;
 
                     foreach ($list_data_kasbon as $item) {
                         if (isset($data_list_kasbon_subcont[$item->id_aktifitas])) {
@@ -193,108 +191,113 @@ if($header->metode_pembayaran == '3') {
                             $aktual_terpakai = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['aktual_terpakai'] : 0;
                             $sisa_budget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['sisa_budget'] : 0;
 
-                            echo '<tr>';
+                            $qty_terpakai = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_terpakai'] : 0;
+                            $nominal_terpakai = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['nominal_terpakai'] : 0;
+                            $total_terpakai = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_terpakai'] : 0;
+                            $qty_overbudget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_overbudget'] : 0;
+                            $nominal_overbudget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['nominal_overbudget'] : 0;
+                            $total_overbudget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_overbudget'] : 0;
 
+                            echo '<tr>';
                             echo '<td class="text-center">' . $no . '</td>';
                             echo '<td>' . $item->nm_aktifitas . '</td>';
                             echo '<td class="text-center">' . number_format($qty_estimasi) . '</td>';
                             echo '<td class="text-right">' . number_format($price_unit_estimasi, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($total_budgeting_estimasi, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($qty_pengajuan, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($aktual_terpakai - $qty_pengajuan, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($sisa_budget - $total_pengajuan, 2) . '</td>';
-
+                            echo '<td class="text-center">' . number_format($qty_terpakai) . '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-center">' . number_format($qty_overbudget) . '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
+                            echo '</td>';
                             echo '</tr>';
 
-                            $ttl_qty_peng += $qty_pengajuan;
-                            $ttl_nominal_peng += $nominal_pengajuan;
-                            $ttl_total_peng += $total_pengajuan;
-
-                            $ttl_est_qty += $qty_estimasi;
-                            $ttl_est_price_unit += $price_unit_estimasi;
-                            $ttl_est_total_budget += $total_budgeting_estimasi;
-                            $ttl_aktual_terpakai += ($aktual_terpakai - $qty_pengajuan);
-                            $ttl_sisa_budget += ($sisa_budget - $total_pengajuan);
+                            $ttl_qty_estimasi += $qty_estimasi;
+                            $ttl_total_estimasi += $total_budgeting_estimasi;
+                            $ttl_qty_terpakai += $qty_terpakai;
+                            $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
+                            $ttl_qty_overbudget += $qty_overbudget;
+                            $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
                         }
                     }
                     ?>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-center">Grand Total</th>
+                        <th class="text-center"><?= number_format($ttl_qty_estimasi, 2) ?></th>
+                        <th></th>
+                        <th class="text-right"><?= number_format($ttl_total_estimasi, 2) ?></th>
+                        <th class="text-center"><?= number_format($ttl_qty_terpakai, 2) ?></th>
+                        <th></th>
+                        <th class="text-right"><?= number_format($ttl_total_terpakai, 2) ?></th>
+                        <th class="text-center"><?= number_format($ttl_qty_overbudget, 2) ?></th>
+                        <th></th>
+                        <th class="text-right"><?= number_format($ttl_total_overbudget, 2) ?></th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <br>
+
+            <h4 style="font-weight: bold;">Pengajuan</h4>
+            <br>
+
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="text-center">No.</th>
+                        <th rowspan="2" class="text-center">Item</th>
+                        <th colspan="3" class="text-center">Pengajuan</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price / Unit</th>
+                        <th class="text-center">Total Pengajuan</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <?php
-                    if (!empty($data_list_kasbon_subcont_custom)) :
-                        foreach ($data_list_kasbon_subcont_custom as $item) :
+                    $no = 0;
+
+                    $ttl_qty_pengajuan = 0;
+                    $ttl_total_pengajuan = 0;
+                    foreach ($list_data_kasbon as $item) {
+                        if (isset($data_list_kasbon_subcont[$item->id_aktifitas])) {
                             $no++;
 
+                            $qty_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas]['total_pengajuan'])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_pengajuan'] : 0;
+
                             echo '<tr>';
-                            
-                            echo '<td class="text-center">';
-                            echo $no;
-                            echo '</td>';
-
-                            echo '<td>';
-                            echo $item->nm_aktifitas;
-                            echo '</td>';
-
-                            echo '<td class="text-center">';
-                            echo number_format($item->qty_estimasi);
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo number_format($item->price_unit_estimasi, 2);
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo number_format($item->total_budget_estimasi, 2);
-                            echo '</td>';
-
-                            echo '<td class="text-center">';
-                            echo number_format($item->qty_pengajuan);
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo number_format($item->nominal_pengajuan, 2);
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo number_format($item->total_pengajuan, 2);
-                            echo '</td>';
-
-                            echo '<td class="text-center">';
-                            echo number_format($item->aktual_terpakai, 2);
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo number_format($item->sisa_budget, 2);
-                            echo '</td>';
-
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td>' . $item->nm_aktifitas . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
                             echo '</tr>';
 
-                            $ttl_qty_peng += $item->qty_pengajuan;
-                            $ttl_nominal_peng += $item->nominal_pengajuan;
-                            $ttl_total_peng += $item->total_pengajuan;
-
-                            $ttl_est_qty += $item->qty_estimasi;
-                            $ttl_est_price_unit += $item->price_unit_estimasi;
-                            $ttl_est_total_budget += $item->total_budget_estimasi;
-                            $ttl_aktual_terpakai += ($item->aktual_terpakai);
-                            $ttl_sisa_budget += ($item->sisa_budget);
-                        endforeach;
-                    endif;
+                            $ttl_qty_pengajuan += $qty_pengajuan;
+                            $ttl_total_pengajuan += $total_pengajuan;
+                        }
+                    }
                     ?>
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="2" class="text-center">Total</td>
-                        <td class="text-center"><?= number_format($ttl_est_qty) ?></td>
-                        <td class="text-right"><?= number_format($ttl_est_price_unit, 2) ?></td>
-                        <td class="text-right"><?= number_format($ttl_est_total_budget, 2) ?></td>
-                        <td class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_peng) ?></td>
-                        <td class="text-right"></td>
-                        <td class="text-right"><?= number_format($ttl_total_peng, 2) ?></td>
-                        <td class="text-center"><?= number_format($ttl_aktual_terpakai) ?></td>
-                        <td class="text-right"><?= number_format($ttl_sisa_budget, 2) ?></td>
+                        <th colspan="2" class="text-center">Grand Total</th>
+                        <th class="text-right"><?= number_format($ttl_qty_pengajuan, 2) ?></th>
+                        <th></th>
+                        <th class="text-right"><?= number_format($ttl_total_pengajuan, 2) ?></th>
                     </tr>
                 </tfoot>
             </table>
@@ -303,19 +306,6 @@ if($header->metode_pembayaran == '3') {
 
             <div class="col-md-6">
                 <table style="width: 100%">
-                    <tr>
-                        <th style="padding: 5px;">Document</th>
-                        <td style="padding: 5px;">
-                            <input type="file" name="kasbon_document" id="" class="form-control form-control-sm" disabled>
-                            <?php
-                            if (file_exists('./' . $header->dokument_link) && $header->dokument_link !== '') {
-                                echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-sm btn-primary" target="_blank">
-                                        <i class="fa fa-download"></i> Download
-                                    </a>';
-                            }
-                            ?>
-                        </td>
-                    </tr>
                     <tr>
                         <th style="padding: 5px;">Bank</th>
                         <td style="padding: 5px;">

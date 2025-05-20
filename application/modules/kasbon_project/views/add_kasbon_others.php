@@ -230,7 +230,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                         echo '<td class="text-center">';
                         echo ($qty_tambahan > 0) ? number_format($item->price_unit_final, 2) : '-';
-                        echo '<input type="hidden" name="detail_others[' . $no . '][price_unit_terpakai]" value="' . $item->price_unit_final . '">';
+                        echo '<input type="hidden" name="detail_others[' . $no . '][nominal_overbudget]" value="' . $item->price_unit_final . '">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
@@ -321,7 +321,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                         echo '<td>';
                         echo '<input type="text" name="detail_others[' . $no . '][total_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" value="" readonly>';
-                        echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . ($item->qty_final - $aktual_terpakai) . '">';
+                        echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . ($item->qty_final - $aktual_terpakai + $qty_tambahan) . '">';
                         echo '<input type="hidden" name="detail_others[' . $no . '][sisa_budget]" value="' . ($sisa_budget + ($qty_tambahan * $nominal_tambahan)) . '">';
                         echo '</td>';
 
@@ -423,7 +423,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                         echo '<td class="text-center">';
                         echo number_format($item->qty_final - $aktual_terpakai + $qty_tambahan, 2);
-                        echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . ($item->qty_final - $aktual_terpakai) . '">';
+                        echo '<input type="hidden" name="detail_others[' . $no . '][aktual_terpakai]" value="' . ($item->qty_final - $aktual_terpakai + $qty_tambahan) . '">';
                         echo '</td>';
 
                         echo '<td class="text-center">';
