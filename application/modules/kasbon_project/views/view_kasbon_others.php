@@ -261,6 +261,10 @@ if ($header->metode_pembayaran == '3') {
                 <tbody>
                     <?php
                     $no = 0;
+
+                    $ttl_qty_pengajuan = 0;
+                    $ttl_total_pengajuan = 0;
+
                     foreach ($list_data_others as $item) {
                         if (isset($list_arr_kasbon[$item->id_item])) {
                             $no++;
@@ -278,10 +282,21 @@ if ($header->metode_pembayaran == '3') {
                             echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
 
                             echo '</tr>';
+
+                            $ttl_qty_pengajuan += $qty_pengajuan;
+                            $ttl_total_pengajuan += $total_pengajuan;
                         }
                     }
                     ?>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-center">Grand Total</th>
+                        <th class="text-center"><?= number_format($ttl_qty_pengajuan, 2) ?></th>
+                        <th></th>
+                        <th class="text-right"><?= number_format($ttl_total_pengajuan, 2) ?></th>
+                    </tr>
+                </tfoot>
             </table>
 
             <br><br>
