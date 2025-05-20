@@ -306,6 +306,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 <tbody>
                     <?php
                     $no = 0;
+
+                    $ttl_qty_pengajuan = 0;
+                    $ttl_total_pengajuan = 0;
+
                     foreach ($list_data_lab as $item) {
                         if (isset($list_arr_kasbon[$item->id_lab])) {
                             $no++;
@@ -350,10 +354,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             echo '</td>';
 
                             echo '</tr>';
+
+                            $ttl_qty_pengajuan += $qty_pengajuan;
+                            $ttl_total_pengajuan += $total_pengajuan;
                         }
                     }
                     ?>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-center">Grand Total</th>
+                        <th class="text-center ttl_qty_pengajuan"><?= number_format($ttl_qty_pengajuan, 2) ?></th>
+                        <th></th>
+                        <th class="text-center ttl_pengajuan"><?= number_format($ttl_total_pengajuan, 2) ?></th>
+                    </tr>
+                </tfoot>
             </table>
 
             <br><br>

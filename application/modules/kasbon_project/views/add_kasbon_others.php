@@ -329,6 +329,14 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     }
                     ?>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-center">Grnad Total</th>
+                        <th class="text-center ttl_qty_pengajuan">0.00</th>
+                        <th class="text-center"></th>
+                        <th class="text-right ttl_pengajuan">0.00</th>
+                    </tr>
+                </tfoot>
             </table>
 
             <!-- <table class="table custom-table">
