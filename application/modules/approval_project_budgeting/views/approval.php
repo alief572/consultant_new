@@ -837,7 +837,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         swal({
             type: 'warning',
             title: 'Are you sure ?',
-            text: 'This data will be rejected !',
+            text: 'This data will be approved !',
             showCancelButton: true
         }, function(next) {
             if (next) {
