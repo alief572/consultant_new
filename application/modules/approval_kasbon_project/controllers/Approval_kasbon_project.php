@@ -286,7 +286,7 @@ class Approval_kasbon_project extends Admin_Controller
         }
 
         $this->template->set($data);
-        $this->template->title('Approval Pengajuan '.$metode_pembayaran);
+        $this->template->title('Approval Pengajuan ' . $metode_pembayaran);
         $this->template->render('approval_kasbon');
     }
 
@@ -451,6 +451,8 @@ class Approval_kasbon_project extends Admin_Controller
             print_r($this->db->last_query());
             exit;
         }
+
+        $update_req_header = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id_header' => $id_kasbon]);
 
         $update_req_subcont = $this->db->update('kons_tr_kasbon_project_subcont', ['sts' => 1], ['id_header' => $id_kasbon]);
 
