@@ -452,15 +452,45 @@ class Approval_kasbon_project extends Admin_Controller
             exit;
         }
 
-        $update_req_header = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id_header' => $id_kasbon]);
+        $update_req_header = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id' => $id_kasbon]);
+        if (!$update_req_header) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
 
         $update_req_subcont = $this->db->update('kons_tr_kasbon_project_subcont', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_subcont) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
 
         $update_req_akomodasi = $this->db->update('kons_tr_kasbon_project_akomodasi', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_akomodasi) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
 
         $update_req_others = $this->db->update('kons_tr_kasbon_project_others', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_others) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
 
         $update_req_lab = $this->db->update('kons_tr_kasbon_project_lab', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_lab) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
