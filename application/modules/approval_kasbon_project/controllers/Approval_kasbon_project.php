@@ -335,6 +335,8 @@ class Approval_kasbon_project extends Admin_Controller
 
         $get_direktur_user = $this->db->get_where('users', array('id_user' => 48))->row();
 
+
+
         $data_insert_req_payment = [
             'no_doc' => $id_kasbon,
             'nama' => $nm_user,
@@ -420,21 +422,50 @@ class Approval_kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-        // $insert_req_payment = $this->db->insert('request_payment', $data_insert_req_payment);
-        // if (!$insert_req_payment) {
-        //     $this->db->trans_rollback();
+        if ($get_header_kasbon->metode_pembayaran == '1') {
+            $insert_sendigs_kasbon = $this->db->insert(DBSF . '.tr_kasbon', $data_insert_sendigs_kasbon);
+            if (!$insert_sendigs_kasbon) {
+                $this->db->trans_rollback();
 
-        //     print_r($this->db->error($insert_req_payment));
-        //     exit;
-        // }
-
-        $insert_sendigs_kasbon = $this->db->insert(DBSF . '.tr_kasbon', $data_insert_sendigs_kasbon);
-        if (!$insert_sendigs_kasbon) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
+                print_r($this->db->last_query());
+                exit;
+            }
         }
+
+        if ($get_header_kasbon->metode_pembayaran == '2') {
+
+            $no_doc = $this->Approval_kasbon_project_model->no_sendigs('format_direct_payment');
+
+            $data_insert_direct_payment_sendigs = [
+                'no_doc' => $no_doc,
+                'tgl_doc' => date('Y-m-d'),
+                'ids' => $id_kasbon,
+                'id_spk_budgeting' => $get_header_kasbon->id_spk_budgeting,
+                'id_spk_penawaran' => $get_header_kasbon->id_spk_penawaran,
+                'id_penawaran' => $get_header_kasbon->id_penawaran,
+                'tipe' => $get_header_kasbon->tipe,
+                'deskripsi' => $get_header_kasbon->deskripsi,
+                'grand_total' => $get_header_kasbon->grand_total,
+                'bank' => $get_header_kasbon->bank,
+                'bank_number' => $get_header_kasbon->bank_number,
+                'bank_account' => $get_header_kasbon->bank_account,
+                'metode_pembayaran' => 1,
+                'created_by' => $this->auth->user_id(),
+                'created_date' => date('Y-m-d H:i:s')
+            ];
+
+            $insert_direct_payment_sendigs = $this->db->insert(DBSF . '.tr_direct_payment', $data_insert_direct_payment_sendigs);
+            if (!$insert_direct_payment_sendigs) {
+                $this->db->trans_rollback();
+
+                print_r($this->db->last_query());
+                exit;
+            }
+        }
+
+        if ($get_header_kasbon->metode_pembayaran == '3') {
+        }
+
 
         $update_req = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id' => $id_kasbon]);
         if (!$update_req) {

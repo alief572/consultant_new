@@ -430,7 +430,7 @@ class Perbaikan_data extends Admin_Controller
             }
         }
 
-        if (!empty($insert_expense_detail_sendigs)) {
+        if (!empty($arr_expense_detail_sendigs)) {
             $insert_expense_detail_sendigs = $this->db->insert_batch(DBSF . '.tr_expense_detail', $arr_expense_detail_sendigs);
             if (!$insert_expense_detail_sendigs) {
                 $this->db->trans_rollback();
@@ -440,8 +440,12 @@ class Perbaikan_data extends Admin_Controller
             }
         }
 
-        if (!empty($insert_kasbon_request_payment)) {
+
+
+        if (!empty($arr_kasbon_sendigs_rp)) {
             $insert_kasbon_request_payment = $this->db->insert_batch(DBSF . '.request_payment', $arr_kasbon_sendigs_rp);
+
+
             if (!$insert_kasbon_request_payment) {
                 $this->db->trans_rollback();
 
@@ -450,7 +454,7 @@ class Perbaikan_data extends Admin_Controller
             }
         }
 
-        if (!empty($insert_expense_request_payment)) {
+        if (!empty($arr_expense_sendigs_rp)) {
             $insert_expense_request_payment = $this->db->insert_batch(DBSF . '.request_payment', $arr_expense_sendigs_rp);
             if (!$insert_expense_request_payment) {
                 $this->db->trans_rollback();
