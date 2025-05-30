@@ -800,14 +800,9 @@ if ($header->metode_pembayaran == '3') {
 
           echo '<td class="text-center">' . $no . '</td>';
           echo '<td class="text-left">' . $item->nm_biaya . '</td>';
-          echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
-          echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($qty_tambahan, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($nominal_tambahan, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
           echo '</tr>';

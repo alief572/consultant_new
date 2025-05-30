@@ -335,8 +335,6 @@ class Approval_kasbon_project extends Admin_Controller
 
         $get_direktur_user = $this->db->get_where('users', array('id_user' => 48))->row();
 
-
-
         $data_insert_req_payment = [
             'no_doc' => $id_kasbon,
             'nama' => $nm_user,
@@ -380,8 +378,6 @@ class Approval_kasbon_project extends Admin_Controller
         } else {
             return false;
         }
-
-
 
         $project = '';
         if ($get_header_kasbon->tipe == '1') :
