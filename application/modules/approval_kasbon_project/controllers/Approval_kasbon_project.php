@@ -446,6 +446,7 @@ class Approval_kasbon_project extends Admin_Controller
                 'bank_number' => $get_header_kasbon->bank_number,
                 'bank_account' => $get_header_kasbon->bank_account,
                 'metode_pembayaran' => 1,
+                'sts' => 1,
                 'created_by' => $this->auth->user_id(),
                 'created_date' => date('Y-m-d H:i:s')
             ];
