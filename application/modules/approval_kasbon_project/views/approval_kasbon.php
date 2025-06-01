@@ -3,6 +3,17 @@ $ENABLE_ADD     = has_permission('Kasbon_Project.Add');
 $ENABLE_MANAGE  = has_permission('Kasbon_Project.Manage');
 $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
+
+$metode_pembayaran = '';
+if ($header->metode_pembayaran == '1') {
+  $metode_pembayaran = 'Kasbon';
+}
+if ($header->metode_pembayaran == '2') {
+  $metode_pembayaran = 'Direct Payment';
+}
+if ($header->metode_pembayaran == '3') {
+  $metode_pembayaran = 'PO';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -121,46 +132,64 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <th class="pd-5 valign-top" width="150"></th>
         <td class="pd-5 valign-top" width="400"></td>
       </tr>
+      <tr>
+        <th class="pd-5 valign-top" width="150">Tanggal</th>
+        <td class="pd-5 valign-top" width="400"><?= date('d F Y', strtotime($header->tgl)) ?></td>
+        <th class="pd-5 valign-top" width="150">Description</th>
+        <td class="pd-5 valign-top" width="400"><?= $header->deskripsi ?></td>
+      </tr>
+      <tr>
+        <th class="pd-5 valign-top" width="150">Metode Pembayaran</th>
+        <td class="pd-5 valign-top" width="400"><?= $metode_pembayaran ?></td>
+        <th colspan="2"></th>
+      </tr>
     </table>
   </div>
 </div>
 
 <div class="box <?= ($tipe !== '1') ? 'd-none' : '' ?>">
   <div class="box-header">
-    <h4>List Subcont</h4>
-    <hr>
+    <h4 style="font-weight: bold;">Informasi Pengajuan</h4>
   </div>
 
   <div class="box-body">
     <table class="table custom-table">
       <thead>
         <tr>
-          <th rowspan="2" class="text-center" valign="middle">No.</th>
-          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
-          <th colspan="2" class="text-center">Estimasi</th>
-          <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
-          <th colspan="3" class="text-center">Pengajuan</th>
-          <th rowspan="2" class="text-center" valign="middle">Qty Tambahan</th>
-          <th rowspan="2" class="text-center" valign="middle">Budget Tambahan</th>
-          <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
-          <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
+          <th rowspan="2" class="text-center">No.</th>
+          <th rowspan="2" class="text-center">Item</th>
+          <th colspan="3" class="text-center">Estimasi</th>
+          <th colspan="3" class="text-center">Terpakai</th>
+          <th colspan="2" class="text-center">Sisa Sebelum Pengajuan</th>
+          <th colspan="3" class="text-center">Overbudget</th>
         </tr>
         <tr>
           <th class="text-center">Qty</th>
           <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Budget</th>
           <th class="text-center">Qty</th>
           <th class="text-center">Price / Unit</th>
-          <th class="text-center">Total Pengajuan</th>
+          <th class="text-center">Total Terpakai</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Sisa budget</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total</th>
         </tr>
       </thead>
       <tbody>
         <?php
         $no = 0;
 
-        $ttl_estimasi_subcont = 0;
-        $ttl_pengajuan_subcont = 0;
-        $ttl_aktual_subcont = 0;
-        $ttl_sisa_subcont = 0;
+        $ttl_qty_estimasi_subcont = 0;
+        $ttl_total_estimasi_subcont = 0;
+        $ttl_qty_terpakai_subcont = 0;
+        $ttl_total_terpakai_subcont = 0;
+        $ttl_qty_sebelum = 0;
+        $ttl_sisa_budget_sebelum = 0;
+        $ttl_qty_overbudget = 0;
+        $ttl_total_overbudget = 0;
+
         foreach ($list_kasbon_subcont as $item) {
           $no++;
 
@@ -174,61 +203,121 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
           echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_terpakai, 2) . '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_terpakai > 0) ? number_format($item->nominal_terpakai, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_overbudget, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_overbudget, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
+          echo '<td>';
+          echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_overbudget > 0) ? number_format($item->total_overbudget, 2) : '-';
+          echo '</td>';
+          echo '</tr>';
+
+          $ttl_qty_estimasi_subcont += $item->qty_estimasi;
+          $ttl_total_estimasi_subcont += $item->total_budget_estimasi;
+          $ttl_qty_terpakai_subcont += $item->qty_terpakai;
+          $ttl_total_terpakai_subcont += ($item->qty_terpakai > 0) ? $item->total_terpakai : 0;
+          $ttl_qty_sebelum += ($item->aktual_terpakai - $item->qty_overbudget);
+          $ttl_sisa_budget_sebelum += ($item->sisa_budget - $item->total_overbudget);
+          $ttl_qty_overbudget += $item->qty_overbudget;
+          $ttl_total_overbudget += ($item->qty_overbudget > 0) ? $item->total_terpakai : 0;
+        }
+        ?>
+      </tbody>
+      <!-- <tbody>
+        <?php
+        foreach ($list_kasbon_subcont_custom as $item) {
+          $no++;
+
+          echo '<tr>';
+
+          echo '<td class="text-center">' . $no . '</td>';
+          echo '<td class="text-left">' . $item->nm_aktifitas . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+          echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($qty_tambahan, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($budget_tambahan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan + $qty_tambahan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format(0, 2) . '</td>';
+          echo '<td class="text-right">' . number_format(0, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
           echo '</tr>';
 
           $ttl_estimasi_subcont += $item->total_budget_estimasi;
           $ttl_pengajuan_subcont += $item->total_pengajuan;
-          $ttl_aktual_subcont += ($item->aktual_terpakai - $item->qty_pengajuan + $qty_tambahan);
+          $ttl_aktual_subcont += ($item->aktual_terpakai - $item->qty_pengajuan);
           $ttl_sisa_subcont += ($item->sisa_budget - $item->total_pengajuan);
         }
         ?>
-      </tbody>
+      </tbody> -->
+      <tfoot>
+        <tr>
+          <th colspan="2" class="text-center">Grand Total</th>
+          <th class="text-center"><?= number_format($ttl_qty_estimasi_subcont, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_estimasi_subcont, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_terpakai_subcont, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_terpakai_subcont, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_sebelum, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_sisa_budget_sebelum, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_overbudget, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_overbudget, 2) ?></th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <br><br>
+
+    <table class="table custom-table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="text-center" valign="middle">No.</th>
+          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+          <th colspan="3" class="text-center">Pengajuan</th>
+          <th colspan="2" class="text-center valign-middle">Sisa Setelah Pengajuan</th>
+        </tr>
+        <tr>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Pengajuan</th>
+          <th class="text-center">Sisa Qty</th>
+          <th class="text-center">Sisa Budget</th>
+        </tr>
+      </thead>
       <tbody>
-        <?php 
-          foreach ($list_kasbon_subcont_custom as $item) {
-            $no++;
-  
-            echo '<tr>';
-  
-            echo '<td class="text-center">' . $no . '</td>';
-            echo '<td class="text-left">' . $item->nm_aktifitas . '</td>';
-            echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
-            echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
-            echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
-            echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
-            echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
-            echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-            echo '<td class="text-center">' . number_format(0, 2) . '</td>';
-            echo '<td class="text-right">' . number_format(0, 2) . '</td>';
-            echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
-            echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
-            echo '</tr>';
-  
-            $ttl_estimasi_subcont += $item->total_budget_estimasi;
-            $ttl_pengajuan_subcont += $item->total_pengajuan;
-            $ttl_aktual_subcont += ($item->aktual_terpakai - $item->qty_pengajuan);
-            $ttl_sisa_subcont += ($item->sisa_budget - $item->total_pengajuan);
-          }
+        <?php
+        $no = 0;
+        foreach ($list_kasbon_subcont as $item) {
+          $no++;
+
+          echo '<tr>';
+
+          echo '<td class="text-center">' . $no . '</td>';
+          echo '<td>' . $item->nm_aktifitas . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_overbudget, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->nominal_overbudget, 2) . '</td>';
+
+          echo '</tr>';
+        }
         ?>
       </tbody>
       <tfoot>
-        <tr>
-          <th colspan="4" class="text-right">Grand Total</th>
-          <th class="text-right"><?= number_format($ttl_estimasi_subcont, 2) ?></th>
-          <th colspan="2"></th>
-          <th class="text-right"><?= number_format($ttl_pengajuan_subcont, 2) ?></th>
-          <th class="text-right"></th>
-          <th class="text-right"></th>
-          <th class="text-center"><?= number_format($ttl_aktual_subcont, 2) ?></th>
-          <th class="text-right"><?= number_format($ttl_sisa_subcont, 2) ?></th>
-        </tr>
+
       </tfoot>
     </table>
   </div>
@@ -236,7 +325,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
 <div class="box <?= ($tipe !== '2') ? 'd-none' : '' ?>">
   <div class="box-header">
-    <h4>List Akomodasi</h4>
+    <h4>Informasi Pengajuan</h4>
     <hr>
   </div>
 
@@ -244,36 +333,44 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     <table class="table custom-table">
       <thead>
         <tr>
-          <th rowspan="2" class="text-center" valign="middle">No.</th>
-          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
-          <th colspan="2" class="text-center">Estimasi</th>
-          <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
-          <th colspan="3" class="text-center">Pengajuan</th>
-          <th rowspan="2" class="text-center" valign="middle">Qty Budget Tambahan</th>
-          <th rowspan="2" class="text-center" valign="middle">Budget Tambahan</th>
-          <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
-          <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
+          <th rowspan="2" class="text-center">No.</th>
+          <th rowspan="2" class="text-center">Item</th>
+          <th colspan="3" class="text-center">Estimasi</th>
+          <th colspan="3" class="text-center">Terpakai</th>
+          <th colspan="2" class="text-center">Sisa Sebelum Pengajuan</th>
+          <th colspan="3" class="text-center">Overbudget</th>
         </tr>
         <tr>
           <th class="text-center">Qty</th>
           <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Budget</th>
           <th class="text-center">Qty</th>
           <th class="text-center">Price / Unit</th>
-          <th class="text-center">Total Pengajuan</th>
+          <th class="text-center">Total Terpakai</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Sisa budget</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total</th>
         </tr>
       </thead>
       <tbody>
         <?php
         $no = 0;
-
-        $ttl_estimasi_akomodasi = 0;
-        $ttl_pengajuan_akomodasi = 0;
-        $ttl_qty_tambahan_akomodasi = 0;
-        $ttl_qty_sisa_akomodasi = 0;
-        $ttl_sisa_budget_akomodasi = 0;
+        $ttl_qty_estimasi_others = 0;
+        $ttl_total_estimasi_others = 0;
+        $ttl_qty_terpakai_others = 0;
+        $ttl_total_terpakai_others = 0;
+        $ttl_qty_sebelum = 0;
+        $ttl_sisa_budget_sebelum = 0;
+        $ttl_qty_overbudget = 0;
+        $ttl_total_overbudget = 0;
 
         foreach ($list_kasbon_akomodasi as $item) {
           $no++;
+
+          $qty_sisa_sebelum = ($item->aktual_terpakai);
+          $sisa_budget = $item->sisa_budget;
 
           echo '<tr>';
 
@@ -282,65 +379,238 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
           echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
           echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->qty_budget_tambahan, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->budget_tambahan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->aktual_terpakai + $item->qty_budget_tambahan - $item->qty_pengajuan, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->sisa_budget + $item->budget_tambahan - $item->total_pengajuan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_terpakai) . '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_terpakai > 0) ? number_format($item->nominal_terpakai, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_overbudget, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_overbudget, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
+          echo '<td>';
+          echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_overbudget > 0) ? number_format($item->total_overbudget, 2) : '-';
+          echo '</td>';
+
           echo '</tr>';
 
-          $ttl_estimasi_akomodasi += $item->total_budget_estimasi;
-          $ttl_pengajuan_akomodasi += $item->total_pengajuan;
-          $ttl_qty_tambahan_akomodasi += $item->qty_budget_tambahan;
-          $ttl_qty_sisa_akomodasi += ($item->aktual_terpakai + $item->qty_budget_tambahan - $item->qty_pengajuan);
-          $ttl_sisa_budget_akomodasi += ($item->sisa_budget + $item->budget_tambahan - $item->total_pengajuan);
+          $ttl_qty_estimasi_others += $item->qty_estimasi;
+          $ttl_total_estimasi_others += $item->total_budget_estimasi;
+          $ttl_qty_terpakai_others += $item->qty_terpakai;
+          $ttl_total_terpakai_others += ($item->qty_terpakai > 0) ? $item->total_terpakai : 0;
+          $ttl_qty_sebelum += $qty_sisa_sebelum;
+          $ttl_sisa_budget_sebelum += $sisa_budget;
+          $ttl_qty_overbudget += $item->qty_overbudget;
+          $ttl_total_overbudget += ($item->qty_overbudget > 0) ? $item->total_terpakai : 0;
         }
         ?>
       </tbody>
       <tfoot>
         <tr>
-          <th colspan="4"></th>
-          <th class="text-right"><?= number_format($ttl_estimasi_akomodasi, 2) ?></th>
-          <th colspan="2"></th>
-          <th class="text-right"><?= number_format($ttl_pengajuan_akomodasi, 2) ?></th>
-          <th class="text-center"><?= number_format($ttl_qty_tambahan_akomodasi, 2) ?></th>
-          <th class="text-right"></th>
-          <th class="text-center"><?= number_format($ttl_qty_sisa_akomodasi, 2) ?></th>
-          <th class="text-right"><?= number_format($ttl_sisa_budget_akomodasi, 2) ?></th>
+          <th colspan="2" class="text-center">Grand Total</th>
+          <th class="text-center"><?= number_format($ttl_qty_estimasi_others, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_estimasi_others, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_terpakai_others, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_terpakai_others, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_sebelum, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_sisa_budget_sebelum, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_overbudget, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_overbudget, 2) ?></th>
         </tr>
       </tfoot>
     </table>
+
+    <br>
+
+    <h4 style="font-weight: bold;">Informasi</h4>
+
+    <br>
+
+    <table class="table custom-table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="text-center" valign="middle">No.</th>
+          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+          <th colspan="3" class="text-center">Pengajuan</th>
+          <th colspan="2" class="text-center valign-middle">Sisa Setelah Pengajuan</th>
+        </tr>
+        <tr>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Pengajuan</th>
+          <th class="text-center">Sisa Qty</th>
+          <th class="text-center">Sisa Budget</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        $ttl_estimasi_akomodasi = 0;
+        $ttl_pengajuan_akomodasi = 0;
+        $ttl_aktual_akomodasi = 0;
+        $ttl_sisa_akomodasi = 0;
+
+        $no = 0;
+        foreach ($list_kasbon_akomodasi as $item) {
+          $no++;
+
+          echo '<tr>';
+
+          echo '<td class="text-center">' . $no . '</td>';
+          echo '<td class="text-left">' . $item->nm_biaya . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
+          echo '</tr>';
+
+          $ttl_estimasi_akomodasi += $item->total_budget_estimasi;
+          $ttl_pengajuan_akomodasi += $item->total_pengajuan;
+          $ttl_aktual_akomodasi += ($item->aktual_terpakai - $item->qty_pengajuan);
+          $ttl_sisa_akomodasi += ($item->sisa_budget - $item->total_pengajuan);
+        }
+        ?>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="4" class="text-right">Grand Total</th>
+          <th class="text-right"><?= number_format($ttl_pengajuan_akomodasi, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_aktual_akomodasi, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_sisa_akomodasi, 2) ?></th>
+        </tr>
+      </tfoot>
+    </table>
+
+
   </div>
 </div>
 
 <div class="box <?= ($tipe !== '3') ? 'd-none' : '' ?>">
   <div class="box-header">
-    <h4>List Others</h4>
-    <hr>
+    <h4 style="font-weight: bold;">Informasi Pengajuan</h4>
   </div>
 
   <div class="box-body">
     <table class="table custom-table">
       <thead>
         <tr>
-          <th rowspan="2" class="text-center" valign="middle">No.</th>
-          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
-          <th colspan="2" class="text-center">Estimasi</th>
-          <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
-          <th colspan="3" class="text-center">Pengajuan</th>
-          <th rowspan="2" class="text-center" valign="middle">Qty Tambahan</th>
-          <th rowspan="2" class="text-center" valign="middle">Budget Tambahan</th>
-          <th rowspan="2" class="text-center" valign="middle">Sisa Qty</th>
-          <th rowspan="2" class="text-center" valign="middle">Sisa Budget</th>
+          <th rowspan="2" class="text-center">No.</th>
+          <th rowspan="2" class="text-center">Item</th>
+          <th colspan="3" class="text-center">Estimasi</th>
+          <th colspan="3" class="text-center">Terpakai</th>
+          <th colspan="2" class="text-center">Sisa Sebelum Pengajuan</th>
+          <th colspan="3" class="text-center">Overbudget</th>
         </tr>
         <tr>
           <th class="text-center">Qty</th>
           <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Budget</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Terpakai</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Sisa budget</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        $no = 0;
+        $ttl_qty_estimasi_others = 0;
+        $ttl_total_estimasi_others = 0;
+        $ttl_qty_terpakai_others = 0;
+        $ttl_total_terpakai_others = 0;
+        $ttl_qty_sebelum = 0;
+        $ttl_sisa_budget_sebelum = 0;
+        $ttl_qty_overbudget = 0;
+        $ttl_total_overbudget = 0;
+
+        foreach ($list_kasbon_others as $item) {
+          $no++;
+
+          $qty_sisa_sebelum = ($item->aktual_terpakai);
+          $sisa_budget = $item->sisa_budget;
+
+          echo '<tr>';
+
+          echo '<td class="text-center">' . $no . '</td>';
+          echo '<td>' . $item->nm_biaya . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_estimasi, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_terpakai, 2) . '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_terpakai > 0) ? number_format($item->nominal_terpakai, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-center">' . number_format($qty_sisa_sebelum - $item->qty_overbudget, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($sisa_budget - $item->total_overbudget, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_overbudget > 0) ? number_format($item->total_overbudget, 2) : '-';
+          echo '</td>';
+
+          echo '</tr>';
+
+          $ttl_qty_estimasi_others += $item->qty_estimasi;
+          $ttl_total_estimasi_others += $item->total_budget_estimasi;
+          $ttl_qty_terpakai_others += $item->qty_terpakai;
+          $ttl_total_terpakai_others += ($item->qty_terpakai > 0) ? $item->total_terpakai : 0;
+          $ttl_qty_sebelum += $qty_sisa_sebelum;
+          $ttl_sisa_budget_sebelum += $sisa_budget;
+          $ttl_qty_overbudget += $item->qty_overbudget;
+          $ttl_total_overbudget += ($item->qty_overbudget > 0) ? $item->total_terpakai : 0;
+        }
+        ?>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="2" class="text-center">Grand Total</th>
+          <th class="text-center"><?= number_format($ttl_qty_estimasi_others, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_estimasi_others, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_terpakai_others, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_terpakai_others, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_sebelum, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_sisa_budget_sebelum, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_overbudget, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_overbudget, 2) ?></th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <br><br>
+
+    <table class="table custom-table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="text-center" valign="middle">No.</th>
+          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+          <th colspan="3" class="text-center">Pengajuan</th>
+          <th colspan="2" class="text-center valign-middle">Sisa Setelah Pengajuan</th>
+        </tr>
+        <tr>
           <th class="text-center">Qty</th>
           <th class="text-center">Price / Unit</th>
           <th class="text-center">Total Pengajuan</th>
+          <th class="text-center">Sisa Qty</th>
+          <th class="text-center">Sisa Budget</th>
         </tr>
       </thead>
       <tbody>
@@ -361,21 +631,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
           echo '<td class="text-center">' . $no . '</td>';
           echo '<td class="text-left">' . $item->nm_biaya . '</td>';
-          echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
-          echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($qty_tambahan, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($nominal_tambahan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan + $qty_tambahan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
           echo '</tr>';
 
           $ttl_estimasi_others += $item->total_budget_estimasi;
           $ttl_pengajuan_others += $item->total_pengajuan;
-          $ttl_aktual_others += ($item->aktual_terpakai - $item->qty_pengajuan + $qty_tambahan);
+          $ttl_aktual_others += ($item->aktual_terpakai - $item->qty_pengajuan);
           $ttl_sisa_others += ($item->sisa_budget - $item->total_pengajuan);
         }
         ?>
@@ -383,13 +648,178 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
       <tfoot>
         <tr>
           <th colspan="4" class="text-right">Grand Total</th>
-          <th class="text-right"><?= number_format($ttl_estimasi_others, 2) ?></th>
-          <th colspan="2"></th>
           <th class="text-right"><?= number_format($ttl_pengajuan_others, 2) ?></th>
-          <th></th>
-          <th></th>
           <th class="text-center"><?= number_format($ttl_aktual_others, 2) ?></th>
           <th class="text-right"><?= number_format($ttl_sisa_others, 2) ?></th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <br><br>
+
+
+  </div>
+</div>
+
+<div class="box <?= ($tipe !== '4') ? 'd-none' : '' ?>">
+  <div class="box-header">
+    <h4 style="font-weight: bold;">Informasi Pengajuan</h4>
+  </div>
+
+  <div class="box-body">
+    <table class="table custom-table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="text-center">No.</th>
+          <th rowspan="2" class="text-center">Item</th>
+          <th colspan="3" class="text-center">Estimasi</th>
+          <th colspan="3" class="text-center">Terpakai</th>
+          <th colspan="2" class="text-center">Sisa Sebelum Pengajuan</th>
+          <th colspan="3" class="text-center">Overbudget</th>
+        </tr>
+        <tr>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Budget</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Terpakai</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Sisa budget</th>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        $no = 0;
+        $ttl_qty_estimasi_lab = 0;
+        $ttl_total_estimasi_lab = 0;
+        $ttl_qty_terpakai_lab = 0;
+        $ttl_total_terpakai_lab = 0;
+        $ttl_qty_sebelum = 0;
+        $ttl_sisa_budget_sebelum = 0;
+        $ttl_qty_overbudget = 0;
+        $ttl_total_overbudget = 0;
+
+        foreach ($list_kasbon_lab as $item) {
+          $no++;
+
+          $qty_sisa_sebelum = ($item->aktual_terpakai);
+          $sisa_budget = $item->sisa_budget;
+
+          echo '<tr>';
+
+          echo '<td class="text-center">' . $no . '</td>';
+          echo '<td>' . $item->nm_biaya . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_estimasi, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_terpakai, 2) . '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_terpakai > 0) ? number_format($item->nominal_terpakai, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-center">' . number_format($qty_sisa_sebelum - $item->qty_overbudget, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($sisa_budget - $item->total_overbudget, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
+          echo '</td>';
+          echo '<td class="text-right">';
+          echo ($item->qty_overbudget > 0) ? number_format($item->total_overbudget, 2) : '-';
+          echo '</td>';
+
+          echo '</tr>';
+
+          $ttl_qty_estimasi_lab += $item->qty_estimasi;
+          $ttl_total_estimasi_lab += $item->total_budget_estimasi;
+          $ttl_qty_terpakai_lab += $item->qty_terpakai;
+          $ttl_total_terpakai_lab += ($item->qty_terpakai > 0) ? $item->total_terpakai : 0;
+          $ttl_qty_sebelum += $qty_sisa_sebelum;
+          $ttl_sisa_budget_sebelum += $sisa_budget;
+          $ttl_qty_overbudget += $item->qty_overbudget;
+          $ttl_total_overbudget += ($item->qty_overbudget > 0) ? $item->total_terpakai : 0;
+        }
+        ?>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="2" class="text-center">Grand Total</th>
+          <th class="text-center"><?= number_format($ttl_qty_estimasi_lab, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_estimasi_lab, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_terpakai_lab, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_terpakai_lab, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_sebelum, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_sisa_budget_sebelum, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_qty_overbudget, 2) ?></th>
+          <th></th>
+          <th class="text-right"><?= number_format($ttl_total_overbudget, 2) ?></th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <br><br>
+
+    <table class="table custom-table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="text-center" valign="middle">No.</th>
+          <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+          <th colspan="3" class="text-center">Pengajuan</th>
+          <th colspan="2" class="text-center valign-middle">Sisa Setelah Pengajuan</th>
+        </tr>
+        <tr>
+          <th class="text-center">Qty</th>
+          <th class="text-center">Price / Unit</th>
+          <th class="text-center">Total Pengajuan</th>
+          <th class="text-center">Sisa Qty</th>
+          <th class="text-center">Sisa Budget</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        $ttl_estimasi_lab = 0;
+        $ttl_pengajuan_lab = 0;
+        $ttl_aktual_lab = 0;
+        $ttl_sisa_lab = 0;
+
+        $no = 0;
+        foreach ($list_kasbon_lab as $item) {
+          $no++;
+
+          $qty_tambahan = (isset($data_overbudget_lab[$item->id_lab])) ? $data_overbudget_lab[$item->id_lab]['qty_budget_tambahan'] : 0;
+          $nominal_tambahan = (isset($data_overbudget_lab[$item->id_lab])) ? $data_overbudget_lab[$item->id_lab]['budget_tambahan'] : 0;
+
+          echo '<tr>';
+
+          echo '<td class="text-center">' . $no . '</td>';
+          echo '<td class="text-left">' . $item->nm_biaya . '</td>';
+          echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
+          echo '</tr>';
+
+          $ttl_estimasi_lab += $item->total_budget_estimasi;
+          $ttl_pengajuan_lab += $item->total_pengajuan;
+          $ttl_aktual_lab += ($item->aktual_terpakai - $item->qty_pengajuan);
+          $ttl_sisa_lab += ($item->sisa_budget - $item->total_pengajuan);
+        }
+        ?>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="4" class="text-right">Grand Total</th>
+          <th class="text-right"><?= number_format($ttl_pengajuan_lab, 2) ?></th>
+          <th class="text-center"><?= number_format($ttl_aktual_lab, 2) ?></th>
+          <th class="text-right"><?= number_format($ttl_sisa_lab, 2) ?></th>
         </tr>
       </tfoot>
     </table>

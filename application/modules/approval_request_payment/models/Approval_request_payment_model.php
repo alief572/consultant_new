@@ -151,7 +151,7 @@ class Approval_request_payment_model extends BF_Model
     /* EDITED BY HIKMAT A.R [18-08-2022] */
     public function GetListDataApproval($where = '')
     {
-        if($where !== '') {
+        if ($where !== '') {
             $data    = $this->db->query("SELECT a.* FROM request_payment a WHERE " . $where . " order by no_doc DESC")->result();
         } else {
             $data    = $this->db->query("SELECT a.* FROM request_payment a order by no_doc DESC")->result();
@@ -389,18 +389,18 @@ class Approval_request_payment_model extends BF_Model
         if (!empty($search)) {
             $where_search = 'AND (
                 a.id LIKE "%' . $search['value'] . '%" 
-                OR r.tipe LIKE "%'.$search['value'].'%"
-                OR c.nm_lengkap LIKE "%'.$search['value'].'%"
-                OR a.tgl LIKE "%'.$search['value'].'%"
-                OR a.grand_total LIKE "%'.$search['value'].'%"
+                OR r.tipe LIKE "%' . $search['value'] . '%"
+                OR c.nm_lengkap LIKE "%' . $search['value'] . '%"
+                OR a.tgl LIKE "%' . $search['value'] . '%"
+                OR a.grand_total LIKE "%' . $search['value'] . '%"
             )';
 
             $where_search2 = 'AND (
                 a.id LIKE "%' . $search['value'] . '%" 
-                OR r.tipe LIKE "%'.$search['value'].'%"
-                OR c.nm_lengkap LIKE "%'.$search['value'].'%"
-                OR a.created_date LIKE "%'.$search['value'].'%"
-                OR a.selisih LIKE "%'.$search['value'].'%"
+                OR r.tipe LIKE "%' . $search['value'] . '%"
+                OR c.nm_lengkap LIKE "%' . $search['value'] . '%"
+                OR a.created_date LIKE "%' . $search['value'] . '%"
+                OR a.selisih LIKE "%' . $search['value'] . '%"
             )';
         }
 

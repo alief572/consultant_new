@@ -32,7 +32,7 @@ class Approval_kasbon_project extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Approval Kasbon Project');
+        $this->template->title('Approval Pengajuan');
         $this->template->render('index');
     }
 
@@ -59,6 +59,7 @@ class Approval_kasbon_project extends Admin_Controller
             $this->db->or_like('b.nm_project', $search['value'], 'both');
             $this->db->group_end();
         }
+        $this->db->group_by('a.id_kasbon');
         $this->db->order_by('a.created_date', 'desc');
         $this->db->limit($length, $start);
 
@@ -80,6 +81,7 @@ class Approval_kasbon_project extends Admin_Controller
             $this->db->or_like('b.nm_project', $search['value'], 'both');
             $this->db->group_end();
         }
+        $this->db->group_by('a.id_kasbon');
         $this->db->order_by('a.created_date', 'desc');
 
         $get_data_all = $this->db->get();
@@ -112,6 +114,9 @@ class Approval_kasbon_project extends Admin_Controller
                 }
                 if ($get_header_kasbon->tipe == '3') {
                     $tipe = 'Others';
+                }
+                if ($get_header_kasbon->tipe == '4') {
+                    $tipe = 'Lab';
                 }
             }
             $nominal = (!empty($get_header_kasbon)) ? $get_header_kasbon->grand_total : 0;
@@ -185,6 +190,13 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->where('a.sts', null);
         $get_kasbon_others = $this->db->get()->result();
 
+        $this->db->select('a.*, b.isu_lingkungan as nm_biaya');
+        $this->db->from('kons_tr_kasbon_project_lab a');
+        $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_header', $id_kasbon);
+        $this->db->where('a.sts', null);
+        $get_kasbon_lab = $this->db->get()->result();
+
         $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
@@ -226,21 +238,55 @@ class Approval_kasbon_project extends Admin_Controller
             ];
         endforeach;
 
+        $this->db->select('a.qty_budget_tambahan, a.budget_tambahan, a.pengajuan_budget, c.id_lab');
+        $this->db->from('kons_tr_kasbon_req_ovb_lab_detail a');
+        $this->db->join('kons_tr_kasbon_req_ovb_lab_header b', 'b.id_request_ovb = a.id_request_ovb', 'left');
+        $this->db->join('kons_tr_spk_budgeting_lab c', 'c.id = a.id_detail');
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts', '1');
+        $get_ovb_lab = $this->db->get()->result();
+
+        $data_overbudget_lab = [];
+        foreach ($get_ovb_lab as $item_ovb_lab) :
+            $data_overbudget_lab[$item_ovb_lab->id_lab] = [
+                'qty_budget_tambahan' => $item_ovb_lab->qty_budget_tambahan,
+                'budget_tambahan' => $item_ovb_lab->budget_tambahan,
+                'pengajuan_budget' => $item_ovb_lab->pengajuan_budget
+            ];
+        endforeach;
+
+        $get_header = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id_kasbon])->row();
+
         $data = [
             'id_kasbon' => $id_kasbon,
             'id_spk_budgeting' => $id_spk_budgeting,
             'tipe' => $get_header->tipe,
+            'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_kasbon_subcont' => $get_kasbon_subcont,
             'list_kasbon_subcont_custom' => $get_kasbon_subcont_custom,
             'list_kasbon_akomodasi' => $get_kasbon_akomodasi,
             'list_kasbon_others' => $get_kasbon_others,
+            'list_kasbon_lab' => $get_kasbon_lab,
             'list_ovb_akomodasi' => $get_ovb_akomodasi,
             'data_overbudget_subcont' => $data_overbudget_subcont,
-            'data_overbudget_others' => $data_overbudget_others
+            'data_overbudget_others' => $data_overbudget_others,
+            'data_overbudget_lab' => $data_overbudget_lab
         ];
 
+        $metode_pembayaran = '';
+        if ($get_header->metode_pembayaran == '1') {
+            $metode_pembayaran = 'Kasbon';
+        }
+        if ($get_header->metode_pembayaran == '2') {
+            $metode_pembayaran = 'Direct Payment';
+        }
+        if ($get_header->metode_pembayaran == '3') {
+            $metode_pembayaran = 'PO';
+        }
+
         $this->template->set($data);
+        $this->template->title('Approval Pengajuan ' . $metode_pembayaran);
         $this->template->render('approval_kasbon');
     }
 
@@ -303,104 +349,176 @@ class Approval_kasbon_project extends Admin_Controller
             'currency' => 'IDR'
         ];
 
-        // $no_doc = '';
-        // $newcode = '';
-		// $data = $this->db->get_where(DBSF.'.ms_generate', array('tipe' => 'format_kasbon'))->row();
-		// if ($data !== false) {
-		// 	if (stripos($data->info, 'YEAR', 0) !== false) {
-		// 		if ($data->info3 != date("Y")) {
-		// 			$years = date("Y");
-		// 			$number = 1;
-		// 			$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
-		// 		} else {
-		// 			$years = $data->info3;
-		// 			$number = ($data->info2 + 1);
-		// 			$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
-		// 		}
-		// 		$newcode = str_ireplace('XXXX', $newnumber, $data->info);
-		// 		$newcode = str_ireplace('YEAR', $years, $newcode);
-		// 		$newdata = array('info2' => $number, 'info3' => $years);
-		// 	} else {
-		// 		$number = ($data->info2 + 1);
-		// 		$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
-		// 		$newcode = str_ireplace('XXXX', $newnumber, $data->info);
-		// 		$newdata = array('info2' => $number);
-		// 	}
-		// 	$this->db->update(DBSF.'.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
+        $no_doc = '';
+        $newcode = '';
+        $data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => 'format_kasbon'))->row();
+        if ($data !== false) {
+            if (stripos($data->info, 'YEAR', 0) !== false) {
+                if ($data->info3 != date("Y")) {
+                    $years = date("Y");
+                    $number = 1;
+                    $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                } else {
+                    $years = $data->info3;
+                    $number = ($data->info2 + 1);
+                    $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                }
+                $newcode = str_ireplace('XXXX', $newnumber, $data->info);
+                $newcode = str_ireplace('YEAR', $years, $newcode);
+                $newdata = array('info2' => $number, 'info3' => $years);
+            } else {
+                $number = ($data->info2 + 1);
+                $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                $newcode = str_ireplace('XXXX', $newnumber, $data->info);
+                $newdata = array('info2' => $number);
+            }
+            $this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
 
-		// 	$no_doc = $newcode;
-		// } else {
-		// 	return false;
-		// }
+            $no_doc = $newcode;
+        } else {
+            return false;
+        }
 
-        
+        $project = '';
+        if ($get_header_kasbon->tipe == '1') :
+            $project = 'Subcont';
+        endif;
+        if ($get_header_kasbon->tipe == '2') :
+            $project = 'Akomodasi';
+        endif;
+        if ($get_header_kasbon->tipe == '3') :
+            $project = 'Others';
+        endif;
+        if ($get_header_kasbon->tipe == '4') :
+            $project = 'Lab';
+        endif;
 
-        // $project = '';
-        // if ($get_header_kasbon->tipe == '1') :
-        //     $project = 'Subcont';
-        // endif;
-        // if ($get_header_kasbon->tipe == '1') :
-        //     $project = 'Akomodasi';
-        // endif;
-        // if ($get_header_kasbon->tipe == '1') :
-        //     $project = 'Others';
-        // endif;
-
-        // $data_insert_sendigs_kasbon = [
-        //     'no_doc' => $no_doc,
-        //     'tgl_doc' => date('Y-m-d'),
-        //     'departement' => '',
-        //     'nama' => $nm_user,
-        //     'jumlah_kasbon' => $get_header_kasbon->grand_total,
-        //     'keperluan' => $get_header_kasbon->deskripsi,
-        //     'doc_file' => $get_header_kasbon->dokument_link,
-        //     'status' => 1,
-        //     'created_by' => $nm_user,
-        //     'created_on' => date('Y-m-d H:i:s'),
-        //     'bank_id' => $get_header_kasbon->bank,
-        //     'accnumber' => $get_header_kasbon->bank_number,
-        //     'accname' => $get_header_kasbon->bank_account,
-        //     'project' => $project,
-        //     'approved_by' => $get_direktur_user->nm_lengkap,
-        //     'approved_on' => date('Y-m-d H:i:s'),
-        //     'keterangan' => $get_header_kasbon->deskripsi,
-        //     'metode_pembayaran' => 1,
-        //     'project_consultant' => 1
-        // ];
+        $data_insert_sendigs_kasbon = [
+            'no_doc' => $no_doc,
+            'tgl_doc' => date('Y-m-d'),
+            'departement' => '',
+            'nama' => $nm_user,
+            'jumlah_kasbon' => $get_header_kasbon->grand_total,
+            'keperluan' => $get_header_kasbon->deskripsi,
+            'doc_file' => $get_header_kasbon->dokument_link,
+            'status' => 1,
+            'created_by' => $nm_user,
+            'created_on' => date('Y-m-d H:i:s'),
+            'bank_id' => $get_header_kasbon->bank,
+            'accnumber' => $get_header_kasbon->bank_number,
+            'accname' => $get_header_kasbon->bank_account,
+            'project' => $project,
+            'approved_by' => $get_direktur_user->nm_lengkap,
+            'approved_on' => date('Y-m-d H:i:s'),
+            'keterangan' => $get_header_kasbon->deskripsi,
+            'metode_pembayaran' => 1,
+            'project_consultant' => 1,
+            'no_kasbon_consultant' => $id_kasbon
+        ];
 
         $this->db->trans_begin();
 
-        $insert_req_payment = $this->db->insert('request_payment', $data_insert_req_payment);
-        if (!$insert_req_payment) {
-            $this->db->trans_rollback();
+        if ($get_header_kasbon->metode_pembayaran == '1') {
+            $insert_sendigs_kasbon = $this->db->insert(DBSF . '.tr_kasbon', $data_insert_sendigs_kasbon);
+            if (!$insert_sendigs_kasbon) {
+                $this->db->trans_rollback();
 
-            print_r($this->db->error($insert_req_payment));
-            exit;
+                print_r($this->db->last_query());
+                exit;
+            }
         }
 
-        // $insert_sendigs_kasbon = $this->db->insert(DBSF.'.tr_kasbon', $data_insert_sendigs_kasbon);
+        if ($get_header_kasbon->metode_pembayaran == '2') {
 
-        // $update_req = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id' => $id_kasbon]);
-        // if (!$update_req) {
-        //     $this->db->trans_rollback();
+            $no_doc = $this->Approval_kasbon_project_model->no_sendigs('format_direct_payment');
 
-        //     print_r($this->db->error($update_req));
-        //     exit;
-        // }
+            $data_insert_direct_payment_sendigs = [
+                'no_doc' => $no_doc,
+                'tgl_doc' => date('Y-m-d'),
+                'ids' => $id_kasbon,
+                'id_spk_budgeting' => $get_header_kasbon->id_spk_budgeting,
+                'id_spk_penawaran' => $get_header_kasbon->id_spk_penawaran,
+                'id_penawaran' => $get_header_kasbon->id_penawaran,
+                'tipe' => $get_header_kasbon->tipe,
+                'deskripsi' => $get_header_kasbon->deskripsi,
+                'grand_total' => $get_header_kasbon->grand_total,
+                'bank' => $get_header_kasbon->bank,
+                'bank_number' => $get_header_kasbon->bank_number,
+                'bank_account' => $get_header_kasbon->bank_account,
+                'metode_pembayaran' => 1,
+                'sts' => 1,
+                'created_by' => $this->auth->user_id(),
+                'created_date' => date('Y-m-d H:i:s')
+            ];
+
+            $insert_direct_payment_sendigs = $this->db->insert(DBSF . '.tr_direct_payment', $data_insert_direct_payment_sendigs);
+            if (!$insert_direct_payment_sendigs) {
+                $this->db->trans_rollback();
+
+                print_r($this->db->last_query());
+                exit;
+            }
+        }
+
+        if ($get_header_kasbon->metode_pembayaran == '3') {
+        }
+
+
+        $update_req = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id' => $id_kasbon]);
+        if (!$update_req) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
 
         $update_req = $this->db->update('kons_tr_req_kasbon_project', ['sts' => 1], ['id_kasbon' => $id_kasbon, 'sts' => 0]);
         if (!$update_req) {
             $this->db->trans_rollback();
 
-            print_r($this->db->error($update_req));
+            print_r($this->db->last_query());
+            exit;
+        }
+
+        $update_req_header = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id' => $id_kasbon]);
+        if (!$update_req_header) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
             exit;
         }
 
         $update_req_subcont = $this->db->update('kons_tr_kasbon_project_subcont', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_subcont) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
 
         $update_req_akomodasi = $this->db->update('kons_tr_kasbon_project_akomodasi', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_akomodasi) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
 
         $update_req_others = $this->db->update('kons_tr_kasbon_project_others', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_others) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
+
+        $update_req_lab = $this->db->update('kons_tr_kasbon_project_lab', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_lab) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

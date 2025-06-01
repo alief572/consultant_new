@@ -119,7 +119,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <table border="0" style="width: 100%;">
             <tr>
                 <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Biaya Subcont</h4>
+                    <h4 style="font-weight: 800;">Pengajuan Subcont</h4>
                 </th>
                 <th class="pd-5">
                     <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
@@ -225,7 +225,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <table border="0" style="width: 100%;">
             <tr>
                 <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Akomodasi</h4>
+                    <h4 style="font-weight: 800;">Pengajuan Akomodasi</h4>
                 </th>
                 <th class="pd-5">
                     <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
@@ -331,7 +331,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <table border="0" style="width: 100%;">
             <tr>
                 <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Others</h4>
+                    <h4 style="font-weight: 800;">Pengajuan Others</h4>
                 </th>
                 <th class="pd-5">
                     <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
@@ -435,6 +435,115 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 </div>
 
+<div class="box">
+    <div class="box-header">
+        <table border="0" style="width: 100%;">
+            <tr>
+                <th class="pd-5" width="700">
+                    <h4 style="font-weight: 800;">Lab</h4>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_lab) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Aktual</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_lab_aktual">Rp. <?= number_format($nilai_kasbon_aktual_lab) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_lab_sisa">Rp. <?= number_format($budget_lab - $nilai_kasbon_aktual_lab) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box-body">
+        <a href="<?= base_url('kasbon_project/add_kasbon_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Kasbon
+        </a>
+        <table class="table custom-table mt-5" id="table_kasbon_lab" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <br><br>
+
+        <h4 style="font-weight: 800;">
+            Overbudget Lab
+        </h4>
+        <a href="<?= base_url('kasbon_project/add_request_budget_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Overbudget
+        </a>
+        <table class="table custom-table mt-5" id="table_ovb_lab" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">ID Request</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <a href="<?= base_url('kasbon_project') ?>" class="btn btn-sm btn-danger">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
 
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
@@ -445,9 +554,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         DataTables_kasbon_subcont();
         DataTables_kasbon_akomodasi();
         DataTables_kasbon_others();
+        DataTables_kasbon_lab();
         DataTables_ovb_akomodasi();
         DataTables_ovb_subcont();
         DataTables_ovb_others();
+        DataTables_ovb_lab();
     });
 
     function DataTables_kasbon_subcont(view = null) {
@@ -550,6 +661,51 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             serverSide: true,
             ajax: {
                 url: siteurl + active_controller + 'get_data_kasbon_others',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'req_number'
+                },
+                {
+                    data: 'nm_biaya'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'reject_reason'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
+    function DataTables_kasbon_lab(view = null) {
+        var dataTables_kasbon_lab = $('#table_kasbon_lab').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_kasbon_lab.destroy();
+        dataTables_kasbon_lab = $('#table_kasbon_lab').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_kasbon_lab',
                 type: "POST",
                 dataType: "JSON",
                 data: function(d) {
@@ -693,6 +849,42 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     }
 
+    function DataTables_ovb_lab(view = null) {
+        var dataTables_ovb_akomodasi = $('#table_ovb_lab').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_ovb_akomodasi.destroy();
+        dataTables_ovb_akomodasi = $('#table_ovb_lab').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_ovb_lab',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_request_ovb'
+                },
+                {
+                    data: 'amount'
+                },
+                {
+                    data: 'sts'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
     function number_format(number, decimals, dec_point, thousands_sep) {
         // Strip all characters but numerical ones.
         number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
@@ -737,6 +929,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                 $('.budget_others_aktual').html('Rp. ' + number_format(result.nilai_budget_others_aktual));
                 $('.budget_others_sisa').html('Rp. ' + number_format(result.nilai_budget_others - result.nilai_budget_others_aktual));
+
+                $('.budget_lab_aktual').html('Rp. ' + number_format(result.nilai_budget_lab_aktual));
+                $('.budget_lab_sisa').html('Rp. ' + number_format(result.nilai_budget_lab));
             },
             error: function(result) {
 
@@ -866,6 +1061,54 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                                 text: result.pesan
                             }, function(lanjut) {
                                 DataTables_kasbon_others();
+                                hitung_all_budget_process();
+                            });
+                        } else {
+                            swal({
+                                type: 'error',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_kasbon_lab', function() {
+        var id_kasbon_lab = $(this).data('id');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_kasbon_lab',
+                    data: {
+                        'id_kasbon_lab': id_kasbon_lab
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                DataTables_kasbon_lab();
                                 hitung_all_budget_process();
                             });
                         } else {
@@ -1096,6 +1339,55 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_ovb_subcont',
+                    data: {
+                        'id_request_ovb': id_request_ovb
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(result) {
+                        if (result.status == 1) {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                location.reload();
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_ovb_lab', function(e) {
+        e.preventDefault();
+
+        var id_request_ovb = $(this).data('id_request_ovb');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_ovb_lab',
                     data: {
                         'id_request_ovb': id_request_ovb
                     },

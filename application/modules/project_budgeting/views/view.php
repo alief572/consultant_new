@@ -433,6 +433,81 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
     <div class="box">
         <div class="box-header">
+            <h4 style="font-weight: 600;">Lab</h4>
+        </div>
+        <div class="box-body">
+            <table class="table custom-table-no" border="0">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">No.</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Item</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Keterangan</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Estimasi</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Final</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $no_lab = 1;
+
+                    $ttl_qty_lab_estimasi = 0;
+                    $ttl_qty_lab_final = 0;
+                    $ttl_price_lab_estimasi = 0;
+                    $ttl_price_lab_final = 0;
+                    $ttl_total_lab_estimasi = 0;
+                    $ttl_total_lab_final = 0;
+
+                    foreach ($list_budgeting_lab as $item) {
+                        echo '<tr class="tr_lab_' . $no_lab . '">';
+
+                        echo '<td class="text-center">' . $no_lab . ' <input type="hidden" name="lab_final[' . $no_lab . '][id_lab]" value="' . $item->id_lab . '"> </td>';
+                        echo '<td>' . $item->nm_item . '</td>';
+                        echo '<td>' . $item->keterangan . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->price_unit_estimasi) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->total_estimasi) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_final) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->price_unit_final) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->total_final) . '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_qty_lab_estimasi += $item->qty_estimasi;
+                        $ttl_qty_lab_final += $item->qty_final;
+                        $ttl_price_lab_estimasi += $item->price_unit_estimasi;
+                        $ttl_price_lab_final += $item->price_unit_final;
+                        $ttl_total_lab_estimasi += $item->total_estimasi;
+                        $ttl_total_lab_final += $item->total_final;
+
+                        $no_lab++;
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3"></th>
+                        <th class="text-center"><?= number_format($ttl_qty_lab_estimasi) ?></th>
+                        <th class="text-center"><?= number_format($ttl_price_lab_estimasi, 2) ?></th>
+                        <th class="text-center"><?= number_format($ttl_total_lab_estimasi, 2) ?></th>
+                        <th class="text-center ttl_qty_lab"><?= number_format($ttl_qty_lab_final) ?></th>
+                        <th class="text-center ttl_price_lab"><?= number_format($ttl_price_lab_final, 2) ?></th>
+                        <th class="text-center ttl_total_lab"><?= number_format($ttl_total_lab_final, 2) ?></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
             <h4 class="semi-bold">
                 Summary & Compare
 
@@ -493,13 +568,20 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 <input type="hidden" name="ttl_total_others_before" value="<?= $list_budgeting->biaya_others_before ?>">
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Lab</td>
+                            <td class="text-right">
+                                <?= number_format($list_budgeting->biaya_lab_before, 2) ?>
+                                <input type="hidden" name="ttl_total_lab_before" value="<?= $list_budgeting->biaya_lab_before ?>">
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right">
-                                <?= number_format(($list_budgeting->biaya_subcont_before + $list_budgeting->biaya_akomodasi_before + $list_budgeting->biaya_others_before), 2) ?>
-                                <input type="hidden" name="grand_total_pengeluaran_before" value="<?= ($list_budgeting->biaya_subcont_before + $list_budgeting->biaya_akomodasi_before + $list_budgeting->biaya_others_before) ?>">
+                                <?= number_format(($list_budgeting->biaya_subcont_before + $list_budgeting->biaya_akomodasi_before + $list_budgeting->biaya_others_before + $list_budgeting->biaya_lab_before), 2) ?>
+                                <input type="hidden" name="grand_total_pengeluaran_before" value="<?= ($list_budgeting->biaya_subcont_before + $list_budgeting->biaya_akomodasi_before + $list_budgeting->biaya_others_before + $list_budgeting->biaya_lab_before) ?>">
                             </th>
                         </tr>
                     </tfoot>
@@ -539,12 +621,18 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 <?= number_format($list_budgeting->biaya_others_after, 2) ?>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Lab</td>
+                            <td class="text-right summary_biaya_lab">
+                                <?= number_format($list_budgeting->biaya_lab_after, 2) ?>
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right summary_total_pengeluaran">
-                                <?= number_format(($list_budgeting->biaya_subcont_after + $list_budgeting->biaya_akomodasi_after + $list_budgeting->biaya_others_after), 2) ?>
+                                <?= number_format(($list_budgeting->biaya_subcont_after + $list_budgeting->biaya_akomodasi_after + $list_budgeting->biaya_others_after + $list_budgeting->biaya_lab_after), 2) ?>
                             </th>
                         </tr>
                     </tfoot>
@@ -616,18 +704,32 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 ?>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Lab</td>
+                            <td class="text-right summary_biaya_lab">
+                                <?php
+                                if ($list_budgeting->biaya_lab_result > 0) {
+                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_lab_result, 2) . '</span>';
+                                } else if ($list_budgeting->biaya_lab_result < 0) {
+                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_lab_result, 2) . ')</span>';
+                                } else {
+                                    echo number_format($list_budgeting->biaya_lab_result, 2);
+                                }
+                                ?>
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right summary_total_pengeluaran">
                                 <?php
-                                if (($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result) > 0) {
-                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result, 2) . '</span>';
-                                } else if (($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result) < 0) {
-                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result, 2) . ')</span>';
+                                if (($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result) > 0) {
+                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result, 2) . '</span>';
+                                } else if (($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result) < 0) {
+                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result, 2) . ')</span>';
                                 } else {
-                                    echo number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result, 2);
+                                    echo number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result, 2);
                                 }
                                 ?>
                             </th>

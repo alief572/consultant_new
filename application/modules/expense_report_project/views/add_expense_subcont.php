@@ -11,6 +11,9 @@ if ($tipe == '2') {
 if ($tipe == '3') {
     $title_header = 'Others';
 }
+if ($tipe == '4') {
+    $title_header = 'Lab';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -92,15 +95,17 @@ if ($tipe == '3') {
                     <tr>
                         <th class="text-center" rowspan="2">No.</th>
                         <th class="text-center" rowspan="2">Item</th>
-                        <th class="text-center" colspan="2">Kasbon</th>
-                        <th class="text-center" colspan="2">Expense Report</th>
-                        <th class="text-center" rowspan="2" width="30%">Keterangan</th>
+                        <th class="text-center" colspan="3">Kasbon</th>
+                        <th class="text-center" colspan="3">Expense Report</th>
+                        <th class="text-center" rowspan="2" width="380">Keterangan</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Nominal</th>
+                        <th class="text-center">Total Kasbon</th>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Nominal</th>
+                        <th class="text-center">Total Expense</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -128,29 +133,37 @@ if ($tipe == '3') {
                         echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][id_detail_kasbon]" value="' . $item['id_detail_kasbon'] . '">';
                         echo '</td>';
 
-                        echo '<td width="500">' . $item['nm_item'] . '</td>';
+                        echo '<td width="200">' . $item['nm_item'] . '</td>';
 
-                        echo '<td class="text-center" width="200">';
+                        echo '<td class="text-center" width="120">';
                         echo number_format($item['qty_kasbon'], 2);
                         echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][qty_kasbon]" value="' . $item['qty_kasbon'] . '">';
                         echo '</td>';
 
-                        echo '<td class="text-center" width="200">';
+                        echo '<td class="text-center" width="120">';
                         echo number_format($item['nominal_kasbon'], 2);
                         echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][nominal_kasbon]" value="' . $item['nominal_kasbon'] . '">';
                         echo '</td>';
 
-                        echo '<td width="200">';
-                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][qty_expense]" class="form-control form-control-sm auto_num text-right qty_expense" value="' . $item['qty_kasbon'] . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_qty . '>';
-                        echo '</td>';
-
-                        echo '<td width="200">';
-                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $item['nominal_kasbon'] . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
-                        echo '<input type="hidden" class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][total_kasbon]" value="' . $item['total_kasbon'] . '">';
+                        echo '<td class="text-center" width="120">';
+                        echo number_format($item['nominal_kasbon'] * $item['qty_kasbon'], 2);
+                        echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][total_kasbon]" value="' . $item['total_kasbon'] . '">';
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<textarea class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][keterangan]" '.$readonly_nominal.'></textarea>';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][qty_expense]" class="form-control form-control-sm auto_num text-right qty_expense" value="' . $item['qty_kasbon'] . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_qty . '>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $item['nominal_kasbon'] . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][total_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $item['total_kasbon'] . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" readonly>';
+                        echo '</td>';
+
+                        echo '<td width="50">';
+                        echo '<textarea class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][keterangan]"  ' . $readonly_nominal . ' rows="5"></textarea>';
                         echo '</td>';
 
                         echo '</tr>';
@@ -164,17 +177,17 @@ if ($tipe == '3') {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5" class="text-right">Total Kasbon</td>
+                        <td colspan="7" class="text-right">Total Kasbon</td>
                         <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td colspan="5" class="text-right">Total Expense Report</td>
+                        <td colspan="7" class="text-right">Total Expense Report</td>
                         <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td colspan="5" class="text-right">Selisih</td>
+                        <td colspan="7" class="text-right">Selisih</td>
                         <td class="text-right col_selisih">0.00</td>
                         <td></td>
                     </tr>
@@ -198,7 +211,7 @@ if ($tipe == '3') {
                             <td style="padding: 5px;">
                                 <input type="file" name="bukti_pengembalian[]" id="" class="form-control form-control-sm" multiple>
                             </td>
-                        </tr>   
+                        </tr>
                         <tr>
                             <th>
                                 Keterangan Kurang Bayar
@@ -337,6 +350,10 @@ if ($tipe == '3') {
                 qty_expense = 1;
             }
             var nominal_expense = get_num($('input[name="detail_subcont[' + i + '][nominal_expense]"]').val());
+
+            var total_expense = parseFloat(qty_expense * nominal_expense);
+
+            $('input[name="detail_subcont[' + i + '][total_expense]"]').val(number_format(total_expense, 2));
 
             ttl_expense_report += (qty_expense * nominal_expense);
             ttl_kasbon += (qty_kasbon * nominal_kasbon);
