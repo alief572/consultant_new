@@ -82,7 +82,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
         $this->db->where('a.flag_active', 'Y');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $this->db->order_by('a.name', 'ASC');
         $get_all_marketing = $this->db->get()->result();
 
@@ -93,7 +93,7 @@ class SPK_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -230,7 +230,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
         $this->db->where('a.flag_active', 'Y');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $this->db->order_by('a.name', 'ASC');
         $get_all_marketing = $this->db->get()->result();
 
@@ -241,7 +241,7 @@ class SPK_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -369,7 +369,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
         $this->db->where('a.flag_active', 'Y');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $this->db->order_by('a.name', 'ASC');
         $get_all_marketing = $this->db->get()->result();
 
@@ -380,7 +380,7 @@ class SPK_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -861,7 +861,7 @@ class SPK_penawaran extends Admin_Controller
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
         $this->db->where('a.flag_active', 'Y');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $this->db->order_by('a.name', 'ASC');
         $get_all_marketing = $this->db->get()->result();
 
@@ -872,7 +872,7 @@ class SPK_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
         $detail_informasi_awal = '';

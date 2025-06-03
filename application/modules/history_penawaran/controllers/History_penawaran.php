@@ -105,7 +105,7 @@ class History_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
         $data = [
@@ -185,7 +185,7 @@ class History_penawaran extends Admin_Controller
         $no = ($start + 1);
         foreach ($get_data->result() as $item) {
 
-            $option = '<a href="'.base_url('history_penawaran/view_penawaran/'. $item->id_history) .'" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-eye"></i></a>';
+            $option = '<a href="' . base_url('history_penawaran/view_penawaran/' . $item->id_history) . '" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-eye"></i></a>';
 
 
             // $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
