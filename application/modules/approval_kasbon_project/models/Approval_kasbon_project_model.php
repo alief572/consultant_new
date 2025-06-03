@@ -3,6 +3,7 @@
 class Approval_kasbon_project_model extends BF_Model
 {
 
+    protected $otherdb;
     public function __construct()
     {
         parent::__construct();
@@ -11,6 +12,8 @@ class Approval_kasbon_project_model extends BF_Model
         $this->ENABLE_MANAGE  = has_permission('Approval_Kasbon_Project.Manage');
         $this->ENABLE_VIEW    = has_permission('Approval_Kasbon_Project.View');
         $this->ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
+
+        $this->otherdb = $this->load->database('sendigs_finance', TRUE);
     }
 
     function generate_id_kasbon_subcont($no_tambah)
@@ -73,7 +76,8 @@ class Approval_kasbon_project_model extends BF_Model
     {
         $no_doc = '';
         $newcode = '';
-        $data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => $tipe))->row();
+        $query_data = 'SELECT * FROM ms_generate WHERE tipe = "' . $tipe . '"';
+        $data = $this->otherdb->query($query_data)->row();
         if ($data !== false) {
             if (stripos($data->info, 'YEAR', 0) !== false) {
                 if ($data->info3 != date("Y")) {
@@ -94,7 +98,7 @@ class Approval_kasbon_project_model extends BF_Model
                 $newcode = str_ireplace('XXXX', $newnumber, $data->info);
                 $newdata = array('info2' => $number);
             }
-            $this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => $tipe));
+            $this->otherdb->update('ms_generate', $newdata, array('tipe' => $tipe));
 
             $no_doc = $newcode;
 

@@ -7,6 +7,8 @@ if (!defined('BASEPATH')) {
 
 class Perbaikan_data extends Admin_Controller
 {
+
+    protected $otherdb;
     public function __construct()
     {
         parent::__construct();
@@ -14,6 +16,9 @@ class Perbaikan_data extends Admin_Controller
         $this->template->page_icon('fa fa-cubes');
         $this->load->library('upload');
         $this->load->model('Perbaikan_data/Perbaikan_data_model');
+        $this->otherdb = $this->load->database('sendigs_finance', TRUE);
+        // $this->otherdb =  $this->otherdb->query("SET NAMES 'utf8'");
+
         date_default_timezone_set('Asia/Bangkok');
     }
 
@@ -254,6 +259,9 @@ class Perbaikan_data extends Admin_Controller
 
     public function fill_request_payment()
     {
+
+        // $this->otherdb = $this->load->database('sendigs_finance', TRUE);
+
         $arr_kasbon_sendigs = [];
         $arr_kasbon_sendigs_rp = [];
 
@@ -261,10 +269,17 @@ class Perbaikan_data extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.sts', 1);
         $get_kasbon = $this->db->get()->result();
+        // $sql = "SELECT * FORM tr_kasbon WHERE no_kasbon_consultant = '$this->id' ";
+        // $result = $this->db->get_where(DBSF . '.tr_kasbon', ['no_kasbon_consultant' => $this->id])->result();
 
         $no = 0;
         foreach ($get_kasbon as $item) {
-            $get_kasbon_sendigs = $this->db->get_where(DBSF . '.tr_kasbon', array('no_kasbon_consultant' => $item->id))->result();
+            // $get_kasbon_sendigs = $this->otherdb->get_where(DBSF . '.tr_kasbon', array('no_kasbon_consultant' => $item->id));
+            $get_kasbon_sendigs = $this->otherdb->query('SELECT * FROM tr_kasbon WHERE no_kasbon_consultant = "' . $item->id . '"')->result();
+            // if (!$get_kasbon_sendigs) {
+            // print_r($get_kasbon_sendigs);
+            // exit;
+            // }
 
             if (count($get_kasbon_sendigs) < 1) {
                 $no++;
@@ -340,7 +355,8 @@ class Perbaikan_data extends Admin_Controller
 
         $no = 0;
         foreach ($get_expense as $item) {
-            $get_expense_sendigs = $this->db->get_where(DBSF . '.tr_expense', array('no_expense_consultant' => $item->id))->result();
+            // $get_expense_sendigs = $this->db->get_where(DBSF . '.tr_expense', array('no_expense_consultant' => $item->id))->result();
+            $get_expense_sendigs = $this->otherdb->query('SELECT * FROM tr_expense WHERE no_expense_consultant = "' . $item->id . '"')->result();
 
             $get_user = $this->db->get_where('users', array('id_user' => $item->created_by))->row();
             $nama = (!empty($get_user)) ? $get_user->nm_lengkap : '';
@@ -411,7 +427,7 @@ class Perbaikan_data extends Admin_Controller
         $this->db->trans_begin();
 
         if (!empty($arr_kasbon_sendigs)) {
-            $insert_kasbon_sendigs = $this->db->insert_batch(DBSF . '.tr_kasbon', $arr_kasbon_sendigs);
+            $insert_kasbon_sendigs = $this->otherdb->insert_batch('tr_kasbon', $arr_kasbon_sendigs);
             if (!$insert_kasbon_sendigs) {
                 $this->db->trans_rollback();
 
@@ -421,7 +437,7 @@ class Perbaikan_data extends Admin_Controller
         }
 
         if (!empty($arr_expense_sendigs)) {
-            $insert_expense_sendigs = $this->db->insert_batch(DBSF . '.tr_expense', $arr_expense_sendigs);
+            $insert_expense_sendigs = $this->otherdb->insert_batch('tr_expense', $arr_expense_sendigs);
             if (!$insert_expense_sendigs) {
                 $this->db->trans_rollback();
 
@@ -431,7 +447,7 @@ class Perbaikan_data extends Admin_Controller
         }
 
         if (!empty($arr_expense_detail_sendigs)) {
-            $insert_expense_detail_sendigs = $this->db->insert_batch(DBSF . '.tr_expense_detail', $arr_expense_detail_sendigs);
+            $insert_expense_detail_sendigs = $this->otherdb->insert_batch('tr_expense_detail', $arr_expense_detail_sendigs);
             if (!$insert_expense_detail_sendigs) {
                 $this->db->trans_rollback();
 
@@ -443,7 +459,7 @@ class Perbaikan_data extends Admin_Controller
 
 
         if (!empty($arr_kasbon_sendigs_rp)) {
-            $insert_kasbon_request_payment = $this->db->insert_batch(DBSF . '.request_payment', $arr_kasbon_sendigs_rp);
+            $insert_kasbon_request_payment = $this->otherdb->insert_batch('request_payment', $arr_kasbon_sendigs_rp);
 
 
             if (!$insert_kasbon_request_payment) {
@@ -455,7 +471,7 @@ class Perbaikan_data extends Admin_Controller
         }
 
         if (!empty($arr_expense_sendigs_rp)) {
-            $insert_expense_request_payment = $this->db->insert_batch(DBSF . '.request_payment', $arr_expense_sendigs_rp);
+            $insert_expense_request_payment = $this->otherdb->insert_batch('request_payment', $arr_expense_sendigs_rp);
             if (!$insert_expense_request_payment) {
                 $this->db->trans_rollback();
 
@@ -488,18 +504,22 @@ class Perbaikan_data extends Admin_Controller
         $arr_payment_detail = [];
 
         foreach ($get_payment as $item) {
-            $get_sendigs_payment = $this->db->get_where(DBSF . '.payment_approve', ['id' => $item->id])->result();
+            // $get_sendigs_payment = $this->db->get_where(DBSF . '.payment_approve', ['id' => $item->id])->result();
+            $query = 'SELECT * FROM payment_approve WHERE id = "' . $item->id . '"';
+            $get_sendigs_payment = $this->otherdb->query($query)->result();
 
             if (empty($get_sendigs_payment)) {
                 $no_doc = '';
 
                 if ($item->tipe == 'kasbon') {
-                    $get_kasbon = $this->db->get_where(DBSF . '.tr_kasbon', array('no_kasbon_consultant' => $item->no_doc))->row();
+                    $query_kasbon = 'SELECT * FROM tr_kasbon WHERE no_kasbon_consultant = "' . $item->no_doc . '"';
+                    $get_kasbon = $this->otherdb->query($query_kasbon)->row();
 
                     $no_doc = (!empty($get_kasbon)) ? $get_kasbon->no_doc : '';
                 }
                 if ($item->tipe == 'expense') {
-                    $get_expense = $this->db->get_where(DBSF . '.tr_expense', array('no_expense_consultant' => $item->no_doc))->row();
+                    $query_expense = 'SELECT * FROM tr_expense WHERE no_expense_consultant = "' . $item->no_doc . '"';
+                    $get_expense = $this->otherdb->query($query_expense)->row();
 
                     $no_doc = (!empty($get_expense)) ? $get_expense->no_doc : '';
                 }
@@ -548,20 +568,22 @@ class Perbaikan_data extends Admin_Controller
         }
 
         foreach ($get_payment_detail as $item) {
-
-            $get_sendigs_payment_detail = $this->db->get_where(DBSF . '.payment_approve_details', ['id' => $item->id])->result();
+            $query_payment_detail = 'SELECT * FROM payment_approve_details WHERE id = "' . $item->id . '"';
+            $get_sendigs_payment_detail = $this->otherdb->query($query_payment_detail)->result();
             if (empty($get_sendigs_payment_detail)) {
                 $no_doc = '';
 
                 $get_payment = $this->db->get_where('payment_approve', ['id' => $item->payment_id])->row();
 
                 if ($get_payment->tipe == 'kasbon') {
-                    $get_kasbon = $this->db->get_where(DBSF . '.tr_kasbon', array('no_kasbon_consultant' => $item->no_doc))->row();
+                    $query_kasbon = 'SELECT * FROM tr_kasbon WHERE no_kasbon_consultant = "' . $item->no_doc . '"';
+                    $get_kasbon = $this->otherdb->query($query_kasbon)->row();
 
                     $no_doc = (!empty($get_kasbon)) ? $get_kasbon->no_doc : '';
                 }
                 if ($get_payment->tipe == 'expense') {
-                    $get_expense = $this->db->get_where(DBSF . '.tr_expense', array('no_expense_consultant' => $item->no_doc))->row();
+                    $query_expense = 'SELECT * FROM tr_expense WHERE no_expense_consultant = "' . $item->no_doc . '"';
+                    $get_expense = $this->otherdb->query($query_expense)->row();
 
                     $no_doc = (!empty($get_expense)) ? $get_expense->no_doc : '';
                 }
@@ -587,7 +609,7 @@ class Perbaikan_data extends Admin_Controller
         $this->db->trans_begin();
 
         if (!empty($arr_payment)) {
-            $insert_payment = $this->db->insert_batch(DBSF . '.payment_approve', $arr_payment);
+            $insert_payment = $this->otherdb->insert_batch('payment_approve', $arr_payment);
             if (!$insert_payment) {
                 $this->db->trans_rollback();
 
@@ -597,7 +619,7 @@ class Perbaikan_data extends Admin_Controller
         }
 
         if (!empty($arr_payment_detail)) {
-            $insert_detail_payment = $this->db->insert_batch(DBSF . '.payment_approve_details', $arr_payment_detail);
+            $insert_detail_payment = $this->otherdb->insert_batch('payment_approve_details', $arr_payment_detail);
             if (!$insert_detail_payment) {
                 $this->db->trans_rollback();
 
@@ -615,5 +637,10 @@ class Perbaikan_data extends Admin_Controller
 
             echo 'Success !';
         }
+    }
+
+    public function test()
+    {
+        echo phpinfo();
     }
 }
