@@ -19,6 +19,8 @@ class Approval_kasbon_project extends Admin_Controller
     protected $managePermission = 'Approval_Kasbon_Project.Manage';
     protected $deletePermission = 'Approval_Kasbon_Project.Delete';
 
+    protected $otherdb;
+
     public function __construct()
     {
         parent::__construct();
@@ -27,6 +29,8 @@ class Approval_kasbon_project extends Admin_Controller
         $this->load->library('upload');
         $this->load->model(array('Approval_kasbon_project/Approval_kasbon_project_model'));
         date_default_timezone_set('Asia/Bangkok');
+
+        $this->otherdb = $this->load->database('sendigs_finance', TRUE);
     }
 
     public function index()
@@ -351,7 +355,9 @@ class Approval_kasbon_project extends Admin_Controller
 
         $no_doc = '';
         $newcode = '';
-        $data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => 'format_kasbon'))->row();
+
+        $query_data = 'SELECT * FROM ms_generate WHERE tipe = "format_kasbon"';
+        $data = $this->otherdb->query($query_data)->row();
         if ($data !== false) {
             if (stripos($data->info, 'YEAR', 0) !== false) {
                 if ($data->info3 != date("Y")) {
@@ -372,7 +378,7 @@ class Approval_kasbon_project extends Admin_Controller
                 $newcode = str_ireplace('XXXX', $newnumber, $data->info);
                 $newdata = array('info2' => $number);
             }
-            $this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
+            $this->otherdb->update('ms_generate', $newdata, array('tipe' => 'format_kasbon'));
 
             $no_doc = $newcode;
         } else {
@@ -419,7 +425,7 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->trans_begin();
 
         if ($get_header_kasbon->metode_pembayaran == '1') {
-            $insert_sendigs_kasbon = $this->db->insert(DBSF . '.tr_kasbon', $data_insert_sendigs_kasbon);
+            $insert_sendigs_kasbon = $this->otherdb->insert('tr_kasbon', $data_insert_sendigs_kasbon);
             if (!$insert_sendigs_kasbon) {
                 $this->db->trans_rollback();
 
@@ -451,7 +457,7 @@ class Approval_kasbon_project extends Admin_Controller
                 'created_date' => date('Y-m-d H:i:s')
             ];
 
-            $insert_direct_payment_sendigs = $this->db->insert(DBSF . '.tr_direct_payment', $data_insert_direct_payment_sendigs);
+            $insert_direct_payment_sendigs = $this->otherdb->insert('tr_direct_payment', $data_insert_direct_payment_sendigs);
             if (!$insert_direct_payment_sendigs) {
                 $this->db->trans_rollback();
 

@@ -8,11 +8,21 @@
 
 class Perbaikan_data_model extends BF_Model
 {
+    protected $otherdb;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->otherdb = $this->load->database('sendigs_finance', TRUE);
+        // $this->otherdb =  $this->otherdb->query("SET NAMES 'utf8'");
+
+        date_default_timezone_set('Asia/Bangkok');
+    }
     public function no_sendigs($tipe, $no)
     {
         $no_doc = '';
         $newcode = '';
-        $data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => $tipe))->row();
+        $query_data = 'SELECT * FROM ms_generate WHERE tipe = "' . $tipe . '"';
+        $data = $this->otherdb->query($query_data)->row();
         if ($data !== false) {
             if (stripos($data->info, 'YEAR', 0) !== false) {
                 if ($data->info3 != date("Y")) {
@@ -33,7 +43,8 @@ class Perbaikan_data_model extends BF_Model
                 $newcode = str_ireplace('XXXX', $newnumber, $data->info);
                 $newdata = array('info2' => $number);
             }
-            $this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => $tipe));
+
+            $this->otherdb->update('ms_generate', $newdata, array('tipe' => $tipe));
 
             $no_doc = $newcode;
         }

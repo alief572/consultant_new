@@ -19,6 +19,8 @@ class Approval_expense_report_project extends Admin_Controller
     protected $managePermission = 'Approval_Expense_Report_Project.Manage';
     protected $deletePermission = 'Approval_Expense_Report_Project.Delete';
 
+    protected $otherdb;
+
     public function __construct()
     {
         parent::__construct();
@@ -27,6 +29,8 @@ class Approval_expense_report_project extends Admin_Controller
         $this->load->library('upload');
         $this->load->model(array('Approval_expense_report_project/Approval_expense_report_project_model'));
         date_default_timezone_set('Asia/Bangkok');
+
+        $this->otherdb = $this->load->database('sendigs_finance', TRUE);
     }
 
     // View Page Function
@@ -1619,7 +1623,7 @@ class Approval_expense_report_project extends Admin_Controller
         // exit;
 
         if (!empty($arr_insert_expense)) {
-            $insert_sendigs_expense = $this->db->insert_batch(DBSF . '.tr_expense', $arr_insert_expense);
+            $insert_sendigs_expense = $this->otherdb->insert_batch('tr_expense', $arr_insert_expense);
 
             $error = $this->db->error();
             if ($error['code'] != 0) {
@@ -1630,7 +1634,7 @@ class Approval_expense_report_project extends Admin_Controller
         }
 
         if (!empty($arr_insert_expense_detail)) {
-            $insert_sendigs_expense_detail = $this->db->insert_batch(DBSF . '.tr_expense_detail', $arr_insert_expense_detail);
+            $insert_sendigs_expense_detail = $this->otherdb->insert_batch('tr_expense_detail', $arr_insert_expense_detail);
 
             $error = $this->db->error();
             if ($error['code'] != 0) {

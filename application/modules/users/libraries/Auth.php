@@ -4,28 +4,30 @@
  */
 class Auth
 {
-	protected $ci;
-	protected $user;
+    protected $ci;
+    protected $user;
 
-	public function __construct()
-	{
-		$this->ci =& get_instance();
+    public function __construct()
+    {
+        $this->ci = &get_instance();
         $this->ci->load->library('session');
         $this->ci->lang->load('users/users');
-		$this->ci->load->model(array('users/users_model',
-                                    'users/user_groups_model'));
+        $this->ci->load->model(array(
+            'users/users_model',
+            'users/user_groups_model'
+        ));
 
-		$this->user = $this->ci->session->userdata('app_session');
-	}
+        $this->user = $this->ci->session->userdata('app_session');
+    }
 
-	public function is_login()
-	{
-		return ($this->user) ? TRUE : FALSE;
-	}
+    public function is_login()
+    {
+        return ($this->user) ? TRUE : FALSE;
+    }
 
     public function user_id()
     {
-        return $this->user['id_user'];
+        return isset($this->user) ? $this->user['id_user'] : '';
     }
 
     public function user_name()
@@ -38,7 +40,7 @@ class Auth
         return $this->user['kdcab'];
     }
 
-		public function nama()
+    public function nama()
     {
         return $this->user['nm_lengkap'];
     }
@@ -46,15 +48,12 @@ class Auth
     public function userdata()
     {
         $userdata =  $this->ci->users_model->select(array("users.*"))
-                                ->find($this->user_id());
+            ->find($this->user_id());
         $user_groups = "";
 
-        if($this->is_admin())
-        {
+        if ($this->is_admin()) {
             $user_groups = "Administrator";
-        }
-        else
-        {
+        } else {
             $user_groups = $this->get_user_groups();
         }
 
@@ -63,42 +62,37 @@ class Auth
         return $userdata;
     }
 
-	public function login($username = "", $password = "")
-	{
-		if($this->is_login())
-        {
+    public function login($username = "", $password = "")
+    {
+        if ($this->is_login()) {
             redirect('Dashboard');
         }
 
-		$user 	= $this->ci->users_model->find_by(array('username' => $username));
+        $user     = $this->ci->users_model->find_by(array('username' => $username));
 
-    	if(!$user)
-    	{
-    		$this->ci->template->set_message(lang('users_login_fail'), 'error');
-    		return FALSE;
-    	}
+        if (!$user) {
+            $this->ci->template->set_message(lang('users_login_fail'), 'error');
+            return FALSE;
+        }
 
-        if($user->deleted == 1)
-        {
+        if ($user->deleted == 1) {
             $this->ci->template->set_message(lang('users_already_deleted'), 'error');
             return FALSE;
         }
 
-    	if($user->st_aktif == 0)
-    	{
-    		$this->ci->template->set_message(lang('users_not_active'), 'error');
-    		return FALSE;
-    	}
+        if ($user->st_aktif == 0) {
+            $this->ci->template->set_message(lang('users_not_active'), 'error');
+            return FALSE;
+        }
 
-    	if(password_verify($password, $user->password))
-    	{
-    		//Buat Session
-    		$array = array();
-    		foreach ($user as $key => $usr) {
-    			$array[$key] = $usr;
-    		}
+        if (password_verify($password, $user->password)) {
+            //Buat Session
+            $array = array();
+            foreach ($user as $key => $usr) {
+                $array[$key] = $usr;
+            }
 
-    		$this->ci->session->set_userdata('app_session', $array);
+            $this->ci->session->set_userdata('app_session', $array);
             //Set User Data
             $this->user = $this->ci->session->userdata('app_session');
             //Update Login Terakhir
@@ -106,18 +100,17 @@ class Auth
             $this->ci->users_model->update($this->user_id(), array('login_terakhir' => date('Y-m-d H:i:s'), 'ip' => $ip_address));
 
             $requested_page = $this->ci->session->userdata('requested_page');
-            if($requested_page != '')
-            {
+            if ($requested_page != '') {
                 redirect("dashboard");
             }
 
-    		redirect("dashboard");
-    	}
+            redirect("dashboard");
+        }
 
         $this->ci->template->set_message(lang('users_wrong_password'), 'error');
         $this->ci->template->message();
         return FALSE;
-	}
+    }
 
     public function logout()
     {
@@ -129,11 +122,10 @@ class Auth
     {
         $id = $this->user_id();
 
-        $data = $this->ci->users_model->join('user_groups','users.id_user = user_groups.id_user')
-                                    ->find_by(array('users.id_user' => $id, 'id_group' => 1));
+        $data = $this->ci->users_model->join('user_groups', 'users.id_user = user_groups.id_user')
+            ->find_by(array('users.id_user' => $id, 'id_group' => 1));
 
-        if($data)
-        {
+        if ($data) {
             return TRUE;
         }
 
@@ -145,14 +137,13 @@ class Auth
         $id = $this->user_id();
 
         $groups = $this->ci->user_groups_model->select("user_groups.id_group, groups.nm_group")
-                                    ->join('groups', 'user_groups.id_group = groups.id_group')
-                                    ->order_by('nm_group', 'ASC')
-                                    ->find_all_by(array('id_user' => $id));
+            ->join('groups', 'user_groups.id_group = groups.id_group')
+            ->order_by('nm_group', 'ASC')
+            ->find_all_by(array('id_user' => $id));
 
         $return = "";
         $arr    = array();
-        if($groups)
-        {
+        if ($groups) {
             foreach ($groups as $key => $gr) {
                 $arr[] = ucwords($gr->nm_group);
             }
@@ -165,32 +156,28 @@ class Auth
 
     public function has_permission($nm_permission = "")
     {
-        if($nm_permission == "")
-        {
+        if ($nm_permission == "") {
             return FALSE;
         }
 
-        if($this->is_admin())
-        {
+        if ($this->is_admin()) {
             return TRUE;
         }
 
         $id = $this->user_id();
 
-        $group_permissions = $this->ci->users_model->join('user_groups','users.id_user = user_groups.id_user')
-                                        ->join('group_permissions','user_groups.id_group = group_permissions.id_group')
-                                        ->join('permissions','group_permissions.id_permission = permissions.id_permission')
-                                        ->find_by(array('nm_permission' => $nm_permission,'users.id_user' => $id));
-        if($group_permissions)
-        {
+        $group_permissions = $this->ci->users_model->join('user_groups', 'users.id_user = user_groups.id_user')
+            ->join('group_permissions', 'user_groups.id_group = group_permissions.id_group')
+            ->join('permissions', 'group_permissions.id_permission = permissions.id_permission')
+            ->find_by(array('nm_permission' => $nm_permission, 'users.id_user' => $id));
+        if ($group_permissions) {
             return TRUE;
         }
 
-        $user_permissions = $this->ci->users_model->join('user_permissions','users.id_user = user_permissions.id_user')
-                                        ->join('permissions','user_permissions.id_permission = permissions.id_permission')
-                                        ->find_by(array('nm_permission' => $nm_permission,'users.id_user' => $id));
-        if($user_permissions)
-        {
+        $user_permissions = $this->ci->users_model->join('user_permissions', 'users.id_user = user_permissions.id_user')
+            ->join('permissions', 'user_permissions.id_permission = permissions.id_permission')
+            ->find_by(array('nm_permission' => $nm_permission, 'users.id_user' => $id));
+        if ($user_permissions) {
             return TRUE;
         }
 
