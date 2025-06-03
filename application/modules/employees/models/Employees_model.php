@@ -3,9 +3,12 @@
 class Employees_model extends BF_Model
 {
 
+	protected $dbhr;
 	public function __construct()
 	{
 		parent::__construct();
+
+		$this->dbhr = $this->load->database('dbhr', true);
 	}
 
 	public function Simpan($table, $data)
@@ -2148,82 +2151,94 @@ class Employees_model extends BF_Model
 		$length = $this->input->post('length');
 		$search = $this->input->post('search');
 
-		$this->db->select('a.*,b.name as company_name,c.name as department_name,
-								d.name as division_name, e.name as title_name,
-								f.name as firstcontract,g.name as secondcontract,
-								h.name as thirdcontract,i.name as permanent, j.name as position_name');
-		$this->db->from('hr_sentral.employees a');
-		$this->db->join('hr_sentral.companies b', 'b.id=a.company_id', 'left');
-		$this->db->join('hr_sentral.departments c', 'c.id=a.department_id', 'left');
-		$this->db->join('hr_sentral.divisions d', 'd.id=a.division_id', 'left');
-		$this->db->join('hr_sentral.titles e', 'e.id=a.title_id', 'left');
-		$this->db->join('hr_sentral.contracts f', 'f.id=a.firstcontract_id', 'left');
-		$this->db->join('hr_sentral.contracts g', 'g.id=a.secondcontract_id', 'left');
-		$this->db->join('hr_sentral.contracts h', 'h.id=a.thirdcontract_id', 'left');
-		$this->db->join('hr_sentral.contracts i', 'i.id=a.permanent_id', 'left');
-		$this->db->join('hr_sentral.positions j', 'j.id=a.position_id', 'left');
-		$this->db->where(array('a.flag_active' => 'Y', 'a.company_id' => 'COM003'));
-		if(!empty($search)) {
-			$this->db->group_start();
-			$this->db->like('a.id', $search['value'], 'both');
-			$this->db->or_like('a.nik', $search['value'], 'both');
-			$this->db->or_like('a.name', $search['value'], 'both');
-			$this->db->or_like('a.hometown', $search['value'], 'both');
-			$this->db->or_like('a.birthday', $search['value'], 'both');
-			$this->db->or_like('a.birthday', $search['value'], 'both');
-			$this->db->or_like('a.nationality', $search['value'], 'both');
-			$this->db->or_like('a.flag_active', $search['value'], 'both');
-			$this->db->group_end();
-		}
-		$this->db->limit($length, $start);
-		$query = $this->db->get();
+		$qry = '
+			SELECT
+				a.*,
+				b.name as company_name,
+				c.name as department_name,
+				d.name as division_name,
+				e.name as title_name,
+				f.name as firstcontract,
+				g.name as secondcontract,
+				h.name as thirdcontract,
+				i.name as permanent,
+				j.name as position_name
+			FROM
+				employees a
+				LEFT JOIN companies b ON b.id = a.company_id
+				LEFT JOIN departments c ON c.id = a.department_id
+				LEFT JOIN divisions d ON d.id = a.division_id
+				LEFT JOIN titles e ON e.id = a.title_id
+				LEFT JOIN contracts f ON f.id = a.firstcontract_id
+				LEFT JOIN contracts g ON g.id = a.secondcontract_id
+				LEFT JOIN contracts h ON h.id = a.thirdcontract_id
+				LEFT JOIN contracts i ON i.id = a.permanent_id
+				LEFT JOIN positions j ON j.id = a.position_id
+			WHERE
+				1=1 AND
+				a.flag_active = "Y" AND
+				a.company_id = "COM003" AND
+				(
+					a.id LIKE "%' . $search['value'] . '%" OR
+					a.nik LIKE "%' . $search['value'] . '%" OR
+					a.name LIKE "%' . $search['value'] . '%" OR
+					a.hometown LIKE "%' . $search['value'] . '%" OR
+					a.birthday LIKE "%' . $search['value'] . '%" OR
+					a.nationality LIKE "%' . $search['value'] . '%" OR
+					a.flag_active LIKE "%' . $search['value'] . '%"
+				)
+			ORDER BY a.id ASC
+			LIMIT ' . $length . ' OFFSET ' . $start . '
+		';
+		$query = $this->dbhr->query($qry)->result();
 
-		$this->db->select('a.*,b.name as company_name,c.name as department_name,
-								d.name as division_name, e.name as title_name,
-								f.name as firstcontract,g.name as secondcontract,
-								h.name as thirdcontract,i.name as permanent, j.name as position_name');
-		$this->db->from('hr_sentral.employees a');
-		$this->db->join('hr_sentral.companies b', 'b.id=a.company_id', 'left');
-		$this->db->join('hr_sentral.departments c', 'c.id=a.department_id', 'left');
-		$this->db->join('hr_sentral.divisions d', 'd.id=a.division_id', 'left');
-		$this->db->join('hr_sentral.titles e', 'e.id=a.title_id', 'left');
-		$this->db->join('hr_sentral.contracts f', 'f.id=a.firstcontract_id', 'left');
-		$this->db->join('hr_sentral.contracts g', 'g.id=a.secondcontract_id', 'left');
-		$this->db->join('hr_sentral.contracts h', 'h.id=a.thirdcontract_id', 'left');
-		$this->db->join('hr_sentral.contracts i', 'i.id=a.permanent_id', 'left');
-		$this->db->join('hr_sentral.positions j', 'j.id=a.position_id', 'left');
-		$this->db->where(array('a.flag_active' => 'Y', 'a.company_id' => 'COM003'));
-		if(!empty($search)) {
-			$this->db->group_start();
-			$this->db->like('a.id', $search['value'], 'both');
-			$this->db->or_like('a.nik', $search['value'], 'both');
-			$this->db->or_like('a.name', $search['value'], 'both');
-			$this->db->or_like('a.hometown', $search['value'], 'both');
-			$this->db->or_like('a.birthday', $search['value'], 'both');
-			$this->db->or_like('a.birthday', $search['value'], 'both');
-			$this->db->or_like('a.nationality', $search['value'], 'both');
-			$this->db->or_like('a.flag_active', $search['value'], 'both');
-			$this->db->group_end();
-		}
-		$query_all = $this->db->get();
+		$qry_all = '
+			SELECT
+				a.*,
+				b.name as company_name,
+				c.name as department_name,
+				d.name as division_name,
+				e.name as title_name,
+				f.name as firstcontract,
+				g.name as secondcontract,
+				h.name as thirdcontract,
+				i.name as permanent,
+				j.name as position_name
+			FROM
+				employees a
+				LEFT JOIN companies b ON b.id = a.company_id
+				LEFT JOIN departments c ON c.id = a.department_id
+				LEFT JOIN divisions d ON d.id = a.division_id
+				LEFT JOIN titles e ON e.id = a.title_id
+				LEFT JOIN contracts f ON f.id = a.firstcontract_id
+				LEFT JOIN contracts g ON g.id = a.secondcontract_id
+				LEFT JOIN contracts h ON h.id = a.thirdcontract_id
+				LEFT JOIN contracts i ON i.id = a.permanent_id
+				LEFT JOIN positions j ON j.id = a.position_id
+			WHERE
+				1=1 AND
+				a.flag_active = "Y" AND
+				a.company_id = "COM003" AND
+				(
+					a.id LIKE "%' . $search['value'] . '%" OR
+					a.nik LIKE "%' . $search['value'] . '%" OR
+					a.name LIKE "%' . $search['value'] . '%" OR
+					a.hometown LIKE "%' . $search['value'] . '%" OR
+					a.birthday LIKE "%' . $search['value'] . '%" OR
+					a.nationality LIKE "%' . $search['value'] . '%" OR
+					a.flag_active LIKE "%' . $search['value'] . '%"
+				)
+			ORDER BY a.id ASC
+		';
+		$query_all = $this->dbhr->query($qry_all)->result();
 
 		$hasil = [];
 
 		$int	= (0 + $start);
-		foreach ($query->result() as $datas) {
+		foreach ($query as $datas) {
 			$int++;
 
-			$awal  = date_create($datas->hiredate);
-			$akhir = date_create(); // waktu sekarang
-			// $akhir = ; // waktu sekarang
-			@$diff  = date_diff($awal, $akhir);
 
-			$th = 'Th';
-			$bl = 'Bln';
-
-			@$tahun = $diff->y;
-			@$bulan = $diff->m;
-			@$hari  = $diff->d;
 
 			$agama = $datas->relid;
 			$jk    = $datas->genderid;
@@ -2257,7 +2272,7 @@ class Employees_model extends BF_Model
 			} elseif ($jk === 'P') {
 				$genderid = 'Perempuan';
 			}
-			
+
 			if ($agama == '1') {
 				$religi = 'Islam';
 			} elseif ($agama == '2') {
@@ -2291,10 +2306,10 @@ class Employees_model extends BF_Model
 		}
 
 		echo json_encode([
-            'draw' => intval($draw),
-            'recordsTotal' => $query_all->num_rows(),
-            'recordsFiltered' => $query_all->num_rows(),
-            'data' => $hasil
-        ]);
+			'draw' => intval($draw),
+			'recordsTotal' => count($query_all),
+			'recordsFiltered' => count($query_all),
+			'data' => $hasil
+		]);
 	}
 }

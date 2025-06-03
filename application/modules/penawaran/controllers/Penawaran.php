@@ -21,6 +21,8 @@ class Penawaran extends Admin_Controller
 
     protected $is_admin;
 
+    protected $dbhr;
+
     public function __construct()
     {
         parent::__construct();
@@ -31,6 +33,8 @@ class Penawaran extends Admin_Controller
         date_default_timezone_set('Asia/Bangkok');
 
         $this->is_admin = $this->auth->is_admin();
+
+        $this->dbhr = $this->load->database('dbhr', true);
     }
 
     public function index()
@@ -113,7 +117,7 @@ class Penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
         $data = [
@@ -205,7 +209,7 @@ class Penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
         $data = [
@@ -509,7 +513,7 @@ class Penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
         $data = [
@@ -946,7 +950,7 @@ class Penawaran extends Admin_Controller
             ];
 
             $insert_history_penawaran = $this->db->insert('kons_tr_penawaran_history', $arr_insert_history_penawaran);
-            if(!$insert_history_penawaran) {
+            if (!$insert_history_penawaran) {
                 print_r($this->db->error($insert_history_penawaran));
                 exit;
             }
@@ -958,7 +962,7 @@ class Penawaran extends Admin_Controller
             print_r($this->db->error($insert_penawaran_aktifitas));
             exit;
         } else {
-            if(isset($post['dt_act'])) {
+            if (isset($post['dt_act'])) {
                 $arr_insert_history_act = [];
                 foreach ($post['dt_act'] as $item_act) {
                     $arr_insert_history_act[] = [
@@ -979,7 +983,7 @@ class Penawaran extends Admin_Controller
                 }
 
                 $insert_history_act = $this->db->insert_batch('kons_tr_penawaran_aktifitas_history', $arr_insert_history_act);
-                if(!$insert_history_act) {
+                if (!$insert_history_act) {
                     print_r($this->db->error($insert_history_act));
                     exit;
                 }
@@ -1009,9 +1013,9 @@ class Penawaran extends Admin_Controller
                             'input_date' => date('Y-m-d H:i:s')
                         ];
                     }
-    
+
                     $insert_history_ako = $this->db->insert_batch('kons_tr_penawaran_akomodasi_history', $arr_insert_history_akomodasi);
-                    if(!$insert_history_ako) {
+                    if (!$insert_history_ako) {
                         print_r($this->db->error($insert_history_ako));
                         exit;
                     }
@@ -1027,7 +1031,7 @@ class Penawaran extends Admin_Controller
                 print_r($this->db->error($insert_penawaran_others));
                 exit;
             } else {
-                if(isset($post['dt_oth'])) {
+                if (isset($post['dt_oth'])) {
                     $arr_insert_history_others = [];
                     foreach ($post['dt_oth'] as $item_oth) {
                         $arr_insert_history_others[] = [
@@ -1044,9 +1048,9 @@ class Penawaran extends Admin_Controller
                             'input_date' => date('Y-m-d H:i:s')
                         ];
                     }
-    
+
                     $insert_history_oth = $this->db->insert_batch('kons_tr_penawaran_others_history', $arr_insert_history_others);
-                    if(!$insert_history_oth) {
+                    if (!$insert_history_oth) {
                         print_r($this->db->error($insert_history_oth));
                         exit;
                     }
@@ -1061,7 +1065,7 @@ class Penawaran extends Admin_Controller
                 print_r($this->db->error($insert_penawaran_lab));
                 exit;
             } else {
-                if(isset($post['dt_lab'])) {
+                if (isset($post['dt_lab'])) {
                     $arr_insert_history_lab = [];
                     foreach ($post['dt_lab'] as $item_lab) {
                         $arr_insert_history_lab[] = [
@@ -1080,7 +1084,7 @@ class Penawaran extends Admin_Controller
                     }
 
                     $insert_history_lab = $this->db->insert_batch('kons_tr_penawaran_lab_history', $arr_insert_history_lab);
-                    if(!$insert_history_lab) {
+                    if (!$insert_history_lab) {
                         print_r($this->db->error($insert_history_lab));
                         exit;
                     }
