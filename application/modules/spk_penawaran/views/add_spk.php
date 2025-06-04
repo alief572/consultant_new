@@ -1165,7 +1165,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
             });
 
             return false;
-        } else if (ttl_persentase_payment < 100 || ttl_persentase_payment > 100) {
+        } else if (ttl_nominal_payment != nilai_kontrak_bersih) {
             swal({
                 type: 'warning',
                 title: 'Warning !',
