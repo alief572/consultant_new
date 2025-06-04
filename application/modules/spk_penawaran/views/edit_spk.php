@@ -691,8 +691,8 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 <tfoot>
                     <tr>
                         <th></th>
-                        <th class="text-right ttl_persentase_payment"><?= number_format($ttl_persen_payment, 2) ?></th>
-                        <th class="text-right ttl_nominal_payment"><?= number_format($ttl_nominal_payment, 2) ?></th>
+                        <th class="text-right ttl_persentase_payment"><?= number_format($ttl_persen_payment) ?></th>
+                        <th class="text-right ttl_nominal_payment"><?= number_format($ttl_nominal_payment) ?></th>
                         <th class="text-right"></th>
                         <th class="text-right"></th>
                     </tr>
@@ -1017,8 +1017,8 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
             ttl_nominal_payment += nominal_payment;
         }
 
-        $('.ttl_persentase_payment').html(number_format(ttl_persen_payment, 2));
-        $('.ttl_nominal_payment').html(number_format(ttl_nominal_payment, 2));
+        $('.ttl_persentase_payment').html(number_format(ttl_persen_payment));
+        $('.ttl_nominal_payment').html(number_format(ttl_nominal_payment));
     }
 
     function hitung_grand_ttl_subcont() {
@@ -1164,6 +1164,9 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
         var waktu_to = $('input[name="waktu_to"]').val();
         var project_leader = $('input[name="project_leader"]').val();
 
+        var ttl_nominal_payment = get_num($('.ttl_nominal_payment').text());
+        var nilai_kontrak_bersih = get_num($('.total_nilai_kontrak_bersih').val());
+
         if (ttl_persen_komisi > 5) {
             swal({
                 type: 'warning',
@@ -1172,7 +1175,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
             });
 
             return false;
-        } else if (ttl_persentase_payment < 100 || ttl_persentase_payment > 100) {
+        } else if (ttl_nominal_payment != nilai_kontrak_bersih) {
             swal({
                 type: 'warning',
                 title: 'Warning !',

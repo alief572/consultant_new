@@ -38,7 +38,7 @@ class Perbaikan_data extends Admin_Controller
         foreach ($get_budgeting as $item) :
             $get_penawaran_lab = $this->db->get_where('kons_tr_penawaran_lab a', array('id_penawaran' => $item->id_penawaran))->result();
             foreach ($get_penawaran_lab as $item_lab) :
-                $get_budgeting_lab =  $this->db->get_where('kons_tr_spk_budgeting_lab', array('id_lab' => $item_lab->id))->row();
+                $get_budgeting_lab =  $this->db->get_where('kons_tr_spk_budgeting_lab', array('id_lab' => $item_lab->id))->result();
                 if (count($get_budgeting_lab) < 1) {
 
                     $get_lab = $this->db->get_where('kons_master_lab', array('id' => $item_lab->id_item))->row();
@@ -74,8 +74,7 @@ class Perbaikan_data extends Admin_Controller
             $this->db->select('a.qty_pengajuan');
             $this->db->from('kons_tr_kasbon_project_subcont a');
             $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
-            $this->db->where('a.id_header', $item->id_header);
-            $this->db->where('a.id', $item->id);
+            $this->db->where('a.id_aktifitas', $item->id_aktifitas);
             $this->db->where('a.created_date <', $item->created_date);
             $get_qty_terpakai = $this->db->get()->result();
 
@@ -117,8 +116,7 @@ class Perbaikan_data extends Admin_Controller
             $this->db->select('a.qty_pengajuan');
             $this->db->from('kons_tr_kasbon_project_akomodasi a');
             $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
-            $this->db->where('a.id_header', $item->id_header);
-            $this->db->where('a.id', $item->id);
+            $this->db->where('a.id_akomodasi', $item->id_akomodasi);
             $this->db->where('a.created_date <', $item->created_date);
             $get_qty_terpakai = $this->db->get()->result();
 
@@ -146,8 +144,7 @@ class Perbaikan_data extends Admin_Controller
             $this->db->select('a.qty_pengajuan');
             $this->db->from('kons_tr_kasbon_project_others a');
             $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
-            $this->db->where('a.id_header', $item->id_header);
-            $this->db->where('a.id', $item->id);
+            $this->db->where('a.id_others', $item->id_others);
             $this->db->where('a.created_date <', $item->created_date);
             $get_qty_terpakai = $this->db->get()->result();
 
@@ -189,8 +186,7 @@ class Perbaikan_data extends Admin_Controller
             $this->db->select('a.qty_pengajuan');
             $this->db->from('kons_tr_kasbon_project_lab a');
             $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
-            $this->db->where('a.id_header', $item->id_header);
-            $this->db->where('a.id', $item->id);
+            $this->db->where('a.id_lab', $item->id_lab);
             $this->db->where('a.sts', 1);
             $this->db->where('a.created_date <', $item->created_date);
             $get_qty_terpakai = $this->db->get()->result();
