@@ -1154,6 +1154,9 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         var waktu_to = $('input[name="waktu_to"]').val();
         var project_leader = $('input[name="project_leader"]').val();
 
+        var ttl_nominal_payment = get_num($('.ttl_nominal_payment').text());
+        var nilai_kontrak_bersih = get_num($('.total_nilai_kontrak_bersih').val());
+
         if (ttl_persen_komisi > 5) {
             swal({
                 type: 'warning',
