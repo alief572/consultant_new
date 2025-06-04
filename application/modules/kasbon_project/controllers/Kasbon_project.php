@@ -647,8 +647,15 @@ class Kasbon_project extends Admin_Controller
         $no = 1;
         foreach ($get_kasbon_subcont->result() as $item) {
             $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-            if ($item->sts_req == '1') {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Waiting Approval</button>';
+
+            $this->db->select('a.id');
+            $this->db->from('kons_tr_req_kasbon_project a');
+            $this->db->where('a.id_kasbon', $item->id);
+            $this->db->where('a.sts', 0);
+            $get_check_req_approval = $this->db->get()->result();
+
+            if (count($get_check_req_approval) > 0) {
+                $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
             }
 
             if ($item->sts == '1') {
@@ -833,8 +840,15 @@ class Kasbon_project extends Admin_Controller
         $no = 1;
         foreach ($get_kasbon_akomodasi->result() as $item) {
             $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-            if ($item->sts_req == '1') {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Waiting Approval</button>';
+
+            $this->db->select('a.id');
+            $this->db->from('kons_tr_req_kasbon_project a');
+            $this->db->where('a.id_kasbon', $item->id);
+            $this->db->where('a.sts', 0);
+            $get_check_req_approval = $this->db->get()->result();
+
+            if (count($get_check_req_approval) > 0) {
+                $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
             }
             if ($item->sts == '1') {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
@@ -1004,9 +1018,17 @@ class Kasbon_project extends Admin_Controller
         $no = 1;
         foreach ($get_kasbon_others->result() as $item) {
             $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-            if ($item->sts_req == '1') {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Waiting Approval</button>';
+
+            $this->db->select('a.id');
+            $this->db->from('kons_tr_req_kasbon_project a');
+            $this->db->where('a.id_kasbon', $item->id);
+            $this->db->where('a.sts', 0);
+            $get_check_req_approval = $this->db->get()->result();
+
+            if (count($get_check_req_approval) > 0) {
+                $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
             }
+
             if ($item->sts == '1') {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
@@ -1174,9 +1196,17 @@ class Kasbon_project extends Admin_Controller
         $no = 1;
         foreach ($get_kasbon_lab->result() as $item) {
             $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-            if ($item->sts_req == '1') {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Waiting Approval</button>';
+
+            $this->db->select('a.id');
+            $this->db->from('kons_tr_req_kasbon_project a');
+            $this->db->where('a.id_kasbon', $item->id);
+            $this->db->where('a.sts', 0);
+            $get_check_req_approval = $this->db->get()->result();
+
+            if (count($get_check_req_approval) > 0) {
+                $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
             }
+
             if ($item->sts == '1') {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
