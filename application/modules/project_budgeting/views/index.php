@@ -22,7 +22,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 <div class="box">
     <div class="box-header">
         <?php if ($ENABLE_ADD) : ?>
-            
+
         <?php endif; ?>
     </div>
     <!-- /.box-header -->
