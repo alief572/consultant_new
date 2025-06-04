@@ -91,15 +91,15 @@ class Project_budgeting extends Admin_Controller
 
             $option = '<a href="' . base_url('project_budgeting/add/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm " style="background-color: #E100A5; color: white;"><i class="fa fa-arrow-up"></i></a>';
 
-            $check_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting', ['id_spk_penawaran' => $item->id_spk_penawaran])->row();
+            $check_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting', ['id_spk_penawaran' => $item->id_spk_penawaran])->result();
             if (count($check_spk_budgeting) > 0) {
 
                 $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
 
-                if ($check_spk_budgeting->sts == 1) {
+                if ($check_spk_budgeting[0]->sts == 1) {
                     $status = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
                 }
-                if ($check_spk_budgeting->sts == 2) {
+                if ($check_spk_budgeting[0]->sts == 2) {
                     $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
                 }
 
@@ -120,7 +120,7 @@ class Project_budgeting extends Admin_Controller
                 if ($this->viewPermission) {
                     $option .= '
                         <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem;">
-                            <a href="' . base_url('project_budgeting/view_budget/' . urlencode(str_replace('/', '|', $check_spk_budgeting->id_spk_budgeting))) . '" class="btn btn-sm btn-info" style="color: #000000">
+                            <a href="' . base_url('project_budgeting/view_budget/' . urlencode(str_replace('/', '|', $check_spk_budgeting[0]->id_spk_budgeting))) . '" class="btn btn-sm btn-info" style="color: #000000">
                                 <div class="col-12 dropdown-item">
                                 <b>
                                     <i class="fa fa-file"></i>
@@ -132,10 +132,10 @@ class Project_budgeting extends Admin_Controller
                     ';
                 }
 
-                if ($this->deletePermission && $check_spk_budgeting->sts !== '1') {
+                if ($this->deletePermission && $check_spk_budgeting[0]->sts !== '1') {
                     $option .= '
                         <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem;">
-                            <a href="javascript:void(0);" class="btn btn-sm btn-danger del_spk_budget" style="color: #000000" data-id="' . $check_spk_budgeting->id_spk_budgeting . '">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-danger del_spk_budget" style="color: #000000" data-id="' . $check_spk_budgeting[0]->id_spk_budgeting . '">
                                 <div class="col-12 dropdown-item">
                                 <b>
                                     <i class="fa fa-trash"></i>
