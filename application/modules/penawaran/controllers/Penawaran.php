@@ -609,7 +609,7 @@ class Penawaran extends Admin_Controller
 
             $mandays = $item->mandays;
             $mandays_rate = ($item->mandays >= 1) ? ($item->harga_aktifitas / $item->mandays) : ($item->harga_aktifitas);
-            $total = ($item->mandays >= 1) ? $mandays_rate : ($item->harga_aktifitas * $item->mandays);
+            $total = ($item->mandays >= 1) ? ($mandays_rate * $item->mandays) : ($item->harga_aktifitas * $item->mandays);
 
             $hasil .= '</select>';
             $hasil .= '</td>';
