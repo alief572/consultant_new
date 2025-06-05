@@ -81,7 +81,7 @@ class Penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001']);
+        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257']);
         $get_marketing = $this->db->get()->result();
 
         $this->db->select('a.id, a.name as nm_karyawan');
@@ -190,7 +190,7 @@ class Penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001']);
+        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257']);
         $get_marketing = $this->db->get()->result();
 
         $this->db->select('a.id, a.name as nm_karyawan');
@@ -477,7 +477,7 @@ class Penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001']);
+        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257']);
         $get_marketing = $this->db->get()->result();
 
         $this->db->select('a.id, a.name as nm_karyawan');
