@@ -392,7 +392,7 @@ class Setting extends Admin_Controller
 
         $options = [
             'cost' => $cost,
-            'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM)
+            'salt' => random_bytes(16)
         ];
 
         $password = password_hash($password, PASSWORD_BCRYPT, $options);
