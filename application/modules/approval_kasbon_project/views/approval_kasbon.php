@@ -196,6 +196,9 @@ if ($header->metode_pembayaran == '3') {
           $qty_tambahan = (isset($data_overbudget_subcont[$item->id_aktifitas])) ? $data_overbudget_subcont[$item->id_aktifitas]['qty_budget_tambahan'] : 0;
           $budget_tambahan = (isset($data_overbudget_subcont[$item->id_aktifitas])) ? $data_overbudget_subcont[$item->id_aktifitas]['budget_tambahan'] : 0;
 
+          $qty_sisa_sebelum = (($item->qty_estimasi - $item->qty_terpakai) - $item->qty_overbudget);
+          $sisa_budget_sebelum = (($item->total_budget_estimasi - $item->total_terpakai) - $item->total_overbudget);
+
           echo '<tr>';
 
           echo '<td class="text-center">' . $no . '</td>';
@@ -210,8 +213,8 @@ if ($header->metode_pembayaran == '3') {
           echo '<td class="text-right">';
           echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
           echo '</td>';
-          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_overbudget, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_overbudget, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($qty_sisa_sebelum, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($sisa_budget_sebelum, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
           echo '<td>';
           echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
@@ -302,6 +305,9 @@ if ($header->metode_pembayaran == '3') {
         foreach ($list_kasbon_subcont as $item) {
           $no++;
 
+          $sisa_qty_setelah = (($item->qty_estimasi - $item->qty_terpakai) + $item->qty_overbudget - $item->qty_pengajuan);
+          $sisa_budget_setelah = (($item->total_budget_estimasi - $item->total_terpakai) + $item->total_overbudget - $item->total_pengajuan);
+
           echo '<tr>';
 
           echo '<td class="text-center">' . $no . '</td>';
@@ -309,8 +315,8 @@ if ($header->metode_pembayaran == '3') {
           echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_overbudget, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->nominal_overbudget, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($sisa_qty_setelah, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($sisa_budget_setelah, 2) . '</td>';
 
           echo '</tr>';
         }
@@ -366,11 +372,13 @@ if ($header->metode_pembayaran == '3') {
         $ttl_qty_overbudget = 0;
         $ttl_total_overbudget = 0;
 
+        $ttl_qty_sebelum = 0;
+
         foreach ($list_kasbon_akomodasi as $item) {
           $no++;
 
-          $qty_sisa_sebelum = ($item->aktual_terpakai);
-          $sisa_budget = $item->sisa_budget;
+          $qty_sisa_sebelum = (($item->qty_estimasi - $item->qty_terpakai) - $item->qty_overbudget);
+          $sisa_budget_sebelum = (($item->total_budget_estimasi - $item->total_terpakai) - $item->total_overbudget);
 
           echo '<tr>';
 
@@ -386,8 +394,8 @@ if ($header->metode_pembayaran == '3') {
           echo '<td class="text-right">';
           echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
           echo '</td>';
-          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_overbudget, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_overbudget, 2) . '</td>';
+          echo '<td class="text-center">' . number_format(($item->qty_estimasi - $item->qty_terpakai) - $item->qty_overbudget, 2) . '</td>';
+          echo '<td class="text-right">' . number_format(($item->total_budget_estimasi - $item->total_terpakai) - $item->total_overbudget, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
           echo '<td>';
           echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
@@ -403,7 +411,7 @@ if ($header->metode_pembayaran == '3') {
           $ttl_qty_terpakai_others += $item->qty_terpakai;
           $ttl_total_terpakai_others += ($item->qty_terpakai > 0) ? $item->total_terpakai : 0;
           $ttl_qty_sebelum += $qty_sisa_sebelum;
-          $ttl_sisa_budget_sebelum += $sisa_budget;
+          $ttl_sisa_budget_sebelum += $sisa_budget_sebelum;
           $ttl_qty_overbudget += $item->qty_overbudget;
           $ttl_total_overbudget += ($item->qty_overbudget > 0) ? $item->total_terpakai : 0;
         }
@@ -460,6 +468,9 @@ if ($header->metode_pembayaran == '3') {
         foreach ($list_kasbon_akomodasi as $item) {
           $no++;
 
+          $sisa_qty_setelah = (($item->qty_estimasi - $item->qty_terpakai) + $item->qty_overbudget - $item->qty_pengajuan);
+          $sisa_budget_setelah = (($item->total_budget_estimasi - $item->total_terpakai) + $item->total_overbudget - $item->total_pengajuan);
+
           echo '<tr>';
 
           echo '<td class="text-center">' . $no . '</td>';
@@ -467,8 +478,8 @@ if ($header->metode_pembayaran == '3') {
           echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($sisa_qty_setelah, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($sisa_budget_setelah, 2) . '</td>';
           echo '</tr>';
 
           $ttl_estimasi_akomodasi += $item->total_budget_estimasi;
@@ -537,8 +548,8 @@ if ($header->metode_pembayaran == '3') {
         foreach ($list_kasbon_others as $item) {
           $no++;
 
-          $qty_sisa_sebelum = ($item->aktual_terpakai);
-          $sisa_budget = $item->sisa_budget;
+          $qty_sisa_sebelum = (($item->qty_estimasi - $item->qty_terpakai) - $item->qty_overbudget);
+          $sisa_budget_sebelum = (($item->total_budget_estimasi - $item->total_terpakai) - $item->total_overbudget);
 
           echo '<tr>';
 
@@ -554,8 +565,8 @@ if ($header->metode_pembayaran == '3') {
           echo '<td class="text-right">';
           echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
           echo '</td>';
-          echo '<td class="text-center">' . number_format($qty_sisa_sebelum - $item->qty_overbudget, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($sisa_budget - $item->total_overbudget, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($qty_sisa_sebelum, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($sisa_budget_sebelum, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
           echo '<td class="text-right">';
           echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
@@ -571,7 +582,7 @@ if ($header->metode_pembayaran == '3') {
           $ttl_qty_terpakai_others += $item->qty_terpakai;
           $ttl_total_terpakai_others += ($item->qty_terpakai > 0) ? $item->total_terpakai : 0;
           $ttl_qty_sebelum += $qty_sisa_sebelum;
-          $ttl_sisa_budget_sebelum += $sisa_budget;
+          $ttl_sisa_budget_sebelum += $sisa_budget_sebelum;
           $ttl_qty_overbudget += $item->qty_overbudget;
           $ttl_total_overbudget += ($item->qty_overbudget > 0) ? $item->total_terpakai : 0;
         }
@@ -627,6 +638,9 @@ if ($header->metode_pembayaran == '3') {
           $qty_tambahan = (isset($data_overbudget_others[$item->id_others])) ? $data_overbudget_others[$item->id_others]['qty_budget_tambahan'] : 0;
           $nominal_tambahan = (isset($data_overbudget_others[$item->id_others])) ? $data_overbudget_others[$item->id_others]['budget_tambahan'] : 0;
 
+          $sisa_qty_setelah = (($item->qty_estimasi - $item->qty_terpakai) + $item->qty_overbudget - $item->qty_pengajuan);
+          $sisa_budget_setelah = (($item->total_budget_estimasi - $item->total_terpakai) + $item->total_overbudget - $item->total_pengajuan);
+
           echo '<tr>';
 
           echo '<td class="text-center">' . $no . '</td>';
@@ -634,8 +648,8 @@ if ($header->metode_pembayaran == '3') {
           echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($sisa_qty_setelah, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($sisa_budget_setelah, 2) . '</td>';
           echo '</tr>';
 
           $ttl_estimasi_others += $item->total_budget_estimasi;
@@ -706,8 +720,8 @@ if ($header->metode_pembayaran == '3') {
         foreach ($list_kasbon_lab as $item) {
           $no++;
 
-          $qty_sisa_sebelum = ($item->aktual_terpakai);
-          $sisa_budget = $item->sisa_budget;
+          $qty_sisa_sebelum = (($item->qty_estimasi - $item->qty_terpakai) - $item->qty_overbudget);
+          $sisa_budget_sebelum = (($item->total_budget_estimasi - $item->total_terpakai) - $item->total_overbudget);
 
           echo '<tr>';
 
@@ -723,8 +737,8 @@ if ($header->metode_pembayaran == '3') {
           echo '<td class="text-right">';
           echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
           echo '</td>';
-          echo '<td class="text-center">' . number_format($qty_sisa_sebelum - $item->qty_overbudget, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($sisa_budget - $item->total_overbudget, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($qty_sisa_sebelum, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($sisa_budget_sebelum, 2) . '</td>';
           echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
           echo '<td class="text-right">';
           echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
@@ -796,6 +810,9 @@ if ($header->metode_pembayaran == '3') {
           $qty_tambahan = (isset($data_overbudget_lab[$item->id_lab])) ? $data_overbudget_lab[$item->id_lab]['qty_budget_tambahan'] : 0;
           $nominal_tambahan = (isset($data_overbudget_lab[$item->id_lab])) ? $data_overbudget_lab[$item->id_lab]['budget_tambahan'] : 0;
 
+          $sisa_qty_setelah = (($item->qty_estimasi - $item->qty_terpakai) + $item->qty_overbudget - $item->qty_pengajuan);
+          $sisa_budget_setelah = (($item->total_budget_estimasi - $item->total_terpakai) + $item->total_overbudget - $item->total_pengajuan);
+
           echo '<tr>';
 
           echo '<td class="text-center">' . $no . '</td>';
@@ -803,8 +820,8 @@ if ($header->metode_pembayaran == '3') {
           echo '<td class="text-center">' . number_format($item->qty_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->nominal_pengajuan, 2) . '</td>';
           echo '<td class="text-right">' . number_format($item->total_pengajuan, 2) . '</td>';
-          echo '<td class="text-center">' . number_format($item->aktual_terpakai - $item->qty_pengajuan, 2) . '</td>';
-          echo '<td class="text-right">' . number_format($item->sisa_budget - $item->total_pengajuan, 2) . '</td>';
+          echo '<td class="text-center">' . number_format($sisa_qty_setelah, 2) . '</td>';
+          echo '<td class="text-right">' . number_format($sisa_budget_setelah, 2) . '</td>';
           echo '</tr>';
 
           $ttl_estimasi_lab += $item->total_budget_estimasi;
