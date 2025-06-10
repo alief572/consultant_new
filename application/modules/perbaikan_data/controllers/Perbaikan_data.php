@@ -639,4 +639,72 @@ class Perbaikan_data extends Admin_Controller
     {
         echo phpinfo();
     }
+
+    public function fix_pengajuan()
+    {
+        $get_pengajuan = $this->db->get('kons_tr_kasbon_project_header')->result();
+
+        $this->db->trans_begin();
+
+        foreach ($get_pengajuan as $item) {
+            if ($item->tipe == '1') {
+                $this->db->select('SUM(a.total_pengajuan) as ttl_detail');
+                $this->db->from('kons_tr_kasbon_project_subcont a');
+                $this->db->where('a.id_header', $item->id);
+                $get_ttl_detail = $this->db->get()->row();
+
+                if ($item->grand_total <> $get_ttl_detail->ttl_detail) {
+                    echo $item->id . ' - ' . number_format($item->grand_total) . ' - ' . number_format($get_ttl_detail->ttl_detail) . '<br>';
+
+                    $this->db->update('kons_tr_kasbon_project_header', array('grand_total' => $get_ttl_detail->ttl_detail), array('id' => $item->id));
+                }
+            }
+            if ($item->tipe == '2') {
+                $this->db->select('SUM(a.total_pengajuan) as ttl_detail');
+                $this->db->from('kons_tr_kasbon_project_akomodasi a');
+                $this->db->where('a.id_header', $item->id);
+                $get_ttl_detail = $this->db->get()->row();
+
+                if ($item->grand_total <> $get_ttl_detail->ttl_detail) {
+                    echo $item->id . ' - ' . number_format($item->grand_total) . ' - ' . number_format($get_ttl_detail->ttl_detail) . '<br>';
+
+                    $this->db->update('kons_tr_kasbon_project_header', array('grand_total' => $get_ttl_detail->ttl_detail), array('id' => $item->id));
+                }
+            }
+            if ($item->tipe == '3') {
+                $this->db->select('SUM(a.total_pengajuan) as ttl_detail');
+                $this->db->from('kons_tr_kasbon_project_others a');
+                $this->db->where('a.id_header', $item->id);
+                $get_ttl_detail = $this->db->get()->row();
+
+                if ($item->grand_total <> $get_ttl_detail->ttl_detail) {
+                    echo $item->id . ' - ' . number_format($item->grand_total) . ' - ' . number_format($get_ttl_detail->ttl_detail) . '<br>';
+
+                    $this->db->update('kons_tr_kasbon_project_header', array('grand_total' => $get_ttl_detail->ttl_detail), array('id' => $item->id));
+                }
+            }
+            if ($item->tipe == '4') {
+                $this->db->select('SUM(a.total_pengajuan) as ttl_detail');
+                $this->db->from('kons_tr_kasbon_project_lab a');
+                $this->db->where('a.id_header', $item->id);
+                $get_ttl_detail = $this->db->get()->row();
+
+                if ($item->grand_total <> $get_ttl_detail->ttl_detail) {
+                    echo $item->id . ' - ' . number_format($item->grand_total) . ' - ' . number_format($get_ttl_detail->ttl_detail) . '<br>';
+
+                    $this->db->update('kons_tr_kasbon_project_header', array('grand_total' => $get_ttl_detail->ttl_detail), array('id' => $item->id));
+                }
+            }
+        }
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            echo 'ERROR!!';
+        } else {
+            $this->db->trans_commit();
+
+            echo 'SUCCESS!';
+        }
+    }
 }

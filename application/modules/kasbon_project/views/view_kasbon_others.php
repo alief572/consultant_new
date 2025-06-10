@@ -180,16 +180,16 @@ if ($header->metode_pembayaran == '3') {
                     $ttl_total_overbudget = 0;
 
                     foreach ($list_data_others as $item) {
-                        if (isset($list_arr_kasbon[$item->id_item])) {
+                        if (isset($list_arr_kasbon[$item->id_others])) {
                             $no++;
 
-                            $qty_terpakai = (isset($list_arr_kasbon[$item->id_item]['qty_terpakai'])) ? $list_arr_kasbon[$item->id_item]['qty_terpakai'] : 0;
-                            $nominal_terpakai = (isset($list_arr_kasbon[$item->id_item]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id_item]['nominal_terpakai'] : 0;
-                            $total_terpakai = (isset($list_arr_kasbon[$item->id_item]['total_terpakai'])) ? $list_arr_kasbon[$item->id_item]['total_terpakai'] : 0;
+                            $qty_terpakai = (isset($list_arr_kasbon[$item->id_others]['qty_terpakai'])) ? $list_arr_kasbon[$item->id_others]['qty_terpakai'] : 0;
+                            $nominal_terpakai = (isset($list_arr_kasbon[$item->id_others]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id_others]['nominal_terpakai'] : 0;
+                            $total_terpakai = (isset($list_arr_kasbon[$item->id_others]['total_terpakai'])) ? $list_arr_kasbon[$item->id_others]['total_terpakai'] : 0;
 
-                            $qty_overbudget = (isset($list_arr_kasbon[$item->id_item]['qty_overbudget'])) ? $list_arr_kasbon[$item->id_item]['qty_overbudget'] : 0;
-                            $nominal_overbudget = (isset($list_arr_kasbon[$item->id_item]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id_item]['nominal_overbudget'] : 0;
-                            $total_overbudget = (isset($list_arr_kasbon[$item->id_item]['total_overbudget'])) ? $list_arr_kasbon[$item->id_item]['total_overbudget'] : 0;
+                            $qty_overbudget = (isset($list_arr_kasbon[$item->id_others]['qty_overbudget'])) ? $list_arr_kasbon[$item->id_others]['qty_overbudget'] : 0;
+                            $nominal_overbudget = (isset($list_arr_kasbon[$item->id_others]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id_others]['nominal_overbudget'] : 0;
+                            $total_overbudget = (isset($list_arr_kasbon[$item->id_others]['total_overbudget'])) ? $list_arr_kasbon[$item->id_others]['total_overbudget'] : 0;
 
                             echo '<tr>';
 
@@ -266,12 +266,12 @@ if ($header->metode_pembayaran == '3') {
                     $ttl_total_pengajuan = 0;
 
                     foreach ($list_data_others as $item) {
-                        if (isset($list_arr_kasbon[$item->id_item])) {
+                        if (isset($list_arr_kasbon[$item->id_others])) {
                             $no++;
 
-                            $qty_pengajuan = (isset($list_arr_kasbon[$item->id_item]['qty_pengajuan'])) ? $list_arr_kasbon[$item->id_item]['qty_pengajuan'] : 0;
-                            $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_item]['nominal_pengajuan'])) ? $list_arr_kasbon[$item->id_item]['nominal_pengajuan'] : 0;
-                            $total_pengajuan = (isset($list_arr_kasbon[$item->id_item]['total_pengajuan'])) ? $list_arr_kasbon[$item->id_item]['total_pengajuan'] : 0;
+                            $qty_pengajuan = (isset($list_arr_kasbon[$item->id_others]['qty_pengajuan'])) ? $list_arr_kasbon[$item->id_others]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_others]['nominal_pengajuan'])) ? $list_arr_kasbon[$item->id_others]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($list_arr_kasbon[$item->id_others]['total_pengajuan'])) ? $list_arr_kasbon[$item->id_others]['total_pengajuan'] : 0;
 
                             echo '<tr>';
 
