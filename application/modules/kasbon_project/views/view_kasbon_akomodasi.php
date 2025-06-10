@@ -176,18 +176,18 @@ if ($header->metode_pembayaran == '3') {
                     $ttl_total_overbudget = 0;
 
                     foreach ($list_data_kasbon as $item) {
-                        if (isset($data_list_kasbon_akomodasi[$item->id])) {
+                        if (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) {
                             $no++;
 
-                            $qty_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['qty_pengajuan'] : 0;
-                            $nominal_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['nominal_pengajuan'] : 0;
-                            $total_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['total_pengajuan'] : 0;
+                            $qty_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['total_pengajuan'] : 0;
 
-                            $aktual_terpakai = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['aktual_terpakai'] : 0;
-                            $sisa_budget = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['sisa_budget'] : 0;
+                            $aktual_terpakai = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['aktual_terpakai'] : 0;
+                            $sisa_budget = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['sisa_budget'] : 0;
 
-                            $budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['budget_tambahan'] : 0;
-                            $qty_budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id])) ? $data_list_kasbon_akomodasi[$item->id]['qty_budget_tambahan'] : 0;
+                            $budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['budget_tambahan'] : 0;
+                            $qty_budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['qty_budget_tambahan'] : 0;
 
                             echo '<tr>';
 
@@ -266,7 +266,7 @@ if ($header->metode_pembayaran == '3') {
                     $ttl_total_pengajuan = 0;
 
                     foreach ($list_data_kasbon as $item) {
-                        if (isset($data_list_kasbon_akomodasi[$item->id])) {
+                        if (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) {
                             $no++;
 
                             $qty_pengajuan = $item->qty_pengajuan;

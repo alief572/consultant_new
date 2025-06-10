@@ -2550,7 +2550,7 @@ class Kasbon_project extends Admin_Controller
         $data_list_kasbon_akomodasi = [];
 
         foreach ($get_kasbon_akomodasi as $item) {
-            $data_list_kasbon_akomodasi[$item->id] = [
+            $data_list_kasbon_akomodasi[$item->id_akomodasi] = [
                 'nm_biaya' => $item->nm_biaya,
                 'nominal_pengajuan' => $item->nominal_pengajuan,
                 'qty_pengajuan' => $item->qty_pengajuan,
@@ -2628,7 +2628,7 @@ class Kasbon_project extends Admin_Controller
         $data_list_kasbon_akomodasi = [];
 
         foreach ($get_kasbon_akomodasi as $item) {
-            $data_list_kasbon_akomodasi[$item->id] = [
+            $data_list_kasbon_akomodasi[$item->id_akomodasi] = [
                 'nm_biaya' => $item->nm_biaya,
                 'nominal_pengajuan' => $item->nominal_pengajuan,
                 'qty_pengajuan' => $item->qty_pengajuan,
@@ -2813,7 +2813,7 @@ class Kasbon_project extends Admin_Controller
 
         $list_arr_kasbon = [];
         foreach ($get_data_kasbon as $item) {
-            $list_arr_kasbon[$item->id_item] = [
+            $list_arr_kasbon[$item->id_others] = [
                 'qty_pengajuan' => $item->qty_pengajuan,
                 'nominal_pengajuan' => $item->nominal_pengajuan,
                 'total_pengajuan' => $item->total_pengajuan,
