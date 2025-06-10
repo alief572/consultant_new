@@ -17,13 +17,13 @@ class Actual_plan_tagih_model extends BF_Model
     public function generate_id()
     {
         $Ym             = date('ym');
-        $srcMtr            = "SELECT MAX(id) as maxP FROM kons_tr_plan_tagih_header WHERE id LIKE '%/" . date('y') . "%' ";
+        $srcMtr            = "SELECT MAX(id) as maxP FROM kons_tr_actual_plan_tagih WHERE id LIKE '%/" . date('y') . "%' ";
         $resultMtr        = $this->db->query($srcMtr)->result_array();
         $angkaUrut2        = $resultMtr[0]['maxP'];
-        $urutan2        = (int)substr($angkaUrut2, 0, 3);
+        $urutan2        = (int)substr($angkaUrut2, 0, 5);
         $urutan2++;
-        $urut2            = sprintf('%03s', $urutan2);
-        $kode_trans        = $urut2 . '/PLN-TGH/' . int_to_roman(date('m')) . '/' . date('y');
+        $urut2            = sprintf('%05s', $urutan2);
+        $kode_trans        = $urut2 . '/ACT-TGH/' . int_to_roman(date('m')) . '/' . date('y');
 
         return $kode_trans;
     }
