@@ -71,21 +71,21 @@ $ENABLE_DELETE  = has_permission('Actual_Plan_Tagih.Delete');
 <input type="hidden" id="bulan" value="1">
 
 <div class="modal modal-default fade" id="dialog-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">Closing PO</h4>
+                <h4 class="modal-title" id="myModalLabel">Update Actual Plan Tagih</h4>
             </div>
-            <form action="" method="post" id="CP-frm-data">
+            <form action="" method="post" id="frm-data" enctype="multipart/form-data">
                 <div class="modal-body" id="ModalViewCP">
-                    ...
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <span class="glyphicon glyphicon-remove"></span> Cancel
                     </button>
-                    <button type="submit" class="btn btn-sm btn-danger">Close It!</button>
+                    <button type="submit" class="btn btn-sm btn-success">Update</button>
                 </div>
             </form>
         </div>
@@ -122,15 +122,115 @@ $ENABLE_DELETE  = has_permission('Actual_Plan_Tagih.Delete');
                 'id': id
             },
             cache: false,
-            dataType: 'json',
             success: function(result) {
-
+                $('#ModalViewCP').html(result);
+                $('#dialog-popup').modal('show');
             },
             error: function(result) {
                 swal({
                     type: 'error',
                     title: 'Error !',
                     text: 'Please, try again later !'
+                });
+            }
+        });
+    });
+
+    $(document).on('change', 'select[name="tagih_mundur"]', function() {
+        var tagih_mundur = $(this).val();
+
+        if (tagih_mundur == '1' || tagih_mundur == '3') {
+            $('input[name="tanggal_actual"]').attr('readonly', true);
+            $('textarea[name="alasan_mundur"]').attr('readonly', true);
+            $('input[name="upload_surat_mundur"]').prop('disabled', true);
+        }
+        if (tagih_mundur == '2') {
+            $('input[name="tanggal_actual"]').attr('readonly', false);
+            $('textarea[name="alasan_mundur"]').attr('readonly', false);
+            $('input[name="upload_surat_mundur"]').prop('disabled', false);
+        }
+    });
+
+    $(document).on('submit', '#frm-data', function(e) {
+        e.preventDefault();
+
+        var tagih_mundur = $('select[name="tagih_mundur"]').val();
+
+        if (tagih_mundur == '2') {
+            var tanggal_actual = $('input[name="tanggal_actual"]').val();
+            var alasan_mundur = $('textarea[name="alasan_mundur"]').val();
+            var upload_surat_mundur = $('input[name="upload_surat_mundur"]').val();
+
+            var valid = 1;
+            var msg = '';
+            if (valid == 1 && tanggal_actual.length < 1) {
+                var valid = 0;
+
+                var msg = 'Mohon pilih dulu tanggal actual plan tagih nya !';
+            }
+            if (valid == 1 && alasan_mundur.length < 1) {
+                var valid = 0;
+
+                var msg = 'Mohon isi dulu alasan mundur plan tagih nya !';
+            }
+            if (valid == 1 && upload_surat_mundur.length < 1) {
+                var valid = 0;
+
+                var msg = 'Mohon pilih dulu file surat mundur plan tagih nya !';
+            }
+
+            if (valid !== 1) {
+                swal({
+                    type: 'warning',
+                    title: 'Warning !',
+                    text: msg
+                });
+
+                return false;
+            }
+        }
+
+        swal({
+            type: 'warning',
+            title: 'Warning !',
+            text: 'Are you sure ?',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                var form_data = new FormData($('#frm-data')[0]);
+
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'save_actual_plan_tagih',
+                    data: form_data,
+                    dataType: 'json',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.msg
+                            }, function(lanjut) {
+                                location.reload();
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Warning !',
+                                text: result.msg
+                            });
+                        }
+                    },
+                    error: function() {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
                 });
             }
         });
