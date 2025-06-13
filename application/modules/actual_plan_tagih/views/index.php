@@ -91,6 +91,28 @@ $ENABLE_DELETE  = has_permission('Actual_Plan_Tagih.Delete');
         </div>
     </div>
 </div>
+
+<div class="modal modal-default fade" id="dialog-popup-macet" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">Update Tagihan Macet</h4>
+            </div>
+            <form action="" method="post" id="frm-data-macet" enctype="multipart/form-data">
+                <div class="modal-body" id="ModalViewCPMacet">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-success">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <!-- DataTables -->
 <!-- <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
@@ -136,6 +158,30 @@ $ENABLE_DELETE  = has_permission('Actual_Plan_Tagih.Delete');
         });
     });
 
+    $(document).on('click', '.aktual_tagihan_macet', function() {
+        var id = $(this).data('id');
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'aktual_tagihan_macet_get',
+            data: {
+                'id': id
+            },
+            cache: false,
+            success: function(result) {
+                $('#ModalViewCPMacet').html(result);
+                $('#dialog-popup-macet').modal('show');
+            },
+            error: function(result) {
+                swal({
+                    type: 'error',
+                    title: 'Error !',
+                    text: 'Please, try again later !'
+                });
+            }
+        });
+    });
+
     $(document).on('change', 'select[name="tagih_mundur"]', function() {
         var tagih_mundur = $(this).val();
 
@@ -149,6 +195,7 @@ $ENABLE_DELETE  = has_permission('Actual_Plan_Tagih.Delete');
             $('textarea[name="alasan_mundur"]').attr('readonly', false);
             $('input[name="upload_surat_mundur"]').prop('disabled', false);
         }
+
     });
 
     $(document).on('submit', '#frm-data', function(e) {
@@ -202,6 +249,57 @@ $ENABLE_DELETE  = has_permission('Actual_Plan_Tagih.Delete');
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'save_actual_plan_tagih',
+                    data: form_data,
+                    dataType: 'json',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.msg
+                            }, function(lanjut) {
+                                location.reload();
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Warning !',
+                                text: result.msg
+                            });
+                        }
+                    },
+                    error: function() {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('submit', '#frm-data-macet', function(e) {
+        e.preventDefault();
+
+        var tagih_mundur = $('select[name="tagih_mundur"]').val();
+
+        swal({
+            type: 'warning',
+            title: 'Warning !',
+            text: 'Are you sure ?',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                var form_data = new FormData($('#frm-data-macet')[0]);
+
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'save_actual_plan_tagih_macet',
                     data: form_data,
                     dataType: 'json',
                     cache: false,

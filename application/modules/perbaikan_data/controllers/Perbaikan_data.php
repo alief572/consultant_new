@@ -707,4 +707,46 @@ class Perbaikan_data extends Admin_Controller
             echo 'SUCCESS!';
         }
     }
+
+    public function fix_kasbon_no()
+    {
+        $this->db->select('a.*, c.nm_lengkap');
+        $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('request_payment b', 'b.no_doc = a.id', 'left');
+        $this->db->join('users c', 'c.id_user = a.created_by', 'left');
+        $this->db->where('a.sts', 1);
+        $this->db->where('b.no_doc', null);
+        $get_kasbon = $this->db->get()->result();
+
+        $arr_insert_req_payment = [];
+        foreach ($get_kasbon as $item) {
+            echo $item->id . " - " . $item->deskripsi . '<br>';
+
+            $arr_insert_req_payment[] = [
+                'no_doc' => $item->id,
+                'nama' => $item->nm_lengkap,
+                'tgl_doc' => $item->tgl,
+                'keperluan' => $item->deskripsi,
+                'jumlah' => $item->grand_total,
+                'created_by' => $item->nm_lengkap,
+                'created_on' => date('Y-m-d H:i:s'),
+                'ids' => $item->id,
+                'currency' => 'idr'
+            ];
+        }
+
+        $this->db->trans_begin();
+
+        $this->db->insert_batch('request_payment', $arr_insert_req_payment);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            echo 'ERROR !';
+        } else {
+            $this->db->trans_commit();
+
+            echo 'SUCCESS !';
+        }
+    }
 }

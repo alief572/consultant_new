@@ -5,8 +5,6 @@
             <th class="text-center">Keterangan</th>
             <th class="text-center">Tagih/Mundur</th>
             <th class="text-center">Select Tanggal</th>
-            <th class="text-center">Alasan Mundur</th>
-            <th class="text-center">Upload Surat Mundur</th>
         </tr>
     </thead>
     <tbody>
@@ -28,19 +26,11 @@
             <td class="text-left"><?= $data_plan_tagih_detail->desc_payment ?></td>
             <td>
                 <select name="tagih_mundur" id="" class="form-control form-control-sm">
-                    <option value="1">Tagih</option>
                     <option value="2">Mundur</option>
-                    <option value="3">Tagihan Macet</option>
                 </select>
             </td>
             <td>
-                <input type="date" name="tanggal_actual" id="" class="form-control form-control-sm" class="text-center" readonly>
-            </td>
-            <td>
-                <textarea name="alasan_mundur" id="" class="form-control form-control-sm" readonly></textarea>
-            </td>
-            <td>
-                <input type="file" name="upload_surat_mundur" id="" class="form-control form-control-sm" disabled>
+                <input type="date" name="tanggal_actual" id="" class="form-control form-control-sm" class="text-center">
             </td>
         </tr>
     </tbody>
