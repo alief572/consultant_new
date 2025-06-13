@@ -192,8 +192,8 @@
             <th align="center">No.</th>
             <th align="center">Item</th>
             <th align="center">Qty</th>
-            <th align="center">Price/Unit</th>
-            <th align="center">Total</th>
+            <th align="center">Price/Unit Budget</th>
+            <th align="center">Total Budget</th>
             <th align="center">Keterangan</th>
         </tr>
     </thead>
@@ -207,14 +207,51 @@
             echo '<td align="center">' . $no_others . '</td>';
             echo '<td align="left">' . $item_others->nm_biaya . '</td>';
             echo '<td align="center">' . number_format($item_others->qty) . '</td>';
-            echo '<td align="center">' . number_format($item_others->price_unit, 2) . '</td>';
-            echo '<td align="center">' . number_format($item_others->total, 2) . '</td>';
+            echo '<td align="center">' . number_format($item_others->price_unit_budget, 2) . '</td>';
+            echo '<td align="center">' . number_format($item_others->total_budget, 2) . '</td>';
             echo '<td align="left">' . $item_others->keterangan . '</td>';
             echo '</tr>';
 
-            $biaya_others += $item_others->total;
+            $biaya_others += $item_others->total_budget;
 
             $no_others++;
+        }
+        ?>
+    </tbody>
+</table>
+<br><br>
+
+<h3>Detail Lab</h3>
+<hr>
+<table width="100%" class="table table-bordered" border="1">
+    <thead>
+        <tr>
+            <th align="center">No.</th>
+            <th align="center">Item</th>
+            <th align="center">Qty</th>
+            <th align="center">Price/Unit Budget</th>
+            <th align="center">Total Budget</th>
+            <th align="center">Keterangan</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $biaya_lab = 0;
+
+        $no_lab = 1;
+        foreach ($list_lab as $item_lab) {
+            echo '<tr>';
+            echo '<td align="center">' . $no_lab . '</td>';
+            echo '<td align="left">' . $item_lab->nm_biaya . '</td>';
+            echo '<td align="center">' . number_format($item_lab->qty) . '</td>';
+            echo '<td align="center">' . number_format($item_lab->price_unit_budget, 2) . '</td>';
+            echo '<td align="center">' . number_format($item_lab->total_budget, 2) . '</td>';
+            echo '<td align="left">' . $item_lab->keterangan . '</td>';
+            echo '</tr>';
+
+            $biaya_lab += $item_lab->total_budget;
+
+            $no_lab++;
         }
         ?>
     </tbody>
@@ -260,14 +297,20 @@
         <th align="left" valign="top" width="50">Mandays Internal</th>
         <th align="center" valign="top" width="2">:</th>
         <td width="100" valign="top"><?= number_format($list_spk_penawaran->mandays_internal) ?></td>
-        <th align="left" valign="top" width="50">Biaya Tandem</th>
+        <th align="left" valign="top" width="50">Biaya Lab</th>
         <th align="center" width="2" valign="top">:</th>
-        <td width="100" valign="top">Rp. <?= number_format($ttl_tandem, 2) ?></td>
+        <td width="100" valign="top">Rp. <?= number_format($biaya_lab, 2) ?></td>
     </tr>
     <tr>
         <th align="left" valign="top" width="50">Mandays Rate</th>
         <th align="center" valign="top" width="2">:</th>
         <td width="100" valign="top"><?= number_format($list_spk_penawaran->mandays_rate, 2) ?></td>
+        <th align="left" valign="top" width="50">Biaya Tandem</th>
+        <th align="center" width="2" valign="top">:</th>
+        <td width="100" valign="top">Rp. <?= number_format($ttl_tandem, 2) ?></td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
         <th align="left" valign="top" width="50">Nilai Kontrak Bersih</th>
         <th align="center" width="2" valign="top">:</th>
         <td width="100" valign="top">Rp. <?= number_format($list_spk_penawaran->nilai_kontrak_bersih, 2) ?></td>

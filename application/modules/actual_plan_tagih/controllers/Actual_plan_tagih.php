@@ -62,8 +62,29 @@ class Actual_plan_tagih extends Admin_Controller
 
         $get_plan_tagih_detail  = $this->db->get_where('kons_tr_plan_tagih_detail', array('id' => $id))->row();
 
+        $macet = '';
+        $get_actual_plan_tagih = $this->db->get_where('kons_tr_actual_plan_tagih', array('id_detail_plan_tagih' => $id))->result();
+        if (!empty($get_actual_plan_tagih) && $get_actual_plan_tagih->tagih_mundur == '3') {
+            $macet = '1';
+        }
+
         $this->template->set('data_plan_tagih_detail', $get_plan_tagih_detail);
+        $this->template->set('macet', $macet);
         $this->template->render('form_actual_plan_tagih');
+    }
+
+    public function aktual_tagihan_macet_get()
+    {
+        $id = $this->input->post('id');
+
+        $get_plan_tagih_detail  = $this->db->get_where('kons_tr_plan_tagih_detail', array('id' => $id))->row();
+
+        $macet = '';
+
+
+        $this->template->set('data_plan_tagih_detail', $get_plan_tagih_detail);
+        $this->template->set('macet', $macet);
+        $this->template->render('form_actual_plan_tagih_macet');
     }
 
     public function save_actual_plan_tagih()
@@ -72,14 +93,15 @@ class Actual_plan_tagih extends Admin_Controller
 
         $file_surat_mundur = '';
         if (!empty($_FILES['upload_surat_mundur'])) {
-            $config['upload_path']   = 'uploads/surat_mundur/';
+            $config['upload_path']   = './uploads/surat_mundur';
             $config['allowed_types'] = '*';
             $config['max_size']      = 999999999999; // In KB
             $config['encrypt_name']  = TRUE; // Optional: encrypt the filename
+            $config['remove_spaces']  = TRUE; // Optional: encrypt the filename
 
             $this->load->library('upload', $config);
 
-
+            $this->upload->initialize($config);
             if ($this->upload->do_upload('upload_surat_mundur')) {
                 $uploadData = $this->upload->data();
                 $file_surat_mundur = 'uploads/surat_mundur/' . $uploadData['file_name'];
@@ -90,55 +112,179 @@ class Actual_plan_tagih extends Admin_Controller
         }
 
         $file_laporan_progress = '';
-        if (!empty($_FILES['upload_laporan_progress'])) {
-            $config2['upload_path']   = './uploads/actual_plan_tagih_laporan_progress/';
+        if (!empty($_FILES['upload_laporan_progress']['filename'])) {
+            $config2['upload_path']   = './uploads/laporan_progress';
             $config2['allowed_types'] = '*';
             $config2['max_size']      = 999999999999; // In KB
-            $config2['encrypt_name']  = TRUE; // Optional: encrypt the filename
+            $config2['encrypt_name']  = TRUE; // Optional: encrypt the filename 
+            $config2['remove_spaces']  = TRUE; // Optional: encrypt the filename 
 
             $this->load->library('upload', $config2);
 
-
+            $this->upload->initialize($config2);
             if ($this->upload->do_upload('upload_laporan_progress')) {
                 $uploadData2 = $this->upload->data();
-                $file_laporan_progress = 'uploads/actual_plan_tagih_laporan_progress/' . $uploadData2['file_name'];
+                $file_laporan_progress = 'uploads/laporan_progress/' . $uploadData2['file_name'];
             } else {
                 print_r('laporan progress - ' . $this->upload->display_errors());
                 exit;
             }
         }
 
-        $id = $this->Actual_plan_tagih_model->generate_id();
-        $arr_insert = [
-            'id' => $id,
-            'id_detail_plan_tagih' => $post['id_detail_plan_tagih'],
-            'id_top' => $post['id_top'],
-            'id_spk_penawaran' => $post['id_spk_penawaran'],
-            'id_penawaran' => $post['id_penawaran'],
-            'term_payment' => $post['term_payment'],
-            'persen_payment' => $post['persen_payment'],
-            'nominal_payment' => $post['nominal_payment'],
-            'desc_payment' => $post['desc_payment'],
-            'tgl_plan_tagih' => $post['tgl_plan_tagih'],
-            'urutan' => $post['urutan'],
-            'tanggal_actual_plan_tagih' => $post['tanggal_actual'],
-            'tagih_mundur' => $post['tagih_mundur'],
-            'alasan_mundur' => $post['alasan_mundur'],
-            'file_surat_mundur' => $file_surat_mundur,
-            'file_laporan_progress' => $file_laporan_progress,
-            'created_by' => $this->auth->user_id(),
-            'created_date' => date('Y-m-d H:i:s')
-        ];
+        $this->db->trans_begin();
+
+        if ($post['macet'] == '1') {
+            $arr_update = [
+                'tgl_actual_plan_tagih' => $post['tgl_plan_tagih'],
+                'tagih_mundur' => $post['tagih_mundur'],
+                'alasan_mundur' => '',
+                'file_surat_mundur' => '',
+                'file_laporan_progress' => $file_laporan_progress,
+                'macet' => 1
+            ];
+            $update_actual_plan_tagih = $this->db->update('kons_tr_actual_plan_tagih', $arr_update, array('id_detail_plan_tagih' => $post['id_detail_plan_tagih']));
+            if (!$update_actual_plan_tagih) {
+                $this->db->trans_rollback();
+
+                print_r($this->db->last_query());
+                exit;
+            }
+        } else {
+            $id = $this->Actual_plan_tagih_model->generate_id();
+            $arr_insert = [
+                'id' => $id,
+                'id_detail_plan_tagih' => $post['id_detail_plan_tagih'],
+                'id_top' => $post['id_top'],
+                'id_spk_penawaran' => $post['id_spk_penawaran'],
+                'id_penawaran' => $post['id_penawaran'],
+                'term_payment' => $post['term_payment'],
+                'persen_payment' => $post['persen_payment'],
+                'nominal_payment' => $post['nominal_payment'],
+                'desc_payment' => $post['desc_payment'],
+                'tgl_plan_tagih' => $post['tgl_plan_tagih'],
+                'urutan' => $post['urutan'],
+                'tanggal_actual_plan_tagih' => $post['tanggal_actual'],
+                'tagih_mundur' => $post['tagih_mundur'],
+                'alasan_mundur' => $post['alasan_mundur'],
+                'file_surat_mundur' => $file_surat_mundur,
+                'file_laporan_progress' => $file_laporan_progress,
+                'created_by' => $this->auth->user_id(),
+                'created_date' => date('Y-m-d H:i:s')
+            ];
+            if ($post['tagih_mundur'] == '3') {
+                $arr_insert = [
+                    'id' => $id,
+                    'id_detail_plan_tagih' => $post['id_detail_plan_tagih'],
+                    'id_top' => $post['id_top'],
+                    'id_spk_penawaran' => $post['id_spk_penawaran'],
+                    'id_penawaran' => $post['id_penawaran'],
+                    'term_payment' => $post['term_payment'],
+                    'persen_payment' => $post['persen_payment'],
+                    'nominal_payment' => $post['nominal_payment'],
+                    'desc_payment' => $post['desc_payment'],
+                    'tgl_plan_tagih' => $post['tgl_plan_tagih'],
+                    'urutan' => $post['urutan'],
+                    'tanggal_actual_plan_tagih' => $post['tanggal_actual'],
+                    'tagih_mundur' => $post['tagih_mundur'],
+                    'alasan_mundur' => $post['alasan_mundur'],
+                    'file_surat_mundur' => $file_surat_mundur,
+                    'file_laporan_progress' => $file_laporan_progress,
+                    'macet' => 1,
+                    'created_by' => $this->auth->user_id(),
+                    'created_date' => date('Y-m-d H:i:s')
+                ];
+            } else {
+                $arr_insert = [
+                    'id' => $id,
+                    'id_detail_plan_tagih' => $post['id_detail_plan_tagih'],
+                    'id_top' => $post['id_top'],
+                    'id_spk_penawaran' => $post['id_spk_penawaran'],
+                    'id_penawaran' => $post['id_penawaran'],
+                    'term_payment' => $post['term_payment'],
+                    'persen_payment' => $post['persen_payment'],
+                    'nominal_payment' => $post['nominal_payment'],
+                    'desc_payment' => $post['desc_payment'],
+                    'tgl_plan_tagih' => $post['tgl_plan_tagih'],
+                    'urutan' => $post['urutan'],
+                    'tanggal_actual_plan_tagih' => $post['tanggal_actual'],
+                    'tagih_mundur' => $post['tagih_mundur'],
+                    'alasan_mundur' => $post['alasan_mundur'],
+                    'file_surat_mundur' => $file_surat_mundur,
+                    'file_laporan_progress' => $file_laporan_progress,
+                    'created_by' => $this->auth->user_id(),
+                    'created_date' => date('Y-m-d H:i:s')
+                ];
+            }
+
+            $insert_actual_plan = $this->db->insert('kons_tr_actual_plan_tagih', $arr_insert);
+            if (!$insert_actual_plan) {
+                $this->db->trans_rollback();
+
+                print_r($this->db->last_query());
+                exit;
+            }
+        }
+
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+
+            $valid = 0;
+            $msg = 'Please try again later !';
+        } else {
+            $this->db->trans_commit();
+
+            $valid = 1;
+            $msg = 'Data saved succesfully !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'msg' => $msg
+        ]);
+    }
+
+    public function save_actual_plan_tagih_macet()
+    {
+        $post = $this->input->post();
+
+        $file_laporan_progress = '';
+        if (!empty($_FILES['upload_laporan_progress'])) {
+            $config2['upload_path']   = './uploads/laporan_progress';
+            $config2['allowed_types'] = '*';
+            $config2['max_size']      = 999999999999; // In KB
+            $config2['encrypt_name']  = TRUE; // Optional: encrypt the filename 
+            $config2['remove_spaces']  = TRUE; // Optional: encrypt the filename 
+
+            $this->load->library('upload', $config2);
+
+            $this->upload->initialize($config2);
+            if ($this->upload->do_upload('upload_laporan_progress')) {
+                $uploadData2 = $this->upload->data();
+                $file_laporan_progress = 'uploads/laporan_progress/' . $uploadData2['file_name'];
+            } else {
+                print_r('laporan progress - ' . $this->upload->display_errors());
+                exit;
+            }
+        }
 
         $this->db->trans_begin();
 
-        $insert_actual_plan = $this->db->insert('kons_tr_actual_plan_tagih', $arr_insert);
-        if (!$insert_actual_plan) {
+        $arr_update = [
+            'tanggal_actual_plan_tagih' => $post['tanggal_actual'],
+            'tagih_mundur' => $post['tagih_mundur'],
+            'alasan_mundur' => '',
+            'file_surat_mundur' => '',
+            'file_laporan_progress' => $file_laporan_progress
+        ];
+        $update_actual_plan_tagih = $this->db->update('kons_tr_actual_plan_tagih', $arr_update, array('id_detail_plan_tagih' => $post['id_detail_plan_tagih']));
+        if (!$update_actual_plan_tagih) {
             $this->db->trans_rollback();
 
             print_r($this->db->last_query());
             exit;
         }
+
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

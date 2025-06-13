@@ -413,6 +413,12 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.id_penawaran', $get_spk_penawaran->id_penawaran);
         $get_others = $this->db->get()->result();
 
+        $this->db->select('a.*, b.isu_lingkungan as nm_biaya');
+        $this->db->from('kons_tr_penawaran_lab a');
+        $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $get_spk_penawaran->id_penawaran);
+        $get_lab = $this->db->get()->result();
+
         $ttl_mandays_subcont = 0;
         $ttl_tandem = 0;
         foreach ($get_spk_penawaran_subcont as $item) {
@@ -440,6 +446,7 @@ class SPK_penawaran extends Admin_Controller
             'detail_informasi_awal' => $detail_informasi_awal,
             'list_akomodasi' => $get_akomodasi,
             'list_others' => $get_others,
+            'list_lab' => $get_lab,
             'ttl_mandays_subcont' => $ttl_mandays_subcont,
             'ttl_tandem' => $ttl_tandem,
             'nm_paket' => $nm_paket

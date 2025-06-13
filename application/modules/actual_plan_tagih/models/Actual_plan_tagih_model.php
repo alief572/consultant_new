@@ -40,8 +40,15 @@ class Actual_plan_tagih_model extends BF_Model
         $this->db->from('kons_tr_plan_tagih_detail a');
         $this->db->join('kons_tr_plan_tagih_header b', 'b.id = a.id_header');
         $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = a.id_spk_penawaran');
-        $this->db->where('DATE_FORMAT(a.tgl_plan_tagih, "%Y") =', date('Y'));
-        $this->db->where('DATE_FORMAT(a.tgl_plan_tagih, "%m") =', sprintf('%02s', $bulan));
+        $this->db->join('kons_tr_actual_plan_tagih d', 'd.id_detail_plan_tagih = a.id', 'left');
+        if ($bulan == 'macet') {
+            $this->db->where('d.id IS NOT NULL');
+            $this->db->where('d.tagih_mundur', '3');
+        } else {
+            $this->db->where('DATE_FORMAT(a.tgl_plan_tagih, "%Y") =', date('Y'));
+            $this->db->where('DATE_FORMAT(a.tgl_plan_tagih, "%m") =', sprintf('%02s', $bulan));
+            $this->db->where('d.id', null);
+        }
         if (!empty($search['value'])) {
             $this->db->group_start();
             $this->db->like('a.id_spk_penawaran', $search['value'], 'both');
@@ -63,8 +70,15 @@ class Actual_plan_tagih_model extends BF_Model
         $this->db->from('kons_tr_plan_tagih_detail a');
         $this->db->join('kons_tr_plan_tagih_header b', 'b.id = a.id_header');
         $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = a.id_spk_penawaran');
-        $this->db->where('DATE_FORMAT(a.tgl_plan_tagih, "%Y") =', date('Y'));
-        $this->db->where('DATE_FORMAT(a.tgl_plan_tagih, "%m") =', sprintf('%02s', $bulan));
+        $this->db->join('kons_tr_actual_plan_tagih d', 'd.id_detail_plan_tagih = a.id', 'left');
+        if ($bulan == 'macet') {
+            $this->db->where('d.id IS NOT NULL');
+            $this->db->where('d.tagih_mundur', '3');
+        } else {
+            $this->db->where('DATE_FORMAT(a.tgl_plan_tagih, "%Y") =', date('Y'));
+            $this->db->where('DATE_FORMAT(a.tgl_plan_tagih, "%m") =', sprintf('%02s', $bulan));
+            $this->db->where('d.id', null);
+        }
         if (!empty($search['value'])) {
             $this->db->group_start();
             $this->db->like('a.id_spk_penawaran', $search['value'], 'both');
@@ -84,9 +98,16 @@ class Actual_plan_tagih_model extends BF_Model
         foreach ($get_data->result() as $item) {
             $no++;
 
-            $status = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
+            $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Actual Plan Tagih</button>';
+            if ($bulan == 'macet') {
+                $status = '<button type="button" class="btn btn-sm btn-danger">Tagihan Macet</button>';
+            }
 
-            $option = '<button type="button" class="btn btn-sm btn-warning aktual_tagihan" title="Aktual Tagihan" data-id="' . $item->id . '"><i class="fa fa-pencil"></i></button>';
+            if ($bulan == 'macet') {
+                $option = '<button type="button" class="btn btn-sm btn-warning aktual_tagihan_macet" title="Penagihan Tagihan Macet" data-id="' . $item->id . '"><i class="fa fa-pencil"></i></button>';
+            } else {
+                $option = '<button type="button" class="btn btn-sm btn-warning aktual_tagihan" title="Aktual Tagihan" data-id="' . $item->id . '"><i class="fa fa-pencil"></i></button>';
+            }
 
             $hasil[] = [
                 'no' => $no,
