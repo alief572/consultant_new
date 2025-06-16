@@ -391,11 +391,11 @@ class Setting extends Admin_Controller
         //End finding cost
 
         $options = [
-            'cost' => $cost,
-            'salt' => random_bytes(16)
+            'cost' => 12
         ];
 
-        $password = password_hash($password, PASSWORD_BCRYPT, $options);
+
+        $password = password_hash($password, PASSWORD_DEFAULT);
 
         if ($type == 'insert') {
             $data_insert = array(
