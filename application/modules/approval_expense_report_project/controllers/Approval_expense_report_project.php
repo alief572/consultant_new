@@ -771,7 +771,7 @@ class Approval_expense_report_project extends Admin_Controller
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             $this->db->where('a.sts_req', 1);
             $this->db->group_by('a.id');
-            $check_expense_req_app = $this->db->get()->row();
+            $check_expense_req_app = $this->db->get()->result();
 
             if (count($check_expense_req_app) < 1) {
                 $valid_show = 0;
