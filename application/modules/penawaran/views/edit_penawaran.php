@@ -55,9 +55,20 @@ if (count($list_penawaran_lab) > 0) {
                     <td class="pd-5" width="390">
                         <input type="text" name="id_penawaran" id="" class="form-control form-control-sm" value="<?= $list_penawaran->id_quotation ?>" readonly>
                     </td>
-                    <td class="pd-5 semi-bold">Date</td>
+                    <td class="pd-5 semi-bold">Company</td>
                     <td class="pd-5" width="390">
-                        <input type="date" name="tgl_quotation" id="" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime($list_penawaran->tgl_quotation)) ?>" required>
+                        <select class="form-control form-control-sm" name="company">
+                            <option value="">- Company -</option>
+                            <?php
+                            foreach ($list_company as $item) :
+                                $selected = '';
+                                if ($item->id == $list_penawaran->company) {
+                                    $selected = 'selected';
+                                }
+                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nm_company . '</option>';
+                            endforeach;
+                            ?>
+                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -76,6 +87,17 @@ if (count($list_penawaran_lab) > 0) {
                             ?>
                         </select>
                     </td>
+                    <td class="pd-5 semi-bold">Date</td>
+                    <td class="pd-5" width="390">
+                        <input type="date" name="tgl_quotation" id="" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime($list_penawaran->tgl_quotation)) ?>" required>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td class="pd-5 semi-bold">PIC</td>
+                    <td class="pd-5" width="390">
+                        <input type="text" name="pic" id="" class="form-control form-control-sm pic" value="<?= $list_penawaran->nm_pic ?>" readonly>
+                    </td>
                     <td class="pd-5 semi-bold">Sales <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390">
                         <select name="marketing" id="" class="form-control form-control-sm select_marketing">
@@ -90,16 +112,6 @@ if (count($list_penawaran_lab) > 0) {
                             }
                             ?>
                         </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="pd-5 semi-bold">PIC</td>
-                    <td class="pd-5" width="390">
-                        <input type="text" name="pic" id="" class="form-control form-control-sm pic" value="<?= $list_penawaran->nm_pic ?>" readonly>
-                    </td>
-                    <td class="pd-5 semi-bold">Address</td>
-                    <td class="pd-5" width="390">
-                        <input type="text" name="address" id="" class="form-control form-control-sm address" value="<?= $list_penawaran->address ?>">
                     </td>
                 </tr>
                 <tr>
@@ -162,21 +174,11 @@ if (count($list_penawaran_lab) > 0) {
                             </tr>
                         </table>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Upload Proposal</td>
+                    <td class="pd-5 semi-bold">Address</td>
                     <td class="pd-5" width="390">
-                        <input type="file" name="upload_proposal" id="" class="form-control form-control-sm">
-                        <?php
-                        if (
-                            $list_penawaran->upload_proposal !== '' &&
-                            $list_penawaran->upload_proposal !== null &&
-                            file_exists('./uploads/proposal_penawaran/' . $list_penawaran->upload_proposal)
-                        ) {
-                            echo '<a href="' . base_url('uploads/proposal_penawaran/' . $list_penawaran->upload_proposal) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
-                            <i class="fa fa-download"></i> Download Proposal
-                        </a>';
-                        }
-                        ?>
+                        <input type="text" name="address" id="" class="form-control form-control-sm address" value="<?= $list_penawaran->address ?>">
                     </td>
+
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold">Consultation Package <span class='text-red'>*</span></td>
@@ -194,21 +196,22 @@ if (count($list_penawaran_lab) > 0) {
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Upload Tahapan</td>
+                    <td class="pd-5 semi-bold" valign="top">Upload Proposal</td>
                     <td class="pd-5" width="390">
-                        <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm">
+                        <input type="file" name="upload_proposal" id="" class="form-control form-control-sm">
                         <?php
                         if (
-                            $list_penawaran->upload_tahapan !== '' &&
-                            $list_penawaran->upload_tahapan !== null &&
-                            file_exists('./uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan)
+                            $list_penawaran->upload_proposal !== '' &&
+                            $list_penawaran->upload_proposal !== null &&
+                            file_exists('./uploads/proposal_penawaran/' . $list_penawaran->upload_proposal)
                         ) {
-                            echo '<a href="' . base_url('uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
-                            <i class="fa fa-download"></i> Download Tahapan
+                            echo '<a href="' . base_url('uploads/proposal_penawaran/' . $list_penawaran->upload_proposal) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                            <i class="fa fa-download"></i> Download Proposal
                         </a>';
                         }
                         ?>
                     </td>
+
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Divisi <span class='text-red'>*</span></td>
@@ -229,6 +232,24 @@ if (count($list_penawaran_lab) > 0) {
                             <option value="5" <?= ($list_penawaran->id_divisi == 5) ? 'selected' : '' ?>>Kalibrasi</option>
                         </select>
                     </td>
+                    <td class="pd-5 semi-bold" valign="top">Upload Tahapan</td>
+                    <td class="pd-5" width="390">
+                        <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm">
+                        <?php
+                        if (
+                            $list_penawaran->upload_tahapan !== '' &&
+                            $list_penawaran->upload_tahapan !== null &&
+                            file_exists('./uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan)
+                        ) {
+                            echo '<a href="' . base_url('uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                            <i class="fa fa-download"></i> Download Tahapan
+                        </a>';
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
                     <td class="pd-5 semi-bold" valign="top">Upload PO</td>
                     <td class="pd-5" width="390">
                         <input type="file" name="upload_po" id="" class="form-control form-control-sm">

@@ -49,9 +49,20 @@ if (count($list_penawaran_lab) > 0) {
                 <td class="pd-5" width="390">
                     <input type="text" name="" id="" class="form-control form-control-sm" value="<?= $list_penawaran->id_quotation ?>" readonly>
                 </td>
-                <td class="pd-5 semi-bold">Date</td>
+                <td class="pd-5 semi-bold">Company</td>
                 <td class="pd-5" width="390">
-                    <input type="date" name="tgl_quotation" id="" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime($list_penawaran->tgl_quotation)) ?>" readonly>
+                    <select class="form-control form-control-sm" name="company" readonly>
+                        <option value="">- Company -</option>
+                        <?php
+                        foreach ($list_company as $item) {
+                            $selected = '';
+                            if ($item->id == $list_penawaran->company) {
+                                $selected = 'selected';
+                            }
+                            echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nm_company . '</option>';
+                        }
+                        ?>
+                    </select>
                 </td>
             </tr>
             <tr>
@@ -68,6 +79,16 @@ if (count($list_penawaran_lab) > 0) {
                         ?>
                     </select>
                 </td>
+                <td class="pd-5 semi-bold">Date</td>
+                <td class="pd-5" width="390">
+                    <input type="date" name="tgl_quotation" id="" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime($list_penawaran->tgl_quotation)) ?>" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td class="pd-5 semi-bold">PIC</td>
+                <td class="pd-5" width="390">
+                    <input type="text" name="pic" id="" class="form-control form-control-sm pic" value="<?= $list_penawaran->nm_pic ?>" readonly>
+                </td>
                 <td class="pd-5 semi-bold">Sales</td>
                 <td class="pd-5" width="390">
                     <select name="marketing" id="" class="form-control form-control-sm select_marketing" readonly>
@@ -80,16 +101,7 @@ if (count($list_penawaran_lab) > 0) {
                         ?>
                     </select>
                 </td>
-            </tr>
-            <tr>
-                <td class="pd-5 semi-bold">PIC</td>
-                <td class="pd-5" width="390">
-                    <input type="text" name="pic" id="" class="form-control form-control-sm pic" value="<?= $list_penawaran->nm_pic ?>" readonly>
-                </td>
-                <td class="pd-5 semi-bold">Address</td>
-                <td class="pd-5" width="390">
-                    <input type="text" name="address" id="" class="form-control form-control-sm address" value="<?= $list_penawaran->address ?>" readonly>
-                </td>
+
             </tr>
             <tr>
                 <td class="pd-5 semi-bold" valign="top">Informasi Awal</td>
@@ -158,6 +170,24 @@ if (count($list_penawaran_lab) > 0) {
                         </tr>
                     </table>
                 </td>
+                <td class="pd-5 semi-bold">Address</td>
+                <td class="pd-5" width="390">
+                    <input type="text" name="address" id="" class="form-control form-control-sm address" value="<?= $list_penawaran->address ?>" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td class="pd-5 semi-bold">Consultation Package</td>
+                <td class="pd-5" width="390">
+                    <select name="consultation_package" class="form-control form-control-sm change_package select_package" required>
+                        <?php
+                        foreach ($list_package as $item) {
+                            if ($item->id_konsultasi_h == $list_penawaran->id_paket) {
+                                echo '<option value="' . $item->id_konsultasi_h . '">' . $item->nm_paket . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                </td>
                 <td class="pd-5 semi-bold">Upload Proposal</td>
                 <td class="pd-5" width="390">
                     <?php
@@ -172,15 +202,17 @@ if (count($list_penawaran_lab) > 0) {
                     }
                     ?>
                 </td>
+
             </tr>
             <tr>
-                <td class="pd-5 semi-bold">Consultation Package</td>
-                <td class="pd-5" width="390">
-                    <select name="consultation_package" class="form-control form-control-sm change_package select_package" required>
+                <td class="pd-5 semi-bold" valign="top">Divisi</td>
+                <td class="pd-5" width="390" valign="top">
+                    <input type="hidden" name="nm_divisi" class="nm_divisi" value="<?= $list_penawaran->nm_divisi ?>">
+                    <select name="divisi" class="form-control form-control-sm change_divisi select_divisi" required>
                         <?php
-                        foreach ($list_package as $item) {
-                            if ($item->id_konsultasi_h == $list_penawaran->id_paket) {
-                                echo '<option value="' . $item->id_konsultasi_h . '">' . $item->nm_paket . '</option>';
+                        foreach ($list_divisi as $item) {
+                            if ($item->id == $list_penawaran->id_divisi) {
+                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
                             }
                         }
                         ?>
@@ -202,19 +234,7 @@ if (count($list_penawaran_lab) > 0) {
                 </td>
             </tr>
             <tr>
-                <td class="pd-5 semi-bold" valign="top">Divisi</td>
-                <td class="pd-5" width="390" valign="top">
-                    <input type="hidden" name="nm_divisi" class="nm_divisi" value="<?= $list_penawaran->nm_divisi ?>">
-                    <select name="divisi" class="form-control form-control-sm change_divisi select_divisi" required>
-                        <?php
-                        foreach ($list_divisi as $item) {
-                            if ($item->id == $list_penawaran->id_divisi) {
-                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama . '</option>';
-                            }
-                        }
-                        ?>
-                    </select>
-                </td>
+                <td colspan="2"></td>
                 <td class="pd-5 semi-bold">Upload PO</td>
                 <td class="pd-5" width="390">
                     <?php

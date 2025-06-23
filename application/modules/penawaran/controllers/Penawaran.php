@@ -120,6 +120,10 @@ class Penawaran extends Admin_Controller
         $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_company a');
+        $get_company = $this->db->get()->result();
+
         $data = [
             'list_penawaran' => $get_penawaran,
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
@@ -134,7 +138,8 @@ class Penawaran extends Admin_Controller
             'list_def_others' => $get_def_biaya_others,
             'list_def_lab' => $get_def_biaya_lab,
             'list_divisi' => $get_divisi,
-            'list_employees' => $get_employees
+            'list_employees' => $get_employees,
+            'list_company' => $get_company
         ];
 
         $this->template->title('Edit Quotation');
@@ -212,6 +217,10 @@ class Penawaran extends Admin_Controller
         $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_company a');
+        $get_company = $this->db->get()->result();
+
         $data = [
             'list_penawaran' => $get_penawaran,
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
@@ -223,7 +232,8 @@ class Penawaran extends Admin_Controller
             'list_package' => $get_package,
             'list_aktifitas' => $get_aktifitas,
             'list_divisi' => $get_divisi,
-            'list_employees' => $get_employees
+            'list_employees' => $get_employees,
+            'list_company' => $get_company
         ];
 
         $this->template->title('View Quotation');
@@ -516,6 +526,10 @@ class Penawaran extends Admin_Controller
         $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_company a');
+        $get_company = $this->db->get()->result();
+
         $data = [
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
@@ -525,7 +539,8 @@ class Penawaran extends Admin_Controller
             'list_def_others' => $get_def_biaya_others,
             'list_def_lab' => $get_def_biaya_lab,
             'list_divisi' => $get_divisi,
-            'list_employees' => $get_employees
+            'list_employees' => $get_employees,
+            'list_company' => $get_company
         ];
 
         $this->template->title('Create Quotation');
@@ -806,6 +821,12 @@ class Penawaran extends Admin_Controller
         $id_penawaran = generateNoPenawaran($employee_code, $tipe_penawaran);
         $id_history = $this->Penawaran_model->generate_history_id();
 
+        $company = $post['company'];
+
+        $get_company = $this->db->get_where('kons_tr_company', ['id' => $company])->row();
+
+        $nm_company = (!empty($get_company)) ? $get_company->nm_company : '';
+
         $arr_insert = [
             'id_quotation' => $id_penawaran,
             'tipe_penawaran' => $tipe_penawaran,
@@ -834,7 +855,9 @@ class Penawaran extends Admin_Controller
             'mandays_internal' => $post['ttl_total_mandays'],
             'mandays_rate' => $post['ttl_mandays_rate'],
             'input_by' => $this->auth->user_id(),
-            'input_date' => date('Y-m-d H:i:s')
+            'input_date' => date('Y-m-d H:i:s'),
+            'company' => $company,
+            'nm_company' => $nm_company
         ];
 
         $arr_insert_act = [];
@@ -1188,6 +1211,12 @@ class Penawaran extends Admin_Controller
             $detail_info_awal = $post['informasi_awal_others'];
         }
 
+        $company = $post['company'];
+
+        $get_company = $this->db->get_where('kons_tr_company', ['id' => $company])->row();
+
+        $nm_company = (!empty($get_company)) ? $get_company->nm_company : '';
+
         if ($filenames == '') {
             $arr_insert = [
                 'tgl_quotation' => $post['tgl_quotation'],
@@ -1213,6 +1242,8 @@ class Penawaran extends Admin_Controller
                 'sts_quot' => 1,
                 'sts_deal' => null,
                 'revisi' => ($post['revisi'] + 1),
+                'company' => $company,
+                'nm_company' => $nm_company,
                 'updated_by' => $this->auth->user_id(),
                 'updated_date' => date('Y-m-d H:i:s')
             ];
@@ -1232,6 +1263,8 @@ class Penawaran extends Admin_Controller
                 'tipe_informasi_awal' => $tipe_info_awal,
                 'detail_informasi_awal' => $detail_info_awal,
                 'revisi' => ($post['revisi'] + 1),
+                'company' => $company,
+                'nm_company' => $nm_company,
                 'updated_by' => $this->auth->user_id(),
                 'updated_date' => date('Y-m-d H:i:s')
             ];
@@ -1345,6 +1378,8 @@ class Penawaran extends Admin_Controller
                 'sts_quot' => 1,
                 'sts_deal' => null,
                 'revisi' => ($post['revisi'] + 1),
+                'company' => $company,
+                'nm_company' => $nm_company,
                 'input_by' => $this->auth->user_id(),
                 'input_date' => date('Y-m-d H:i:s')
             ];

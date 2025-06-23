@@ -48,9 +48,16 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <td class="pd-5" width="390" valign="top">
                         <input type="text" name="" id="" class="form-control form-control-sm" readonly>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Date <span class='text-red'>*</span></td>
+                    <td class="pd-5 semi-bold" valign="top">Company <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="date" name="tgl_quotation" id="" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
+                        <select name="company" class="form-control form-contorl-sm company" required>
+                            <option value="">- Company -</option>
+                            <?php
+                            foreach ($list_company as $item) :
+                                echo '<option value="' . $item->id . '">' . $item->nm_company . '</option>';
+                            endforeach;
+                            ?>
+                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -65,17 +72,11 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Sales <span class='text-red'>*</span></td>
+                    <td class="pd-5 semi-bold" valign="top">Date <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
-                        <select name="marketing" id="" class="form-control form-control-sm select_marketing">
-                            <option value="">- Select Sales -</option>
-                            <?php
-                            foreach ($list_marketing as $item) {
-                                echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
-                            }
-                            ?>
-                        </select>
+                        <input type="date" name="tgl_quotation" id="" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
                     </td>
+
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">PIC</td>
@@ -93,7 +94,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <table style="width: 100%;" border="0">
                             <tr>
                                 <td style="padding: 0.2rem;">
-                                    <input type="checkbox" name="check_info_awal_sales" id="" class="check_info_awal_sales"> Sales 
+                                    <input type="checkbox" name="check_info_awal_sales" id="" class="check_info_awal_sales"> Sales
                                 </td>
                                 <td style="padding: 0.2rem;">
                                     <select name="informasi_awal_sales" id="" class="form-control form-control-sm informasi_awal_sales">
@@ -139,10 +140,18 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             </tr>
                         </table>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top" valign="top">Upload Proposal</td>
+                    <td class="pd-5 semi-bold" valign="top">Sales <span class='text-red'>*</span></td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="file" name="upload_proposal" id="" class="form-control form-control-sm">
+                        <select name="marketing" id="" class="form-control form-control-sm select_marketing">
+                            <option value="">- Select Sales -</option>
+                            <?php
+                            foreach ($list_marketing as $item) {
+                                echo '<option value="' . $item->id . '">' . ucfirst($item->nm_karyawan) . '</option>';
+                            }
+                            ?>
+                        </select>
                     </td>
+
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Consultation Package <span class='text-red'>*</span></td>
@@ -156,10 +165,11 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             ?>
                         </select>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top" valign="top">Upload Tahapan</td>
+                    <td class="pd-5 semi-bold" valign="top" valign="top">Upload Proposal</td>
                     <td class="pd-5" width="390" valign="top">
-                        <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm">
+                        <input type="file" name="upload_proposal" id="" class="form-control form-control-sm">
                     </td>
+
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Divisi <span class='text-red'>*</span></td>
@@ -175,6 +185,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             <option value="5">Kalibrasi</option>
                         </select>
                     </td>
+                    <td class="pd-5 semi-bold" valign="top" valign="top">Upload Tahapan</td>
+                    <td class="pd-5" width="390" valign="top">
+                        <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm">
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
                     <td class="pd-5 semi-bold" valign="top" valign="top">Upload PO</td>
                     <td class="pd-5" width="390" valign="top">
                         <input type="file" name="upload_po" id="" class="form-control form-control-sm">
@@ -537,6 +555,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
 <!-- page script -->
 <script type="text/javascript">
+    $('.company').select2();
     $('.select_customer').select2();
     $('.select_marketing').select2();
     $('.select_package').select2();
@@ -839,7 +858,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hitung_detail_other_summary();
     }
 
-    
+
 
     function hitung_all_others() {
         var no_others = parseFloat($('.no_others').val());
@@ -878,7 +897,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hitung_detail_other_summary();
     }
 
-    function hitung_all_lab(){
+    function hitung_all_lab() {
         var no_lab = parseFloat($('.no_lab').val());
 
         var ttl_grand_total = 0;
@@ -1205,8 +1224,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             cache: false,
             dataType: 'json',
             success: function(result) {
-                $('input[name="dt_lab['+no+'][harga_lab]"]').autoNumeric('set', result.harga_ssc);
-                $('input[name="dt_lab['+no+'][harga_lab_budget]"]').autoNumeric('set', result.harga_lab);
+                $('input[name="dt_lab[' + no + '][harga_lab]"]').autoNumeric('set', result.harga_ssc);
+                $('input[name="dt_lab[' + no + '][harga_lab_budget]"]').autoNumeric('set', result.harga_lab);
             },
             error: function(result) {
                 swal({
