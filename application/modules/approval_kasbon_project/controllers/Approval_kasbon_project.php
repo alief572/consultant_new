@@ -353,7 +353,35 @@ class Approval_kasbon_project extends Admin_Controller
             'currency' => 'IDR'
         ];
 
+        $no_doc = '';
+        $newcode = '';
+        $data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => 'format_kasbon'))->row();
+        if ($data !== false) {
+            if (stripos($data->info, 'YEAR', 0) !== false) {
+                if ($data->info3 != date("Y")) {
+                    $years = date("Y");
+                    $number = 1;
+                    $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                } else {
+                    $years = $data->info3;
+                    $number = ($data->info2 + 1);
+                    $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                }
+                $newcode = str_ireplace('XXXX', $newnumber, $data->info);
+                $newcode = str_ireplace('YEAR', $years, $newcode);
+                $newdata = array('info2' => $number, 'info3' => $years);
+            } else {
+                $number = ($data->info2 + 1);
+                $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                $newcode = str_ireplace('XXXX', $newnumber, $data->info);
+                $newdata = array('info2' => $number);
+            }
+            $this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
 
+            $no_doc = $newcode;
+        } else {
+            return false;
+        }
 
         $project = '';
         if ($get_header_kasbon->tipe == '1') :
@@ -369,7 +397,28 @@ class Approval_kasbon_project extends Admin_Controller
             $project = 'Lab';
         endif;
 
-
+        $data_insert_sendigs_kasbon = [
+            'no_doc' => $no_doc,
+            'tgl_doc' => date('Y-m-d'),
+            'departement' => '',
+            'nama' => $nm_user,
+            'jumlah_kasbon' => $get_header_kasbon->grand_total,
+            'keperluan' => $get_header_kasbon->deskripsi,
+            'doc_file' => $get_header_kasbon->dokument_link,
+            'status' => 1,
+            'created_by' => $nm_user,
+            'created_on' => date('Y-m-d H:i:s'),
+            'bank_id' => $get_header_kasbon->bank,
+            'accnumber' => $get_header_kasbon->bank_number,
+            'accname' => $get_header_kasbon->bank_account,
+            'project' => $project,
+            'approved_by' => $get_direktur_user->nm_lengkap,
+            'approved_on' => date('Y-m-d H:i:s'),
+            'keterangan' => $get_header_kasbon->deskripsi,
+            'metode_pembayaran' => 1,
+            'project_consultant' => 1,
+            'no_kasbon_consultant' => $id_kasbon
+        ];
 
         $this->db->trans_begin();
 
