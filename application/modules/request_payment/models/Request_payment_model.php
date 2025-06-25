@@ -59,9 +59,14 @@ class Request_payment_model extends BF_Model
     /**
      * Function construct used to load some library, do some actions, etc.
      */
+
+    protected $otherdb;
+
     public function __construct()
     {
         parent::__construct();
+
+        $this->otherdb = $this->load->database('sendigs_finance', true);
     }
 
     // list data request
@@ -385,18 +390,18 @@ class Request_payment_model extends BF_Model
         if (!empty($search)) {
             $where_search = 'AND (
                 a.id LIKE "%' . $search['value'] . '%" 
-                OR r.tipe LIKE "%'.$search['value'].'%"
-                OR c.nm_lengkap LIKE "%'.$search['value'].'%"
-                OR a.tgl LIKE "%'.$search['value'].'%"
-                OR a.grand_total LIKE "%'.$search['value'].'%"
+                OR r.tipe LIKE "%' . $search['value'] . '%"
+                OR c.nm_lengkap LIKE "%' . $search['value'] . '%"
+                OR a.tgl LIKE "%' . $search['value'] . '%"
+                OR a.grand_total LIKE "%' . $search['value'] . '%"
             )';
 
             $where_search2 = 'AND (
                 a.id LIKE "%' . $search['value'] . '%" 
-                OR r.tipe LIKE "%'.$search['value'].'%"
-                OR c.nm_lengkap LIKE "%'.$search['value'].'%"
-                OR a.created_date LIKE "%'.$search['value'].'%"
-                OR a.selisih LIKE "%'.$search['value'].'%"
+                OR r.tipe LIKE "%' . $search['value'] . '%"
+                OR c.nm_lengkap LIKE "%' . $search['value'] . '%"
+                OR a.created_date LIKE "%' . $search['value'] . '%"
+                OR a.selisih LIKE "%' . $search['value'] . '%"
             )';
         }
 
@@ -612,5 +617,37 @@ class Request_payment_model extends BF_Model
             'recordsFiltered' => $get_data_all->num_rows(),
             'data' => $hasil
         ]);
+    }
+
+    function GetAutoGenerate_expense($tipe)
+    {
+        $newcode = '';
+        $query_data = 'SELECT * FROM ms_generate WHERE tipe = "' . $tipe . '"';
+        $data = $this->otherdb->query($query_data)->row();
+        if ($data !== false) {
+            if (stripos($data->info, 'YEAR', 0) !== false) {
+                if ($data->info3 != date("Y")) {
+                    $years = date("Y");
+                    $number = 1;
+                    $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                } else {
+                    $years = $data->info3;
+                    $number = ($data->info2 + 1);
+                    $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                }
+                $newcode = str_ireplace('XXXX', $newnumber, $data->info);
+                $newcode = str_ireplace('YEAR', $years, $newcode);
+                $newdata = array('info2' => $number, 'info3' => $years);
+            } else {
+                $number = ($data->info2 + 1);
+                $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                $newcode = str_ireplace('XXXX', $newnumber, $data->info);
+                $newdata = array('info2' => $number);
+            }
+            $this->otherdb->update('ms_generate', $newdata, array('tipe' => $tipe));
+            return $newcode;
+        } else {
+            return false;
+        }
     }
 }
