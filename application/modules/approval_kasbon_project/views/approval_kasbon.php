@@ -754,7 +754,7 @@ if ($header->metode_pembayaran == '3') {
           $ttl_qty_terpakai_lab += $item->qty_terpakai;
           $ttl_total_terpakai_lab += ($item->qty_terpakai > 0) ? $item->total_terpakai : 0;
           $ttl_qty_sebelum += $qty_sisa_sebelum;
-          $ttl_sisa_budget_sebelum += $sisa_budget;
+          $ttl_sisa_budget_sebelum += $sisa_budget_sebelum;
           $ttl_qty_overbudget += $item->qty_overbudget;
           $ttl_total_overbudget += ($item->qty_overbudget > 0) ? $item->total_terpakai : 0;
         }
