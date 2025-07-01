@@ -1988,6 +1988,9 @@ class Approval_request_payment extends Admin_Controller
 			if ($get_kasbon_header->tipe == '3') {
 				$tipe = 'Kasbon Others';
 			}
+			if ($get_kasbon_header->tipe == '4') {
+				$tipe = 'Kasbon Lab';
+			}
 
 			$this->db->select('a.*');
 			$this->db->from('kons_tr_kasbon_project_subcont a');
@@ -2004,6 +2007,11 @@ class Approval_request_payment extends Admin_Controller
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_others = $this->db->get()->result();
 
+			$this->db->select('a.*');
+			$this->db->from('kons_tr_kasbon_project_lab a');
+			$this->db->where('a.id_header', $id);
+			$get_kasbon_lab = $this->db->get()->result();
+
 			$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
 
 			$data = [
@@ -2014,6 +2022,7 @@ class Approval_request_payment extends Admin_Controller
 				'data_kasbon_subcont' => $get_kasbon_subcont,
 				'data_kasbon_akomodasi' => $get_kasbon_akomodasi,
 				'data_kasbon_others' => $get_kasbon_others,
+				'data_kasbon_lab' => $get_kasbon_lab,
 				'tipe' => $tipe,
 				'tgl_approve_direktur' => $get_request_payment->created_on
 			];
@@ -2088,6 +2097,9 @@ class Approval_request_payment extends Admin_Controller
 			}
 			if ($get_expense->tipe == '3') {
 				$title_expense = 'Expense Others';
+			}
+			if ($get_expense->tipe == '4') {
+				$title_expense = 'Expense Lab';
 			}
 
 			$this->db->select('a.*');
