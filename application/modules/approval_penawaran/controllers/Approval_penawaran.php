@@ -89,7 +89,7 @@ class Approval_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $this->db->where('a.flag_active', 'Y');
         $get_employees = $this->db->get()->result();
 
@@ -103,7 +103,7 @@ class Approval_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -183,7 +183,7 @@ class Approval_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $this->db->where('a.flag_active', 'Y');
         $get_employees = $this->db->get()->result();
 
@@ -197,7 +197,7 @@ class Approval_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
