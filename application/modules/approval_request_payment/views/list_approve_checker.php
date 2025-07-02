@@ -103,6 +103,9 @@ endforeach;
                                     if ($get_kasbon_header->tipe == '3') {
                                         $link_view = base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
                                     }
+                                    if ($get_kasbon_header->tipe == '4') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_lab/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
                                 }
 
                                 echo '<tr>';
