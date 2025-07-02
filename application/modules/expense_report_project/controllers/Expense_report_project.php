@@ -1029,7 +1029,6 @@ class Expense_report_project extends Admin_Controller
 
             $count_ttl_kasbon_lab = $this->db->select('SUM(a.total_pengajuan) as val')->get_where('kons_tr_kasbon_project_lab a', array('a.id_spk_budgeting' => $item->id_spk_budgeting, 'a.sts' => 1))->row();
 
-            
             $ttl_kasbon = ($count_ttl_kasbon_subcont->val + $count_ttl_kasbon_akomodasi->val + $count_ttl_kasbon_others->val + $count_ttl_kasbon_lab->val);
 
             $ttl_expense = 0;
@@ -1045,8 +1044,6 @@ class Expense_report_project extends Admin_Controller
             if (($ttl_kasbon - $ttl_expense) <= 0 && $item->sts !== 1) {
                 $valid_show = 0;
             }
-
-
 
             $this->db->select('a.*');
             $this->db->from('kons_tr_expense_report_project_header a');
@@ -1066,6 +1063,7 @@ class Expense_report_project extends Admin_Controller
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             $this->db->where('a.sts', null);
             $this->db->where('a.sts_req', null);
+            $this->db->where('b.id IS NOT NULL');
             $check_expense_draft = $this->db->get()->num_rows();
 
             $option = '<a href="' . base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-primary" title="Add Expense Report"><i class="fa fa-arrow-up"></i></a>';
@@ -1102,7 +1100,7 @@ class Expense_report_project extends Admin_Controller
             $get_pic_kasbon = $this->db->get()->result();
 
             $pic_kasbon = [];
-            foreach($get_pic_kasbon as $item_pic_kasbon) :
+            foreach ($get_pic_kasbon as $item_pic_kasbon) :
                 $pic_kasbon[] = ucfirst($item_pic_kasbon->nm_lengkap);
             endforeach;
 
@@ -1111,7 +1109,7 @@ class Expense_report_project extends Admin_Controller
                 'no' => $no,
                 'id_spk_penawaran' => $item->id_spk_penawaran,
                 'nm_customer' => $item->nm_customer,
-                'pic_kasbon' => implode(', ',$pic_kasbon),
+                'pic_kasbon' => implode(', ', $pic_kasbon),
                 'nm_project' => $item->nama_project,
                 'option' => $option
             ];
@@ -1625,7 +1623,7 @@ class Expense_report_project extends Admin_Controller
             }
 
 
-            
+
 
             $option .= '</div>';
 
@@ -1793,7 +1791,7 @@ class Expense_report_project extends Admin_Controller
             }
 
 
-            
+
 
             $option .= '</div>';
 
@@ -2029,7 +2027,7 @@ class Expense_report_project extends Admin_Controller
         // print_r($data_bukti_penggunaan);
         // exit;
 
-        if(!empty($data_bukti_penggunaan)) {
+        if (!empty($data_bukti_penggunaan)) {
             $insert_bukti_penggunaan = $this->db->insert_batch('kons_tr_bukti_penggunaan_expense', $data_bukti_penggunaan);
             if (!$insert_bukti_penggunaan) {
                 $this->db->trans_rollback();
@@ -2186,7 +2184,7 @@ class Expense_report_project extends Admin_Controller
         // if (!empty($data_bukti_pengembalian)) {
         //     $this->db->delete('kons_tr_expense_report_bukti_pengembalian', ['id_header_expense' => $post['id_expense']]);
         // }
-        
+
         $data_insert_header = [
             'total_expense_report' => $ttl_expense_report,
             'total_kasbon' => $ttl_kasbon,
@@ -2454,7 +2452,8 @@ class Expense_report_project extends Admin_Controller
         ]);
     }
 
-    public function del_bukti_penggunaan() {
+    public function del_bukti_penggunaan()
+    {
         $id = $this->input->post('id');
 
         $this->db->trans_begin();
@@ -2476,7 +2475,8 @@ class Expense_report_project extends Admin_Controller
         ]);
     }
 
-    public function del_bukti_pengembalian() {
+    public function del_bukti_pengembalian()
+    {
         $id = $this->input->post('id');
 
         $this->db->trans_begin();
