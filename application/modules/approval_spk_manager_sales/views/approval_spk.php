@@ -736,7 +736,7 @@ if ($data_user->employee_id == '168') {
     });
 
     $(document).on('click', '.reject_spk', function() {
-        var id_spk_penawaran = $('.id_spk_penawaran').val();
+        var id_spk_penawaran = $('input[name="id_spk_penawaran"]').val();
         var reject_reason = $('.reject_reason').val();
 
         if (reject_reason == '') {
