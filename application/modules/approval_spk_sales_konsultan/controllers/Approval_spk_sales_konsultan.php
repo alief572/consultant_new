@@ -70,7 +70,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
         $this->db->where('a.flag_active', 'Y');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $this->db->order_by('a.name', 'ASC');
         $get_all_marketing = $this->db->get()->result();
 
@@ -81,7 +81,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -216,7 +216,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
         $this->db->where('a.flag_active', 'Y');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $this->db->order_by('a.name', 'ASC');
         $get_all_marketing = $this->db->get()->result();
 
@@ -227,7 +227,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
