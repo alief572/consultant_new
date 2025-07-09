@@ -3422,7 +3422,9 @@ class Kasbon_project extends Admin_Controller
 
         $grand_total = 0;
         foreach ($post['detail_akomodasi'] as $item) {
-            $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            if (isset($item['total_pengajuan'])) {
+                $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            }
         }
 
         $data_header = [
