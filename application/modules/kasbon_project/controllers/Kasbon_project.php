@@ -3386,6 +3386,9 @@ class Kasbon_project extends Admin_Controller
     {
         $post = $this->input->post();
 
+        print_r($post);
+        exit;
+
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
