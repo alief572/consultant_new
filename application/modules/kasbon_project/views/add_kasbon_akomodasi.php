@@ -541,14 +541,33 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             }, function(next) {
                 if (next) {
                     var formData = new FormData($('#frm-data')[0]);
+                    const result = {};
+
+                    for (const [name, value] of formData.entries()) {
+                        const keys = name
+                            .replace(/\]/g, '') // remove closing brackets
+                            .split(/\[/); // split by opening bracket
+
+                        let current = result;
+
+                        for (let i = 0; i < keys.length; i++) {
+                            const key = keys[i];
+
+                            if (i === keys.length - 1) {
+                                current[key] = value;
+                            } else {
+                                if (!current[key]) current[key] = {};
+                                current = current[key];
+                            }
+                        }
+                    }
 
                     $.ajax({
                         type: 'post',
                         url: siteurl + active_controller + 'save_kasbon_akomodasi',
-                        data: formData,
+                        data: JSON.stringify(result),
+                        contentType: 'application/json',
                         cache: false,
-                        processData: false,
-                        contentType: false,
                         dataType: 'JSON',
                         success: function(result) {
                             if (result.status == '1') {
