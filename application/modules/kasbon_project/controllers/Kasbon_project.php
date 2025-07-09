@@ -3384,7 +3384,8 @@ class Kasbon_project extends Admin_Controller
 
     public function save_kasbon_akomodasi()
     {
-        $post = $this->input->post();
+        $json = file_get_contents('php://input');
+        $post = json_decode($json, true);
 
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
@@ -3457,7 +3458,7 @@ class Kasbon_project extends Admin_Controller
         $data_insert = [];
 
         $no = 1;
-        foreach ($post['detail_akomodasi'] as $item) {
+        foreach ($post['detail_akomodasi'] as $x => $item) {
             if (str_replace(',', '', $item['qty_pengajuan']) > 0 && str_replace(',', '', $item['nominal_pengajuan'])) {
                 $data_insert[] = [
                     'id_header' => $id,
