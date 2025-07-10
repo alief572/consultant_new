@@ -215,10 +215,10 @@ class Master_aktifitas extends Admin_Controller
                     } else {
                         $terinput  = 0;
                         $tahapan   = 1;
-                        $unique_id = sha1(time(microtime()));
+                        $unique_id = sha1(time() . microtime());
                         foreach ($post['aktifitas_num'] as $key => $value) {
                             $id_aktifitas     = $value;
-                            $nm_aktifitas     = $post['nm_aktifitas'][$key];
+                            $nm_aktifitas     = str_replace(['"', "'", $post['nm_aktifitas'][$key]], '', $post['nm_aktifitas'][$key]);
                             $harga_aktifitas  = str_replace(',', '', $post['hrg_aktifitas'][$key]);
                             // $bobot            = $post['bobot'][$key];
                             $mandays          = $post['mandays'][$key];
