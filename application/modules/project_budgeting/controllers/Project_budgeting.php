@@ -266,9 +266,9 @@ class Project_budgeting extends Admin_Controller
 
         $get_spk = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $get_spk_budgeting->id_spk_penawaran])->row();
 
-        $this->db->select('a.*');
-        $this->db->from('employee a');
-        $this->db->where('a.deleted', 'N');
+        $this->db->select('a.id, a.name as nm_karyawan');
+        $this->db->from(DBHR . '.employees a');
+        $this->db->where('a.flag_active', 'Y');
         $get_all_marketing = $this->db->get()->result();
 
         $this->db->select('a.*, c.mandays as mandays_def');
