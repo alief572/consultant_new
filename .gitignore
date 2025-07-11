@@ -1,4 +1,4 @@
-*/config/development
+*/config/development/*
 */logs/log-*.php
 !*/logs/index.html
 */cache/*
@@ -6,14 +6,23 @@
 !*/cache/index.html
 !*/cache/.htaccess
 
-user_guide_src/build/*
-user_guide_src/cilexer/build/*
-user_guide_src/cilexer/dist/*
-user_guide_src/cilexer/pycilexer.egg-info/*
-
-/application/config/constants.php
+/manifest.json
+/assets/manifest-icon/
 
 #codeigniter 3
+.vscode/*
+application/config/*
 application/logs/*
+application/config/development/*
+application/config/database.php
+application/config/constants.php
 !application/logs/index.html
 !application/logs/.htaccess
+
+#/vendor/
+/uploads/*
+/assets/files/*
+/assets/pr/*
+/docker/*
+docker-compose.yml
+application/config/config.php
