@@ -7,6 +7,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 $open_akomodasi = 'd-none';
 $open_others = 'd-none';
 $open_lab = 'd-none';
+$open_subcont_tenaga_ahli = 'd-none';
+$open_subcont_perusahaan = 'd-none';
 
 if (count($list_penawaran_akomodasi) > 0) {
     $open_akomodasi = '';
@@ -63,9 +65,20 @@ if (count($list_penawaran_lab) > 0) {
                 <td class="pd-5" width="390">
                     <input type="text" name="" id="" class="form-control form-control-sm" value="<?= $list_penawaran->id_quotation ?>" readonly>
                 </td>
-                <td class="pd-5 semi-bold">Date</td>
+                <td class="pd-5 semi-bold">Company</td>
                 <td class="pd-5" width="390">
-                    <input type="date" name="tgl_quotation" id="" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime($list_penawaran->tgl_quotation)) ?>" readonly>
+                    <select class="form-control form-control-sm" name="company" readonly>
+                        <option value="">- Company -</option>
+                        <?php
+                        foreach ($list_company as $item) {
+                            $selected = '';
+                            if ($item->id == $list_penawaran->company) {
+                                $selected = 'selected';
+                                echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nm_company . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
                 </td>
             </tr>
             <tr>
@@ -82,6 +95,16 @@ if (count($list_penawaran_lab) > 0) {
                         ?>
                     </select>
                 </td>
+                <td class="pd-5 semi-bold">Date</td>
+                <td class="pd-5" width="390">
+                    <input type="date" name="tgl_quotation" id="" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime($list_penawaran->tgl_quotation)) ?>" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td class="pd-5 semi-bold">PIC</td>
+                <td class="pd-5" width="390">
+                    <input type="text" name="pic" id="" class="form-control form-control-sm pic" value="<?= $list_penawaran->nm_pic ?>" readonly>
+                </td>
                 <td class="pd-5 semi-bold">Sales</td>
                 <td class="pd-5" width="390">
                     <select name="marketing" id="" class="form-control form-control-sm select_marketing" disabled>
@@ -93,16 +116,6 @@ if (count($list_penawaran_lab) > 0) {
                         }
                         ?>
                     </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="pd-5 semi-bold">PIC</td>
-                <td class="pd-5" width="390">
-                    <input type="text" name="pic" id="" class="form-control form-control-sm pic" value="<?= $list_penawaran->nm_pic ?>" readonly>
-                </td>
-                <td class="pd-5 semi-bold">Address</td>
-                <td class="pd-5" width="390">
-                    <input type="text" name="address" id="" class="form-control form-control-sm address" value="<?= $list_penawaran->address ?>" readonly>
                 </td>
             </tr>
             <tr>
@@ -172,20 +185,9 @@ if (count($list_penawaran_lab) > 0) {
                         </tr>
                     </table>
                 </td>
-                <td class="pd-5 semi-bold">Upload Proposal</td>
+                <td class="pd-5 semi-bold">Address</td>
                 <td class="pd-5" width="390">
-                    <input type="file" name="upload_proposal" id="" class="form-control form-control-sm" disabled>
-                    <?php
-                    if (
-                        $list_penawaran->upload_proposal !== '' &&
-                        $list_penawaran->upload_proposal !== null &&
-                        file_exists('./uploads/proposal_penawaran/' . $list_penawaran->upload_proposal)
-                    ) {
-                        echo '<a href="' . base_url('uploads/proposal_penawaran/' . $list_penawaran->upload_proposal) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
-                            <i class="fa fa-download"></i> Download Proposal
-                        </a>';
-                    }
-                    ?>
+                    <input type="text" name="address" id="" class="form-control form-control-sm address" value="<?= $list_penawaran->address ?>" readonly>
                 </td>
             </tr>
             <tr>
@@ -201,17 +203,17 @@ if (count($list_penawaran_lab) > 0) {
                         ?>
                     </select>
                 </td>
-                <td class="pd-5 semi-bold" valign="top">Upload Tahapan</td>
+                <td class="pd-5 semi-bold">Upload Proposal</td>
                 <td class="pd-5" width="390">
-                    <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm" disabled>
+                    <input type="file" name="upload_proposal" id="" class="form-control form-control-sm" disabled>
                     <?php
                     if (
-                        $list_penawaran->upload_tahapan !== '' &&
-                        $list_penawaran->upload_tahapan !== null &&
-                        file_exists('./uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan)
+                        $list_penawaran->upload_proposal !== '' &&
+                        $list_penawaran->upload_proposal !== null &&
+                        file_exists('./uploads/proposal_penawaran/' . $list_penawaran->upload_proposal)
                     ) {
-                        echo '<a href="' . base_url('uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
-                            <i class="fa fa-download"></i> Download Tahapan
+                        echo '<a href="' . base_url('uploads/proposal_penawaran/' . $list_penawaran->upload_proposal) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                            <i class="fa fa-download"></i> Download Proposal
                         </a>';
                     }
                     ?>
@@ -238,6 +240,24 @@ if (count($list_penawaran_lab) > 0) {
                         ?>
                     </select>
                 </td>
+                <td class="pd-5 semi-bold" valign="top">Upload Tahapan</td>
+                <td class="pd-5" width="390">
+                    <input type="file" name="upload_tahapan" id="" class="form-control form-control-sm" disabled>
+                    <?php
+                    if (
+                        $list_penawaran->upload_tahapan !== '' &&
+                        $list_penawaran->upload_tahapan !== null &&
+                        file_exists('./uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan)
+                    ) {
+                        echo '<a href="' . base_url('uploads/tahapan_penawaran/' . $list_penawaran->upload_tahapan) . '" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                            <i class="fa fa-download"></i> Download Tahapan
+                        </a>';
+                    }
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
                 <td class="pd-5 semi-bold" valign="top">Upload PO</td>
                 <td class="pd-5" width="390">
                     <input type="file" name="upload_po" id="" class="form-control form-control-sm" disabled>
@@ -489,8 +509,6 @@ if (count($list_penawaran_lab) > 0) {
         </h4>
     </div>
     <div class="box-body box_others <?= ($open_lab == '') ? '' : 'd-none' ?>">
-
-
         <br>
 
         <table class="table custom-table">
@@ -544,6 +562,138 @@ if (count($list_penawaran_lab) > 0) {
 <div class="box">
     <div class="box-header">
         <h4 class="semi-bold">
+            Subcont Tenaga Ahli
+            <div style="float: right">
+                <div class="onoffswitch">
+                    <input type="checkbox" name="switch_subcont_tenaga_ahli" class="onoffswitch-checkbox" id="switch_subcont_tenaga_ahli" <?= ($open_subcont_tenaga_ahli == '') ? 'checked' : '' ?>>
+                    <label class="onoffswitch-label" for="switch_subcont_tenaga_ahli">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+        </h4>
+    </div>
+    <div class="box-body box_subcont_tenaga_ahli <?= ($open_subcont_tenaga_ahli == '') ? '' : 'd-none' ?>">
+        <br>
+
+        <table class="table custom-table">
+            <thead>
+                <tr>
+                    <th class="text-center">Item</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Price/Unit Customer</th>
+                    <th class="text-center">Price/Unit Budget</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Total Budget</th>
+                    <th class="text-center">Keterangan</th>
+                </tr>
+            </thead>
+            <tbody class="list_subcont_tenaga_ahli">
+                <?php
+                $no_subcont_tenaga_ahli = 1;
+
+                $ttl_subcont_tenaga_ahli = 0;
+                $ttl_subcont_tenaga_ahli_budget = 0;
+                foreach ($list_penawaran_subcont_tenaga_ahli as $item_subcont_tenaga_ahli) {
+                    echo '<tr>';
+                    echo '<td>' . $item_subcont_tenaga_ahli->nm_biaya . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->qty, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->price_unit, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->price_unit_budget, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->total, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->total_budget, 2) . '</td>';
+                    echo '<td>' . $item_subcont_tenaga_ahli->keterangan . '</td>';
+                    echo '</tr>';
+
+                    $ttl_subcont_tenaga_ahli += $item_subcont_tenaga_ahli->total;
+                    $ttl_subcont_tenaga_ahli_budget += $item_subcont_tenaga_ahli->total_budget;
+                }
+                ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" class="text-right">
+                        Total
+                    </th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_subcont_tenaga_ahli, 2) ?></th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_subcont_tenaga_ahli_budget, 2) ?></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <h4 class="semi-bold">
+            Subcont Perusahaan
+            <div style="float: right">
+                <div class="onoffswitch">
+                    <input type="checkbox" name="switch_subcont_perusahaan" class="onoffswitch-checkbox" id="switch_subcont_perusahaan" <?= ($open_subcont_perusahaan == '') ? 'checked' : '' ?>>
+                    <label class="onoffswitch-label" for="switch_subcont_perusahaan">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+        </h4>
+    </div>
+    <div class="box-body box_subcont_perusahaan <?= ($open_subcont_perusahaan == '') ? '' : 'd-none' ?>">
+        <br>
+
+        <table class="table custom-table">
+            <thead>
+                <tr>
+                    <th class="text-center">Item</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Price/Unit Customer</th>
+                    <th class="text-center">Price/Unit Budget</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Total Budget</th>
+                    <th class="text-center">Keterangan</th>
+                </tr>
+            </thead>
+            <tbody class="list_subcont_perusahaan">
+                <?php
+                $no_subcont_perusahaan = 1;
+
+                $ttl_subcont_perusahaan = 0;
+                $ttl_subcont_perusahaan_budget = 0;
+                foreach ($list_penawaran_subcont_perusahaan as $item_subcont_perusahaan) {
+                    echo '<tr>';
+                    echo '<td>' . $item_subcont_perusahaan->nm_biaya . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_perusahaan->qty, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_perusahaan->price_unit, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_perusahaan->price_unit_budget, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_perusahaan->total, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_perusahaan->total_budget, 2) . '</td>';
+                    echo '<td>' . $item_subcont_perusahaan->keterangan . '</td>';
+                    echo '</tr>';
+
+                    $ttl_subcont_perusahaan += $item_subcont_perusahaan->total;
+                    $ttl_subcont_perusahaan_budget += $item_subcont_perusahaan->total_budget;
+                }
+                ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" class="text-right">
+                        Total
+                    </th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_subcont_perusahaan, 2) ?></th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_subcont_perusahaan_budget, 2) ?></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <h4 class="semi-bold">
             Summary
 
             <div style="float: right;">
@@ -580,8 +730,16 @@ if (count($list_penawaran_lab) > 0) {
                     <td class="text-right summary_lab"><?= number_format($ttl_lab, 2) ?></td>
                 </tr>
                 <tr>
+                    <td class="text-left">Subcont Tenaga Ahli</td>
+                    <td class="text-right summary_subcont_tenaga_ahli"><?= number_format($ttl_subcont_tenaga_ahli, 2) ?></td>
+                </tr>
+                <tr>
+                    <td class="text-left">Subcont Perusahaan</td>
+                    <td class="text-right summary_subcont_perusahaan"><?= number_format($ttl_subcont_perusahaan, 2) ?></td>
+                </tr>
+                <tr>
                     <td class="text-left"><b>Subtotal</b></td>
-                    <td class="text-right summary_subtotal"><?= number_format(($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab), 2) ?></td>
+                    <td class="text-right summary_subtotal"><?= number_format(($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan), 2) ?></td>
                 </tr>
                 <tr>
                     <td class="text-left"><b>Discount</b></td>
@@ -594,13 +752,13 @@ if (count($list_penawaran_lab) > 0) {
                 </tr>
                 <tr>
                     <td class="text-left"><b>Price after discount</b></td>
-                    <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc), 2) ?></td>
+                    <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan) - $list_penawaran->nilai_disc), 2) ?></td>
                 </tr>
                 <tr>
                     <?php
                     $nilai_ppn = 0;
                     if ($list_penawaran->ppn == 1) {
-                        $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc) * 11 / 100);
+                        $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan) - $list_penawaran->nilai_disc) * 11 / 100);
                     }
                     ?>
                     <td class="text-left">PPN</td>
@@ -610,7 +768,7 @@ if (count($list_penawaran_lab) > 0) {
             <tfoot>
                 <tr>
                     <td class="text-left"><b>Grand Total</b></td>
-                    <td class="text-right summary_grand_total"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc) + $nilai_ppn, 2) ?></td>
+                    <td class="text-right summary_grand_total"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan) - $list_penawaran->nilai_disc) + $nilai_ppn, 2) ?></td>
                 </tr>
             </tfoot>
         </table>
@@ -634,7 +792,7 @@ if (count($list_penawaran_lab) > 0) {
                     <td class="text-center">:</td>
                     <td class="text-right">
                         <input type="hidden" name="ttl_total_mandays" value="<?= $list_penawaran->total_mandays ?>">
-                        <span class="ttl_total_mandays"><?= number_format($list_penawaran->total_mandays) ?></span>
+                        <span class="ttl_total_mandays"><?= number_format($list_penawaran->total_mandays, 2) ?></span>
                     </td>
                 </tr>
                 <tr>
@@ -642,7 +800,7 @@ if (count($list_penawaran_lab) > 0) {
                     <td class="text-center">:</td>
                     <td class="text-right">
                         <input type="hidden" name="ttl_mandays_tandem" value="<?= $list_penawaran->mandays_tandem ?>">
-                        <span class="ttl_mandays_tandem"><?= number_format($list_penawaran->mandays_tandem) ?></span>
+                        <span class="ttl_mandays_tandem"><?= number_format($list_penawaran->mandays_tandem, 2) ?></span>
                     </td>
                 </tr>
                 <tr>
@@ -650,7 +808,7 @@ if (count($list_penawaran_lab) > 0) {
                     <td class="text-center">:</td>
                     <td class="text-right">
                         <input type="hidden" name="ttl_mandays_subcont" value="<?= $list_penawaran->mandays_subcont ?>">
-                        <span class="ttl_mandays_subcont"><?= number_format($list_penawaran->mandays_subcont) ?></span>
+                        <span class="ttl_mandays_subcont"><?= number_format($list_penawaran->mandays_subcont, 2) ?></span>
                     </td>
                 </tr>
                 <tr>

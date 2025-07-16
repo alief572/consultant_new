@@ -411,6 +411,112 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     <div class="box">
         <div class="box-header">
             <h4 class="semi-bold">
+                Subcont Tenaga Ahli
+                <div style="float: right">
+                    <div class="onoffswitch">
+                        <input type="checkbox" name="switch_subcont_tenaga_ahli" class="onoffswitch-checkbox" id="switch_subcont_tenaga_ahli">
+                        <label class="onoffswitch-label" for="switch_subcont_tenaga_ahli">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </h4>
+        </div>
+        <div class="box-body box_subcont_tenaga_ahli d-none">
+            <div style="float: right; margin-bottom: 1rem;">
+                <button type="button" class="btn btn-sm btn-success add_subcont_tenaga_ahli">
+                    <i class="fa fa-plus"></i> Add
+                </button>
+            </div>
+
+            <br>
+
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">Item</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price/Unit Customer</th>
+                        <th class="text-center">Price/Unit Budget</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Total Budget</th>
+                        <th class="text-center">Keterangan</th>
+                        <th class="text-center">Opsi</th>
+                    </tr>
+                </thead>
+                <tbody class="list_subcont_tenaga_ahli"></tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-right">
+                            Total
+                        </th>
+                        <th class="text-right ttl_subcont_tenaga_ahli_grand_total">000,00</th>
+                        <th class="text-right ttl_subcont_tenaga_ahli_grand_total_budget">000,00</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <h4 class="semi-bold">
+                Subcont Perusahaan
+                <div style="float: right">
+                    <div class="onoffswitch">
+                        <input type="checkbox" name="switch_subcont_perusahaan" class="onoffswitch-checkbox" id="switch_subcont_perusahaan">
+                        <label class="onoffswitch-label" for="switch_subcont_perusahaan">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </h4>
+        </div>
+        <div class="box-body box_subcont_perusahaan d-none">
+            <div style="float: right; margin-bottom: 1rem;">
+                <button type="button" class="btn btn-sm btn-success add_subcont_perusahaan">
+                    <i class="fa fa-plus"></i> Add
+                </button>
+            </div>
+
+            <br>
+
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">Item</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price/Unit Customer</th>
+                        <th class="text-center">Price/Unit Budget</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Total Budget</th>
+                        <th class="text-center">Keterangan</th>
+                        <th class="text-center">Opsi</th>
+                    </tr>
+                </thead>
+                <tbody class="list_subcont_perusahaan"></tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-right">
+                            Total
+                        </th>
+                        <th class="text-right ttl_subcont_perusahaan_grand_total">000,00</th>
+                        <th class="text-right ttl_subcont_perusahaan_grand_total_budget">000,00</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <h4 class="semi-bold">
                 Summary
 
                 <div style="float: right;">
@@ -445,6 +551,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <tr>
                         <td class="text-left">Lab</td>
                         <td class="text-right summary_lab">0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Subcont Tenaga Ahli</td>
+                        <td class="text-right summary_subcont_tenaga_ahli">0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Subcont Perusahaan</td>
+                        <td class="text-right summary_subcont_perusahaan">0.00</td>
                     </tr>
                     <tr>
                         <td class="text-left"><b>Subtotal</b></td>
@@ -543,6 +657,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <input type="hidden" class="no_akomodasi" value="1">
 <input type="hidden" class="no_others" value="1">
 <input type="hidden" class="no_lab" value="1">
+<input type="hidden" class="no_subcont_tenaga_ahli" value="1">
+<input type="hidden" class="no_subcont_perusahaan" value="1">
 
 <div id="form-data"></div>
 <!-- DataTables -->
@@ -692,6 +808,12 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     });
     $(document).on('click', '.add_lab', function() {
         addALab();
+    });
+    $(document).on('click', '.add_subcont_tenaga_ahli', function() {
+        addSubcontTenagaAhli();
+    });
+    $(document).on('click', '.add_subcont_perusahaan', function() {
+        addSubcontPerusahaan();
     });
 
     function auto_num() {
@@ -897,6 +1019,36 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hitung_detail_other_summary();
     }
 
+    function hitung_item_subcont_tenaga_ahli(no) {
+        var qty = get_num($('input[name="dt_subcont_tenaga_ahli[' + no + '][qty_subcont_tenaga_ahli]"]').val());
+        var harga = get_num($('input[name="dt_subcont_tenaga_ahli[' + no + '][harga_subcont_tenaga_ahli]"]').val());
+        var harga_budget = get_num($('input[name="dt_subcont_tenaga_ahli[' + no + '][harga_subcont_tenaga_ahli_budget]"]').val());
+
+        var total = parseFloat(qty * harga);
+        var total_budget = parseFloat(qty * harga_budget);
+
+        $('input[name="dt_subcont_tenaga_ahli[' + no + '][total_subcont_tenaga_ahli]"]').val(number_format(total, 2));
+        $('input[name="dt_subcont_tenaga_ahli[' + no + '][total_subcont_tenaga_ahli_budget]"]').val(number_format(total_budget, 2));
+
+        hitung_all_subcont_tenaga_ahli();
+        hitung_detail_other_summary();
+    }
+
+    function hitung_item_subcont_perusahaan(no) {
+        var qty = get_num($('input[name="dt_subcont_perusahaan[' + no + '][qty_subcont_perusahaan]"]').val());
+        var harga = get_num($('input[name="dt_subcont_perusahaan[' + no + '][harga_subcont_perusahaan]"]').val());
+        var harga_budget = get_num($('input[name="dt_subcont_perusahaan[' + no + '][harga_subcont_perusahaan_budget]"]').val());
+
+        var total = parseFloat(qty * harga);
+        var total_budget = parseFloat(qty * harga_budget);
+
+        $('input[name="dt_subcont_perusahaan[' + no + '][total_subcont_perusahaan]"]').val(number_format(total, 2));
+        $('input[name="dt_subcont_perusahaan[' + no + '][total_subcont_perusahaan_budget]"]').val(number_format(total_budget, 2));
+
+        hitung_all_subcont_perusahaan();
+        hitung_detail_other_summary();
+    }
+
     function hitung_all_lab() {
         var no_lab = parseFloat($('.no_lab').val());
 
@@ -919,20 +1071,68 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hitung_detail_other_summary();
     }
 
+    function hitung_all_subcont_tenaga_ahli() {
+        var no_subcont_tenaga_ahli = parseFloat($('.no_subcont_tenaga_ahli').val());
+
+        var ttl_grand_total = 0;
+        var ttl_grand_total_budget = 0;
+        for (i = 1; i < no_subcont_tenaga_ahli; i++) {
+            if ($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli]"]').val() !== '') {
+                var total_subcont_tenaga_ahli = get_num($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli]"]').val());
+                var total_subcont_tenaga_ahli_budget = get_num($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli_budget]"]').val());
+
+                ttl_grand_total += total_subcont_tenaga_ahli;
+                ttl_grand_total_budget += total_subcont_tenaga_ahli_budget;
+            }
+        }
+
+        $('.ttl_subcont_tenaga_ahli_grand_total').html(number_format(ttl_grand_total, 2));
+        $('.ttl_subcont_tenaga_ahli_grand_total_budget').html(number_format(ttl_grand_total_budget, 2));
+
+        hitung_summary();
+        hitung_detail_other_summary();
+    }
+
+    function hitung_all_subcont_perusahaan() {
+        var no_subcont_perusahaan = parseFloat($('.no_subcont_perusahaan').val());
+
+        var ttl_grand_total = 0;
+        var ttl_grand_total_budget = 0;
+        for (i = 1; i < no_subcont_perusahaan; i++) {
+            if ($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan]"]').val() !== '') {
+                var total_subcont_perusahaan = get_num($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan]"]').val());
+                var total_subcont_perusahaan_budget = get_num($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan_budget]"]').val());
+
+                ttl_grand_total += total_subcont_perusahaan;
+                ttl_grand_total_budget += total_subcont_perusahaan_budget;
+            }
+        }
+
+        $('.ttl_subcont_perusahaan_grand_total').html(number_format(ttl_grand_total, 2));
+        $('.ttl_subcont_perusahaan_grand_total_budget').html(number_format(ttl_grand_total_budget, 2));
+
+        hitung_summary();
+        hitung_detail_other_summary();
+    }
+
     function hitung_summary() {
         var ttl_act_price = get_num($('.ttl_act_price').html());
         var ttl_ako_grand_total = get_num($('.ttl_ako_grand_total').html());
         var ttl_oth_grand_total = get_num($('.ttl_oth_grand_total').html());
         var ttl_lab_grand_total = get_num($('.ttl_lab_grand_total').html());
+        var ttl_subcont_tenaga_ahli_grand_total = get_num($('.ttl_subcont_tenaga_ahli_grand_total').html());
+        var ttl_subcont_perusahaan_grand_total = get_num($('.ttl_subcont_perusahaan_grand_total').html());
 
         $('.summary_konsultasi').html(number_format(ttl_act_price, 2));
         $('.summary_akomodasi').html(number_format(ttl_ako_grand_total, 2));
         $('.summary_others').html(number_format(ttl_oth_grand_total, 2));
         $('.summary_lab').html(number_format(ttl_lab_grand_total, 2));
+        $('.summary_subcont_tenaga_ahli').html(number_format(ttl_subcont_tenaga_ahli_grand_total, 2));
+        $('.summary_subcont_perusahaan').html(number_format(ttl_subcont_perusahaan_grand_total, 2));
 
         var nilai_disc = get_num($('.input_diskon_value').val());
 
-        var subtotal = (ttl_act_price + ttl_ako_grand_total + ttl_oth_grand_total + ttl_lab_grand_total);
+        var subtotal = (ttl_act_price + ttl_ako_grand_total + ttl_oth_grand_total + ttl_lab_grand_total + ttl_subcont_tenaga_ahli_grand_total + ttl_subcont_perusahaan_grand_total);
         $('.summary_subtotal').html(number_format(subtotal, 2));
 
         subtotal -= nilai_disc;
@@ -1130,6 +1330,130 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         auto_num();
     }
 
+    function addSubcontTenagaAhli() {
+        var no_subcont_tenaga_ahli = parseFloat($('.no_subcont_tenaga_ahli').val());
+
+        var hasil = '<tr class="tr_subcont_tenaga_ahli_' + no_subcont_tenaga_ahli + '">';
+
+        hasil += '<td>';
+        hasil += '<select class="form-control form-control-sm change_subcont_tenaga_ahli select_subcont_tenaga_ahli_' + no_subcont_tenaga_ahli + '" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][id_subcont_tenaga_ahli]" data-no="' + no_subcont_tenaga_ahli + '">';
+        hasil += '<option value="">- Item Subcont Tenaga Ahli -</option>';
+        <?php
+        foreach ($list_def_subcont_tenaga_ahli as $item) {
+        ?>
+
+            hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+
+        <?php
+        }
+        ?>
+        hasil += '</select>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][qty_subcont_tenaga_ahli]" onchange="hitung_item_subcont_tenaga_ahli(' + no_subcont_tenaga_ahli + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][harga_subcont_tenaga_ahli]" onchange="hitung_item_subcont_tenaga_ahli(' + no_subcont_tenaga_ahli + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][harga_subcont_tenaga_ahli_budget]" onchange="hitung_item_subcont_tenaga_ahli(' + no_subcont_tenaga_ahli + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][total_subcont_tenaga_ahli]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][total_subcont_tenaga_ahli_budget]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][keterangan_subcont_tenaga_ahli]">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<button type="button" class="btn btn-sm btn-danger del_subcont_tenaga_ahli" data-no="' + no_subcont_tenaga_ahli + '"><i class="fa fa-trash"></i></button>';
+        hasil += '</td>';
+
+        hasil += '</tr>';
+
+        $('.list_subcont_tenaga_ahli').append(hasil);
+
+        $('.select_subcont_tenaga_ahli_' + no_subcont_tenaga_ahli).select2({
+            width: '280px'
+        });
+
+        no_subcont_tenaga_ahli = parseFloat(no_subcont_tenaga_ahli + 1);
+        $('.no_subcont_tenaga_ahli').val(no_subcont_tenaga_ahli);
+
+        auto_num();
+    }
+
+    function addSubcontPerusahaan() {
+        var no_subcont_perusahaan = parseFloat($('.no_subcont_perusahaan').val());
+
+        var hasil = '<tr class="tr_subcont_perusahaan_' + no_subcont_perusahaan + '">';
+
+        hasil += '<td>';
+        hasil += '<select class="form-control form-control-sm change_subcont_perusahaan select_subcont_perusahaan_' + no_subcont_perusahaan + '" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][id_subcont_perusahaan]" data-no="' + no_subcont_perusahaan + '">';
+        hasil += '<option value="">- Item Subcont Perusahaan -</option>';
+        <?php
+        foreach ($list_def_subcont_perusahaan as $item) {
+        ?>
+
+            hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+
+        <?php
+        }
+        ?>
+        hasil += '</select>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][qty_subcont_perusahaan]" onchange="hitung_item_subcont_perusahaan(' + no_subcont_perusahaan + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][harga_subcont_perusahaan]" onchange="hitung_item_subcont_perusahaan(' + no_subcont_perusahaan + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][harga_subcont_perusahaan_budget]" onchange="hitung_item_subcont_perusahaan(' + no_subcont_perusahaan + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][total_subcont_perusahaan]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][total_subcont_perusahaan_budget]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][keterangan_subcont_perusahaan]">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<button type="button" class="btn btn-sm btn-danger del_subcont_perusahaan" data-no="' + no_subcont_perusahaan + '"><i class="fa fa-trash"></i></button>';
+        hasil += '</td>';
+
+        hasil += '</tr>';
+
+        $('.list_subcont_perusahaan').append(hasil);
+
+        $('.select_subcont_perusahaan_' + no_subcont_perusahaan).select2({
+            width: '280px'
+        });
+
+        no_subcont_perusahaan = parseFloat(no_subcont_perusahaan + 1);
+        $('.no_subcont_perusahaan').val(no_subcont_perusahaan);
+
+        auto_num();
+    }
+
     function hitung_detail_other_summary() {
         var max_no = 1;
         $('.tr_no').each(function() {
@@ -1283,6 +1607,22 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         }
     });
 
+    $(document).on('click', '#switch_subcont_tenaga_ahli', function() {
+        if ($(this).is(':checked')) {
+            $('.box_subcont_tenaga_ahli').fadeIn(500);
+        } else {
+            $('.box_subcont_tenaga_ahli').fadeOut(500);
+        }
+    });
+
+    $(document).on('click', '#switch_subcont_perusahaan', function() {
+        if ($(this).is(':checked')) {
+            $('.box_subcont_perusahaan').fadeIn(500);
+        } else {
+            $('.box_subcont_perusahaan').fadeOut(500);
+        }
+    });
+
     $(document).on('change', '.change_customer', function() {
         var id_customer = $(this).val();
 
@@ -1419,6 +1759,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         hitung_all_lab();
     });
 
+    $(document).on('click', '.del_subcont_tenaga_ahli', function() {
+        var no_subcont_tenaga_ahli = $(this).data('no');
+
+        $('.tr_subcont_tenaga_ahli_' + no_subcont_tenaga_ahli).remove();
+
+        hitung_all_subcont_tenaga_ahli();
+    });
+
     $(document).on('change', '.include_ppn', function() {
         hitung_summary();
     });
@@ -1457,8 +1805,61 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             showCancelButton: true
         }, function(next) {
             if (next) {
-                // var formData = new FormData($('.form-data')[0]);
-                var formData = $('.form-data').serialize();
+
+                var cust = $('input[name="customer"]').val();
+                var sts_cust = 0;
+
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'check_sts_customer',
+                    data: {
+                        'cust': cust
+                    },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(result) {
+                        sts_cust = result.cust_sts;
+                    }
+                });
+
+                var sales = $('input[name="marketing"]').val();
+                var initial_sales = '';
+
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'get_initials',
+                    data: {
+                        'sales': sales
+                    },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(result) {
+                        initial_sales = result.sales_initials;
+                    }
+                });
+
+                var company = $('input[name="company"]').val();
+                var nm_company = '';
+
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'get_company',
+                    data: {
+                        'company': company
+                    },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(result) {
+                        nm_company = result.company_nm;
+                    }
+                });
+
+                var formData = new FormData($('.form-data')[0]);
+                // var formData = $('.form-data').serialize();
+
+                formData.append('sts_cust', sts_cust);
+                formData.append('employee_code', initial_sales);
+                formData.append('nm_company', nm_company);
 
                 $.ajax({
                     type: 'post',
@@ -1466,6 +1867,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     data: formData,
                     cache: false,
                     dataType: 'JSON',
+                    contentType: false,
+                    processData: false,
                     success: function(result) {
                         if (result.status == 1) {
                             swal({

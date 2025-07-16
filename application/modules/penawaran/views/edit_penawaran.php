@@ -7,6 +7,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 $open_akomodasi = 'd-none';
 $open_others = 'd-none';
 $open_lab = 'd-none';
+$open_subcont_tenaga_ahli = 'd-none';
+$open_subcont_perusahaan = 'd-none';
 
 if (count($list_penawaran_akomodasi) > 0) {
     $open_akomodasi = '';
@@ -16,6 +18,12 @@ if (count($list_penawaran_others) > 0) {
 }
 if (count($list_penawaran_lab) > 0) {
     $open_lab = '';
+}
+if (count($list_penawaran_subcont_tenaga_ahli) > 0) {
+    $open_subcont_tenaga_ahli = '';
+}
+if (count($list_penawaran_subcont_perusahaan) > 0) {
+    $open_subcont_perusahaan = '';
 }
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
@@ -733,6 +741,226 @@ if (count($list_penawaran_lab) > 0) {
     <div class="box">
         <div class="box-header">
             <h4 class="semi-bold">
+                Subcont Tenaga Ahli
+                <div style="float: right">
+                    <div class="onoffswitch">
+                        <input type="checkbox" name="switch_subcont_tenaga_ahli" class="onoffswitch-checkbox" id="switch_subcont_tenaga_ahli" <?= ($open_subcont_tenaga_ahli == '') ? 'checked' : '' ?>>
+                        <label class="onoffswitch-label" for="switch_subcont_tenaga_ahli">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </h4>
+        </div>
+        <div class="box-body box_subcont_tenaga_ahli <?= $open_subcont_tenaga_ahli ?>">
+            <div style="float: right; margin-bottom: 1rem;">
+                <button type="button" class="btn btn-sm btn-success add_subcont_tenaga_ahli">
+                    <i class="fa fa-plus"></i> Add
+                </button>
+            </div>
+
+            <br>
+
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">Item</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price/Unit Customer</th>
+                        <th class="text-center">Price/Unit Budget</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Total Budget</th>
+                        <th class="text-center">Keterangan</th>
+                        <th class="text-center">Opsi</th>
+                    </tr>
+                </thead>
+                <tbody class="list_subcont_tenaga_ahli">
+                    <?php
+                    $no_subcont_tenaga_ahli = 1;
+
+                    $ttl_subcont_tenaga_ahli = 0;
+                    $ttl_subcont_tenaga_ahli_budget = 0;
+                    foreach ($list_penawaran_subcont_tenaga_ahli as $item_subcont_tenaga_ahli) {
+                        echo '<tr class="tr_subcont_tenaga_ahli_' . $no_subcont_tenaga_ahli . '">';
+
+                        echo '<td>';
+                        echo '<select class="form-control form-control-sm select_subcont_tenaga_ahli_' . $no_subcont_tenaga_ahli . '" name="dt_subcont_tenaga_ahli[' . $no_subcont_tenaga_ahli . '][id_subcont_tenaga_ahli]">';
+                        echo '<option value="">- Select Others -</option>';
+                        foreach ($list_def_tenaga_ahli as $item_def_tenaga_ahli) {
+                            $selected = '';
+                            if ($item_def_tenaga_ahli->id == $item_subcont_tenaga_ahli->id_item) {
+                                $selected = 'selected';
+                            }
+                            echo '<option value="' . $item_def_tenaga_ahli->id . '" ' . $selected . '>' . $item_def_tenaga_ahli->nm_biaya . '</option>';
+                        }
+                        echo '</select>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' . $no_subcont_tenaga_ahli . '][qty_subcont_tenaga_ahli]" value="' . $item_subcont_tenaga_ahli->qty . '" onchange="hitung_item_subcont_tenaga_ahli(' . $no_subcont_tenaga_ahli . ')">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' . $no_subcont_tenaga_ahli . '][harga_subcont_tenaga_ahli]" value="' . $item_subcont_tenaga_ahli->price_unit . '" onchange="hitung_item_subcont_tenaga_ahli(' . $no_subcont_tenaga_ahli . ')">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' . $no_subcont_tenaga_ahli . '][harga_subcont_tenaga_ahli_budget]" value="' . $item_subcont_tenaga_ahli->price_unit_budget . '" onchange="hitung_item_subcont_tenaga_ahli(' . $no_subcont_tenaga_ahli . ')">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' . $no_subcont_tenaga_ahli . '][total_subcont_tenaga_ahli]" value="' . $item_subcont_tenaga_ahli->total . '" readonly>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' . $no_subcont_tenaga_ahli . '][total_subcont_tenaga_ahli_budget]" value="' . $item_subcont_tenaga_ahli->total_budget . '" readonly>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm" name="dt_subcont_tenaga_ahli[' . $no_subcont_tenaga_ahli . '][keterangan_subcont_tenaga_ahli]" value="' . $item_subcont_tenaga_ahli->keterangan . '">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<button type="button" class="btn btn-sm btn-danger del_subcont_tenaga_ahli" data-no="' . $no_subcont_tenaga_ahli . '"><i class="fa fa-trash"></i></button>';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_subcont_tenaga_ahli += $item_subcont_tenaga_ahli->total;
+                        $ttl_subcont_tenaga_ahli_budget += $item_subcont_tenaga_ahli->total_budget;
+                        $no_subcont_tenaga_ahli++;
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-right">
+                            Total
+                        </th>
+                        <th class="text-right ttl_subcont_tenaga_ahli_grand_total"><?= number_format($ttl_subcont_tenaga_ahli, 2) ?></th>
+                        <th class="text-right ttl_subcont_tenaga_ahli_grand_total_budget"><?= number_format($ttl_subcont_tenaga_ahli_budget, 2) ?></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <h4 class="semi-bold">
+                Subcont Perusahaan
+                <div style="float: right">
+                    <div class="onoffswitch">
+                        <input type="checkbox" name="switch_subcont_perusahaan" class="onoffswitch-checkbox" id="switch_subcont_perusahaan" <?= ($open_subcont_perusahaan == '') ? 'checked' : '' ?>>
+                        <label class="onoffswitch-label" for="switch_subcont_perusahaan">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </h4>
+        </div>
+        <div class="box-body box_subcont_perusahaan <?= $open_subcont_perusahaan ?>">
+            <div style="float: right; margin-bottom: 1rem;">
+                <button type="button" class="btn btn-sm btn-success add_subcont_perusahaan">
+                    <i class="fa fa-plus"></i> Add
+                </button>
+            </div>
+
+            <br>
+
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">Item</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Price/Unit Customer</th>
+                        <th class="text-center">Price/Unit Budget</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Total Budget</th>
+                        <th class="text-center">Keterangan</th>
+                        <th class="text-center">Opsi</th>
+                    </tr>
+                </thead>
+                <tbody class="list_subcont_perusahaan">
+                    <?php
+                    $no_subcont_perusahaan = 1;
+
+                    $ttl_subcont_perusahaan = 0;
+                    $ttl_subcont_perusahaan_budget = 0;
+                    foreach ($list_penawaran_subcont_perusahaan as $item_subcont_perusahaan) {
+                        echo '<tr class="tr_subcont_perusahaan_' . $no_subcont_perusahaan . '">';
+
+                        echo '<td>';
+                        echo '<select class="form-control form-control-sm select_subcont_perusahaan_' . $no_subcont_perusahaan . '" name="dt_subcont_perusahaan[' . $no_subcont_perusahaan . '][id_subcont_perusahaan]">';
+                        echo '<option value="">- Select Others -</option>';
+                        foreach ($list_def_subcont_perusahaan as $item_def_perusahaan) {
+                            $selected = '';
+                            if ($item_def_perusahaan->id == $item_subcont_perusahaan->id_item) {
+                                $selected = 'selected';
+                            }
+                            echo '<option value="' . $item_def_perusahaan->id . '" ' . $selected . '>' . $item_def_perusahaan->nm_biaya . '</option>';
+                        }
+                        echo '</select>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' . $no_subcont_perusahaan . '][qty_subcont_perusahaan]" value="' . $item_subcont_perusahaan->qty . '" onchange="hitung_item_subcont_perusahaan(' . $no_subcont_perusahaan . ')">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' . $no_subcont_perusahaan . '][harga_subcont_perusahaan]" value="' . $item_subcont_perusahaan->price_unit . '" onchange="hitung_item_subcont_perusahaan(' . $no_subcont_perusahaan . ')">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' . $no_subcont_perusahaan . '][harga_subcont_perusahaan_budget]" value="' . $item_subcont_perusahaan->price_unit_budget . '" onchange="hitung_item_subcont_perusahaan(' . $no_subcont_perusahaan . ')">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' . $no_subcont_perusahaan . '][total_subcont_perusahaan]" value="' . $item_subcont_perusahaan->total . '" readonly>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' . $no_subcont_perusahaan . '][total_subcont_perusahaan_budget]" value="' . $item_subcont_perusahaan->total_budget . '" readonly>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm" name="dt_subcont_perusahaan[' . $no_subcont_perusahaan . '][keterangan_subcont_perusahaan]" value="' . $item_subcont_perusahaan->keterangan . '">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<button type="button" class="btn btn-sm btn-danger del_subcont_perusahaan" data-no="' . $no_subcont_perusahaan . '"><i class="fa fa-trash"></i></button>';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_subcont_perusahaan += $item_subcont_perusahaan->total;
+                        $ttl_subcont_perusahaan_budget += $item_subcont_perusahaan->total_budget;
+                        $no_subcont_perusahaan++;
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-right">
+                            Total
+                        </th>
+                        <th class="text-right ttl_subcont_perusahaan_grand_total"><?= number_format($ttl_subcont_perusahaan, 2) ?></th>
+                        <th class="text-right ttl_subcont_perusahaan_grand_total_budget"><?= number_format($ttl_subcont_perusahaan_budget, 2) ?></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <h4 class="semi-bold">
                 Summary
 
                 <div style="float: right;">
@@ -769,8 +997,16 @@ if (count($list_penawaran_lab) > 0) {
                         <td class="text-right summary_lab"><?= number_format($ttl_lab, 2) ?></td>
                     </tr>
                     <tr>
+                        <td class="text-left">Subcont Tenaga Ahli</td>
+                        <td class="text-right summary_subcont_tenaga_ahli"><?= number_format($ttl_subcont_tenaga_ahli, 2) ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Subcont Perusahaan</td>
+                        <td class="text-right summary_subcont_perusahaan"><?= number_format($ttl_subcont_perusahaan, 2) ?></td>
+                    </tr>
+                    <tr>
                         <td class="text-left"><b>Subtotal</b></td>
-                        <td class="text-right summary_subtotal"><?= number_format(($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab), 2) ?></td>
+                        <td class="text-right summary_subtotal"><?= number_format(($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan), 2) ?></td>
                     </tr>
                     <tr>
                         <td class="text-left"><b>Discount</b></td>
@@ -783,13 +1019,13 @@ if (count($list_penawaran_lab) > 0) {
                     </tr>
                     <tr>
                         <td class="text-left"><b>Price after discount</b></td>
-                        <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc), 2) ?></td>
+                        <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan) - $list_penawaran->nilai_disc), 2) ?></td>
                     </tr>
                     <tr>
                         <?php
                         $nilai_ppn = 0;
                         if ($list_penawaran->ppn == 1) {
-                            $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc) * 11 / 100);
+                            $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan) - $list_penawaran->nilai_disc) * 11 / 100);
                         }
                         ?>
                         <td class="text-left">PPN</td>
@@ -799,7 +1035,7 @@ if (count($list_penawaran_lab) > 0) {
                 <tfoot>
                     <tr>
                         <td class="text-left"><b>Grand Total</b></td>
-                        <td class="text-right summary_grand_total"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc) + $nilai_ppn, 2) ?></td>
+                        <td class="text-right summary_grand_total"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan) - $list_penawaran->nilai_disc) + $nilai_ppn, 2) ?></td>
                     </tr>
                 </tfoot>
             </table>
@@ -871,6 +1107,8 @@ if (count($list_penawaran_lab) > 0) {
 <input type="hidden" class="no_akomodasi" value="<?= ($no_akomodasi + 1) ?>">
 <input type="hidden" class="no_others" value="<?= ($no_others + 1) ?>">
 <input type="hidden" class="no_lab" value="<?= ($no_lab + 1) ?>">
+<input type="hidden" class="no_subcont_tenaga_ahli" value="<?= ($no_subcont_tenaga_ahli + 1) ?>">
+<input type="hidden" class="no_subcont_perusahaan" value="<?= ($no_subcont_perusahaan + 1) ?>">
 
 <div id="form-data"></div>
 <!-- DataTables -->
@@ -987,6 +1225,14 @@ if (count($list_penawaran_lab) > 0) {
     $(document).on('click', '.add_lab', function(e) {
         e.preventDefault();
         addALab();
+    });
+    $(document).on('click', '.add_subcont_tenaga_ahli', function(e) {
+        e.preventDefault();
+        addSubcontTenagaAhli();
+    });
+    $(document).on('click', '.add_subcont_perusahaan', function(e) {
+        e.preventDefault();
+        addSubcontPerusahaan();
     });
 
     function auto_num() {
@@ -1178,15 +1424,19 @@ if (count($list_penawaran_lab) > 0) {
         var ttl_ako_grand_total = get_num($('.ttl_ako_grand_total').html());
         var ttl_oth_grand_total = get_num($('.ttl_oth_grand_total').html());
         var ttl_lab_grand_total = get_num($('.ttl_lab_grand_total').html());
+        var ttl_subcont_tenaga_ahli_grand_total = get_num($('.ttl_subcont_tenaga_ahli_grand_total').html());
+        var ttl_subcont_perusahaan_grand_total = get_num($('.ttl_subcont_perusahaan_grand_total').html());
 
         $('.summary_konsultasi').html(number_format(ttl_act_price, 2));
         $('.summary_akomodasi').html(number_format(ttl_ako_grand_total, 2));
         $('.summary_others').html(number_format(ttl_oth_grand_total, 2));
         $('.summary_lab').html(number_format(ttl_lab_grand_total, 2));
+        $('.summary_subcont_tenaga_ahli').html(number_format(ttl_subcont_tenaga_ahli_grand_total, 2));
+        $('.summary_subcont_perusahaan').html(number_format(ttl_subcont_perusahaan_grand_total, 2));
 
         var nilai_disc = get_num($('.input_diskon_value').val());
 
-        var subtotal = (ttl_act_price + ttl_ako_grand_total + ttl_oth_grand_total + ttl_lab_grand_total);
+        var subtotal = (ttl_act_price + ttl_ako_grand_total + ttl_oth_grand_total + ttl_lab_grand_total + ttl_subcont_tenaga_ahli_grand_total + ttl_subcont_perusahaan_grand_total);
         $('.summary_subtotal').html(number_format(subtotal, 2));
 
         subtotal -= nilai_disc;
@@ -1407,6 +1657,9 @@ if (count($list_penawaran_lab) > 0) {
         var ttl_nilai_project = 0;
         var ttl_akomodasi = 0;
         var ttl_others = 0;
+        var ttl_lab = 0;
+        var ttl_subcont_tenaga_ahli = 0;
+        var ttl_subcont_perusahaan = 0;
         var ttl_subcont = 0;
         var ttl_tandem = 0;
 
@@ -1448,12 +1701,33 @@ if (count($list_penawaran_lab) > 0) {
             ttl_others += total_others;
         }
 
+        var max_no_lab = get_num($('.no_lab').val());
+        for (i = 1; i <= max_no_lab; i++) {
+            total_lab = get_num($('input[name="dt_lab[' + i + '][total_lab]"]').val());
+
+            ttl_lab += total_lab;
+        }
+
+        var max_no_subcont_tenaga_ahli = get_num($('.no_subcont_tenaga_ahli').val());
+        for (i = 1; i <= max_no_subcont_tenaga_ahli; i++) {
+            total_subcont_tenaga_ahli = get_num($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli]"]').val());
+
+            ttl_subcont_tenaga_ahli += total_subcont_tenaga_ahli;
+        }
+
+        var max_no_subcont_perusahaan = get_num($('.no_subcont_perusahaan').val());
+        for (i = 1; i <= max_no_subcont_perusahaan; i++) {
+            total_subcont_perusahaan = get_num($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan]"]').val());
+
+            ttl_subcont_perusahaan += total_subcont_perusahaan;
+        }
+
         var disc_nilai = get_num($('.input_diskon_value').val());
 
-        var nilai_project = (ttl_nilai_project + ttl_akomodasi + ttl_others);
+        var nilai_project = (ttl_nilai_project + ttl_akomodasi + ttl_others + ttl_lab + ttl_subcont_tenaga_ahli + ttl_subcont_perusahaan);
         nilai_project = (nilai_project - disc_nilai);
 
-        var mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others) / ttl_total_mandays);
+        var mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others - ttl_lab - ttl_subcont_tenaga_ahli - ttl_subcont_perusahaan) / ttl_total_mandays);
 
         // alert(mandays_rate);
 
@@ -1532,6 +1806,130 @@ if (count($list_penawaran_lab) > 0) {
         auto_num();
     }
 
+    function addSubcontTenagaAhli() {
+        var no_subcont_tenaga_ahli = parseFloat($('.no_subcont_tenaga_ahli').val());
+
+        var hasil = '<tr class="tr_subcont_tenaga_ahli_' + no_subcont_tenaga_ahli + '">';
+
+        hasil += '<td>';
+        hasil += '<select class="form-control form-control-sm change_subcont_tenaga_ahli select_subcont_tenaga_ahli_' + no_subcont_tenaga_ahli + '" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][id_subcont_tenaga_ahli]" data-no="' + no_subcont_tenaga_ahli + '">';
+        hasil += '<option value="">- Item Subcont Tenaga Ahli -</option>';
+        <?php
+        foreach ($list_def_tenaga_ahli as $item) {
+        ?>
+
+            hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+
+        <?php
+        }
+        ?>
+        hasil += '</select>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][qty_subcont_tenaga_ahli]" onchange="hitung_item_subcont_tenaga_ahli(' + no_subcont_tenaga_ahli + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][harga_subcont_tenaga_ahli]" onchange="hitung_item_subcont_tenaga_ahli(' + no_subcont_tenaga_ahli + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][harga_subcont_tenaga_ahli_budget]" onchange="hitung_item_subcont_tenaga_ahli(' + no_subcont_tenaga_ahli + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][total_subcont_tenaga_ahli]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][total_subcont_tenaga_ahli_budget]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm" name="dt_subcont_tenaga_ahli[' + no_subcont_tenaga_ahli + '][keterangan_subcont_tenaga_ahli]">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<button type="button" class="btn btn-sm btn-danger del_subcont_tenaga_ahli" data-no="' + no_subcont_tenaga_ahli + '"><i class="fa fa-trash"></i></button>';
+        hasil += '</td>';
+
+        hasil += '</tr>';
+
+        $('.list_subcont_tenaga_ahli').append(hasil);
+
+        $('.select_subcont_tenaga_ahli_' + no_subcont_tenaga_ahli).select2({
+            width: '280px'
+        });
+
+        no_subcont_tenaga_ahli = parseFloat(no_subcont_tenaga_ahli + 1);
+        $('.no_subcont_tenaga_ahli').val(no_subcont_tenaga_ahli);
+
+        auto_num();
+    }
+
+    function addSubcontPerusahaan() {
+        var no_subcont_perusahaan = parseFloat($('.no_subcont_perusahaan').val());
+
+        var hasil = '<tr class="tr_subcont_perusahaan_' + no_subcont_perusahaan + '">';
+
+        hasil += '<td>';
+        hasil += '<select class="form-control form-control-sm change_subcont_perusahaan select_subcont_perusahaan_' + no_subcont_perusahaan + '" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][id_subcont_perusahaan]" data-no="' + no_subcont_perusahaan + '">';
+        hasil += '<option value="">- Item Subcont Tenaga Ahli -</option>';
+        <?php
+        foreach ($list_def_subcont_perusahaan as $item) {
+        ?>
+
+            hasil += '<option value="<?= $item->id ?>"><?= $item->nm_biaya ?></option>';
+
+        <?php
+        }
+        ?>
+        hasil += '</select>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][qty_subcont_perusahaan]" onchange="hitung_item_subcont_perusahaan(' + no_subcont_perusahaan + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][harga_subcont_perusahaan]" onchange="hitung_item_subcont_perusahaan(' + no_subcont_perusahaan + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][harga_subcont_perusahaan_budget]" onchange="hitung_item_subcont_perusahaan(' + no_subcont_perusahaan + ')">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][total_subcont_perusahaan]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm auto_num text-right" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][total_subcont_perusahaan_budget]" readonly>';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<input type="text" class="form-control form-control-sm" name="dt_subcont_perusahaan[' + no_subcont_perusahaan + '][keterangan_subcont_perusahaan]">';
+        hasil += '</td>';
+
+        hasil += '<td>';
+        hasil += '<button type="button" class="btn btn-sm btn-danger del_subcont_perusahaan" data-no="' + no_subcont_perusahaan + '"><i class="fa fa-trash"></i></button>';
+        hasil += '</td>';
+
+        hasil += '</tr>';
+
+        $('.list_subcont_perusahaan').append(hasil);
+
+        $('.select_subcont_perusahaan_' + no_subcont_perusahaan).select2({
+            width: '280px'
+        });
+
+        no_subcont_perusahaan = parseFloat(no_subcont_perusahaan + 1);
+        $('.no_subcont_perusahaan').val(no_subcont_perusahaan);
+
+        auto_num();
+    }
+
     function hitung_item_lab(no) {
         var qty = get_num($('input[name="dt_lab[' + no + '][qty_lab]"]').val());
         var harga = get_num($('input[name="dt_lab[' + no + '][harga_lab]"]').val());
@@ -1544,6 +1942,36 @@ if (count($list_penawaran_lab) > 0) {
         $('input[name="dt_lab[' + no + '][total_lab_budget]"]').val(number_format(total_budget, 2));
 
         hitung_all_lab();
+        hitung_detail_other_summary();
+    }
+
+    function hitung_item_subcont_tenaga_ahli(no) {
+        var qty = get_num($('input[name="dt_subcont_tenaga_ahli[' + no + '][qty_subcont_tenaga_ahli]"]').val());
+        var harga = get_num($('input[name="dt_subcont_tenaga_ahli[' + no + '][harga_subcont_tenaga_ahli]"]').val());
+        var harga_budget = get_num($('input[name="dt_subcont_tenaga_ahli[' + no + '][harga_subcont_tenaga_ahli_budget]"]').val());
+
+        var total = parseFloat(qty * harga);
+        var total_budget = parseFloat(qty * harga_budget);
+
+        $('input[name="dt_subcont_tenaga_ahli[' + no + '][total_subcont_tenaga_ahli]"]').val(number_format(total, 2));
+        $('input[name="dt_subcont_tenaga_ahli[' + no + '][total_subcont_tenaga_ahli_budget]"]').val(number_format(total_budget, 2));
+
+        hitung_all_subcont_tenaga_ahli();
+        hitung_detail_other_summary();
+    }
+
+    function hitung_item_subcont_perusahaan(no) {
+        var qty = get_num($('input[name="dt_subcont_perusahaan[' + no + '][qty_subcont_perusahaan]"]').val());
+        var harga = get_num($('input[name="dt_subcont_perusahaan[' + no + '][harga_subcont_perusahaan]"]').val());
+        var harga_budget = get_num($('input[name="dt_subcont_perusahaan[' + no + '][harga_subcont_perusahaan_budget]"]').val());
+
+        var total = parseFloat(qty * harga);
+        var total_budget = parseFloat(qty * harga_budget);
+
+        $('input[name="dt_subcont_perusahaan[' + no + '][total_subcont_perusahaan]"]').val(number_format(total, 2));
+        $('input[name="dt_subcont_perusahaan[' + no + '][total_subcont_perusahaan_budget]"]').val(number_format(total_budget, 2));
+
+        hitung_all_subcont_perusahaan();
         hitung_detail_other_summary();
     }
 
@@ -1564,6 +1992,50 @@ if (count($list_penawaran_lab) > 0) {
 
         $('.ttl_lab_grand_total').html(number_format(ttl_grand_total, 2));
         $('.ttl_lab_grand_total_budget').html(number_format(ttl_grand_total_budget, 2));
+
+        hitung_summary();
+        hitung_detail_other_summary();
+    }
+
+    function hitung_all_subcont_tenaga_ahli() {
+        var no_subcont_tenaga_ahli = parseFloat($('.no_subcont_tenaga_ahli').val());
+
+        var ttl_grand_total = 0;
+        var ttl_grand_total_budget = 0;
+        for (i = 1; i < no_subcont_tenaga_ahli; i++) {
+            if ($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli]"]').val() !== '') {
+                var total_subcont_tenaga_ahli = get_num($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli]"]').val());
+                var total_subcont_tenaga_ahli_budget = get_num($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli_budget]"]').val());
+
+                ttl_grand_total += total_subcont_tenaga_ahli;
+                ttl_grand_total_budget += total_subcont_tenaga_ahli_budget;
+            }
+        }
+
+        $('.ttl_subcont_tenaga_ahli_grand_total').html(number_format(ttl_grand_total, 2));
+        $('.ttl_subcont_tenaga_ahli_grand_total_budget').html(number_format(ttl_grand_total_budget, 2));
+
+        hitung_summary();
+        hitung_detail_other_summary();
+    }
+
+    function hitung_all_subcont_perusahaan() {
+        var no_subcont_perusahaan = parseFloat($('.no_subcont_perusahaan').val());
+
+        var ttl_grand_total = 0;
+        var ttl_grand_total_budget = 0;
+        for (i = 1; i < no_subcont_perusahaan; i++) {
+            if ($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan]"]').val() !== '') {
+                var total_subcont_perusahaan = get_num($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan]"]').val());
+                var total_subcont_perusahaan_budget = get_num($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan_budget]"]').val());
+
+                ttl_grand_total += total_subcont_perusahaan;
+                ttl_grand_total_budget += total_subcont_perusahaan_budget;
+            }
+        }
+
+        $('.ttl_subcont_perusahaan_grand_total').html(number_format(ttl_grand_total, 2));
+        $('.ttl_subcont_perusahaan_grand_total_budget').html(number_format(ttl_grand_total_budget, 2));
 
         hitung_summary();
         hitung_detail_other_summary();
@@ -1614,6 +2086,22 @@ if (count($list_penawaran_lab) > 0) {
             $('.box_lab').fadeIn(500);
         } else {
             $('.box_lab').fadeOut(500);
+        }
+    });
+
+    $(document).on('click', '#switch_subcont_tenaga_ahli', function() {
+        if ($(this).is(':checked')) {
+            $('.box_subcont_tenaga_ahli').fadeIn(500);
+        } else {
+            $('.box_subcont_tenaga_ahli').fadeOut(500);
+        }
+    });
+
+    $(document).on('click', '#switch_subcont_perusahaan', function() {
+        if ($(this).is(':checked')) {
+            $('.box_subcont_perusahaan').fadeIn(500);
+        } else {
+            $('.box_subcont_perusahaan').fadeOut(500);
         }
     });
 
@@ -1782,6 +2270,22 @@ if (count($list_penawaran_lab) > 0) {
         hitung_all_lab();
     });
 
+    $(document).on('click', '.del_subcont_tenaga_ahli', function() {
+        var no_subcont_tenaga_ahli = $(this).data('no');
+
+        $('.tr_subcont_tenaga_ahli_' + no_subcont_tenaga_ahli).remove();
+
+        hitung_all_subcont_tenaga_ahli();
+    });
+
+    $(document).on('click', '.del_subcont_perusahaan', function() {
+        var no_subcont_perusahaan = $(this).data('no');
+
+        $('.tr_subcont_perusahaan_' + no_subcont_perusahaan).remove();
+
+        hitung_all_subcont_perusahaan();
+    });
+
     $(document).on('change', '.include_ppn', function() {
         hitung_summary();
         hitung_detail_other_summary();
@@ -1821,7 +2325,26 @@ if (count($list_penawaran_lab) > 0) {
             showCancelButton: true
         }, function(next) {
             if (next) {
+
+                var company = $('input[name="company"]').val();
+                var nm_company = '';
+
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'get_company',
+                    data: {
+                        'company': company
+                    },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(result) {
+                        nm_company = result.company_nm;
+                    }
+                });
+
                 var formData = new FormData($('.form-data')[0]);
+
+                formData.append('nm_company', nm_company);
 
                 $.ajax({
                     type: 'post',
