@@ -164,6 +164,18 @@ class Approval_penawaran extends Admin_Controller
         $this->db->where('a.id_penawaran', $id_penawaran);
         $get_penawaran_lab = $this->db->get()->result();
 
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_penawaran_subcont_tenaga_ahli a');
+        $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $id_penawaran);
+        $get_penawaran_subcont_tenaga_ahli = $this->db->get()->result();
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_penawaran_subcont_perusahaan a');
+        $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $id_penawaran);
+        $get_penawaran_subcont_perusahaan = $this->db->get()->result();
+
         $this->db->select('a.*');
         $this->db->from('customer a');
         $this->db->where('a.nm_customer <>', '');
@@ -210,6 +222,8 @@ class Approval_penawaran extends Admin_Controller
             'list_penawaran_akomodasi' => $get_penawaran_akomodasi,
             'list_penawaran_others' => $get_penawaran_others,
             'list_penawaran_lab' => $get_penawaran_lab,
+            'list_penawaran_subcont_tenaga_ahli' => $get_penawaran_subcont_tenaga_ahli,
+            'list_penawaran_subcont_perusahaan' => $get_penawaran_subcont_perusahaan,
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,

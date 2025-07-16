@@ -7,6 +7,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 $open_akomodasi = 'd-none';
 $open_others = 'd-none';
 $open_lab = 'd-none';
+$open_subcont_tenaga_ahli = 'd-none';
+$open_subcont_perusahaan = 'd-none';
 
 if (count($list_penawaran_akomodasi) > 0) {
     $open_akomodasi = '';
@@ -16,6 +18,12 @@ if (count($list_penawaran_others) > 0) {
 }
 if (count($list_penawaran_lab) > 0) {
     $open_lab = '';
+}
+if (count($list_penawaran_subcont_tenaga_ahli) > 0) {
+    $open_subcont_tenaga_ahli = '';
+}
+if (count($list_penawaran_subcont_perusahaan) > 0) {
+    $open_subcont_perusahaan = '';
 }
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
@@ -497,8 +505,8 @@ if (count($list_penawaran_lab) > 0) {
             Lab
             <div style="float: right">
                 <div class="onoffswitch">
-                    <input type="checkbox" name="switch_others" class="onoffswitch-checkbox" id="switch_others" <?= ($open_lab == '') ? 'checked' : '' ?>>
-                    <label class="onoffswitch-label" for="switch_others">
+                    <input type="checkbox" name="switch_lab" class="onoffswitch-checkbox" id="switch_lab" <?= ($open_lab == '') ? 'checked' : '' ?>>
+                    <label class="onoffswitch-label" for="switch_lab">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>
                     </label>
@@ -506,11 +514,8 @@ if (count($list_penawaran_lab) > 0) {
             </div>
         </h4>
     </div>
-    <div class="box-body box_others <?= ($open_lab == '') ? '' : 'd-none' ?>">
-
-
+    <div class="box-body box_lab <?= ($open_lab == '') ? '' : 'd-none' ?>">
         <br>
-
         <table class="table custom-table">
             <thead>
                 <tr>
@@ -562,6 +567,136 @@ if (count($list_penawaran_lab) > 0) {
 <div class="box">
     <div class="box-header">
         <h4 class="semi-bold">
+            Subcont Tenaga Ahli
+            <div style="float: right">
+                <div class="onoffswitch">
+                    <input type="checkbox" name="switch_subcont_tenaga_ahli" class="onoffswitch-checkbox" id="switch_subcont_tenaga_ahli" <?= ($open_subcont_tenaga_ahli == '') ? 'checked' : '' ?>>
+                    <label class="onoffswitch-label" for="switch_subcont_tenaga_ahli">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+        </h4>
+    </div>
+    <div class="box-body box_subcont_tenaga_ahli <?= ($open_subcont_tenaga_ahli == '') ? '' : 'd-none' ?>">
+        <br>
+        <table class="table custom-table">
+            <thead>
+                <tr>
+                    <th class="text-center">Item</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Price/Unit Customer</th>
+                    <th class="text-center">Price/Unit Budget</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Total Budget</th>
+                    <th class="text-center">Keterangan</th>
+                </tr>
+            </thead>
+            <tbody class="list_subcont_tenaga_ahli">
+                <?php
+                $no_subcont_tenaga_ahli = 1;
+
+                $ttl_subcont_tenaga_ahli = 0;
+                $ttl_subcont_tenaga_ahli_budget = 0;
+                foreach ($list_penawaran_subcont_tenaga_ahli as $item_subcont_tenaga_ahli) {
+                    echo '<tr>';
+                    echo '<td>' . $item_subcont_tenaga_ahli->isu_lingkungan . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->qty, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->price_unit, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->price_unit_budget, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->total, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->total_budget, 2) . '</td>';
+                    echo '<td>' . $item_subcont_tenaga_ahli->keterangan . '</td>';
+                    echo '</tr>';
+
+                    $ttl_subcont_tenaga_ahli += $item_subcont_tenaga_ahli->total;
+                    $ttl_subcont_tenaga_ahli_budget += $item_subcont_tenaga_ahli->total_budget;
+                }
+                ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" class="text-right">
+                        Total
+                    </th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_subcont_tenaga_ahli, 2) ?></th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_subcont_tenaga_ahli_budget, 2) ?></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <h4 class="semi-bold">
+            Subcont Perusahaan
+            <div style="float: right">
+                <div class="onoffswitch">
+                    <input type="checkbox" name="switch_subcont_perusahaan" class="onoffswitch-checkbox" id="switch_subcont_perusahaan" <?= ($open_subcont_perusahaan == '') ? 'checked' : '' ?>>
+                    <label class="onoffswitch-label" for="switch_subcont_perusahaan">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+        </h4>
+    </div>
+    <div class="box-body box_subcont_perusahaan <?= ($open_subcont_perusahaan == '') ? '' : 'd-none' ?>">
+        <br>
+        <table class="table custom-table">
+            <thead>
+                <tr>
+                    <th class="text-center">Item</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Price/Unit Customer</th>
+                    <th class="text-center">Price/Unit Budget</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Total Budget</th>
+                    <th class="text-center">Keterangan</th>
+                </tr>
+            </thead>
+            <tbody class="list_subcont_perusahaan">
+                <?php
+                $no_subcont_perusahaan = 1;
+
+                $ttl_subcont_perusahaan = 0;
+                $ttl_subcont_perusahaan_budget = 0;
+                foreach ($list_penawaran_subcont_perusahaan as $item_subcont_perusahaan) {
+                    echo '<tr>';
+                    echo '<td>' . $item_subcont_perusahaan->isu_lingkungan . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_perusahaan->qty, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_perusahaan->price_unit, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_perusahaan->price_unit_budget, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_perusahaan->total, 2) . '</td>';
+                    echo '<td class="text-center">' . number_format($item_subcont_perusahaan->total_budget, 2) . '</td>';
+                    echo '<td>' . $item_subcont_perusahaan->keterangan . '</td>';
+                    echo '</tr>';
+
+                    $ttl_subcont_perusahaan += $item_subcont_perusahaan->total;
+                    $ttl_subcont_perusahaan_budget += $item_subcont_perusahaan->total_budget;
+                }
+                ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" class="text-right">
+                        Total
+                    </th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_subcont_perusahaan, 2) ?></th>
+                    <th class="text-right ttl_oth_grand_total"><?= number_format($ttl_subcont_perusahaan_budget, 2) ?></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <h4 class="semi-bold">
             Summary
 
             <div style="float: right;">
@@ -598,8 +733,16 @@ if (count($list_penawaran_lab) > 0) {
                     <td class="text-right summary_lab"><?= number_format($ttl_lab, 2) ?></td>
                 </tr>
                 <tr>
+                    <td class="text-left">Subcont Tenaga Ahli</td>
+                    <td class="text-right summary_subcont_tenaga_ahli"><?= number_format($ttl_subcont_tenaga_ahli, 2) ?></td>
+                </tr>
+                <tr>
+                    <td class="text-left">Subcont Perusahaan</td>
+                    <td class="text-right summary_subcont_perusahaan"><?= number_format($ttl_subcont_perusahaan, 2) ?></td>
+                </tr>
+                <tr>
                     <td class="text-left"><b>Subtotal</b></td>
-                    <td class="text-right summary_subtotal"><?= number_format(($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab), 2) ?></td>
+                    <td class="text-right summary_subtotal"><?= number_format(($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_perusahaan + $ttl_subcont_tenaga_ahli), 2) ?></td>
                 </tr>
                 <tr>
                     <td class="text-left"><b>Discount</b></td>
@@ -612,13 +755,13 @@ if (count($list_penawaran_lab) > 0) {
                 </tr>
                 <tr>
                     <td class="text-left"><b>Price after discount</b></td>
-                    <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc), 2) ?></td>
+                    <td class="text-right summary_price_after_disc"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan) - $list_penawaran->nilai_disc), 2) ?></td>
                 </tr>
                 <tr>
                     <?php
                     $nilai_ppn = 0;
                     if ($list_penawaran->ppn == 1) {
-                        $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc) * 11 / 100);
+                        $nilai_ppn = ((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan) - $list_penawaran->nilai_disc) * 11 / 100);
                     }
                     ?>
                     <td class="text-left">PPN</td>
@@ -628,7 +771,7 @@ if (count($list_penawaran_lab) > 0) {
             <tfoot>
                 <tr>
                     <td class="text-left"><b>Grand Total</b></td>
-                    <td class="text-right summary_grand_total"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab) - $list_penawaran->nilai_disc) + $nilai_ppn, 2) ?></td>
+                    <td class="text-right summary_grand_total"><?= number_format((($ttl_price + $ttl_akomodasi + $ttl_others + $ttl_lab + $ttl_subcont_tenaga_ahli + $ttl_subcont_perusahaan) - $list_penawaran->nilai_disc) + $nilai_ppn, 2) ?></td>
                 </tr>
             </tfoot>
         </table>

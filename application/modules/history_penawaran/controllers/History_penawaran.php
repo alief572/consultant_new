@@ -72,6 +72,18 @@ class History_penawaran extends Admin_Controller
         $this->db->where('a.id_history', $id_history);
         $get_penawaran_lab = $this->db->get()->result();
 
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_penawaran_subcont_tenaga_ahli_history a');
+        $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_history', $id_history);
+        $get_penawaran_subcont_tenaga_ahli = $this->db->get()->result();
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_penawaran_subcont_perusahaan_history a');
+        $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_history', $id_history);
+        $get_penawaran_subcont_perusahaan = $this->db->get()->result();
+
         $this->db->select('a.*');
         $this->db->from('customer a');
         $this->db->where('a.nm_customer <>', '');
@@ -86,12 +98,12 @@ class History_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035']);
+        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257', 'EMP0173']);
         $get_marketing = $this->db->get()->result();
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where('a.company_id', 'COM003');
+        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $this->db->where('a.flag_active', 'Y');
         $get_employees = $this->db->get()->result();
 
@@ -108,18 +120,25 @@ class History_penawaran extends Admin_Controller
         $this->db->where_not_in('a.company_id', ['COM004', 'COM005']);
         $get_divisi = $this->db->get()->result();
 
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_company a');
+        $get_company = $this->db->get()->result();
+
         $data = [
             'list_penawaran' => $get_penawaran,
             'list_penawaran_aktifitas' => $get_penawaran_aktifitas,
             'list_penawaran_akomodasi' => $get_penawaran_akomodasi,
             'list_penawaran_others' => $get_penawaran_others,
             'list_penawaran_lab' => $get_penawaran_lab,
+            'list_penawaran_subcont_tenaga_ahli' => $get_penawaran_subcont_tenaga_ahli,
+            'list_penawaran_subcont_perusahaan' => $get_penawaran_subcont_perusahaan,
             'list_customers' => $get_customer,
             'list_marketing' => $get_marketing,
             'list_package' => $get_package,
             'list_aktifitas' => $get_aktifitas,
             'list_divisi' => $get_divisi,
-            'list_employees' => $get_employees
+            'list_employees' => $get_employees,
+            'list_company' => $get_company
         ];
 
         $this->template->title('View Quotation');
