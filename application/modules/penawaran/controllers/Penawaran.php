@@ -458,8 +458,8 @@ class Penawaran extends Admin_Controller
             $option .= '</div>';
 
 
-            // $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
-            $nm_marketing = $item->nama;
+            $get_marketing = $this->dbhr->get_where('employees', ['id' => $item->id_marketing])->row();
+            $nm_marketing = (!empty($get_marketing)) ? $get_marketing->name : '';
 
             $this->db->select('a.*');
             $this->db->from('kons_master_konsultasi_header a');
