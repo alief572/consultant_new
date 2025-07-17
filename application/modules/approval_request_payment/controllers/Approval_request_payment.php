@@ -1997,18 +1997,21 @@ class Approval_request_payment extends Admin_Controller
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_subcont = $this->db->get()->result();
 
-			$this->db->select('a.*');
+			$this->db->select('a.*, b.keterangan');
 			$this->db->from('kons_tr_kasbon_project_akomodasi a');
+			$this->db->join('kons_tr_penawaran_akomodasi b', 'b.id = a.id_akomodasi', 'left');
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_akomodasi = $this->db->get()->result();
 
-			$this->db->select('a.*');
+			$this->db->select('a.*, b.keterangan');
 			$this->db->from('kons_tr_kasbon_project_others a');
+			$this->db->join('kons_tr_penawaran_others b', 'b.id = a.id_others', 'left');
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_others = $this->db->get()->result();
 
-			$this->db->select('a.*');
+			$this->db->select('a.*, b.keterangan');
 			$this->db->from('kons_tr_kasbon_project_lab a');
+			$this->db->join('kons_tr_penawaran_lab b', 'b.id = a.id_lab', 'left');
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_lab = $this->db->get()->result();
 
