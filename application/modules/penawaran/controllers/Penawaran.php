@@ -1724,7 +1724,7 @@ class Penawaran extends Admin_Controller
     public function get_initials()
     {
         $sales = $this->input->post('sales');
-        $get_sales = $this->db->get_where(DBHR . '.employees', ['id' => $sales])->row();
+        $get_sales = $this->dbhr->get_where('employees', ['id' => $sales])->row();
 
         $employee_code = '';
         if (!empty($get_sales)) {
