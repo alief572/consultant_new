@@ -232,7 +232,7 @@ if ($tipe == 'Expense') {
 
     <div class="box <?= $box_kasbon_akomodasi ?>">
         <div class="box-header">
-            <h4 style="font-weight: 800;">List Item Others</h4>
+            <h4 style="font-weight: 800;">List Item Akomodasi</h4>
         </div>
 
         <div class="box-body">
@@ -240,7 +240,8 @@ if ($tipe == 'Expense') {
                 <thead>
                     <tr>
                         <th rowspan="2" class="text-center" valign="middle">No.</th>
-                        <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+                        <th rowspan="2" class="text-center" valign="middle" width="150">Item</th>
+                        <th rowspan="2" class="text-center" valign="middle" width="170">Keterangan</th>
                         <th colspan="2" class="text-center">Estimasi</th>
                         <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
                         <th colspan="3" class="text-center">Pengajuan</th>
@@ -272,6 +273,7 @@ if ($tipe == 'Expense') {
                         echo '<tr>';
                         echo '<td class="text-center">' . $no_subcont . '</td>';
                         echo '<td class="text-left">' . $item->nm_item . '</td>';
+                        echo '<td class="text-left">' . $item->keterangan . '</td>';
                         echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
                         echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
                         echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
@@ -291,7 +293,7 @@ if ($tipe == 'Expense') {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="2" class="text-right">Total</td>
+                        <td colspan="3" class="text-right">Total</td>
                         <td class="text-center"></td>
                         <td class="text-center"></td>
                         <td class="text-center"></td>
@@ -318,7 +320,8 @@ if ($tipe == 'Expense') {
                 <thead>
                     <tr>
                         <th rowspan="2" class="text-center" valign="middle">No.</th>
-                        <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+                        <th rowspan="2" class="text-center" valign="middle" width="150">Item</th>
+                        <th rowspan="2" class="text-center" valign="middle" width="170">Keterangan</th>
                         <th colspan="2" class="text-center">Estimasi</th>
                         <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
                         <th colspan="3" class="text-center">Pengajuan</th>
@@ -348,6 +351,7 @@ if ($tipe == 'Expense') {
                         echo '<tr>';
                         echo '<td class="text-center">' . $no_subcont . '</td>';
                         echo '<td class="text-left">' . $item->nm_item . '</td>';
+                        echo '<td class="text-left">' . $item->keterangan . '</td>';
                         echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
                         echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
                         echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
@@ -365,7 +369,7 @@ if ($tipe == 'Expense') {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="2" class="text-right">Total</td>
+                        <td colspan="3" class="text-right">Total</td>
                         <td class="text-center"></td>
                         <td class="text-center"></td>
                         <td class="text-center"></td>
@@ -390,7 +394,8 @@ if ($tipe == 'Expense') {
                 <thead>
                     <tr>
                         <th rowspan="2" class="text-center" valign="middle">No.</th>
-                        <th rowspan="2" class="text-center" valign="middle" width="170">Item</th>
+                        <th rowspan="2" class="text-center" valign="middle" width="150">Item</th>
+                        <th rowspan="2" class="text-center" valign="middle" width="170">Keterangan</th>
                         <th colspan="2" class="text-center">Estimasi</th>
                         <th rowspan="2" class="text-center" valign="middle">Total Budget</th>
                         <th colspan="3" class="text-center">Pengajuan</th>
@@ -420,6 +425,7 @@ if ($tipe == 'Expense') {
                         echo '<tr>';
                         echo '<td class="text-center">' . $no_subcont . '</td>';
                         echo '<td class="text-left">' . $item->nm_item . '</td>';
+                        echo '<td class="text-left">' . $item->keterangan . '</td>';
                         echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
                         echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
                         echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
@@ -437,7 +443,7 @@ if ($tipe == 'Expense') {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="2" class="text-right">Total</td>
+                        <td colspan="3" class="text-right">Total</td>
                         <td class="text-center"></td>
                         <td class="text-center"></td>
                         <td class="text-center"></td>
