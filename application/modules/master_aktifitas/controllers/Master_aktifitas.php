@@ -200,7 +200,7 @@ class Master_aktifitas extends Admin_Controller
                             $callback  = '';
                         }
 
-                        $this->form_validation->set_rules('nm_aktifitas[' . $no . ']', 'Aktifitas #' . ($no + 1), 'trim|required' . $callback);
+                        // $this->form_validation->set_rules('nm_aktifitas[' . $no . ']', 'Aktifitas #' . ($no + 1), 'trim|required' . $callback);
                         $this->form_validation->set_rules('hrg_aktifitas[' . $no . ']', 'Harga #' . ($no + 1), 'trim|required|greater_than[0]|max_length[1000000]');
                         $this->form_validation->set_rules('bobot[' . $no . ']', 'Bobot #' . ($no + 1), 'trim|required');
                         $this->form_validation->set_rules('mandays[' . $no . ']', 'Mandays #' . ($no + 1), 'trim|required');
@@ -218,7 +218,7 @@ class Master_aktifitas extends Admin_Controller
                         $unique_id = sha1(time() . microtime());
                         foreach ($post['aktifitas_num'] as $key => $value) {
                             $id_aktifitas     = $value;
-                            $nm_aktifitas     = str_replace(['"', "'", $post['nm_aktifitas'][$key]], '', $post['nm_aktifitas'][$key]);
+                            $nm_aktifitas     = str_replace(['"', "'"], '', $post['nm_aktifitas'][$key]);
                             $harga_aktifitas  = str_replace(',', '', $post['hrg_aktifitas'][$key]);
                             // $bobot            = $post['bobot'][$key];
                             $mandays          = $post['mandays'][$key];
