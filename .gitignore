@@ -20,7 +20,7 @@ application/config/constants.php
 !application/logs/.htaccess
 
 #/vendor/
-/uploads/*
+# /uploads/*
 /assets/files/*
 /assets/pr/*
 /docker/*
