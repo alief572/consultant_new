@@ -775,8 +775,8 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right">
-                                <?= number_format(($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab), 2) ?>
-                                <input type="hidden" name="grand_total_pengeluaran_before" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_subcont_tenaga_ahli + $ttl_total_subcont_perusahaan) ?>">
+                                <?= number_format(($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab + $ttl_total_subcont_tenaga_ahli + $ttl_total_subcont_perusahaan), 2) ?>
+                                <input type="hidden" name="grand_total_pengeluaran_before" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab + $ttl_total_subcont_tenaga_ahli + $ttl_total_subcont_perusahaan) ?>">
                             </th>
                         </tr>
                     </tfoot>
