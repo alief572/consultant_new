@@ -508,6 +508,156 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
     <div class="box">
         <div class="box-header">
+            <h4 style="font-weight: 600;">Subcont Tenaga Ahli</h4>
+        </div>
+        <div class="box-body">
+            <table class="table custom-table-no" border="0">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">No.</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Item</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Keterangan</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Estimasi</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Final</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $no_subcont_tenaga_ahli = 1;
+
+                    $ttl_qty_subcont_tenaga_ahli_estimasi = 0;
+                    $ttl_qty_subcont_tenaga_ahli_final = 0;
+                    $ttl_price_subcont_tenaga_ahli_estimasi = 0;
+                    $ttl_price_subcont_tenaga_ahli_final = 0;
+                    $ttl_total_subcont_tenaga_ahli_estimasi = 0;
+                    $ttl_total_subcont_tenaga_ahli_final = 0;
+
+                    foreach ($list_budgeting_subcont_tenaga_ahli as $item) {
+                        echo '<tr class="tr_subcont_tenaga_ahli_' . $no_subcont_tenaga_ahli . '">';
+
+                        echo '<td class="text-center">' . $no_subcont_tenaga_ahli . ' <input type="hidden" name="subcont_tenaga_ahli_final[' . $no_subcont_tenaga_ahli . '][id_subcont_tenaga_ahli]" value="' . $item->id_subcont . '"> </td>';
+                        echo '<td>' . $item->nm_item . '</td>';
+                        echo '<td>' . $item->keterangan . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->price_unit_estimasi) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->total_estimasi) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_final) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->price_unit_final) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->total_final) . '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_qty_subcont_tenaga_ahli_estimasi += $item->qty_estimasi;
+                        $ttl_qty_subcont_tenaga_ahli_final += $item->qty_final;
+                        $ttl_price_subcont_tenaga_ahli_estimasi += $item->price_unit_estimasi;
+                        $ttl_price_subcont_tenaga_ahli_final += $item->price_unit_final;
+                        $ttl_total_subcont_tenaga_ahli_estimasi += $item->total_estimasi;
+                        $ttl_total_subcont_tenaga_ahli_final += $item->total_final;
+
+                        $no_subcont_tenaga_ahli++;
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3"></th>
+                        <th class="text-center"><?= number_format($ttl_qty_subcont_tenaga_ahli_estimasi) ?></th>
+                        <th class="text-center"><?= number_format($ttl_price_subcont_tenaga_ahli_estimasi, 2) ?></th>
+                        <th class="text-center"><?= number_format($ttl_total_subcont_tenaga_ahli_estimasi, 2) ?></th>
+                        <th class="text-center ttl_qty_subcont_tenaga_ahli"><?= number_format($ttl_qty_subcont_tenaga_ahli_final) ?></th>
+                        <th class="text-center ttl_price_subcont_tenaga_ahli"><?= number_format($ttl_price_subcont_tenaga_ahli_final, 2) ?></th>
+                        <th class="text-center ttl_total_subcont_tenaga_ahli"><?= number_format($ttl_total_subcont_tenaga_ahli_final, 2) ?></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <h4 style="font-weight: 600;">Subcont Perusahaan</h4>
+        </div>
+        <div class="box-body">
+            <table class="table custom-table-no" border="0">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">No.</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Item</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Keterangan</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Estimasi</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Final</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $no_subcont_perusahaan = 1;
+
+                    $ttl_qty_subcont_perusahaan_estimasi = 0;
+                    $ttl_qty_subcont_perusahaan_final = 0;
+                    $ttl_price_subcont_perusahaan_estimasi = 0;
+                    $ttl_price_subcont_perusahaan_final = 0;
+                    $ttl_total_subcont_perusahaan_estimasi = 0;
+                    $ttl_total_subcont_perusahaan_final = 0;
+
+                    foreach ($list_budgeting_subcont_perusahaan as $item) {
+                        echo '<tr class="tr_subcont_perusahaan_' . $no_subcont_perusahaan . '">';
+
+                        echo '<td class="text-center">' . $no_subcont_perusahaan . ' <input type="hidden" name="subcont_perusahaan_final[' . $no_subcont_perusahaan . '][id_subcont_perusahaan]" value="' . $item->id_subcont . '"> </td>';
+                        echo '<td>' . $item->nm_item . '</td>';
+                        echo '<td>' . $item->keterangan . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->price_unit_estimasi) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->total_estimasi) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_final) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->price_unit_final) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->total_final) . '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_qty_subcont_perusahaan_estimasi += $item->qty_estimasi;
+                        $ttl_qty_subcont_perusahaan_final += $item->qty_final;
+                        $ttl_price_subcont_perusahaan_estimasi += $item->price_unit_estimasi;
+                        $ttl_price_subcont_perusahaan_final += $item->price_unit_final;
+                        $ttl_total_subcont_perusahaan_estimasi += $item->total_estimasi;
+                        $ttl_total_subcont_perusahaan_final += $item->total_final;
+
+                        $no_subcont_perusahaan++;
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3"></th>
+                        <th class="text-center"><?= number_format($ttl_qty_subcont_perusahaan_estimasi) ?></th>
+                        <th class="text-center"><?= number_format($ttl_price_subcont_perusahaan_estimasi, 2) ?></th>
+                        <th class="text-center"><?= number_format($ttl_total_subcont_perusahaan_estimasi, 2) ?></th>
+                        <th class="text-center ttl_qty_subcont_perusahaan"><?= number_format($ttl_qty_subcont_perusahaan_final) ?></th>
+                        <th class="text-center ttl_price_subcont_perusahaan"><?= number_format($ttl_price_subcont_perusahaan_final, 2) ?></th>
+                        <th class="text-center ttl_total_subcont_perusahaan"><?= number_format($ttl_total_subcont_perusahaan_final, 2) ?></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
             <h4 class="semi-bold">
                 Summary & Compare
 
@@ -575,13 +725,27 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 <input type="hidden" name="ttl_total_lab_before" value="<?= $list_budgeting->biaya_lab_before ?>">
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Subcont Tenaga Ahli</td>
+                            <td class="text-right">
+                                <?= number_format($list_budgeting->biaya_subcont_tenaga_ahli_before, 2) ?>
+                                <input type="hidden" name="ttl_total_subcont_tenaga_ahli_before" value="<?= $list_budgeting->biaya_subcont_tenaga_ahli_before ?>">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Biaya Subcont Perusahaan</td>
+                            <td class="text-right">
+                                <?= number_format($list_budgeting->biaya_subcont_perusahaan_before, 2) ?>
+                                <input type="hidden" name="ttl_total_subcont_perusahaan_before" value="<?= $list_budgeting->biaya_subcont_perusahaan_before ?>">
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right">
-                                <?= number_format(($list_budgeting->biaya_subcont_before + $list_budgeting->biaya_akomodasi_before + $list_budgeting->biaya_others_before + $list_budgeting->biaya_lab_before), 2) ?>
-                                <input type="hidden" name="grand_total_pengeluaran_before" value="<?= ($list_budgeting->biaya_subcont_before + $list_budgeting->biaya_akomodasi_before + $list_budgeting->biaya_others_before + $list_budgeting->biaya_lab_before) ?>">
+                                <?= number_format(($list_budgeting->biaya_subcont_before + $list_budgeting->biaya_akomodasi_before + $list_budgeting->biaya_others_before + $list_budgeting->biaya_lab_before + $list_budgeting->biaya_subcont_tenaga_ahli_before + $list_budgeting->biaya_subcont_perusahaan_before), 2) ?>
+                                <input type="hidden" name="grand_total_pengeluaran_before" value="<?= ($list_budgeting->biaya_subcont_before + $list_budgeting->biaya_akomodasi_before + $list_budgeting->biaya_others_before + $list_budgeting->biaya_lab_before + $list_budgeting->biaya_subcont_tenaga_ahli_before + $list_budgeting->biaya_subcont_perusahaan_before) ?>">
                             </th>
                         </tr>
                     </tfoot>
@@ -627,12 +791,24 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 <?= number_format($list_budgeting->biaya_lab_after, 2) ?>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Subcont Tenaga Ahli</td>
+                            <td class="text-right summary_biaya_subcont_tenaga_ahli">
+                                <?= number_format($list_budgeting->biaya_subcont_tenaga_ahli_after, 2) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Biaya Subcont Perusahaan</td>
+                            <td class="text-right summary_biaya_subcont_perusahaan">
+                                <?= number_format($list_budgeting->biaya_subcont_perusahaan_after, 2) ?>
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right summary_total_pengeluaran">
-                                <?= number_format(($list_budgeting->biaya_subcont_after + $list_budgeting->biaya_akomodasi_after + $list_budgeting->biaya_others_after + $list_budgeting->biaya_lab_after), 2) ?>
+                                <?= number_format(($list_budgeting->biaya_subcont_after + $list_budgeting->biaya_akomodasi_after + $list_budgeting->biaya_others_after + $list_budgeting->biaya_lab_after + $list_budgeting->biaya_subcont_tenaga_ahli_after + $list_budgeting->biaya_subcont_perusahaan_after), 2) ?>
                             </th>
                         </tr>
                     </tfoot>
@@ -718,18 +894,46 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 ?>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Subcont Tenaga Ahli</td>
+                            <td class="text-right summary_biaya_subcont_tenaga_ahli">
+                                <?php
+                                if ($list_budgeting->biaya_subcont_tenaga_ahli_result > 0) {
+                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_subcont_tenaga_ahli_result, 2) . '</span>';
+                                } else if ($list_budgeting->biaya_subcont_tenaga_ahli_result < 0) {
+                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_subcont_tenaga_ahli_result, 2) . ')</span>';
+                                } else {
+                                    echo number_format($list_budgeting->biaya_subcont_tenaga_ahli_result, 2);
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Biaya Subcont Perusahaan</td>
+                            <td class="text-right summary_biaya_subcont_perusahaan">
+                                <?php
+                                if ($list_budgeting->biaya_subcont_perusahaan_result > 0) {
+                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_subcont_perusahaan_result, 2) . '</span>';
+                                } else if ($list_budgeting->biaya_subcont_perusahaan_result < 0) {
+                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_subcont_perusahaan_result, 2) . ')</span>';
+                                } else {
+                                    echo number_format($list_budgeting->biaya_subcont_perusahaan_result, 2);
+                                }
+                                ?>
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right summary_total_pengeluaran">
                                 <?php
-                                if (($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result) > 0) {
-                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result, 2) . '</span>';
-                                } else if (($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result) < 0) {
-                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result, 2) . ')</span>';
+                                if (($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result + $list_budgeting->biaya_subcont_tenaga_ahli_result + $list_budgeting->biaya_subcont_perusahaan_result) > 0) {
+                                    echo '<span style="color: #66ff66;">' . number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result + $list_budgeting->biaya_subcont_tenaga_ahli_result + $list_budgeting->biaya_subcont_perusahaan_result, 2) . '</span>';
+                                } else if (($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result + $list_budgeting->biaya_subcont_tenaga_ahli_result + $list_budgeting->biaya_subcont_perusahaan_result) < 0) {
+                                    echo '<span style="color: #ff0000;">(' . number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result + $list_budgeting->biaya_subcont_tenaga_ahli_result + $list_budgeting->biaya_subcont_perusahaan_result, 2) . ')</span>';
                                 } else {
-                                    echo number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result, 2);
+                                    echo number_format($list_budgeting->biaya_subcont_result + $list_budgeting->biaya_akomodasi_result + $list_budgeting->biaya_others_result + $list_budgeting->biaya_lab_result + $list_budgeting->biaya_subcont_tenaga_ahli_result + $list_budgeting->biaya_subcont_perusahaan_result, 2);
                                 }
                                 ?>
                             </th>
@@ -738,7 +942,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                 </table>
             </div>
 
-            <input type="hidden" class="grand_total" name="grand_total" value="<?= ($list_budgeting->biaya_konsultasi + $list_budgeting->biaya_tandem + $list_budgeting->biaya_subcont + $list_budgeting->biaya_akomodasi + $list_budgeting->biaya_others + $list_budgeting->biaya_lab) ?>">
+            <input type="hidden" class="grand_total" name="grand_total" value="<?= ($list_budgeting->biaya_konsultasi + $list_budgeting->biaya_tandem + $list_budgeting->biaya_subcont + $list_budgeting->biaya_akomodasi + $list_budgeting->biaya_others + $list_budgeting->biaya_lab + $list_budgeting->biaya_subcont_tenaga_ahli + $list_budgeting->biaya_subcont_perusahaan) ?>">
 
             <div class="col-md-6">
                 <div class="form-group">

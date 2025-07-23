@@ -122,6 +122,9 @@ class Approval_kasbon_project extends Admin_Controller
                 if ($get_header_kasbon->tipe == '4') {
                     $tipe = 'Lab';
                 }
+                if ($get_header_kasbon->tipe == '5') {
+                    $tipe = 'Subcont Tenaga Ahli';
+                }
             }
             $nominal = (!empty($get_header_kasbon)) ? $get_header_kasbon->grand_total : 0;
 
@@ -201,6 +204,20 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->where('a.sts', null);
         $get_kasbon_lab = $this->db->get()->result();
 
+        $this->db->select('a.*, b.nm_biaya as nm_biaya');
+        $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+        $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_header', $id_kasbon);
+        $this->db->where('a.sts', null);
+        $get_kasbon_subcont_tenaga_ahli = $this->db->get()->result();
+
+        $this->db->select('a.*, b.nm_biaya as nm_biaya');
+        $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
+        $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_header', $id_kasbon);
+        $this->db->where('a.sts', null);
+        $get_kasbon_subcont_perusahaan = $this->db->get()->result();
+
         $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
@@ -259,6 +276,40 @@ class Approval_kasbon_project extends Admin_Controller
             ];
         endforeach;
 
+        $this->db->select('a.qty_budget_tambahan, a.budget_tambahan, a.pengajuan_budget, c.id_subcont');
+        $this->db->from('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_detail a');
+        $this->db->join('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header b', 'b.id_request_ovb = a.id_request_ovb', 'left');
+        $this->db->join('kons_tr_spk_budgeting_subcont_tenaga_ahli c', 'c.id = a.id_detail');
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts', '1');
+        $get_ovb_subcont_tenaga_ahli = $this->db->get()->result();
+
+        $data_overbudget_subcont_tenaga_ahli = [];
+        foreach ($get_ovb_subcont_tenaga_ahli as $item_ovb_subcont_tenaga_ahli) :
+            $data_overbudget_subcont_tenaga_ahli[$item_ovb_subcont_tenaga_ahli->id_subcont] = [
+                'qty_budget_tambahan' => $item_ovb_subcont_tenaga_ahli->qty_budget_tambahan,
+                'budget_tambahan' => $item_ovb_subcont_tenaga_ahli->budget_tambahan,
+                'pengajuan_budget' => $item_ovb_subcont_tenaga_ahli->pengajuan_budget
+            ];
+        endforeach;
+
+        $this->db->select('a.qty_budget_tambahan, a.budget_tambahan, a.pengajuan_budget, c.id_subcont');
+        $this->db->from('kons_tr_kasbon_req_ovb_subcont_perusahaan_detail a');
+        $this->db->join('kons_tr_kasbon_req_ovb_subcont_perusahaan_header b', 'b.id_request_ovb = a.id_request_ovb', 'left');
+        $this->db->join('kons_tr_spk_budgeting_subcont_perusahaan c', 'c.id = a.id_detail');
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts', '1');
+        $get_ovb_subcont_perusahaan = $this->db->get()->result();
+
+        $data_overbudget_subcont_perusahaan = [];
+        foreach ($get_ovb_subcont_perusahaan as $item_ovb_subcont_perusahaan) :
+            $data_overbudget_subcont_perusahaan[$item_ovb_subcont_perusahaan->id_subcont] = [
+                'qty_budget_tambahan' => $item_ovb_subcont_perusahaan->qty_budget_tambahan,
+                'budget_tambahan' => $item_ovb_subcont_perusahaan->budget_tambahan,
+                'pengajuan_budget' => $item_ovb_subcont_perusahaan->pengajuan_budget
+            ];
+        endforeach;
+
         $get_header = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id_kasbon])->row();
 
         $data = [
@@ -272,10 +323,14 @@ class Approval_kasbon_project extends Admin_Controller
             'list_kasbon_akomodasi' => $get_kasbon_akomodasi,
             'list_kasbon_others' => $get_kasbon_others,
             'list_kasbon_lab' => $get_kasbon_lab,
+            'list_kasbon_subcont_tenaga_ahli' => $get_kasbon_subcont_tenaga_ahli,
+            'list_kasbon_subcont_perusahaan' => $get_kasbon_subcont_perusahaan,
             'list_ovb_akomodasi' => $get_ovb_akomodasi,
             'data_overbudget_subcont' => $data_overbudget_subcont,
             'data_overbudget_others' => $data_overbudget_others,
-            'data_overbudget_lab' => $data_overbudget_lab
+            'data_overbudget_lab' => $data_overbudget_lab,
+            'data_overbudget_subcont_tenaga_ahli' => $data_overbudget_subcont_tenaga_ahli,
+            'data_overbudget_subcont_perusahaan' => $data_overbudget_subcont_perusahaan
         ];
 
         $metode_pembayaran = '';
@@ -395,6 +450,9 @@ class Approval_kasbon_project extends Admin_Controller
         endif;
         if ($get_header_kasbon->tipe == '4') :
             $project = 'Lab';
+        endif;
+        if ($get_header_kasbon->tipe == '5') :
+            $project = 'Subcont Tenaga Ahli';
         endif;
 
         // $data_insert_sendigs_kasbon = [
@@ -541,6 +599,14 @@ class Approval_kasbon_project extends Admin_Controller
         }
 
         $update_req_lab = $this->db->update('kons_tr_kasbon_project_lab', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_lab) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
+
+        $update_req_lab = $this->db->update('kons_tr_kasbon_project_subcont_tenaga_ahli', ['sts' => 1], ['id_header' => $id_kasbon]);
         if (!$update_req_lab) {
             $this->db->trans_rollback();
 

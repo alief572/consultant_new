@@ -115,6 +115,52 @@ class Approval_kasbon_overbudget_model extends BF_Model
                             a.id_penawaran LIKE "%' . $search['value'] . '%" OR
                             b.nm_customer LIKE "%' . $search['value'] . '%"
                         )
+
+                    UNION ALL
+
+                    SELECT
+                        a.id_request_ovb as id_request_ovb, 
+                        a.id_spk_budgeting as id_spk_budgeting,
+                        a.id_spk_penawaran as id_spk_penawaran,
+                        a.sts as sts,
+                        a.id_penawaran as id_penawaran,
+                        b.nm_customer as nama_customer,
+                        SUM(c.pengajuan_budget) as nominal,
+                        "5" as tipe
+                    FROM
+                        kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header a
+                        LEFT JOIN kons_tr_spk_penawaran b ON b.id_spk_penawaran = a.id_spk_penawaran
+                        LEFT JOIN kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_detail c ON c.id_request_ovb = a.id_request_ovb
+                    WHERE
+                        a.sts IS NULL AND (
+                            a.id_spk_budgeting LIKE "%' . $search['value'] . '%" OR
+                            a.id_spk_penawaran LIKE "%' . $search['value'] . '%" OR
+                            a.id_penawaran LIKE "%' . $search['value'] . '%" OR
+                            b.nm_customer LIKE "%' . $search['value'] . '%"
+                        )
+
+                    UNION ALL
+
+                    SELECT
+                        a.id_request_ovb as id_request_ovb, 
+                        a.id_spk_budgeting as id_spk_budgeting,
+                        a.id_spk_penawaran as id_spk_penawaran,
+                        a.sts as sts,
+                        a.id_penawaran as id_penawaran,
+                        b.nm_customer as nama_customer,
+                        SUM(c.pengajuan_budget) as nominal,
+                        "6" as tipe
+                    FROM
+                        kons_tr_kasbon_req_ovb_subcont_perusahaan_header a
+                        LEFT JOIN kons_tr_spk_penawaran b ON b.id_spk_penawaran = a.id_spk_penawaran
+                        LEFT JOIN kons_tr_kasbon_req_ovb_subcont_perusahaan_detail c ON c.id_request_ovb = a.id_request_ovb
+                    WHERE
+                        a.sts IS NULL AND (
+                            a.id_spk_budgeting LIKE "%' . $search['value'] . '%" OR
+                            a.id_spk_penawaran LIKE "%' . $search['value'] . '%" OR
+                            a.id_penawaran LIKE "%' . $search['value'] . '%" OR
+                            b.nm_customer LIKE "%' . $search['value'] . '%"
+                        )
             ) z
              WHERE
                 z.id_request_ovb IS NOT NULL AND
@@ -201,6 +247,52 @@ class Approval_kasbon_overbudget_model extends BF_Model
                             a.id_penawaran LIKE "%' . $search['value'] . '%" OR
                             b.nm_customer LIKE "%' . $search['value'] . '%"
                         )
+
+                    UNION ALL
+
+                    SELECT
+                        a.id_request_ovb as id_request_ovb, 
+                        a.id_spk_budgeting as id_spk_budgeting,
+                        a.id_spk_penawaran as id_spk_penawaran,
+                        a.sts as sts,
+                        a.id_penawaran as id_penawaran,
+                        b.nm_customer as nama_customer,
+                        SUM(c.pengajuan_budget) as nominal,
+                        "5" as tipe
+                    FROM
+                        kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header a
+                        LEFT JOIN kons_tr_spk_penawaran b ON b.id_spk_penawaran = a.id_spk_penawaran
+                        LEFT JOIN kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_detail c ON c.id_request_ovb = a.id_request_ovb
+                    WHERE
+                        a.sts IS NULL AND (
+                            a.id_spk_budgeting LIKE "%' . $search['value'] . '%" OR
+                            a.id_spk_penawaran LIKE "%' . $search['value'] . '%" OR
+                            a.id_penawaran LIKE "%' . $search['value'] . '%" OR
+                            b.nm_customer LIKE "%' . $search['value'] . '%"
+                        )
+
+                    UNION ALL
+
+                    SELECT
+                        a.id_request_ovb as id_request_ovb, 
+                        a.id_spk_budgeting as id_spk_budgeting,
+                        a.id_spk_penawaran as id_spk_penawaran,
+                        a.sts as sts,
+                        a.id_penawaran as id_penawaran,
+                        b.nm_customer as nama_customer,
+                        SUM(c.pengajuan_budget) as nominal,
+                        "6" as tipe
+                    FROM
+                        kons_tr_kasbon_req_ovb_subcont_perusahaan_header a
+                        LEFT JOIN kons_tr_spk_penawaran b ON b.id_spk_penawaran = a.id_spk_penawaran
+                        LEFT JOIN kons_tr_kasbon_req_ovb_subcont_perusahaan_detail c ON c.id_request_ovb = a.id_request_ovb
+                    WHERE
+                        a.sts IS NULL AND (
+                            a.id_spk_budgeting LIKE "%' . $search['value'] . '%" OR
+                            a.id_spk_penawaran LIKE "%' . $search['value'] . '%" OR
+                            a.id_penawaran LIKE "%' . $search['value'] . '%" OR
+                            b.nm_customer LIKE "%' . $search['value'] . '%"
+                        )
             ) z
              WHERE
                 z.id_request_ovb IS NOT NULL AND
@@ -215,7 +307,7 @@ class Approval_kasbon_overbudget_model extends BF_Model
         foreach ($get_data->result_array() as $item) {
             $no++;
 
-            $view = '<button type"button" class="btn btn-sm btn-info detail" data-id="' . $item['id_request_ovb'] . '" data-tipe="'.$item['tipe'].'" title="View Overbudget"><i class="fa fa-eye"></i></button>';
+            $view = '<button type"button" class="btn btn-sm btn-info detail" data-id="' . $item['id_request_ovb'] . '" data-tipe="' . $item['tipe'] . '" title="View Overbudget"><i class="fa fa-eye"></i></button>';
 
             $approval = '<button type="button" class="btn btn-sm btn-success approval" data-id="' . $item['id_request_ovb'] . '" data-tipe="' . $item['tipe'] . '" title="Approve Overbudget"><i class="fa fa-check"></i></button>';
 

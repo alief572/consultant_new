@@ -66,7 +66,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
     <div class="box">
         <div class="box-header">
-            <h4 style="font-weight: 800;">Request Over Budget Others</h4>
+            <h4 style="font-weight: 800;">Request Over Budget Lab</h4>
         </div>
 
         <div class="box-body">
@@ -89,10 +89,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<tr>';
 
                         echo '<td class="text-center" valign="top">' . $no . '</td>';
-                        echo '<td valign="top">'.$item['nm_biaya'].'</td>';
-                        echo '<td class="text-right" valign="top">'.number_format($item['qty_budget_tambahan']).'</td>';
-                        echo '<td class="text-right" valign="top">'.number_format($item['budget_tambahan'], 2).'</td>';
-                        echo '<td valign="top">'.$item['reason'].'</td>';
+                        echo '<td valign="top">' . $item['nm_biaya'] . '</td>';
+                        echo '<td class="text-right" valign="top">' . number_format($item['qty_budget_tambahan']) . '</td>';
+                        echo '<td class="text-right" valign="top">' . number_format($item['budget_tambahan'], 2) . '</td>';
+                        echo '<td valign="top">' . $item['reason'] . '</td>';
 
                         echo '</tr>';
 

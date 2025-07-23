@@ -311,6 +311,18 @@
     </tr>
     <tr>
         <td colspan="3"></td>
+        <th align="left" valign="top" width="50">Biaya Subcont Tenaga Ahli</th>
+        <th align="center" width="2" valign="top">:</th>
+        <td width="100" valign="top">Rp. <?= number_format($list_spk_penawaran->biaya_subcont_tenaga_ahli, 2) ?></td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <th align="left" valign="top" width="50">Biaya Subcont Perusahaan</th>
+        <th align="center" width="2" valign="top">:</th>
+        <td width="100" valign="top">Rp. <?= number_format($list_spk_penawaran->biaya_subcont_perusahaan, 2) ?></td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
         <th align="left" valign="top" width="50">Nilai Kontrak Bersih</th>
         <th align="center" width="2" valign="top">:</th>
         <td width="100" valign="top">Rp. <?= number_format($list_spk_penawaran->nilai_kontrak_bersih, 2) ?></td>

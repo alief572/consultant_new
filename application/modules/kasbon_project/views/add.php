@@ -544,6 +544,222 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 </div>
 
+<div class="box">
+    <div class="box-header">
+        <table border="0" style="width: 100%;">
+            <tr>
+                <th class="pd-5" width="700">
+                    <h4 style="font-weight: 800;">Subcont Tenaga Ahli</h4>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_subcont_tenaga_ahli) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Aktual</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_subcont_tenaga_ahli_aktual">Rp. <?= number_format($nilai_kasbon_aktual_subcont_tenaga_ahli) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_subcont_tenaga_ahli_sisa">Rp. <?= number_format($budget_subcont_tenaga_ahli - $nilai_kasbon_aktual_subcont_tenaga_ahli) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box-body">
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Kasbon
+        </a>
+        <table class="table custom-table mt-5" id="table_kasbon_subcont_tenaga_ahli" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <br><br>
+
+        <h4 style="font-weight: 800;">
+            Overbudget Subcont Tenaga Ahli
+        </h4>
+        <a href="<?= base_url('kasbon_project/add_request_budget_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Overbudget
+        </a>
+        <table class="table custom-table mt-5" id="table_ovb_subcont_tenaga_ahli" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">ID Request</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <table border="0" style="width: 100%;">
+            <tr>
+                <th class="pd-5" width="700">
+                    <h4 style="font-weight: 800;">Subcont Perusahaan</h4>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_subcont_perusahaan) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Aktual</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_subcont_perusahaan_aktual">Rp. <?= number_format($nilai_kasbon_aktual_subcont_perusahaan) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_subcont_perusahaan_sisa">Rp. <?= number_format($budget_subcont_perusahaan - $nilai_kasbon_aktual_subcont_perusahaan) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box-body">
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Kasbon
+        </a>
+        <table class="table custom-table mt-5" id="table_kasbon_subcont_perusahaan" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <br><br>
+
+        <h4 style="font-weight: 800;">
+            Overbudget Subcont Perusahaan
+        </h4>
+        <a href="<?= base_url('kasbon_project/add_request_budget_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Overbudget
+        </a>
+        <table class="table custom-table mt-5" id="table_ovb_subcont_perusahaan" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">ID Request</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Option</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <a href="<?= base_url('kasbon_project') ?>" class="btn btn-sm btn-danger">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
+
+
 
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
@@ -555,10 +771,14 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         DataTables_kasbon_akomodasi();
         DataTables_kasbon_others();
         DataTables_kasbon_lab();
+        DataTables_kasbon_subcont_tenaga_ahli();
+        DataTables_kasbon_subcont_perusahaan();
         DataTables_ovb_akomodasi();
         DataTables_ovb_subcont();
         DataTables_ovb_others();
         DataTables_ovb_lab();
+        DataTables_ovb_subcont_tenaga_ahli();
+        DataTables_ovb_subcont_perusahaan();
     });
 
     function DataTables_kasbon_subcont(view = null) {
@@ -741,6 +961,96 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     }
 
+    function DataTables_kasbon_subcont_tenaga_ahli(view = null) {
+        var dataTables_kasbon_subcont_tenaga_ahli = $('#table_kasbon_subcont_tenaga_ahli').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_kasbon_subcont_tenaga_ahli.destroy();
+        dataTables_kasbon_subcont_tenaga_ahli = $('#table_kasbon_subcont_tenaga_ahli').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_kasbon_subcont_tenaga_ahli',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'req_number'
+                },
+                {
+                    data: 'nm_biaya'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'reject_reason'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
+    function DataTables_kasbon_subcont_perusahaan(view = null) {
+        var dataTables_kasbon_subcont_perusahaan = $('#table_kasbon_subcont_perusahaan').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_kasbon_subcont_perusahaan.destroy();
+        dataTables_kasbon_subcont_perusahaan = $('#table_kasbon_subcont_perusahaan').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_kasbon_subcont_perusahaan',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'req_number'
+                },
+                {
+                    data: 'nm_biaya'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'reject_reason'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
     function DataTables_ovb_akomodasi(view = null) {
         var dataTables_ovb_akomodasi = $('#table_ovb_akomodasi').DataTable();
 
@@ -885,6 +1195,78 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     }
 
+    function DataTables_ovb_subcont_tenaga_ahli(view = null) {
+        var dataTables_ovb_akomodasi = $('#table_ovb_subcont_tenaga_ahli').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_ovb_akomodasi.destroy();
+        dataTables_ovb_akomodasi = $('#table_ovb_subcont_tenaga_ahli').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_ovb_subcont_tenaga_ahli',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_request_ovb'
+                },
+                {
+                    data: 'amount'
+                },
+                {
+                    data: 'sts'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
+    function DataTables_ovb_subcont_perusahaan(view = null) {
+        var dataTables_ovb_akomodasi = $('#table_ovb_subcont_perusahaan').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_ovb_akomodasi.destroy();
+        dataTables_ovb_akomodasi = $('#table_ovb_subcont_perusahaan').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_ovb_subcont_perusahaan',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_request_ovb'
+                },
+                {
+                    data: 'amount'
+                },
+                {
+                    data: 'sts'
+                },
+                {
+                    data: 'option'
+                }
+            ]
+        });
+    }
+
     function number_format(number, decimals, dec_point, thousands_sep) {
         // Strip all characters but numerical ones.
         number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
@@ -932,6 +1314,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                 $('.budget_lab_aktual').html('Rp. ' + number_format(result.nilai_budget_lab_aktual));
                 $('.budget_lab_sisa').html('Rp. ' + number_format(result.nilai_budget_lab));
+
+                $('.budget_subcont_tenaga_ahli_aktual').html('Rp. ' + number_format(result.nilai_budget_subcont_tenaga_ahli_aktual));
+                $('.budget_subcont_tenaga_ahli_sisa').html('Rp. ' + number_format(result.nilai_budget_subcont_tenaga_ahli));
+
+                $('.budget_subcont_perusahaan_aktual').html('Rp. ' + number_format(result.nilai_budget_subcont_perusahaan_aktual));
+                $('.budget_subcont_perusahaan_sisa').html('Rp. ' + number_format(result.nilai_budget_subcont_perusahaan));
             },
             error: function(result) {
 
@@ -1109,6 +1497,102 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                                 text: result.pesan
                             }, function(lanjut) {
                                 DataTables_kasbon_lab();
+                                hitung_all_budget_process();
+                            });
+                        } else {
+                            swal({
+                                type: 'error',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_kasbon_subcont_tenaga_ahli', function() {
+        var id_kasbon_subcont_tenaga_ahli = $(this).data('id');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_kasbon_subcont_tenaga_ahli',
+                    data: {
+                        'id_kasbon_subcont_tenaga_ahli': id_kasbon_subcont_tenaga_ahli
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                DataTables_kasbon_subcont_tenaga_ahli();
+                                hitung_all_budget_process();
+                            });
+                        } else {
+                            swal({
+                                type: 'error',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_kasbon_subcont_perusahaan', function() {
+        var id_kasbon_subcont_perusahaan = $(this).data('id');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_kasbon_subcont_perusahaan',
+                    data: {
+                        'id_kasbon_subcont_perusahaan': id_kasbon_subcont_perusahaan
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                DataTables_kasbon_subcont_perusahaan();
                                 hitung_all_budget_process();
                             });
                         } else {
@@ -1388,6 +1872,55 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_ovb_lab',
+                    data: {
+                        'id_request_ovb': id_request_ovb
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(result) {
+                        if (result.status == 1) {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                location.reload();
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_ovb_subcont_tenaga_ahli', function(e) {
+        e.preventDefault();
+
+        var id_request_ovb = $(this).data('id_request_ovb');
+
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be deleted !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_ovb_subcont_tenaga_ahli',
                     data: {
                         'id_request_ovb': id_request_ovb
                     },

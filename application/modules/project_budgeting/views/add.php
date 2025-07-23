@@ -529,6 +529,166 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
     <div class="box">
         <div class="box-header">
+            <h4 style="font-weight: 600;">Subcont Tenaga Ahli</h4>
+        </div>
+        <div class="box-body">
+            <table class="table custom-table-no" border="0">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">No.</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Item</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Keterangan</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Estimasi</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Final</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Action</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $no_subcont_tenaga_ahli = 1;
+
+                    $ttl_qty_subcont_tenaga_ahli = 0;
+                    $ttl_price_subcont_tenaga_ahli = 0;
+                    $ttl_total_subcont_tenaga_ahli = 0;
+
+                    foreach ($list_subcont_tenaga_ahli as $item) {
+                        echo '<tr class="tr_subcont_tenaga_ahli_' . $no_subcont_tenaga_ahli . '">';
+
+                        echo '<td class="text-center">' . $no_subcont_tenaga_ahli . ' <input type="hidden" name="subcont_tenaga_ahli_final[' . $no_subcont_tenaga_ahli . '][id_subcont_tenaga_ahli]" value="' . $item->id . '"></td>';
+                        echo '<td>' . $item->nm_item . '</td>';
+                        echo '<td>' . $item->keterangan . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->price_unit_budget) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->total_budget) . '</td>';
+                        echo '<td>';
+                        echo '<input type="text" name="subcont_tenaga_ahli_final[' . $no_subcont_tenaga_ahli . '][qty]" class="form-control form-control-sm text-right auto_num" value="' . $item->qty . '" onchange="hitung_total_subcont_tenaga_ahli();">';
+                        echo '</td>';
+                        echo '<td>';
+                        echo '<input type="text" name="subcont_tenaga_ahli_final[' . $no_subcont_tenaga_ahli . '][price_unit]" class="form-control form-control-sm text-right auto_num" value="' . $item->price_unit_budget . '" onchange="hitung_total_subcont_tenaga_ahli();">';
+                        echo '</td>';
+                        echo '<td>';
+                        echo '<input type="text" name="subcont_tenaga_ahli_final[' . $no_subcont_tenaga_ahli . '][total]" class="form-control form-control-sm text-right auto_num" value="' . $item->total_budget . '" onchange="hitung_total_subcont_tenaga_ahli();">';
+                        echo '</td>';
+                        echo '<td>';
+                        echo '<button type="button" class="btn btn-sm btn-danger del_subcont_tenaga_ahli" data-no="' . $no_subcont_tenaga_ahli . '"><i class="fa fa-trash"></i></button>';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_qty_subcont_tenaga_ahli += $item->qty;
+                        $ttl_price_subcont_tenaga_ahli += $item->price_unit_budget;
+                        $ttl_total_subcont_tenaga_ahli += $item->total_budget;
+
+                        $no_subcont_tenaga_ahli++;
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3"></th>
+                        <th class="text-center"><?= number_format($ttl_qty_subcont_tenaga_ahli) ?></th>
+                        <th class="text-center"><?= number_format($ttl_price_subcont_tenaga_ahli, 2) ?></th>
+                        <th class="text-center"><?= number_format($ttl_total_subcont_tenaga_ahli, 2) ?></th>
+                        <th class="text-right ttl_qty_subcont_tenaga_ahli"><?= number_format($ttl_qty_subcont_tenaga_ahli) ?></th>
+                        <th class="text-right ttl_price_subcont_tenaga_ahli"><?= number_format($ttl_price_subcont_tenaga_ahli, 2) ?></th>
+                        <th class="text-right ttl_total_subcont_tenaga_ahli"><?= number_format($ttl_total_subcont_tenaga_ahli, 2) ?></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <h4 style="font-weight: 600;">Subcont Perusahaan</h4>
+        </div>
+        <div class="box-body">
+            <table class="table custom-table-no" border="0">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">No.</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Item</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Keterangan</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Estimasi</th>
+                        <th class="text-center" style="vertical-align: middle;" colspan="3">Final</th>
+                        <th class="text-center" style="vertical-align: middle;" rowspan="2">Action</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                        <th class="text-center" style="vertical-align: middle;">Qty</th>
+                        <th class="text-center" style="vertical-align: middle;">Price/Unit</th>
+                        <th class="text-center" style="vertical-align: middle;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $no_subcont_perusahaan = 1;
+
+                    $ttl_qty_subcont_perusahaan = 0;
+                    $ttl_price_subcont_perusahaan = 0;
+                    $ttl_total_subcont_perusahaan = 0;
+
+                    foreach ($list_subcont_perusahaan as $item) {
+                        echo '<tr class="tr_subcont_perusahaan_' . $no_subcont_perusahaan . '">';
+
+                        echo '<td class="text-center">' . $no_subcont_perusahaan . ' <input type="hidden" name="subcont_perusahaan_final[' . $no_subcont_perusahaan . '][id_subcont_perusahaan]" value="' . $item->id . '"></td>';
+                        echo '<td>' . $item->nm_item . '</td>';
+                        echo '<td>' . $item->keterangan . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->price_unit_budget) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->total_budget) . '</td>';
+                        echo '<td>';
+                        echo '<input type="text" name="subcont_perusahaan_final[' . $no_subcont_perusahaan . '][qty]" class="form-control form-control-sm text-right auto_num" value="' . $item->qty . '" onchange="hitung_total_subcont_perusahaan();">';
+                        echo '</td>';
+                        echo '<td>';
+                        echo '<input type="text" name="subcont_perusahaan_final[' . $no_subcont_perusahaan . '][price_unit]" class="form-control form-control-sm text-right auto_num" value="' . $item->price_unit_budget . '" onchange="hitung_total_subcont_perusahaan();">';
+                        echo '</td>';
+                        echo '<td>';
+                        echo '<input type="text" name="subcont_perusahaan_final[' . $no_subcont_perusahaan . '][total]" class="form-control form-control-sm text-right auto_num" value="' . $item->total_budget . '" onchange="hitung_total_subcont_perusahaan();">';
+                        echo '</td>';
+                        echo '<td>';
+                        echo '<button type="button" class="btn btn-sm btn-danger del_subcont_perusahaan" data-no="' . $no_subcont_perusahaan . '"><i class="fa fa-trash"></i></button>';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_qty_subcont_perusahaan += $item->qty;
+                        $ttl_price_subcont_perusahaan += $item->price_unit_budget;
+                        $ttl_total_subcont_perusahaan += $item->total_budget;
+
+                        $no_subcont_perusahaan++;
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3"></th>
+                        <th class="text-center"><?= number_format($ttl_qty_subcont_perusahaan) ?></th>
+                        <th class="text-center"><?= number_format($ttl_price_subcont_perusahaan, 2) ?></th>
+                        <th class="text-center"><?= number_format($ttl_total_subcont_perusahaan, 2) ?></th>
+                        <th class="text-right ttl_qty_subcont_perusahaan"><?= number_format($ttl_qty_subcont_perusahaan) ?></th>
+                        <th class="text-right ttl_price_subcont_perusahaan"><?= number_format($ttl_price_subcont_perusahaan, 2) ?></th>
+                        <th class="text-right ttl_total_subcont_perusahaan"><?= number_format($ttl_total_subcont_perusahaan, 2) ?></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
             <h4 class="semi-bold">
                 Summary & Compare
 
@@ -596,13 +756,27 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 <input type="hidden" name="ttl_total_lab_before" value="<?= $ttl_total_lab ?>">
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Subcont Tenaga Ahli</td>
+                            <td class="text-right">
+                                <?= number_format($ttl_total_subcont_tenaga_ahli, 2) ?>
+                                <input type="hidden" name="ttl_total_subcont_tenaga_ahli_before" value="<?= $ttl_total_subcont_tenaga_ahli ?>">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Biaya Subcont Perusahaan</td>
+                            <td class="text-right">
+                                <?= number_format($ttl_total_subcont_perusahaan, 2) ?>
+                                <input type="hidden" name="ttl_total_subcont_perusahaan_before" value="<?= $ttl_total_subcont_perusahaan ?>">
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right">
                                 <?= number_format(($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab), 2) ?>
-                                <input type="hidden" name="grand_total_pengeluaran_before" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others) ?>">
+                                <input type="hidden" name="grand_total_pengeluaran_before" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_subcont_tenaga_ahli + $ttl_total_subcont_perusahaan) ?>">
                             </th>
                         </tr>
                     </tfoot>
@@ -648,12 +822,24 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 <?= number_format($ttl_total_lab, 2) ?>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Subcont Tenaga Ahli</td>
+                            <td class="text-right summary_biaya_subcont_tenaga_ahli">
+                                <?= number_format($ttl_total_subcont_tenaga_ahli, 2) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Biaya Subcont Perusahaan</td>
+                            <td class="text-right summary_biaya_subcont_perusahaan">
+                                <?= number_format($ttl_total_subcont_perusahaan, 2) ?>
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Grand Total Pengeluaran</th>
                             <th class="text-right summary_total_pengeluaran">
-                                <?= number_format(($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab), 2) ?>
+                                <?= number_format(($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab + $ttl_total_subcont_tenaga_ahli + $ttl_total_subcont_perusahaan), 2) ?>
                             </th>
                         </tr>
                     </tfoot>
@@ -699,6 +885,18 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                                 0
                             </td>
                         </tr>
+                        <tr>
+                            <td>Biaya Subcont Tenaga Ahli</td>
+                            <td class="text-right summary_biaya_subcont_tenaga_ahli_result">
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Biaya Subcont Perusahaan</td>
+                            <td class="text-right summary_biaya_subcont_perusahaan_result">
+                                0
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
@@ -717,12 +915,16 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             <input type="hidden" name="summary_biaya_akomodasi_after" value="<?= $ttl_total_akomodasi ?>">
             <input type="hidden" name="summary_biaya_others_after" value="<?= $ttl_total_others ?>">
             <input type="hidden" name="summary_biaya_lab_after" value="<?= $ttl_total_lab ?>">
+            <input type="hidden" name="summary_biaya_subcont_tenaga_ahli_after" value="<?= $ttl_total_subcont_tenaga_ahli ?>">
+            <input type="hidden" name="summary_biaya_subcont_perusahaan_after" value="<?= $ttl_total_subcont_perusahaan ?>">
 
             <input type="hidden" name="summary_mandays_subcont_result_value" value="0">
             <input type="hidden" name="summary_biaya_subcont_result_value" value="0">
             <input type="hidden" name="summary_biaya_akomodasi_result_value" value="0">
             <input type="hidden" name="summary_biaya_others_result_value" value="0">
             <input type="hidden" name="summary_biaya_lab_result_value" value="0">
+            <input type="hidden" name="summary_biaya_subcont_tenaga_ahli_result_value" value="0">
+            <input type="hidden" name="summary_biaya_subcont_perusahaan_result_value" value="0">
 
             <br><br>
 
@@ -739,7 +941,9 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             <input type="hidden" name="summary_biaya_akomodasi" value="<?= $ttl_total_akomodasi ?>">
             <input type="hidden" name="summary_biaya_others" value="<?= $ttl_total_others ?>">
             <input type="hidden" name="summary_biaya_lab" value="<?= $ttl_total_lab ?>">
-            <input type="hidden" name="summary_total_pengeluaran" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab) ?>">
+            <input type="hidden" name="summary_biaya_subcont_tenaga_ahli" value="<?= $ttl_total_subcont_tenaga_ahli ?>">
+            <input type="hidden" name="summary_biaya_subcont_perusahaan" value="<?= $ttl_total_subcont_perusahaan ?>">
+            <input type="hidden" name="summary_total_pengeluaran" value="<?= ($ttl_subcont + $ttl_total_akomodasi + $ttl_total_others + $ttl_total_lab + $ttl_total_subcont_tenaga_ahli + $ttl_total_subcont_perusahaan) ?>">
 
             <div style="float: right; margin-top: 1rem;">
                 <a href="<?= base_url('project_budgeting') ?>" class="btn btn-sm btn-danger">
@@ -843,15 +1047,17 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         var summary_biaya_akomodasi = get_num($('.summary_biaya_akomodasi').html());
         var summary_biaya_others = get_num($('.summary_biaya_others').html());
         var summary_biaya_lab = get_num($('.summary_biaya_lab').html());
+        var summary_biaya_subcont_tenaga_ahli = get_num($('.summary_biaya_subcont_tenaga_ahli').html());
+        var summary_biaya_subcont_perusahaan = get_num($('.summary_biaya_subcont_perusahaan').html());
 
-        var grand_total_pengeluaran = (summary_biaya_act + summary_biaya_tandem + summary_biaya_subcont + summary_biaya_akomodasi + summary_biaya_others + summary_biaya_lab);
+        var grand_total_pengeluaran = (summary_biaya_act + summary_biaya_tandem + summary_biaya_subcont + summary_biaya_akomodasi + summary_biaya_others + summary_biaya_lab + summary_biaya_subcont_tenaga_ahli + summary_biaya_subcont_perusahaan);
 
         $('.summary_total_pengeluaran').html(number_format(grand_total_pengeluaran, 2));
         $('input[name="summary_total_pengeluaran"]').val(grand_total_pengeluaran);
 
         var nilai_project = parseFloat("<?= $list_penawaran->grand_total ?>");
 
-        var nilai_kontrak_bersih = (nilai_project - summary_biaya_tandem - summary_biaya_subcont - summary_biaya_akomodasi - summary_biaya_others - summary_biaya_lab);
+        var nilai_kontrak_bersih = (nilai_project - summary_biaya_tandem - summary_biaya_subcont - summary_biaya_akomodasi - summary_biaya_others - summary_biaya_lab - summary_biaya_subcont_tenaga_ahli - summary_biaya_subcont_perusahaan);
 
         $('.nilai_kontrak_bersih').val(number_format(nilai_kontrak_bersih, 2));
 
@@ -994,6 +1200,36 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         hitung_compare();
     }
 
+    function hitung_total_others() {
+        var no_ako = "<?= $no_lab ?>";
+        var no_ako = parseFloat(no_ako);
+
+        var total_qty = 0;
+        var total_price = 0;
+        var total_oth = 0;
+
+        for (i = 1; i <= no_ako; i++) {
+            var qty = get_num($('input[name="lab_final[' + i + '][qty]"]').val());
+            var price_unit = get_num($('input[name="lab_final[' + i + '][price_unit]"]').val());
+            var total = (price_unit * qty);
+
+            $('input[name="lab_final[' + i + '][total]"]').val(number_format(total, 2));
+
+            total_qty += qty;
+            total_price += price_unit;
+            total_oth += (price_unit * qty);
+        }
+
+        $('.ttl_qty_lab').html(number_format(total_qty));
+        $('.ttl_price_lab').html(number_format(total_price, 2));
+        $('.ttl_total_lab').html(number_format(total_oth, 2));
+
+        $('.summary_biaya_lab').html(number_format(total_oth, 2));
+
+        hitung_all();
+        hitung_compare();
+    }
+
     function hitung_total_lab() {
         var no_lab = "<?= $no_lab ?>";
         var no_lab = parseFloat(no_lab);
@@ -1025,6 +1261,68 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         hitung_compare();
     }
 
+    function hitung_total_subcont_tenaga_ahli() {
+        var no_subcont_tenaga_ahli = "<?= $no_subcont_tenaga_ahli ?>";
+        var no_subcont_tenaga_ahli = parseFloat(no_subcont_tenaga_ahli);
+
+        var total_qty = 0;
+        var total_price = 0;
+        var total_subcont_tenaga_ahli = 0;
+
+        for (i = 1; i <= no_subcont_tenaga_ahli; i++) {
+            var qty = get_num($('input[name="subcont_tenaga_ahli_final[' + i + '][qty]"]').val());
+            var price_unit = get_num($('input[name="subcont_tenaga_ahli_final[' + i + '][price_unit]"]').val());
+            var total = (price_unit * qty);
+
+            $('input[name="subcont_tenaga_ahli_final[' + i + '][total]"]').val(number_format(total, 2));
+
+            total_qty += qty;
+            total_price += price_unit;
+            total_subcont_tenaga_ahli += (price_unit * qty);
+        }
+
+        $('.ttl_qty_subcont_tenaga_ahli').html(number_format(total_qty));
+        $('.ttl_price_subcont_tenaga_ahli').html(number_format(total_price, 2));
+        $('.ttl_total_subcont_tenaga_ahli').html(number_format(total_subcont_tenaga_ahli, 2));
+
+        $('.summary_biaya_subcont_tenaga_ahli').html(number_format(total_subcont_tenaga_ahli, 2));
+        $('input[name="summary_biaya_subcont_tenaga_ahli"]').val(total_subcont_tenaga_ahli);
+
+        hitung_all();
+        hitung_compare();
+    }
+
+    function hitung_total_subcont_perusahaan() {
+        var no_subcont_perusahaan = "<?= $no_subcont_perusahaan ?>";
+        var no_subcont_perusahaan = parseFloat(no_subcont_perusahaan);
+
+        var total_qty = 0;
+        var total_price = 0;
+        var total_subcont_perusahaan = 0;
+
+        for (i = 1; i <= no_subcont_perusahaan; i++) {
+            var qty = get_num($('input[name="subcont_perusahaan_final[' + i + '][qty]"]').val());
+            var price_unit = get_num($('input[name="subcont_perusahaan_final[' + i + '][price_unit]"]').val());
+            var total = (price_unit * qty);
+
+            $('input[name="subcont_perusahaan_final[' + i + '][total]"]').val(number_format(total, 2));
+
+            total_qty += qty;
+            total_price += price_unit;
+            total_subcont_perusahaan += (price_unit * qty);
+        }
+
+        $('.ttl_qty_subcont_perusahaan').html(number_format(total_qty));
+        $('.ttl_price_subcont_perusahaan').html(number_format(total_price, 2));
+        $('.ttl_total_subcont_perusahaan').html(number_format(total_subcont_perusahaan, 2));
+
+        $('.summary_biaya_subcont_perusahaan').html(number_format(total_subcont_perusahaan, 2));
+        $('input[name="summary_biaya_subcont_perusahaan"]').val(total_subcont_perusahaan);
+
+        hitung_all();
+        hitung_compare();
+    }
+
 
     function hitung_compare() {
         var no_act = "<?= $no_aktifitas ?>";
@@ -1039,11 +1337,19 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         var no_lab = "<?= $no_lab ?>";
         var no_lab = parseFloat(no_lab);
 
+        var no_subcont_tenaga_ahli = "<?= $no_subcont_tenaga_ahli ?>";
+        var no_subcont_tenaga_ahli = parseFloat(no_subcont_tenaga_ahli);
+
+        var no_subcont_perusahaan = "<?= $no_subcont_perusahaan ?>";
+        var no_subcont_perusahaan = parseFloat(no_subcont_perusahaan);
+
         var ttl_mandays_subcont = 0;
         var ttl_subcont = 0;
         var ttl_akomodasi = 0;
         var ttl_others = 0;
         var ttl_lab = 0;
+        var ttl_subcont_tenaga_ahli = 0;
+        var ttl_subcont_perusahaan = 0;
 
         for (i = 1; i <= no_act; i++) {
             var mandays_subcont = get_num($('input[name="subcont_final[' + i + '][mandays_subcont]"]').val());
@@ -1071,11 +1377,25 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             ttl_lab += nilai_lab;
         }
 
+        for (i = 1; i <= no_subcont_tenaga_ahli; i++) {
+            var nilai_subcont_tenaga_ahli = get_num($('input[name="subcont_tenaga_ahli_final[' + i + '][total]"]').val());
+
+            ttl_subcont_tenaga_ahli += nilai_subcont_tenaga_ahli;
+        }
+
+        for (i = 1; i <= no_subcont_perusahaan; i++) {
+            var nilai_subcont_perusahaan = get_num($('input[name="subcont_perusahaan_final[' + i + '][total]"]').val());
+
+            ttl_subcont_perusahaan += nilai_subcont_perusahaan;
+        }
+
         var ttl_mandays_subcont_before = get_num($('input[name="ttl_mandays_subcont_before"]').val());
         var ttl_subcont_before = get_num($('input[name="ttl_subcont_before"]').val());
         var ttl_total_akomodasi_before = get_num($('input[name="ttl_total_akomodasi_before"]').val());
         var ttl_total_others_before = get_num($('input[name="ttl_total_others_before"]').val());
         var ttl_total_lab_before = get_num($('input[name="ttl_total_lab_before"]').val());
+        var ttl_total_subcont_tenaga_ahli_before = get_num($('input[name="ttl_total_subcont_tenaga_ahli_before"]').val());
+        var ttl_total_subcont_perusahaan_before = get_num($('input[name="ttl_total_subcont_perusahaan_before"]').val());
         var grand_total_pengeluaran_before = get_num($('input[name="grand_total_pengeluaran_before"]').val());
 
         var selisih_mandays_subcont = (ttl_mandays_subcont - ttl_mandays_subcont_before);
@@ -1083,7 +1403,9 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         var selisih_total_akomodasi = (ttl_akomodasi - ttl_total_akomodasi_before);
         var selisih_total_others = (ttl_others - ttl_total_others_before);
         var selisih_total_lab = (ttl_lab - ttl_total_lab_before);
-        var selisih_grand_total_pengeluaran = (selisih_subcont + selisih_total_akomodasi + selisih_total_others + selisih_total_lab);
+        var selisih_total_subcont_tenaga_ahli = (ttl_subcont_tenaga_ahli - ttl_total_subcont_tenaga_ahli_before);
+        var selisih_total_subcont_perusahaan = (ttl_subcont_perusahaan - ttl_total_subcont_perusahaan_before);
+        var selisih_grand_total_pengeluaran = (selisih_subcont + selisih_total_akomodasi + selisih_total_others + selisih_total_lab + selisih_total_subcont_tenaga_ahli + selisih_total_subcont_perusahaan);
 
         if (selisih_mandays_subcont > 0) {
             $('.summary_mandays_subcont_result').html('<span style="color: #66ff66;">' + number_format(selisih_mandays_subcont, 2) + '</span>');
@@ -1123,6 +1445,22 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
             $('.summary_biaya_lab_result').html('<span style="color: #ff0000;">(' + number_format(selisih_total_lab, 2) + ')</span>');
         } else {
             $('.summary_biaya_lab_result').html(number_format(selisih_total_lab, 2));
+        }
+
+        if (selisih_total_subcont_tenaga_ahli > 0) {
+            $('.summary_biaya_subcont_tenaga_ahli_result').html('<span style="color: #66ff66;">' + number_format(selisih_total_subcont_tenaga_ahli, 2) + '</span>');
+        } else if (selisih_total_subcont_tenaga_ahli < 0) {
+            $('.summary_biaya_subcont_tenaga_ahli_result').html('<span style="color: #ff0000;">(' + number_format(selisih_total_subcont_tenaga_ahli, 2) + ')</span>');
+        } else {
+            $('.summary_biaya_subcont_tenaga_ahli_result').html(number_format(selisih_total_subcont_tenaga_ahli, 2));
+        }
+
+        if (selisih_total_subcont_perusahaan > 0) {
+            $('.summary_biaya_subcont_perusahaan_result').html('<span style="color: #66ff66;">' + number_format(selisih_total_subcont_perusahaan, 2) + '</span>');
+        } else if (selisih_total_subcont_perusahaan < 0) {
+            $('.summary_biaya_subcont_perusahaan_result').html('<span style="color: #ff0000;">(' + number_format(selisih_total_subcont_perusahaan, 2) + ')</span>');
+        } else {
+            $('.summary_biaya_subcont_perusahaan_result').html(number_format(selisih_total_subcont_perusahaan, 2));
         }
 
         if (selisih_grand_total_pengeluaran > 0) {
@@ -1187,6 +1525,39 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         $('.tr_others_' + no).remove();
 
         hitung_total_others();
+        hitung_all();
+        hitung_compare();
+    });
+
+    $(document).on('click', '.del_lab', function() {
+
+        var no = $(this).data('no');
+
+        $('.tr_lab_' + no).remove();
+
+        hitung_total_lab();
+        hitung_all();
+        hitung_compare();
+    });
+
+    $(document).on('click', '.del_subcont_tenaga_ahli', function() {
+
+        var no = $(this).data('no');
+
+        $('.tr_subcont_tenaga_ahli_' + no).remove();
+
+        hitung_total_subcont_tenaga_ahli();
+        hitung_all();
+        hitung_compare();
+    });
+
+    $(document).on('click', '.del_subcont_perusahaan', function() {
+
+        var no = $(this).data('no');
+
+        $('.tr_subcont_perusahaan_' + no).remove();
+
+        hitung_total_subcont_perusahaan();
         hitung_all();
         hitung_compare();
     });

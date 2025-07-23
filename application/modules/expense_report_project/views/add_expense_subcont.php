@@ -14,6 +14,12 @@ if ($tipe == '3') {
 if ($tipe == '4') {
     $title_header = 'Lab';
 }
+if ($tipe == '5') {
+    $title_header = 'Subcont Tenaga Ahli';
+}
+if ($tipe == '6') {
+    $title_header = 'Subcont Perusahaan';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">

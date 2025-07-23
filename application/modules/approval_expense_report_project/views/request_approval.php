@@ -365,6 +365,132 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <table border="0" style="width: 100%;">
+            <tr>
+                <th class="pd-5" width="700">
+                    <h4 style="font-weight: 800;">Subcont Tenaga Ahli</h4>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_subcont_tenaga_ahli) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>On Process</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_subcont_tenaga_ahli_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_subcont_tenaga_ahli) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box-body">
+        <table class="table custom-table mt-5" id="table_kasbon_subcont_tenaga_ahli" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-header">
+        <table border="0" style="width: 100%;">
+            <tr>
+                <th class="pd-5" width="700">
+                    <h4 style="font-weight: 800;">Subcont Perusahaan</h4>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_subcont_perusahaan) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>On Process</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_subcont_perusahaan_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_subcont_perusahaan) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box-body">
+        <table class="table custom-table mt-5" id="table_kasbon_subcont_perusahaan" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
 
         <div class="col-md-6">
             <label for="">Reject Reason</label>
@@ -395,6 +521,8 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
         DataTables_kasbon_akomodasi();
         DataTables_kasbon_others();
         DataTables_kasbon_lab();
+        DataTables_kasbon_subcont_tenaga_ahli();
+        DataTables_kasbon_subcont_perusahaan();
         // DataTables_ovb_akomodasi();
     });
 
@@ -534,6 +662,90 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
             serverSide: true,
             ajax: {
                 url: siteurl + active_controller + 'get_data_kasbon_lab',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'req_number'
+                },
+                {
+                    data: 'nm_biaya'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'action'
+                }
+            ]
+        });
+    }
+
+    function DataTables_kasbon_subcont_tenaga_ahli(view = null) {
+        var dataTables_kasbon_subcont_tenaga_ahli = $('#table_kasbon_subcont_tenaga_ahli').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_kasbon_subcont_tenaga_ahli.destroy();
+        dataTables_kasbon_subcont_tenaga_ahli = $('#table_kasbon_subcont_tenaga_ahli').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_kasbon_subcont_tenaga_ahli',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = view
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'req_number'
+                },
+                {
+                    data: 'nm_biaya'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'total'
+                },
+                {
+                    data: 'status'
+                },
+                {
+                    data: 'action'
+                }
+            ]
+        });
+    }
+
+    function DataTables_kasbon_subcont_perusahaan(view = null) {
+        var dataTables_kasbon_subcont_perusahaan = $('#table_kasbon_subcont_perusahaan').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_kasbon_subcont_perusahaan.destroy();
+        dataTables_kasbon_subcont_perusahaan = $('#table_kasbon_subcont_perusahaan').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_kasbon_subcont_perusahaan',
                 type: "POST",
                 dataType: "JSON",
                 data: function(d) {
