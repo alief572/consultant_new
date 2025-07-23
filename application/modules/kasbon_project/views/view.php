@@ -442,10 +442,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
             </tbody>
         </table>
-
-        <a href="<?= base_url('kasbon_project') ?>" class="btn btn-sm btn-danger">
-            <i class="fa fa-arrow-left"></i> Back
-        </a>
     </div>
 </div>
 
