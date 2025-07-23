@@ -586,7 +586,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 </tr>
                 <tr>
                     <?php
-                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity - $nilai_lab);
+                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity - $nilai_lab - $nilai_subcont_tenaga_ahli - $nilai_subcont_perusahaan);
                     ?>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                     <td class="pd-5" valign="top">
@@ -596,7 +596,29 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_tandem" id="" class="form-control form-control-sm text-right biaya_tandem" value="<?= number_format($nilai_tandem, 2) ?>" readonly>
                     </td>
-                    <td></td>
+                    <td>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="pd-5 semi-bold" valign="top">Biaya Subcont Tenaga Ahli</td>
+                    <td class="pd-5" valign="top">
+                        <input type="text" name="biaya_subcont_tenaga_ahli" id="" class="form-control form-control-sm text-right total_biaya_subcont_tenaga_ahli" value="<?= number_format($nilai_subcont_tenaga_ahli, 2) ?>" readonly>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="subcont_tenaga_ahli" data-id_spk_penawaran="<?= $list_spk_penawaran->id_spk_penawaran ?>"><i class="fa fa-eye"></i> Detail</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="pd-5 semi-bold" valign="top">Biaya Subcont Perusahaan</td>
+                    <td class="pd-5" valign="top">
+                        <input type="text" name="biaya_subcont_perusahaan" id="" class="form-control form-control-sm text-right total_biaya_subcont_perusahaan" value="<?= number_format($nilai_subcont_perusahaan, 2) ?>" readonly>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="subcont_perusahaan" data-id_spk_penawaran="<?= $list_spk_penawaran->id_spk_penawaran ?>"><i class="fa fa-eye"></i> Detail</button>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="2"></td>
@@ -939,6 +961,8 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
         var biaya_others = get_num($('input[name="biaya_others"]').val());
         var biaya_tandem = get_num($('input[name="biaya_tandem"]').val());
         var biaya_lab = get_num($('input[name="biaya_lab"]').val());
+        var biaya_subcont_tenaga_ahli = get_num($('input[name="biaya_subcont_tenaga_ahli"]').val());
+        var biaya_subcont_perusahaan = get_num($('input[name="biaya_subcont_perusahaan"]').val());
         var total_mandays = get_num($('input[name="total_mandays"]').val());
 
         var mandays_subcont = 0;
@@ -957,9 +981,9 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
         $('.total_mandays_subcont').val(mandays_subcont);
         $('.ttl_total_subcont').html(number_format(ttl_subcont, 2));
 
-        $('input[name="nilai_kontrak_bersih"]').val(number_format((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_lab), 2));
+        $('input[name="nilai_kontrak_bersih"]').val(number_format((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_lab - biaya_subcont_tenaga_ahli - biaya_subcont_perusahaan), 2));
 
-        var mandays_rate = parseFloat((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_tandem - biaya_lab) / total_mandays);
+        var mandays_rate = parseFloat((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_tandem - biaya_lab - biaya_subcont_tenaga_ahli - biaya_subcont_perusahaan) / total_mandays);
 
         $('.total_mandays_rate').val(number_format(mandays_rate, 2));
     }
@@ -1053,8 +1077,10 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
         var biaya_others = get_num($('input[name="biaya_others"]').val());
         var biaya_tandem = get_num($('input[name="biaya_tandem"]').val());
         var biaya_lab = get_num($('input[name="biaya_lab"]').val());
+        var biaya_subcont_tenaga_ahli = get_num($('input[name="biaya_subcont_tenaga_ahli"]').val());
+        var biaya_subcont_perusahaan = get_num($('input[name="biaya_subcont_perusahaan"]').val());
 
-        var nilai_kontrak_bersih = (nilai_kontrak - biaya_akomodasi - biaya_subcont - biaya_others - biaya_tandem - biaya_lab);
+        var nilai_kontrak_bersih = (nilai_kontrak - biaya_akomodasi - biaya_subcont - biaya_others - biaya_tandem - biaya_lab - biaya_subcont_tenaga_ahli - biaya_subcont_perusahaan);
 
         $('input[name="nilai_kontrak_bersih"]').val(number_format(nilai_kontrak_bersih, 2));
     }
@@ -1368,6 +1394,12 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 }
                 if (type == 'lab') {
                     $('#myModalLabel').html('Detail Lab');
+                }
+                if (type == 'subcont_tenaga_ahli') {
+                    $('#myModalLabel').html('Detail Subcont Tenaga Ahli');
+                }
+                if (type == 'subcont_perusahaan') {
+                    $('#myModalLabel').html('Detail Subcont Perusahaan');
                 }
                 $('#MyModalBody').html(result);
                 $('#dialog-rekap').modal('show');

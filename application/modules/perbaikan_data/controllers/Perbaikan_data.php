@@ -454,27 +454,27 @@ class Perbaikan_data extends Admin_Controller
 
 
 
-        if (!empty($arr_kasbon_sendigs_rp)) {
-            $insert_kasbon_request_payment = $this->otherdb->insert_batch('request_payment', $arr_kasbon_sendigs_rp);
+        // if (!empty($arr_kasbon_sendigs_rp)) {
+        //     $insert_kasbon_request_payment = $this->otherdb->insert_batch('request_payment', $arr_kasbon_sendigs_rp);
 
 
-            if (!$insert_kasbon_request_payment) {
-                $this->db->trans_rollback();
+        //     if (!$insert_kasbon_request_payment) {
+        //         $this->db->trans_rollback();
 
-                print_r($this->db->last_query());
-                exit;
-            }
-        }
+        //         print_r($this->db->last_query());
+        //         exit;
+        //     }
+        // }
 
-        if (!empty($arr_expense_sendigs_rp)) {
-            $insert_expense_request_payment = $this->otherdb->insert_batch('request_payment', $arr_expense_sendigs_rp);
-            if (!$insert_expense_request_payment) {
-                $this->db->trans_rollback();
+        // if (!empty($arr_expense_sendigs_rp)) {
+        //     $insert_expense_request_payment = $this->otherdb->insert_batch('request_payment', $arr_expense_sendigs_rp);
+        //     if (!$insert_expense_request_payment) {
+        //         $this->db->trans_rollback();
 
-                print_r($this->db->last_query());
-                exit;
-            }
-        }
+        //         print_r($this->db->last_query());
+        //         exit;
+        //     }
+        // }
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

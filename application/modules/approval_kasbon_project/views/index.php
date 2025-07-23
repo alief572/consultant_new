@@ -120,7 +120,7 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
             },
             columns: [{
                     data: 'no',
-                }, 
+                },
                 {
                     data: 'id_spk_penawaran'
                 },

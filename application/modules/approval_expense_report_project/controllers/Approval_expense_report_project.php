@@ -114,6 +114,34 @@ class Approval_expense_report_project extends Admin_Controller
         $get_budget_ovb_lab = $this->db->get()->row();
         $budget_lab += $get_budget_ovb_lab->total_ovb_lab;
 
+        $this->db->select('SUM(a.total_final) as budget_subcont_tenaga_ahli');
+        $this->db->from('kons_tr_spk_budgeting_subcont_tenaga_ahli a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_subcont_tenaga_ahli = $this->db->get()->row();
+        $budget_subcont_tenaga_ahli = $get_budget_subcont_tenaga_ahli->budget_subcont_tenaga_ahli;
+
+        $this->db->select('SUM(b.budget_tambahan) as total_ovb_subcont_tenaga_ahli');
+        $this->db->from('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_detail b', 'b.id_request_ovb = a.id_request_ovb', 'left');
+        $this->db->where('a.tipe', 5);
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_ovb_subcont_tenaga_ahli = $this->db->get()->row();
+        $budget_subcont_tenaga_ahli += $get_budget_ovb_subcont_tenaga_ahli->total_ovb_subcont_tenaga_ahli;
+
+        $this->db->select('SUM(a.total_final) as budget_subcont_perusahaan');
+        $this->db->from('kons_tr_spk_budgeting_subcont_perusahaan a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_subcont_perusahaan = $this->db->get()->row();
+        $budget_subcont_perusahaan = $get_budget_subcont_perusahaan->budget_subcont_perusahaan;
+
+        $this->db->select('SUM(b.budget_tambahan) as total_ovb_subcont_perusahaan');
+        $this->db->from('kons_tr_kasbon_req_ovb_subcont_perusahaan_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_subcont_perusahaan_detail b', 'b.id_request_ovb = a.id_request_ovb', 'left');
+        $this->db->where('a.tipe', 6);
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budget_ovb_subcont_perusahaan = $this->db->get()->row();
+        $budget_subcont_perusahaan += $get_budget_ovb_subcont_perusahaan->total_ovb_subcont_perusahaan;
+
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_subcont a');
         $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id_header', 'left');
@@ -171,6 +199,34 @@ class Approval_expense_report_project extends Admin_Controller
         }
 
         $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+        $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id_header', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts_req', 1);
+        $get_kasbon_subcont_tenaga_ahli = $this->db->get()->result();
+
+        $nilai_kasbon_on_proses_subcont_tenaga_ahli = 0;
+        foreach ($get_kasbon_subcont_tenaga_ahli as $item) {
+            if ($item->sts !== '1') {
+                $nilai_kasbon_on_proses_subcont_tenaga_ahli += $item->total_pengajuan;
+            }
+        }
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
+        $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id_header', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.sts_req', 1);
+        $get_kasbon_subcont_perusahaan = $this->db->get()->result();
+
+        $nilai_kasbon_on_proses_subcont_perusahaan = 0;
+        foreach ($get_kasbon_subcont_perusahaan as $item) {
+            if ($item->sts !== '1') {
+                $nilai_kasbon_on_proses_subcont_perusahaan += $item->total_pengajuan;
+            }
+        }
+
+        $this->db->select('a.*');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -186,10 +242,14 @@ class Approval_expense_report_project extends Admin_Controller
             'budget_akomodasi' => $budget_akomodasi,
             'budget_others' => $budget_others,
             'budget_lab' => $budget_lab,
+            'budget_subcont_tenaga_ahli' => $budget_subcont_tenaga_ahli,
+            'budget_subcont_perusahaan' => $budget_subcont_perusahaan,
             'nilai_kasbon_on_proses' => $nilai_kasbon_on_proses,
             'nilai_kasbon_on_proses_akomodasi' => $nilai_kasbon_on_proses_akomodasi,
             'nilai_kasbon_on_proses_others' => $nilai_kasbon_on_proses_others,
-            'nilai_kasbon_on_proses_lab' => $nilai_kasbon_on_proses_lab
+            'nilai_kasbon_on_proses_lab' => $nilai_kasbon_on_proses_lab,
+            'nilai_kasbon_on_proses_subcont_tenaga_ahli' => $nilai_kasbon_on_proses_subcont_tenaga_ahli,
+            'nilai_kasbon_on_proses_subcont_perusahaan' => $nilai_kasbon_on_proses_subcont_perusahaan
         ];
 
         $this->template->set($data);
@@ -1492,6 +1552,406 @@ class Approval_expense_report_project extends Admin_Controller
             'draw' => intval($draw),
             'recordsTotal' => $get_kasbon_lab_all->num_rows(),
             'recordsFiltered' => $get_kasbon_lab_all->num_rows(),
+            'data' => $hasil
+        ]);
+    }
+
+    public function get_data_kasbon_subcont_tenaga_ahli()
+    {
+        $draw = $this->input->post('draw');
+        $start = $this->input->post('start');
+        $length = $this->input->post('length');
+        $search = $this->input->post('search');
+        $id_spk_budgeting = $this->input->post('id_spk_budgeting');
+        $view = $this->input->post('view');
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.tipe', 5);
+        $this->db->where('b.sts_req', 1);
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('a.id', $search['value'], 'both');
+            $this->db->or_like('a.deskripsi', $search['value'], 'both');
+            $this->db->or_like('a.tgl', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->group_end();
+        }
+        $this->db->order_by('a.created_by', 'desc');
+        $this->db->limit($length, $start);
+        $get_kasbon_subcont_tenaga_ahli = $this->db->get();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.tipe', 5);
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('a.id', $search['value'], 'both');
+            $this->db->or_like('a.deskripsi', $search['value'], 'both');
+            $this->db->or_like('a.tgl', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->group_end();
+        }
+        $this->db->order_by('a.created_by', 'desc');
+        $get_kasbon_subcont_tenaga_ahli_all = $this->db->get();
+
+        $nilai_kasbon_on_proses = 0;
+        foreach ($get_kasbon_subcont_tenaga_ahli_all->result() as $item) {
+            if ($item->sts !== '1') {
+                $nilai_kasbon_on_proses += $item->grand_total;
+            }
+        }
+
+        $hasil = [];
+
+        $no = 1;
+        foreach ($get_kasbon_subcont_tenaga_ahli->result() as $item) {
+            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+
+            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
+            if ($check_expense->num_rows() > 0) {
+                if ($check_expense->row()->sts_req == 1) {
+                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+                } else {
+                    if ($check_expense->row()->sts == 1) {
+                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+                    }
+                    if ($check_expense->row()->sts == 2) {
+                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                    }
+                }
+            }
+
+            $option = '
+                <div class="btn-group">
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-accent text-primary dropdown-toggle"
+                        title="Actions"
+                        data-toggle="dropdown"
+                        id="dropdownMenu' . $no . '"
+                        aria-expanded="false">
+                        <i class="fa fa-cogs"></i> <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+            ';
+
+            if ($check_expense->num_rows() > 0) {
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="' . base_url('expense_report_project/view_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-info" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-eye"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> View </span>
+                    </div>
+                ';
+
+                if ($check_expense->row()->sts_req == '0' && $check_expense->row()->sts == '0') {
+                    $option .= '
+                        <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-primary req_approval" style="color: #000000" data-id="' . $item->id . '" title="Request Approval">
+                                <div class="col-12 dropdown-item">
+                                <b>
+                                    <i class="fa fa-check"></i>
+                                </b>
+                                </div>
+                            </a>
+                            <span style="font-weight: 500"> Req. Approval </span>
+                        </div>
+                    ';
+                }
+
+                if ($check_expense->row()->sts_req == '0' && $check_expense->row()->sts == '0') {
+                    $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="' . base_url('expense_report_project/edit_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-pencil"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Edit </span>
+                    </div>
+                ';
+                }
+            } else {
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="' . base_url('expense_report_project/add_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-success" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-plus"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Add Expense </span>
+                    </div>
+                ';
+            }
+
+
+            if ($item->sts !== '1' && $item->sts_req !== '1') {
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_kasbon_subcont" style="color: #000000" data-id="' . $item->id . '">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-trash"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Delete </span>
+                    </div>
+                ';
+
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="' . base_url('kasbon_project/edit_kasbon_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-pencil"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Edit </span>
+                    </div>
+                ';
+            }
+
+            $option .= '</div>';
+
+            if ($view == 'view') {
+                $option = '';
+            }
+
+            $action = '<a href="' . base_url('expense_report_project/view_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-eye"></i></a>';
+
+            $hasil[] = [
+                'no' => $no,
+                'req_number' => $item->id,
+                'nm_biaya' => $item->deskripsi,
+                'date' => date('d F Y', strtotime($item->created_date)),
+                'total' => number_format($item->grand_total, 2),
+                'status' => $sts,
+                'option' => $option,
+                'action' => $action
+            ];
+
+            $no++;
+        }
+
+        echo json_encode([
+            'draw' => intval($draw),
+            'recordsTotal' => $get_kasbon_subcont_tenaga_ahli_all->num_rows(),
+            'recordsFiltered' => $get_kasbon_subcont_tenaga_ahli_all->num_rows(),
+            'data' => $hasil
+        ]);
+    }
+
+    public function get_data_kasbon_subcont_perusahaan()
+    {
+        $draw = $this->input->post('draw');
+        $start = $this->input->post('start');
+        $length = $this->input->post('length');
+        $search = $this->input->post('search');
+        $id_spk_budgeting = $this->input->post('id_spk_budgeting');
+        $view = $this->input->post('view');
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('kons_tr_expense_report_project_header b', 'b.id_header = a.id', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.tipe', 6);
+        $this->db->where('b.sts_req', 1);
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('a.id', $search['value'], 'both');
+            $this->db->or_like('a.deskripsi', $search['value'], 'both');
+            $this->db->or_like('a.tgl', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->group_end();
+        }
+        $this->db->order_by('a.created_by', 'desc');
+        $this->db->limit($length, $start);
+        $get_kasbon_subcont_perusahaan = $this->db->get();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.tipe', 6);
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('a.id', $search['value'], 'both');
+            $this->db->or_like('a.deskripsi', $search['value'], 'both');
+            $this->db->or_like('a.tgl', $search['value'], 'both');
+            $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->group_end();
+        }
+        $this->db->order_by('a.created_by', 'desc');
+        $get_kasbon_subcont_perusahaan_all = $this->db->get();
+
+        $nilai_kasbon_on_proses = 0;
+        foreach ($get_kasbon_subcont_perusahaan_all->result() as $item) {
+            if ($item->sts !== '1') {
+                $nilai_kasbon_on_proses += $item->grand_total;
+            }
+        }
+
+        $hasil = [];
+
+        $no = 1;
+        foreach ($get_kasbon_subcont_perusahaan->result() as $item) {
+            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+
+            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
+            if ($check_expense->num_rows() > 0) {
+                if ($check_expense->row()->sts_req == 1) {
+                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+                } else {
+                    if ($check_expense->row()->sts == 1) {
+                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+                    }
+                    if ($check_expense->row()->sts == 2) {
+                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                    }
+                }
+            }
+
+            $option = '
+                <div class="btn-group">
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-accent text-primary dropdown-toggle"
+                        title="Actions"
+                        data-toggle="dropdown"
+                        id="dropdownMenu' . $no . '"
+                        aria-expanded="false">
+                        <i class="fa fa-cogs"></i> <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+            ';
+
+            if ($check_expense->num_rows() > 0) {
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="' . base_url('expense_report_project/view_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-info" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-eye"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> View </span>
+                    </div>
+                ';
+
+                if ($check_expense->row()->sts_req == '0' && $check_expense->row()->sts == '0') {
+                    $option .= '
+                        <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-primary req_approval" style="color: #000000" data-id="' . $item->id . '" title="Request Approval">
+                                <div class="col-12 dropdown-item">
+                                <b>
+                                    <i class="fa fa-check"></i>
+                                </b>
+                                </div>
+                            </a>
+                            <span style="font-weight: 500"> Req. Approval </span>
+                        </div>
+                    ';
+                }
+
+                if ($check_expense->row()->sts_req == '0' && $check_expense->row()->sts == '0') {
+                    $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="' . base_url('expense_report_project/edit_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-pencil"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Edit </span>
+                    </div>
+                ';
+                }
+            } else {
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="' . base_url('expense_report_project/add_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-success" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-plus"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Add Expense </span>
+                    </div>
+                ';
+            }
+
+
+            if ($item->sts !== '1' && $item->sts_req !== '1') {
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_kasbon_subcont" style="color: #000000" data-id="' . $item->id . '">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-trash"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Delete </span>
+                    </div>
+                ';
+
+                $option .= '
+                    <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                        <a href="' . base_url('kasbon_project/edit_kasbon_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-warning" style="color: #000000">
+                            <div class="col-12 dropdown-item">
+                            <b>
+                                <i class="fa fa-pencil"></i>
+                            </b>
+                            </div>
+                        </a>
+                        <span style="font-weight: 500"> Edit </span>
+                    </div>
+                ';
+            }
+
+            $option .= '</div>';
+
+            if ($view == 'view') {
+                $option = '';
+            }
+
+            $action = '<a href="' . base_url('expense_report_project/view_expense_subcont/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-eye"></i></a>';
+
+            $hasil[] = [
+                'no' => $no,
+                'req_number' => $item->id,
+                'nm_biaya' => $item->deskripsi,
+                'date' => date('d F Y', strtotime($item->created_date)),
+                'total' => number_format($item->grand_total, 2),
+                'status' => $sts,
+                'option' => $option,
+                'action' => $action
+            ];
+
+            $no++;
+        }
+
+        echo json_encode([
+            'draw' => intval($draw),
+            'recordsTotal' => $get_kasbon_subcont_perusahaan_all->num_rows(),
+            'recordsFiltered' => $get_kasbon_subcont_perusahaan_all->num_rows(),
             'data' => $hasil
         ]);
     }

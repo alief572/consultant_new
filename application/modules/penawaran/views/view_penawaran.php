@@ -601,7 +601,7 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
                 $ttl_subcont_tenaga_ahli_budget = 0;
                 foreach ($list_penawaran_subcont_tenaga_ahli as $item_subcont_tenaga_ahli) {
                     echo '<tr>';
-                    echo '<td>' . $item_subcont_tenaga_ahli->isu_lingkungan . '</td>';
+                    echo '<td>' . $item_subcont_tenaga_ahli->nm_biaya . '</td>';
                     echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->qty, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->price_unit, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_subcont_tenaga_ahli->price_unit_budget, 2) . '</td>';
@@ -666,7 +666,7 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
                 $ttl_subcont_perusahaan_budget = 0;
                 foreach ($list_penawaran_subcont_perusahaan as $item_subcont_perusahaan) {
                     echo '<tr>';
-                    echo '<td>' . $item_subcont_perusahaan->isu_lingkungan . '</td>';
+                    echo '<td>' . $item_subcont_perusahaan->nm_biaya . '</td>';
                     echo '<td class="text-center">' . number_format($item_subcont_perusahaan->qty, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_subcont_perusahaan->price_unit, 2) . '</td>';
                     echo '<td class="text-center">' . number_format($item_subcont_perusahaan->price_unit_budget, 2) . '</td>';

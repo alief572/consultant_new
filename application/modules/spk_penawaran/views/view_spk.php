@@ -506,8 +506,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 </tr>
                 <tr>
                     <?php
-                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity - $nilai_lab);
-                    $mandays_rate = ($total_mandays > 0) ? ($nilai_kontrak_bersih / $total_mandays) : 0;
+                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity - $nilai_lab - $nilai_subcont_tenaga_ahli - $nilai_subcont_perusahaan);
                     ?>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                     <td class="pd-5" valign="top">
@@ -518,6 +517,26 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                         <input type="text" name="biaya_tandem" id="" class="form-control form-control-sm text-right biaya_tandem" value="<?= number_format($nilai_tandem, 2) ?>" readonly>
                     </td>
                     <td></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="pd-5 semi-bold" valign="top">Biaya Subcont Tenaga Ahli</td>
+                    <td class="pd-5" valign="top">
+                        <input type="text" name="biaya_subcont_tenaga_ahli" id="" class="form-control form-control-sm text-right total_biaya_subcont_tenaga_ahli" value="<?= number_format($nilai_subcont_tenaga_ahli, 2) ?>" readonly>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="subcont_tenaga_ahli" data-id_spk_penawaran="<?= $list_spk_penawaran->id_spk_penawaran ?>"><i class="fa fa-eye"></i> Detail</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="pd-5 semi-bold" valign="top">Biaya Subcont Perusahaan</td>
+                    <td class="pd-5" valign="top">
+                        <input type="text" name="biaya_subcont_perusahaan" id="" class="form-control form-control-sm text-right total_biaya_subcont_perusahaan" value="<?= number_format($nilai_subcont_perusahaan, 2) ?>" readonly>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-info btn_detail" data-type="subcont_perusahaan" data-id_spk_penawaran="<?= $list_spk_penawaran->id_spk_penawaran ?>"><i class="fa fa-eye"></i> Detail</button>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="2"></td>
@@ -1234,6 +1253,12 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 }
                 if (type == 'lab') {
                     $('#myModalLabel').html('Detail Lab');
+                }
+                if (type == 'subcont_tenaga_ahli') {
+                    $('#myModalLabel').html('Detail Subcont Tenaga Ahli');
+                }
+                if (type == 'subcont_perusahaan') {
+                    $('#myModalLabel').html('Detail Subcont Perusahaan');
                 }
                 $('#MyModalBody').html(result);
                 $('#dialog-rekap').modal('show');

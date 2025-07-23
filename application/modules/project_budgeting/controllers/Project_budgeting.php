@@ -231,6 +231,18 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
         $get_lab = $this->db->get()->result();
 
+        $this->db->select('a.id, a.id_penawaran, a.qty, a.price_unit, a.total, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya as nm_item');
+        $this->db->from('kons_tr_penawaran_subcont_tenaga_ahli a');
+        $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
+        $get_subcont_tenaga_ahli = $this->db->get()->result();
+
+        $this->db->select('a.id, a.id_penawaran, a.qty, a.price_unit, a.total, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya as nm_item');
+        $this->db->from('kons_tr_penawaran_subcont_perusahaan a');
+        $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
+        $get_subcont_perusahaan = $this->db->get()->result();
+
         $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
         $this->db->where('a.id_konsultasi_h', $get_spk->id_project);
@@ -246,6 +258,8 @@ class Project_budgeting extends Admin_Controller
             'list_others' => $get_others,
             'list_penawaran' => $get_penawaran,
             'list_lab' => $get_lab,
+            'list_subcont_tenaga_ahli' => $get_subcont_tenaga_ahli,
+            'list_subcont_perusahaan' => $get_subcont_perusahaan,
             'nm_paket' => $nm_paket
         ];
 
@@ -297,6 +311,18 @@ class Project_budgeting extends Admin_Controller
         $this->db->where('b.id_penawaran', $get_spk_budgeting->id_penawaran);
         $get_spk_budgeting_lab = $this->db->get()->result();
 
+        $this->db->from('kons_tr_spk_budgeting_subcont_tenaga_ahli a');
+        $this->db->join('kons_tr_penawaran_subcont_tenaga_ahli b', 'b.id_item = a.id_item');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.id_penawaran', $get_spk_budgeting->id_penawaran);
+        $get_spk_budgeting_subcont_tenaga_ahli = $this->db->get()->result();
+
+        $this->db->from('kons_tr_spk_budgeting_subcont_perusahaan a');
+        $this->db->join('kons_tr_penawaran_subcont_perusahaan b', 'b.id_item = a.id_item');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('b.id_penawaran', $get_spk_budgeting->id_penawaran);
+        $get_spk_budgeting_subcont_perusahaan = $this->db->get()->result();
+
         $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
         $this->db->where('a.id_konsultasi_h', $get_spk->id_project);
@@ -312,6 +338,8 @@ class Project_budgeting extends Admin_Controller
             'list_budgeting_akomodasi' => $get_spk_budgeting_akomodasi,
             'list_budgeting_others' => $get_spk_budgeting_others,
             'list_budgeting_lab' => $get_spk_budgeting_lab,
+            'list_budgeting_subcont_tenaga_ahli' => $get_spk_budgeting_subcont_tenaga_ahli,
+            'list_budgeting_subcont_perusahaan' => $get_spk_budgeting_subcont_perusahaan,
             'nm_paket' => $nm_paket
         ];
 
@@ -341,6 +369,8 @@ class Project_budgeting extends Admin_Controller
         $this->db->delete('kons_tr_spk_budgeting_aktifitas', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
         $this->db->delete('kons_tr_spk_budgeting_others', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
         $this->db->delete('kons_tr_spk_budgeting_lab', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
+        $this->db->delete('kons_tr_spk_budgeting_subcont_tenaga_ahli', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
+        $this->db->delete('kons_tr_spk_budgeting_subcont_perusahaan', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
 
         $id_spk_budgeting = $this->Project_budgeting_model->generate_id_spk_budgeting();
 
@@ -373,6 +403,8 @@ class Project_budgeting extends Admin_Controller
             'biaya_akomodasi' => $post['summary_biaya_akomodasi'],
             'biaya_others' => $post['summary_biaya_others'],
             'biaya_lab' => $post['summary_biaya_lab'],
+            'biaya_subcont_tenaga_ahli' => $post['summary_biaya_subcont_tenaga_ahli'],
+            'biaya_subcont_perusahaan' => $post['summary_biaya_subcont_perusahaan'],
             'nilai_kontrak_bersih' => $get_spk_penawaran->nilai_kontrak_bersih,
             'mandays_rate' => $get_spk_penawaran->mandays_rate,
             'ppn' => $get_penawaran->ppn,
@@ -382,15 +414,22 @@ class Project_budgeting extends Admin_Controller
             'biaya_akomodasi_before' => $post['ttl_total_akomodasi_before'],
             'biaya_others_before' => $post['ttl_total_others_before'],
             'biaya_lab_before' => $post['ttl_total_lab_before'],
+            'biaya_subcont_tenaga_ahli_before' => $post['ttl_total_subcont_tenaga_ahli_before'],
+            'biaya_subcont_perusahaan_before' => $post['ttl_total_subcont_perusahaan_before'],
             'mandays_subcont_after' => $post['summary_mandays_subcont'],
             'biaya_subcont_after' => $post['summary_biaya_subcont_after'],
             'biaya_akomodasi_after' => $post['summary_biaya_akomodasi_after'],
             'biaya_others_after' => $post['summary_biaya_others_after'],
             'biaya_lab_after' => $post['summary_biaya_lab_after'],
+            'biaya_subcont_tenaga_ahli_after' => $post['summary_biaya_subcont_tenaga_ahli_after'],
+            'biaya_subcont_perusahaan_after' => $post['summary_biaya_subcont_perusahaan_after'],
             'mandays_subcont_result' => $post['summary_mandays_subcont_result_value'],
             'biaya_subcont_result' => $post['summary_biaya_subcont_result_value'],
             'biaya_akomodasi_result' => $post['summary_biaya_akomodasi_result_value'],
             'biaya_others_result' => $post['summary_biaya_others_result_value'],
+            'biaya_lab_result' => $post['summary_biaya_lab_result_value'],
+            'biaya_subcont_tenaga_ahli_result' => $post['summary_biaya_subcont_tenaga_ahli_result_value'],
+            'biaya_subcont_perusahaan_result' => $post['summary_biaya_subcont_perusahaan_result_value'],
             'create_by' => $this->auth->user_id(),
             'create_date' => date('Y-m-d H:i:s')
         ];
@@ -525,6 +564,64 @@ class Project_budgeting extends Admin_Controller
             }
         }
 
+        $data_insert_subcont_tenaga_ahli = [];
+        if (isset($post['subcont_tenaga_ahli_final'])) {
+            foreach ($post['subcont_tenaga_ahli_final'] as $item) {
+                $this->db->select('a.*, b.nm_biaya');
+                $this->db->from('kons_tr_penawaran_subcont_tenaga_ahli a');
+                $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
+                $this->db->where('a.id', $item['id_subcont_tenaga_ahli']);
+                $get_subcont_tenaga_ahli = $this->db->get()->row();
+
+                $data_insert_subcont_tenaga_ahli[] = [
+                    'id_spk_budgeting' => $id_spk_budgeting,
+                    'id_spk_penawaran' => $post['id_spk_penawaran'],
+                    'id_penawaran' => $get_spk_penawaran->id_penawaran,
+                    'id_subcont' => $item['id_subcont_tenaga_ahli'],
+                    'id_item' => $get_subcont_tenaga_ahli->id_item,
+                    'nm_item' => $get_subcont_tenaga_ahli->nm_biaya,
+                    'qty_estimasi' => $get_subcont_tenaga_ahli->qty,
+                    'price_unit_estimasi' => $get_subcont_tenaga_ahli->price_unit,
+                    'total_estimasi' => $get_subcont_tenaga_ahli->total,
+                    'qty_final' => str_replace(',', '', $item['qty']),
+                    'price_unit_final' => str_replace(',', '', $item['price_unit']),
+                    'total_final' => str_replace(',', '', $item['total']),
+                    'keterangan' => $get_subcont_tenaga_ahli->keterangan,
+                    'create_by' => $this->auth->user_id(),
+                    'create_date' => date('Y-m-d H:i:s')
+                ];
+            }
+        }
+
+        $data_insert_subcont_perusahaan = [];
+        if (isset($post['subcont_perusahaan_final'])) {
+            foreach ($post['subcont_perusahaan_final'] as $item) {
+                $this->db->select('a.*, b.nm_biaya');
+                $this->db->from('kons_tr_penawaran_subcont_perusahaan a');
+                $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
+                $this->db->where('a.id', $item['id_subcont_perusahaan']);
+                $get_subcont_perusahaan = $this->db->get()->row();
+
+                $data_insert_subcont_perusahaan[] = [
+                    'id_spk_budgeting' => $id_spk_budgeting,
+                    'id_spk_penawaran' => $post['id_spk_penawaran'],
+                    'id_penawaran' => $get_spk_penawaran->id_penawaran,
+                    'id_subcont' => $item['id_subcont_perusahaan'],
+                    'id_item' => $get_subcont_perusahaan->id_item,
+                    'nm_item' => $get_subcont_perusahaan->nm_biaya,
+                    'qty_estimasi' => $get_subcont_perusahaan->qty,
+                    'price_unit_estimasi' => $get_subcont_perusahaan->price_unit,
+                    'total_estimasi' => $get_subcont_perusahaan->total,
+                    'qty_final' => str_replace(',', '', $item['qty']),
+                    'price_unit_final' => str_replace(',', '', $item['price_unit']),
+                    'total_final' => str_replace(',', '', $item['total']),
+                    'keterangan' => $get_subcont_perusahaan->keterangan,
+                    'create_by' => $this->auth->user_id(),
+                    'create_date' => date('Y-m-d H:i:s')
+                ];
+            }
+        }
+
         $insert_spk_budgeting = $this->db->insert('kons_tr_spk_budgeting', $data_insert);
         if (!$insert_spk_budgeting) {
             print_r('Error 1 | ' . $this->db->last_query());
@@ -568,6 +665,24 @@ class Project_budgeting extends Admin_Controller
             }
         }
 
+        if (!empty($data_insert_subcont_tenaga_ahli)) {
+            $insert_spk_budgeting_subcont_tenaga_ahli = $this->db->insert_batch('kons_tr_spk_budgeting_subcont_tenaga_ahli', $data_insert_subcont_tenaga_ahli);
+            if (!$insert_spk_budgeting_subcont_tenaga_ahli) {
+                print_r($this->db->last_query());
+                $this->db->trans_rollback();
+                exit;
+            }
+        }
+
+        if (!empty($data_insert_subcont_perusahaan)) {
+            $insert_spk_budgeting_subcont_perusahaan = $this->db->insert_batch('kons_tr_spk_budgeting_subcont_perusahaan', $data_insert_subcont_perusahaan);
+            if (!$insert_spk_budgeting_subcont_perusahaan) {
+                print_r($this->db->last_query());
+                $this->db->trans_rollback();
+                exit;
+            }
+        }
+
         if ($this->db->trans_status() ===  false) {
             $this->db->trans_rollback();
             $valid = 0;
@@ -590,6 +705,8 @@ class Project_budgeting extends Admin_Controller
 
         $this->db->trans_begin();
 
+        $this->db->delete('kons_tr_spk_budgeting_subcont_perusahaan', ['id_spk_budgeting' => $id]);
+        $this->db->delete('kons_tr_spk_budgeting_subcont_tenaga_ahli', ['id_spk_budgeting' => $id]);
         $this->db->delete('kons_tr_spk_budgeting_lab', ['id_spk_budgeting' => $id]);
         $this->db->delete('kons_tr_spk_budgeting_others', ['id_spk_budgeting' => $id]);
         $this->db->delete('kons_tr_spk_budgeting_akomodasi', ['id_spk_budgeting' => $id]);

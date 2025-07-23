@@ -137,6 +137,20 @@ class Approval_spk_direktur extends Admin_Controller
             $nilai_lab += $item_lab->total_budget;
         }
 
+        $this->db->select('SUM(a.total_budget) as ttl_subcont_tenaga_ahli');
+        $this->db->from('kons_tr_penawaran_subcont_tenaga_ahli a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_subcont_tenaga_ahli = $this->db->get()->row_array();
+
+        $nilai_subcont_tenaga_ahli = (!empty($get_subcont_tenaga_ahli)) ? $get_subcont_tenaga_ahli['ttl_subcont_tenaga_ahli'] : 0;
+
+        $this->db->select('SUM(a.total_budget) as ttl_subcont_perusahaan');
+        $this->db->from('kons_tr_penawaran_subcont_perusahaan a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_subcont_perusahaan = $this->db->get()->row_array();
+
+        $nilai_subcont_perusahaan = (!empty($get_subcont_perusahaan)) ? $get_subcont_perusahaan['ttl_subcont_perusahaan'] : 0;
+
         $nilai_kontrak = 0;
         foreach ($get_aktifitas as $item_aktifitas) {
             $nilai_kontrak += $item_aktifitas->harga_aktifitas;
@@ -170,6 +184,8 @@ class Approval_spk_direktur extends Admin_Controller
             'nilai_akomodasi' => $nilai_akomodasi,
             'nilai_others' => $nilai_others,
             'nilai_lab' => $nilai_lab,
+            'nilai_subcont_tenaga_ahli' => $nilai_subcont_tenaga_ahli,
+            'nilai_subcont_perusahaan' => $nilai_subcont_perusahaan,
             'nilai_kontrak' => $nilai_kontrak,
             'data_user' => $get_user,
             'nm_paket' => $nm_paket
@@ -287,6 +303,20 @@ class Approval_spk_direktur extends Admin_Controller
             $nilai_lab += $item_lab->total_budget;
         }
 
+        $this->db->select('SUM(a.total_budget) as ttl_subcont_tenaga_ahli');
+        $this->db->from('kons_tr_penawaran_subcont_tenaga_ahli a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_subcont_tenaga_ahli = $this->db->get()->row_array();
+
+        $nilai_subcont_tenaga_ahli = (!empty($get_subcont_tenaga_ahli)) ? $get_subcont_tenaga_ahli['ttl_subcont_tenaga_ahli'] : 0;
+
+        $this->db->select('SUM(a.total_budget) as ttl_subcont_perusahaan');
+        $this->db->from('kons_tr_penawaran_subcont_perusahaan a');
+        $this->db->where('a.id_penawaran', $get_penawaran->id_quotation);
+        $get_subcont_perusahaan = $this->db->get()->row_array();
+
+        $nilai_subcont_perusahaan = (!empty($get_subcont_perusahaan)) ? $get_subcont_perusahaan['ttl_subcont_perusahaan'] : 0;
+
         $nilai_kontrak = 0;
         foreach ($get_aktifitas as $item_aktifitas) {
             $nilai_kontrak += $item_aktifitas->harga_aktifitas;
@@ -320,6 +350,8 @@ class Approval_spk_direktur extends Admin_Controller
             'nilai_akomodasi' => $nilai_akomodasi,
             'nilai_others' => $nilai_others,
             'nilai_lab' => $nilai_lab,
+            'nilai_subcont_tenaga_ahli' => $nilai_subcont_tenaga_ahli,
+            'nilai_subcont_perusahaan' => $nilai_subcont_perusahaan,
             'nilai_kontrak' => $nilai_kontrak,
             'data_user' => $get_user,
             'nm_paket' => $nm_paket
@@ -418,7 +450,7 @@ class Approval_spk_direktur extends Admin_Controller
             if (empty($approval_position_arr) && $item->approval_project_leader_sts == null) {
                 $approval_position = 'Project Leader';
             }
-            
+
             if (!empty($approval_position_arr)) {
                 $status_spk = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval : ' . implode(' & ', $approval_position_arr) . '</button>';
             }
@@ -702,6 +734,34 @@ class Approval_spk_direktur extends Admin_Controller
                 $this->template->set($data);
                 $this->template->render('detail_lab');
             }
+            if ($type == 'subcont_tenaga_ahli') {
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya as nm_biaya');
+                $this->db->from('kons_tr_penawaran_subcont_tenaga_ahli a');
+                $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $get_spk_penawaran->id_penawaran);
+                $get_subcont_tenaga_ahli = $this->db->get()->result();
+
+                $data = [
+                    'list_subcont_tenaga_ahli' => $get_subcont_tenaga_ahli
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_subcont_tenaga_ahli');
+            }
+            if ($type == 'subcont_perusahaan') {
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya as nm_biaya');
+                $this->db->from('kons_tr_penawaran_subcont_perusahaan a');
+                $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $get_spk_penawaran->id_penawaran);
+                $get_subcont_perusahaan = $this->db->get()->result();
+
+                $data = [
+                    'list_subcont_perusahaan' => $get_subcont_perusahaan
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_subcont_perusahaan');
+            }
         } else {
             $id_penawaran = $this->input->post('id_penawaran');
             $type = $this->input->post('type');
@@ -747,6 +807,34 @@ class Approval_spk_direktur extends Admin_Controller
 
                 $this->template->set($data);
                 $this->template->render('detail_lab');
+            }
+            if ($type == 'subcont_tenaga_ahli') {
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya as nm_biaya');
+                $this->db->from('kons_tr_penawaran_subcont_tenaga_ahli a');
+                $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $id_penawaran);
+                $get_subcont_tenaga_ahli = $this->db->get()->result();
+
+                $data = [
+                    'list_subcont_tenaga_ahli' => $get_subcont_tenaga_ahli
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_subcont_tenaga_ahli');
+            }
+            if ($type == 'subcont_perusahaan') {
+                $this->db->select('a.id, a.qty, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya as nm_biaya');
+                $this->db->from('kons_tr_penawaran_subcont_perusahaan a');
+                $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item');
+                $this->db->where('a.id_penawaran', $id_penawaran);
+                $get_subcont_perusahaan = $this->db->get()->result();
+
+                $data = [
+                    'list_subcont_perusahaan' => $get_subcont_perusahaan
+                ];
+
+                $this->template->set($data);
+                $this->template->render('detail_subcont_perusahaan');
             }
         }
     }
