@@ -790,9 +790,6 @@ class Penawaran extends Admin_Controller
         if ($this->upload->do_upload('upload_proposal')) {
             $uploadData = $this->upload->data();
             $filenames = $uploadData['file_name'];
-        } else {
-            $valid = 0;
-            $msg = $this->upload->display_errors();
         }
 
         $config_tahapan['upload_path'] = './uploads/tahapan_penawaran/';
@@ -804,9 +801,6 @@ class Penawaran extends Admin_Controller
         if ($this->upload->do_upload('upload_tahapan')) {
             $uploadData_tahapan = $this->upload->data();
             $filenames_tahapan = $uploadData_tahapan['file_name'];
-        } else {
-            $valid = 0;
-            $msg = $this->upload->display_errors();
         }
 
         $config_po['upload_path'] = './uploads/po_penawaran/';
@@ -818,9 +812,6 @@ class Penawaran extends Admin_Controller
         if ($this->upload->do_upload('upload_po')) {
             $uploadData_po = $this->upload->data();
             $filenames_po = $uploadData_po['file_name'];
-        } else {
-            $valid = 0;
-            $msg = $this->upload->display_errors();
         }
 
         $sts_cust = $post['sts_cust'];
