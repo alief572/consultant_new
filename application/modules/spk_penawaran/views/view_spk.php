@@ -1,4 +1,5 @@
 <?php
+
 $ENABLE_ADD     = has_permission('SPK.Add');
 $ENABLE_MANAGE  = has_permission('SPK.Manage');
 $ENABLE_VIEW    = has_permission('SPK.View');
