@@ -1874,7 +1874,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             swal({
                                 type: 'success',
                                 title: 'Success',
-                                text: result.msg
+                                text: result.msg,
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                timer: 3000
                             }, function(after) {
                                 window.location.href = siteurl + active_controller;
                             });
@@ -1882,7 +1885,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             swal({
                                 type: 'warning',
                                 title: 'Failed !',
-                                text: result.msg
+                                text: result.msg,
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                         }
                     },
@@ -1890,7 +1896,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         swal({
                             type: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: 'Please try again later !',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                     }
                 });

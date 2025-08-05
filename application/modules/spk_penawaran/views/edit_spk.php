@@ -1246,7 +1246,10 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                                 swal({
                                     type: 'success',
                                     title: 'Success !',
-                                    text: result.msg
+                                    text: result.msg,
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false,
+                                    timer: 3000
                                 }, function(after) {
                                     window.location.href = siteurl + active_controller;
                                 });
@@ -1254,7 +1257,10 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                                 swal({
                                     type: 'warning',
                                     title: 'Failed !',
-                                    text: result.msg
+                                    text: result.msg,
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false,
+                                    timer: 3000
                                 });
                             }
                         },
@@ -1262,7 +1268,10 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                             swal({
                                 type: 'error',
                                 title: 'Error !',
-                                text: 'Please try again later !'
+                                text: 'Please try again later !',
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                timer: 3000
                             });
                         }
                     })
