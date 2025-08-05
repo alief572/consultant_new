@@ -1998,7 +1998,7 @@ class Kasbon_project extends Admin_Controller
 
         foreach ($get_data->result_array() as $item) {
 
-            $this->db->select('IF(SUM(a.budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan)) as amount');
+            $this->db->select('IF(SUM(a.budget_tambahan * a.qty_budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan * a.qty_budget_tambahan)) as amount');
             $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
             $this->db->where('a.id_request_ovb', $item['id_request_ovb']);
             $get_amount = $this->db->get()->row_array();
@@ -2123,7 +2123,7 @@ class Kasbon_project extends Admin_Controller
 
         foreach ($get_data->result_array() as $item) {
 
-            $this->db->select('IF(SUM(a.budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan)) as amount');
+            $this->db->select('IF(SUM(a.budget_tambahan * a.qty_budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan * a.qty_budget_tambahan)) as amount');
             $this->db->from('kons_tr_kasbon_req_ovb_others_detail a');
             $this->db->where('a.id_request_ovb', $item['id_request_ovb']);
             $get_amount = $this->db->get()->row_array();
@@ -2248,7 +2248,7 @@ class Kasbon_project extends Admin_Controller
 
         foreach ($get_data->result_array() as $item) {
 
-            $this->db->select('IF(SUM(a.budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan)) as amount');
+            $this->db->select('IF(SUM(a.budget_tambahan * a.qty_budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan * a.qty_budget_tambahan)) as amount');
             $this->db->from('kons_tr_kasbon_req_ovb_lab_detail a');
             $this->db->where('a.id_request_ovb', $item['id_request_ovb']);
             $get_amount = $this->db->get()->row_array();
@@ -2373,7 +2373,7 @@ class Kasbon_project extends Admin_Controller
 
         foreach ($get_data->result_array() as $item) {
 
-            $this->db->select('IF(SUM(a.budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan)) as amount');
+            $this->db->select('IF(SUM(a.budget_tambahan * a.qty_budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan * a.qty_budget_tambahan)) as amount');
             $this->db->from('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_detail a');
             $this->db->where('a.id_request_ovb', $item['id_request_ovb']);
             $get_amount = $this->db->get()->row_array();
@@ -2498,7 +2498,7 @@ class Kasbon_project extends Admin_Controller
 
         foreach ($get_data->result_array() as $item) {
 
-            $this->db->select('IF(SUM(a.budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan)) as amount');
+            $this->db->select('IF(SUM(a.budget_tambahan * a.qty_budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan * a.qty_budget_tambahan)) as amount');
             $this->db->from('kons_tr_kasbon_req_ovb_subcont_perusahaan_detail a');
             $this->db->where('a.id_request_ovb', $item['id_request_ovb']);
             $get_amount = $this->db->get()->row_array();
@@ -2585,6 +2585,7 @@ class Kasbon_project extends Admin_Controller
         $start = $this->input->post('start');
         $length = $this->input->post('length');
         $search = $this->input->post('search');
+
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
@@ -2623,7 +2624,7 @@ class Kasbon_project extends Admin_Controller
 
         foreach ($get_data->result_array() as $item) {
 
-            $this->db->select('IF(SUM(a.budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan)) as amount');
+            $this->db->select('IF(SUM(a.budget_tambahan * a.qty_budget_tambahan) IS NULL, 0, SUM(a.budget_tambahan * a.qty_budget_tambahan)) as amount');
             $this->db->from('kons_tr_kasbon_req_ovb_subcont_detail a');
             $this->db->where('a.id_request_ovb', $item['id_request_ovb']);
             $get_amount = $this->db->get()->row_array();
