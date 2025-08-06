@@ -171,10 +171,10 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                                 <input type="text" name="pic" id="" class="form-control form-control-sm" value="<?= ucfirst($detail_informasi_awal) ?>" readonly>
                             </div>
                             <div class="form-group text-center" style="width: 95px;">
-                                <input type="radio" name="tipe_informasi_awal" id="" <?= ($list_penawaran->sts_cust == '1') ? 'checked' : null ?> disabled> RO
+                                <input type="radio" name="tipe_informasi_awal" value="1" id="" <?= ($list_penawaran->sts_cust == '1') ? 'checked' : null ?>> RO
                             </div>
                             <div class="form-group text-center" style="width: 95px;">
-                                <input type="radio" name="tipe_informasi_awal" id="" <?= ($list_penawaran->sts_cust == '0') ? 'checked' : null ?> disabled> NC
+                                <input type="radio" name="tipe_informasi_awal" value="0" id="" <?= ($list_penawaran->sts_cust == '0') ? 'checked' : null ?>> NC
                             </div>
                         </div>
                     </td>
