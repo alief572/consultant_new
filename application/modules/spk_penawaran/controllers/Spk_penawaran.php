@@ -1192,7 +1192,6 @@ class SPK_penawaran extends Admin_Controller
         }
 
         $data_insert_subcont = [];
-
         if (isset($post['subcont'])) {
             foreach ($post['subcont'] as $item) {
                 $data_insert_subcont[] = [
@@ -1209,7 +1208,6 @@ class SPK_penawaran extends Admin_Controller
         }
 
         $data_insert_payment = [];
-
         if (isset($post['pt'])) {
             foreach ($post['pt'] as $item) {
                 $data_insert_payment[] = [
@@ -1265,6 +1263,8 @@ class SPK_penawaran extends Admin_Controller
             print_r($this->db->error($insert_spk_penawaran_payment) . ' ' . $this->db->last_query());
             exit;
         }
+
+        $update_penawaran = $this->db->update('kons_tr_penawaran', ['sts_cust' => $post['tipe_informasi_awal']], ['id_quotation' => $post['id_quotation']]);
 
         if ($this->db->trans_status() === false || $lanjut < 1) {
             $this->db->trans_rollback();
@@ -1500,6 +1500,8 @@ class SPK_penawaran extends Admin_Controller
             print_r($this->db->error($insert_spk_penawaran_payment) . ' ' . $this->db->last_query());
             exit;
         }
+
+        $update_penawaran_sts_cust = $this->db->update('kons_tr_penawaran', ['sts_cust' => $post['tipe_informasi_awal']], ['id_quotation' => $get_spk_penawaran->id_penawaran]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
