@@ -504,18 +504,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var valid = 1;
 
-        for (i = 1; i <= no; i++) {
-            var qty_pengajuan = get_num($('input[name="detail_lab[' + i + '][qty_pengajuan]"]').val());
-            var nominal_pengajuan = get_num($('input[name="detail_lab[' + i + '][nominal_pengajuan]"]').val());
-            var sisa_budget = get_num($('input[name="detail_lab[' + i + '][sisa_budget]"]').val());
+        // for (i = 1; i <= no; i++) {
+        //     var qty_pengajuan = get_num($('input[name="detail_lab[' + i + '][qty_pengajuan]"]').val());
+        //     var nominal_pengajuan = get_num($('input[name="detail_lab[' + i + '][nominal_pengajuan]"]').val());
+        //     var sisa_budget = get_num($('input[name="detail_lab[' + i + '][sisa_budget]"]').val());
 
-            if (qty_pengajuan > 0 && qty_pengajuan < 1) {
-                qty_pengajuan = 1;
-            }
-            if (valid == '1' && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
-                valid = 0;
-            }
-        }
+        //     if (qty_pengajuan > 0 && qty_pengajuan < 1) {
+        //         qty_pengajuan = 1;
+        //     }
+        //     if (valid == '1' && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
+        //         valid = 0;
+        //     }
+        // }
 
         if (valid == '0') {
             swal({

@@ -557,22 +557,22 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var nilai_custom = 0;
         var isset_custom = 0;
-        for (i = 1; i <= no; i++) {
-            var qty_pengajuan_custom = get_num($('input[name="subcont_custom[' + i + '][qty_pengajuan]"]').val());
-            var nominal_pengajuan_custom = get_num($('input[name="subcont_custom[' + i + '][nominal_pengajuan]"]').val());
-            var total_pengajuan_custom = get_num($('input[name="subcont_custom[' + i + '][total_pengajuan]"]').val());
-            var sisa_budget_custom = get_num($('input[name="subcont_custom[' + i + '][sisa_budget]"]').val());
+        // for (i = 1; i <= no; i++) {
+        //     var qty_pengajuan_custom = get_num($('input[name="subcont_custom[' + i + '][qty_pengajuan]"]').val());
+        //     var nominal_pengajuan_custom = get_num($('input[name="subcont_custom[' + i + '][nominal_pengajuan]"]').val());
+        //     var total_pengajuan_custom = get_num($('input[name="subcont_custom[' + i + '][total_pengajuan]"]').val());
+        //     var sisa_budget_custom = get_num($('input[name="subcont_custom[' + i + '][sisa_budget]"]').val());
 
-            isset_custom = 1;
-            nilai_custom += (nominal_pengajuan_custom * qty_pengajuan_custom);
-            if (valid == '1' && (nominal_pengajuan_custom * qty_pengajuan_custom) > sisa_budget_custom) {
-                valid = 0;
-            }
-        }
+        //     isset_custom = 1;
+        //     nilai_custom += (nominal_pengajuan_custom * qty_pengajuan_custom);
+        //     if (valid == '1' && (nominal_pengajuan_custom * qty_pengajuan_custom) > sisa_budget_custom) {
+        //         valid = 0;
+        //     }
+        // }
 
-        if ((nilai_pengajuan > 0 && isset_pengajuan == 0) || (nilai_custom > 0 && isset_custom == 0)) {
-            valid = 0;
-        }
+        // if ((nilai_pengajuan > 0 && isset_pengajuan == 0) || (nilai_custom > 0 && isset_custom == 0)) {
+        //     valid = 0;
+        // }
 
         if (valid == '0') {
             swal({
