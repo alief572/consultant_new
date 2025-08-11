@@ -172,32 +172,14 @@ class History_penawaran extends Admin_Controller
             $this->db->group_end();
         }
         $this->db->group_by('a.id_history');
+
+        $db_clone = clone $this->db;
+        $count_all = $db_clone->count_all_results();
+
         $this->db->order_by('a.input_date', 'desc');
         $this->db->limit($length, $start);
 
         $get_data = $this->db->get();
-
-        $this->db->select('a.*, c.nama');
-        $this->db->from('kons_tr_penawaran_history a');
-        $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
-        $this->db->join('members c', 'c.id = a.id_marketing', 'left');
-        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
-        $this->db->join('kons_master_paket e', 'e.id_paket = d.id_paket', 'left');
-        $this->db->where(1, 1);
-        $this->db->where('a.deleted_by', null);
-        if (!empty($search)) {
-            $this->db->group_start();
-            $this->db->like('a.id_quotation', $search['value'], 'both');
-            $this->db->or_like('a.tgl_quotation', $search['value'], 'both');
-            $this->db->or_like('c.nama', $search['value'], 'both');
-            $this->db->or_like('e.nm_paket', $search['value'], 'both');
-            $this->db->or_like('b.nm_customer', $search['value'], 'both');
-            $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
-            $this->db->group_end();
-        }
-        $this->db->group_by('a.id_history');
-
-        $get_data_all = $this->db->get();
 
         $hasil = [];
 
@@ -239,8 +221,8 @@ class History_penawaran extends Admin_Controller
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data_all->num_rows(),
-            'recordsFiltered' => $get_data_all->num_rows(),
+            'recordsTotal' => $count_all,
+            'recordsFiltered' => $count_all,
             'data' => $hasil
         ]);
     }

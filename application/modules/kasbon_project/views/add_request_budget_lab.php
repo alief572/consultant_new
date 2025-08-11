@@ -128,7 +128,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="req_lab[' . $no . '][budget_tambahan]" value="'.$item->price_unit_final.'" readonly>';
+                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="req_lab[' . $no . '][budget_tambahan]" value="' . $item->price_unit_final . '" readonly>';
                         echo '</td>';
 
                         echo '<td>';
