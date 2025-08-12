@@ -5,7 +5,7 @@ $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
 
 <style>
     .btn {
@@ -49,7 +49,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 <!-- <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
 
-<script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
 <!-- page script -->
 <script type="text/javascript">
     $(document).ready(function() {
@@ -157,6 +157,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         // dataTables.destroy();
 
         var dataTables = $('#table_penawaran').dataTable({
+            processing: false,
+            serverSide: true,
+            stateSave: true,
+            destroy: true,
+            paging: true,
             ajax: {
                 url: siteurl + active_controller + 'get_data_spk',
                 type: "POST",
@@ -191,13 +196,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 {
                     data: 'option'
                 }
-            ],
-            responsive: true,
-            processing: true,
-            serverSide: true,
-            stateSave: true,
-            destroy: true,
-            paging: true
+            ]
         });
     }
 </script>

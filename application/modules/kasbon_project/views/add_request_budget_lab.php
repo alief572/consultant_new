@@ -80,7 +80,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th rowspan="2" class="text-center valign-middle">No</th>
                         <th rowspan="2" class="text-center valign-middle">Item</th>
                         <th colspan="3" class="text-center valign-middle">Estimasi</th>
-                        <th colspan="4" class="text-center valign-middle">Pengajuan</th>
+                        <th colspan="5" class="text-center valign-middle">Pengajuan</th>
                     </tr>
                     <tr>
                         <th class="text-center valign-middle">Qty</th>
@@ -88,6 +88,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th class="text-center valign-middle">Total Budget</th>
                         <th class="text-center valign-middle">Qty Budget Tambahan</th>
                         <th class="text-center valign-middle">Budget Tambahan</th>
+                        <th class="text-center valign-middle">Total Tambahan</th>
                         <th class="text-center valign-middle">Pengajuan New Budget</th>
                         <th class="text-center valign-middle">Reason</th>
                     </tr>
@@ -132,6 +133,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
+                        echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="req_lab[' . $no . '][total_budget_tambahan]" value="0" readonly>';
+                        echo '</td>';
+
+                        echo '<td>';
                         echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="req_lab[' . $no . '][pengajuan_new_budget]" value="' . $item->total_final . '" readonly>';
                         echo '</td>';
 
@@ -149,11 +154,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="4"></td>
+                        <td colspan="5"></td>
                         <td class="text-center">
                             <?= number_format($ttl_total_budget_estimasi, 2) ?>
                         </td>
-                        <td colspan="2"></td>
+                        <td colspan=""></td>
+                        <td class="text-center ttl_tambahan_budget"><?= number_format(0, 2) ?></td>
                         <td class="text-center ttl_new_budget">
                             <?= number_format($ttl_total_budget_estimasi, 2) ?>
                         </td>
@@ -222,19 +228,23 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         var no = "<?= $no ?>";
 
         var ttl_pengajuan_new_budget = 0;
-
+        var ttl_new_budget = 0;
         for (i = 1; i <= no; i++) {
             var total_budget = get_num($('input[name="req_lab[' + i + '][total_budget]"]').val());
             var qty_budget_tambahan = get_num($('input[name="req_lab[' + i + '][qty_budget_tambahan]"]').val());
             var budget_tambahan = get_num($('input[name="req_lab[' + i + '][budget_tambahan]"]').val());
 
+            var ttl_budget = parseFloat(budget_tambahan * qty_budget_tambahan);
             var pengajuan_budget_new = parseFloat(total_budget + (budget_tambahan * qty_budget_tambahan));
 
+            $('input[name="req_lab[' + i + '][total_budget_tambahan]"]').val(number_format(ttl_budget, 2));
             $('input[name="req_lab[' + i + '][pengajuan_new_budget]"]').val(number_format(pengajuan_budget_new, 2));
 
             ttl_pengajuan_new_budget += pengajuan_budget_new;
+            ttl_new_budget += ttl_budget;
         }
 
+        $('.ttl_tambahan_budget').html(number_format(ttl_new_budget, 2));
         $('.ttl_new_budget').html(number_format(ttl_pengajuan_new_budget, 2));
     }
 

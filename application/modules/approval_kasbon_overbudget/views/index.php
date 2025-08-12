@@ -161,16 +161,22 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                                 text: result.msg,
                                 allowOutsideClick: false,
                                 allowEscapeKey: false,
-                                allowEnterKey: false
+                                allowEnterKey: false,
+                                timer: 3000,
+                                showConfirmButton: false
                             }, function(lanjut) {
-                                $('#dialog-rekap').modal('hide');
-                                DataTables();
+                                location.reload();
                             });
                         } else {
                             swal({
                                 type: 'warning',
                                 title: 'Failed !',
-                                text: result.msg
+                                text: result.msg,
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                allowEnterKey: false,
+                                timer: 3000,
+                                showConfirmButton: false
                             });
                         }
                     },
@@ -178,7 +184,12 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                         swal({
                             type: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: 'Please try again later !',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            allowEnterKey: false,
+                            timer: 3000,
+                            showConfirmButton: false
                         });
                     }
                 });
@@ -197,7 +208,9 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                 text: 'Reject reason must be filled first !',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-                allowEnterKey: false
+                allowEnterKey: false,
+                timer: 3000,
+                showConfirmButton: false
             });
 
             return false;
@@ -227,16 +240,22 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                                         text: result.msg,
                                         allowOutsideClick: false,
                                         allowEscapeKey: false,
-                                        allowEnterKey: false
+                                        allowEnterKey: false,
+                                        timer: 3000,
+                                        showConfirmButton: false
                                     }, function(lanjut) {
-                                        $('#dialog-rekap').modal('hide');
-                                        DataTables();
+                                        location.reload();
                                     });
                                 } else {
                                     swal({
                                         type: 'warning',
                                         title: 'Failed !',
-                                        text: result.msg
+                                        text: result.msg,
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false,
+                                        allowEnterKey: false,
+                                        timer: 3000,
+                                        showConfirmButton: false
                                     });
                                 }
                             },
@@ -244,7 +263,12 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                                 swal({
                                     type: 'error',
                                     title: 'Error !',
-                                    text: 'Please try again later !'
+                                    text: 'Please try again later !',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    allowEnterKey: false,
+                                    timer: 3000,
+                                    showConfirmButton: false
                                 });
                             }
                         });
@@ -254,7 +278,12 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                 swal({
                     type: 'error',
                     title: 'Error !',
-                    text: 'Please try again later !'
+                    text: 'Please try again later !',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                    timer: 3000,
+                    showConfirmButton: false
                 });
             }
         }
@@ -303,7 +332,7 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                 }
             ],
             responsive: true,
-            processing: true,
+            processing: false,
             serverSide: true,
             stateSave: true,
             destroy: true,
