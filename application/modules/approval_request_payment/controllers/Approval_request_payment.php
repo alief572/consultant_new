@@ -399,31 +399,44 @@ class Approval_request_payment extends Admin_Controller
 			if ($get_kasbon_header->tipe == '5') {
 				$tipe = 'Kasbon Subcont Tenaga Ahli';
 			}
+			if ($get_kasbon_header->tipe == '6') {
+				$tipe = 'Kasbon Subcont Perusahaan';
+			}
 
 			$this->db->select('a.*');
 			$this->db->from('kons_tr_kasbon_project_subcont a');
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_subcont = $this->db->get()->result();
 
-			$this->db->select('a.*');
+			$this->db->select('a.*, b.keterangan');
 			$this->db->from('kons_tr_kasbon_project_akomodasi a');
+			$this->db->join('kons_tr_penawaran_akomodasi b', 'b.id = a.id_akomodasi', 'left');
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_akomodasi = $this->db->get()->result();
 
-			$this->db->select('a.*');
+			$this->db->select('a.*, b.keterangan');
 			$this->db->from('kons_tr_kasbon_project_others a');
+			$this->db->join('kons_tr_penawaran_others b', 'b.id = a.id_others', 'left');
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_others = $this->db->get()->result();
 
-			$this->db->select('a.*');
+			$this->db->select('a.*, b.keterangan');
 			$this->db->from('kons_tr_kasbon_project_lab a');
+			$this->db->join('kons_tr_penawaran_lab b', 'b.id = a.id_lab', 'left');
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_lab = $this->db->get()->result();
 
-			$this->db->select('a.*');
+			$this->db->select('a.*, b.keterangan');
 			$this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+			$this->db->join('kons_tr_penawaran_subcont_tenaga_ahli b', 'b.id = a.id_subcont', 'left');
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_subcont_tenaga_ahli = $this->db->get()->result();
+
+			$this->db->select('a.*, b.keterangan');
+			$this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
+			$this->db->join('kons_tr_penawaran_subcont_perusahaan b', 'b.id = a.id_subcont', 'left');
+			$this->db->where('a.id_header', $id);
+			$get_kasbon_subcont_perusahaan = $this->db->get()->result();
 
 			$data = [
 				'id' => $id,
@@ -435,6 +448,7 @@ class Approval_request_payment extends Admin_Controller
 				'data_kasbon_others' => $get_kasbon_others,
 				'data_kasbon_lab' => $get_kasbon_lab,
 				'data_kasbon_subcont_tenaga_ahli' => $get_kasbon_subcont_tenaga_ahli,
+				'data_kasbon_subcont_perusahaan' => $get_kasbon_subcont_perusahaan,
 				'tipe' => $tipe
 			];
 		} else {
@@ -466,6 +480,7 @@ class Approval_request_payment extends Admin_Controller
 
 					$list_detail_expense_detail[$item_expense_detail->id] = [
 						'nama_expense' => $get_spk_budgeting->nm_aktifitas,
+						'keterangan' => $item_expense_detail->keterangan,
 						'qty_kasbon' => $get_kasbon->qty_pengajuan,
 						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
 						'qty_expense' => $item_expense_detail->qty_expense,
@@ -478,6 +493,7 @@ class Approval_request_payment extends Admin_Controller
 
 					$list_detail_expense_detail[$item_expense_detail->id] = [
 						'nama_expense' => $get_spk_budgeting->nm_item,
+						'keterangan' => $item_expense_detail->keterangan,
 						'qty_kasbon' => $get_kasbon->qty_pengajuan,
 						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
 						'qty_expense' => $item_expense_detail->qty_expense,
@@ -490,6 +506,7 @@ class Approval_request_payment extends Admin_Controller
 
 					$list_detail_expense_detail[$item_expense_detail->id] = [
 						'nama_expense' => $get_kasbon->nm_item,
+						'keterangan' => $item_expense_detail->keterangan,
 						'qty_kasbon' => $get_kasbon->qty_pengajuan,
 						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
 						'qty_expense' => $item_expense_detail->qty_expense,
