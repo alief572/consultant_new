@@ -3,6 +3,17 @@ $ENABLE_ADD     = has_permission('Expense_Report_Project.Add');
 $ENABLE_MANAGE  = has_permission('Expense_Report_Project.Manage');
 $ENABLE_VIEW    = has_permission('Expense_Report_Project.View');
 $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
+
+$title_header = 'Subcont';
+if ($tipe == '2') {
+    $title_header = 'Akomodasi';
+}
+if ($tipe == '3') {
+    $title_header = 'Others';
+}
+if ($tipe == '4') {
+    $title_header = 'Lab';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -67,745 +78,298 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
     }
 </style>
 
-<input type="hidden" name="id_spk_budgeting" class="id_spk_budgeting" value="<?= $list_budgeting->id_spk_budgeting ?>">
-
+<input type="hidden" name="id_expense" value="<?= $header->id ?>">
+<input type="hidden" name="id_header" value="<?= $id_header ?>">
+<input type="hidden" name="id_spk_budgeting" value="<?= $id_spk_budgeting ?>">
+<input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
+<input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
 <div class="box">
     <div class="box-header">
-
+        <h3>List Item <?= $title_header ?></h3>
     </div>
 
-    <div class="box-body" style="z-index: 1 !important;">
-        <table border="0" style="width: 100%; z-index: 1 !important;">
-            <tr>
-                <th class="pd-5 valign-top" width="150">No. SPK</th>
-                <td class="pd-5 valign-top" width="400"><?= $list_budgeting->id_spk_penawaran ?></td>
-                <th class="pd-5 valign-top" width="150">Project Leader</th>
-                <td class="pd-5 valign-top" width="400"><?= ucfirst($list_budgeting->nm_project_leader) ?></td>
-            </tr>
-            <tr>
-                <th class="pd-5 valign-top" width="150">Customer</th>
-                <td class="pd-5 valign-top" width="400"><?= $list_budgeting->nm_customer ?></td>
-                <th class="pd-5 valign-top" width="150">Sales</th>
-                <td class="pd-5 valign-top" width="400"><?= ucfirst($list_budgeting->nm_sales) ?></td>
-            </tr>
-            <tr>
-                <th class="pd-5 valign-top" width="150">Address</th>
-                <td class="pd-5 valign-top" width="400"><?= $list_budgeting->alamat ?></td>
-                <th class="pd-5 valign-top" width="150">Waktu</th>
-                <td class="pd-5 valign-top" width="400">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <input type="date" name="" id="" class="form-control form-control-sm" value="<?= $list_budgeting->waktu_from ?>" readonly>
-                        </div>
-                        <div class="form-group text-center" style="width: 50px; padding-top: 8px;">
-                            <span>-</span>
-                        </div>
-                        <div class="form-group">
-                            <input type="date" name="" id="" class="form-control form-control-sm" value="<?= $list_budgeting->waktu_to ?>" readonly>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th class="pd-5 valign-top" width="150">Project</th>
-                <td class="pd-5 valign-top" width="400"><?= $list_budgeting->nm_project ?></td>
-                <th class="pd-5 valign-top" width="150"></th>
-                <td class="pd-5 valign-top" width="400"></td>
-            </tr>
-        </table>
-    </div>
-</div>
+    <form id="data_form">
+        <div class="box-body" style="z-index: 1 !important;">
+            <table class="table custom-table mt-5">
+                <thead>
+                    <tr>
+                        <th class="text-center" rowspan="2">No.</th>
+                        <th class="text-center" rowspan="2">Item</th>
+                        <th class="text-center" colspan="2">Kasbon</th>
+                        <th class="text-center" colspan="2">Expense Report</th>
+                        <th class="text-center" rowspan="2">Keterangan</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Nominal</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Nominal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $ttl_expense_report = 0;
+                    $ttl_kasbon = 0;
 
-<div class="box">
-    <div class="box-header">
-        <table border="0" style="width: 100%;">
-            <tr>
-                <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Biaya Subcont</h4>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>Budget</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_subcont) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>On Process</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_subcont_on_process">Rp. <?= number_format($nilai_kasbon_on_proses) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-            </tr>
-        </table>
-    </div>
+                    $count_no = 0;
+                    foreach ($datalist_item as $item) {
 
-    <div class="box-body" style="overflow: visible !important;">
-        <table id="example1" class="table custom-table mt-5" style="overflow: visible !important;">
-            <thead>
-                <tr>
-                    <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
-                    <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
+                        $readonly_qty = 'readonly';
+                        $readonly_nominal = 'readonly';
 
-            </tbody>
-        </table>
-    </div>
-</div>
+                        $qty_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['qty_expense'] : 0;
+                        $nominal_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['nominal_expense'] : 0;
+                        $total_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['total_expense'] : 0;
+                        $keterangan = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['keterangan'] : '';
 
-<div class="box">
-    <div class="box-header">
-        <table border="0" style="width: 100%;">
-            <tr>
-                <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Akomodasi</h4>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>Budget</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_akomodasi) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>On Process</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_akomodasi_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_akomodasi) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-            </tr>
-        </table>
-    </div>
+                        echo '<tr>';
 
-    <div class="box-body" style="overflow: visible !important;">
-        <table class="table custom-table mt-5" id="table_kasbon_akomodasi" style="overflow: visible !important;">
-            <thead>
-                <tr>
-                    <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
-                    <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
+                        echo '<td class="text-center">';
+                        echo $item['no'];
+                        echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][id_detail_kasbon]" value="' . $item['id_detail_kasbon'] . '">';
+                        echo '</td>';
 
-            </tbody>
-        </table>
-    </div>
-</div>
+                        echo '<td width="500">' . $item['nm_item'] . '</td>';
 
-<div class="box">
-    <div class="box-header">
-        <table border="0" style="width: 100%;">
-            <tr>
-                <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Others</h4>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>Budget</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_others) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>On Process</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_others_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_others) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-            </tr>
-        </table>
-    </div>
+                        echo '<td class="text-center" width="200">';
+                        echo number_format($item['qty_kasbon'], 2);
+                        echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][qty_kasbon]" value="' . $item['qty_kasbon'] . '">';
+                        echo '</td>';
 
-    <div class="box-body">
-        <table class="table custom-table mt-5" id="table_kasbon_others" style="overflow: visible !important;">
-            <thead>
-                <tr>
-                    <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
-                    <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
+                        echo '<td class="text-center" width="200">';
+                        echo number_format($item['nominal_kasbon'], 2);
+                        echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][nominal_kasbon]" value="' . $item['nominal_kasbon'] . '">';
+                        echo '</td>';
 
-            </tbody>
-        </table>
-    </div>
-</div>
+                        echo '<td width="200">';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][qty_expense]" class="form-control form-control-sm auto_num text-right qty_expense" value="' . $qty_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_qty . '>';
+                        echo '</td>';
 
-<div class="box">
-    <div class="box-header">
-        <table border="0" style="width: 100%;">
-            <tr>
-                <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Lab</h4>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>Budget</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_lab) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>On Process</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_lab_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_lab) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-            </tr>
-        </table>
-    </div>
+                        echo '<td width="200">';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $nominal_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
+                        echo '</td>';
 
-    <div class="box-body">
-        <table class="table custom-table mt-5" id="table_kasbon_lab" style="overflow: visible !important;">
-            <thead>
-                <tr>
-                    <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
-                    <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
+                        echo '<td width="200">';
+                        echo '<textarea class="form-control form-control-sm" readonly>' . $keterangan . '</textarea>';
+                        echo '</td>';
 
-            </tbody>
-        </table>
-    </div>
-</div>
+                        echo '</tr>';
 
-<div class="box">
-    <div class="box-header">
-        <table border="0" style="width: 100%;">
-            <tr>
-                <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Subcont Tenaga Ahli</h4>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>Budget</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_subcont_tenaga_ahli) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>On Process</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_subcont_tenaga_ahli_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_subcont_tenaga_ahli) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-            </tr>
-        </table>
-    </div>
+                        $ttl_kasbon += ($item['total_kasbon']);
+                        $ttl_expense_report += ($total_expense);
 
-    <div class="box-body">
-        <table class="table custom-table mt-5" id="table_kasbon_subcont_tenaga_ahli" style="overflow: visible !important;">
-            <thead>
-                <tr>
-                    <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
-                    <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
+                        $count_no++;
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="text-right">Total Kasbon</td>
+                        <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right">Total Expense Report</td>
+                        <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right">Selisih</td>
+                        <td class="text-right col_selisih"><?= number_format($header->selisih, 2) ?></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
 
-            </tbody>
-        </table>
-    </div>
-</div>
+            <br><br>
 
-<div class="box">
-    <div class="box-header">
-        <table border="0" style="width: 100%;">
-            <tr>
-                <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Subcont Perusahaan</h4>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>Budget</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_subcont_perusahaan) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>On Process</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_subcont_perusahaan_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_subcont_perusahaan) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-            </tr>
-        </table>
-    </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <table style="width: 100%">
+                        <tr>
+                            <th style="padding: 5px;">Bukti Pengembalian</th>
+                            <td style="padding: 5px;">
+                                <?php
+                                if (count($list_bukti_pengembalian) > 0) {
+                                    echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup">';
+                                    echo '<i class="fa fa-list"></i> List Bukti Pengemblian';
+                                    echo '</button>';
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="padding: 5px;">Bukti Penggunaan</th>
+                            <td style="padding: 5px;">
+                                <?php
+                                if (count($list_bukti_penggunaan) > 0) {
+                                    echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup2">';
+                                    echo '<i class="fa fa-list"></i> List Bukti Penggunaan';
+                                    echo '</button>';
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
-    <div class="box-body">
-        <table class="table custom-table mt-5" id="table_kasbon_subcont_perusahaan" style="overflow: visible !important;">
-            <thead>
-                <tr>
-                    <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
-                    <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
+            <br>
 
-            </tbody>
-        </table>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="">Reject Reason</label>
+                    <textarea class="form-control form-control-sm" name="reject_reason"></textarea>
+                </div>
+            </div>
+            <div class="col-md-6"></div>
 
-        <div class="col-md-6">
-            <label for="">Reject Reason</label>
-            <textarea name="reject_reason" class="form-control form-control-sm reject_reason" id=""><?= $list_expense[0]->reject_reason ?></textarea>
+            <br>
+            <div class="col-md-12">
+                <a href="<?= base_url('approval_expense_report_project') ?>" class="btn btn-sm btn-danger">
+                    <i class="fa fa-arrow-left"></i> Back
+                </a>
+                <button type="button" class="btn btn-sm btn-danger reject"><i class="fa fa-close"></i> Reject</button>
+                <button type="button" class="btn btn-sm btn-success approve"><i class="fa fa-check"></i> Approve</button>
+            </div>
         </div>
-        <div class="col-md-12" style="margin-top: 2vh;">
-            <a href="<?= base_url('kasbon_project') ?>" class="btn btn-sm btn-danger">
-                <i class="fa fa-arrow-left"></i> Back
-            </a>
-            <button type="button" class="btn btn-sm btn-danger reject">
-                <i class="fa fa-close"></i> Reject
-            </button>
-            <button type="button" class="btn btn-sm btn-success approve">
-                <i class="fa fa-check"></i> Approve
-            </button>
+    </form>
+</div>
+
+<div class="modal modal-default fade" id="dialog-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style='width:70%; '>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel"><span class="fa fa-users"></span>&nbsp;List Bukti Pengembalian</h4>
+            </div>
+            <div class="modal-body" id="ModalView">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Document Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $no = 1;
+                        foreach ($list_bukti_pengembalian as $item) {
+                            echo '<tr>';
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td><a href="' . base_url($item->document_link) . '" target="_blank">' . $item->document_link . '</a></td>';
+                            echo '</tr>';
+
+                            $no++;
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
+<div class="modal modal-default fade" id="dialog-popup2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style='width:70%; '>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel"><span class="fa fa-users"></span>&nbsp;List Bukti Penggunaan</h4>
+            </div>
+            <div class="modal-body" id="ModalView">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Document Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $no = 1;
+                        foreach ($list_bukti_penggunaan as $item) {
+                            echo '<tr>';
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td><a href="' . base_url($item->upload_file) . '" target="_blank">' . $item->upload_file . '</a></td>';
+                            echo '</tr>';
 
+                            $no++;
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 
 <script>
     $(document).ready(function() {
-        DataTables_kasbon_subcont();
-        DataTables_kasbon_akomodasi();
-        DataTables_kasbon_others();
-        DataTables_kasbon_lab();
-        DataTables_kasbon_subcont_tenaga_ahli();
-        DataTables_kasbon_subcont_perusahaan();
-        // DataTables_ovb_akomodasi();
+        $('.auto_num').autoNumeric();
     });
 
-    function DataTables_kasbon_subcont(view = null) {
-        var dataTables_kasbon_subcont = $('#example1').DataTable();
+    $(document).on('submit', '#frm-data', function(e) {
+        e.preventDefault();
 
-        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_kasbon_subcont.destroy();
-        dataTables_kasbon_subcont = $('#example1').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: siteurl + active_controller + 'get_data_kasbon_subcont',
-                type: "POST",
-                dataType: "JSON",
-                data: function(d) {
-                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
-                }
-            },
-            columns: [{
-                    data: 'no'
-                },
-                {
-                    data: 'req_number'
-                },
-                {
-                    data: 'nm_aktifitas'
-                },
-                {
-                    data: 'date'
-                },
-                {
-                    data: 'total'
-                },
-                {
-                    data: 'status'
-                },
-                {
-                    data: 'action'
-                }
-            ]
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be saved !',
+            showCancelButton: true
+        }, function(next) {
+            if (next) {
+                var formData = new FormData($('#frm-data')[0]);
+
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'update_expense_report_subcont',
+                    data: formData,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'JSON',
+                    success: function(result) {
+                        if (result.status == '1') {
+                            swal({
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.pesan
+                            }, function(lanjut) {
+                                window.location.href = siteurl + active_controller + 'add/' + '<?= urlencode(str_replace('/', '|', $id_spk_budgeting)) ?>';
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: result.pesan
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
         });
-    }
+    });
 
-    function DataTables_kasbon_akomodasi(view = null) {
-        var dataTables_kasbon_akomodasi = $('#table_kasbon_akomodasi').DataTable();
+    function get_num(nilai = null) {
+        if (nilai !== '' && nilai !== null) {
+            nilai = nilai.split(',').join('');
+            nilai = parseFloat(nilai);
+        } else {
+            nilai = 0;
+        }
 
-        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_kasbon_akomodasi.destroy();
-        dataTables_kasbon_akomodasi = $('#table_kasbon_akomodasi').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: siteurl + active_controller + 'get_data_kasbon_akomodasi',
-                type: "POST",
-                dataType: "JSON",
-                data: function(d) {
-                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
-                }
-            },
-            columns: [{
-                    data: 'no'
-                },
-                {
-                    data: 'req_number'
-                },
-                {
-                    data: 'nm_biaya'
-                },
-                {
-                    data: 'date'
-                },
-                {
-                    data: 'total'
-                },
-                {
-                    data: 'status'
-                },
-                {
-                    data: 'action'
-                }
-            ]
-        });
-    }
-
-    function DataTables_kasbon_others(view = null) {
-        var dataTables_kasbon_others = $('#table_kasbon_others').DataTable();
-
-        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_kasbon_others.destroy();
-        dataTables_kasbon_others = $('#table_kasbon_others').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: siteurl + active_controller + 'get_data_kasbon_others',
-                type: "POST",
-                dataType: "JSON",
-                data: function(d) {
-                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
-                }
-            },
-            columns: [{
-                    data: 'no'
-                },
-                {
-                    data: 'req_number'
-                },
-                {
-                    data: 'nm_biaya'
-                },
-                {
-                    data: 'date'
-                },
-                {
-                    data: 'total'
-                },
-                {
-                    data: 'status'
-                },
-                {
-                    data: 'action'
-                }
-            ]
-        });
-    }
-
-    function DataTables_kasbon_lab(view = null) {
-        var dataTables_kasbon_lab = $('#table_kasbon_lab').DataTable();
-
-        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_kasbon_lab.destroy();
-        dataTables_kasbon_lab = $('#table_kasbon_lab').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: siteurl + active_controller + 'get_data_kasbon_lab',
-                type: "POST",
-                dataType: "JSON",
-                data: function(d) {
-                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
-                }
-            },
-            columns: [{
-                    data: 'no'
-                },
-                {
-                    data: 'req_number'
-                },
-                {
-                    data: 'nm_biaya'
-                },
-                {
-                    data: 'date'
-                },
-                {
-                    data: 'total'
-                },
-                {
-                    data: 'status'
-                },
-                {
-                    data: 'action'
-                }
-            ]
-        });
-    }
-
-    function DataTables_kasbon_subcont_tenaga_ahli(view = null) {
-        var dataTables_kasbon_subcont_tenaga_ahli = $('#table_kasbon_subcont_tenaga_ahli').DataTable();
-
-        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_kasbon_subcont_tenaga_ahli.destroy();
-        dataTables_kasbon_subcont_tenaga_ahli = $('#table_kasbon_subcont_tenaga_ahli').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: siteurl + active_controller + 'get_data_kasbon_subcont_tenaga_ahli',
-                type: "POST",
-                dataType: "JSON",
-                data: function(d) {
-                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
-                }
-            },
-            columns: [{
-                    data: 'no'
-                },
-                {
-                    data: 'req_number'
-                },
-                {
-                    data: 'nm_biaya'
-                },
-                {
-                    data: 'date'
-                },
-                {
-                    data: 'total'
-                },
-                {
-                    data: 'status'
-                },
-                {
-                    data: 'action'
-                }
-            ]
-        });
-    }
-
-    function DataTables_kasbon_subcont_perusahaan(view = null) {
-        var dataTables_kasbon_subcont_perusahaan = $('#table_kasbon_subcont_perusahaan').DataTable();
-
-        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_kasbon_subcont_perusahaan.destroy();
-        dataTables_kasbon_subcont_perusahaan = $('#table_kasbon_subcont_perusahaan').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: siteurl + active_controller + 'get_data_kasbon_subcont_perusahaan',
-                type: "POST",
-                dataType: "JSON",
-                data: function(d) {
-                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
-                }
-            },
-            columns: [{
-                    data: 'no'
-                },
-                {
-                    data: 'req_number'
-                },
-                {
-                    data: 'nm_biaya'
-                },
-                {
-                    data: 'date'
-                },
-                {
-                    data: 'total'
-                },
-                {
-                    data: 'status'
-                },
-                {
-                    data: 'action'
-                }
-            ]
-        });
-    }
-
-    function DataTables_ovb_akomodasi(view = null) {
-        var dataTables_ovb_akomodasi = $('#table_ovb_akomodasi').DataTable();
-
-        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_ovb_akomodasi.destroy();
-        dataTables_ovb_akomodasi = $('#table_ovb_akomodasi').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: siteurl + active_controller + 'get_data_ovb_akomodasi',
-                type: "POST",
-                dataType: "JSON",
-                data: function(d) {
-                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
-                }
-            },
-            columns: [{
-                    data: 'no'
-                },
-                {
-                    data: 'id_request_ovb'
-                },
-                {
-                    data: 'amount'
-                }
-            ]
-        });
+        return nilai;
     }
 
     function number_format(number, decimals, dec_point, thousands_sep) {
@@ -832,60 +396,71 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
         return s.join(dec);
     }
 
-    function hitung_all_budget_process() {
-        var id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>";
+    function hitung_total(no) {
+        var count_no = "<?= $count_no ?>";
 
-        $.ajax({
-            type: 'post',
-            url: siteurl + active_controller + 'hitung_all_budget_on_process',
-            data: {
-                'id_spk_budgeting': id_spk_budgeting
-            },
-            cache: false,
-            dataType: 'json',
-            success: function(result) {
-                $('.budget_subcont_on_process').html('Rp. ' + number_format(result.nilai_budget_subcont));
-                $('.budget_akomodasi_on_process').html(number_format(result.nilai_budget_akomodasi));
-                $('.budget_others_on_process').html('Rp. ' + number_format(result.nilai_budget_others));
-            },
-            error: function(result) {
+        var ttl_expense_report = 0;
+        var ttl_kasbon = 0;
+        var selisih = 0;
 
-            }
-        });
+        for (i = 1; i <= count_no; i++) {
+            var qty_kasbon = get_num($('input[name="detail_subcont[' + i + '][qty_kasbon]"]').val());
+            var nominal_kasbon = get_num($('input[name="detail_subcont[' + i + '][nominal_kasbon]"]').val());
+
+            var qty_expense = get_num($('input[name="detail_subcont[' + i + '][qty_expense]"]').val());
+            var nominal_expense = get_num($('input[name="detail_subcont[' + i + '][nominal_expense]"]').val());
+
+            ttl_expense_report += (qty_expense * nominal_expense);
+            ttl_kasbon += (qty_kasbon * nominal_kasbon);
+
+            selisih += ((qty_kasbon * nominal_kasbon) - (qty_expense * nominal_expense));
+        }
+
+        $('.col_ttl_expense_report').html(number_format(ttl_expense_report, 2));
+        $('.col_ttl_kasbon').html(number_format(ttl_kasbon, 2));
+        $('.col_selisih').html(number_format(selisih, 2));
     }
 
-    $(document).on('click', '.approve', function() {
-        var id_spk_budgeting = $('.id_spk_budgeting').val();
+    $(document).on('click', '.approve', function(e) {
+        e.preventDefault();
+
+        var id_header = $('input[name="id_header"]').val();
 
         swal({
             type: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be approved !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        }, function(lanjut) {
+            if (lanjut) {
                 $.ajax({
-                    type: 'POST',
+                    type: 'post',
                     url: siteurl + active_controller + 'approve_expense_report',
                     data: {
-                        'id_spk_budgeting': id_spk_budgeting
+                        'id_header': id_header
                     },
                     cache: false,
                     dataType: 'json',
                     success: function(result) {
-                        if (result.status == 1) {
+                        if (result.status == '1') {
                             swal({
                                 type: 'success',
                                 title: 'Success !',
-                                text: result.pesan
-                            }, function(lanjut) {
-                                window.location.href = siteurl + 'approval_expense_report_project';
+                                text: result.msg,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                timer: 3000
+                            }, function(next) {
+                                window.location.href = siteurl + active_controller + 'approval_expense_report_project';
                             });
                         } else {
                             swal({
                                 type: 'warning',
                                 title: 'Failed !',
-                                text: result.pesan
+                                text: result.msg,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                timer: 3000
                             });
                         }
                     },
@@ -893,70 +468,86 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                         swal({
                             type: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: 'Please try again later !',
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            timer: 3000
                         });
                     }
-                });
+                })
             }
         });
     });
 
-    $(document).on('click', '.reject', function() {
-        var id_spk_budgeting = $('.id_spk_budgeting').val();
-        var reject_reason = $('.reject_reason').val();
+    $(document).on('click', '.reject', function(e) {
+        e.preventDefault();
 
-        if (reject_reason == '' || reject_reason == null) {
+        var id_header = $('input[name="id_header"]').val();
+        var reject_reason = $('textarea[name="reject_reason"]').val();
+
+        if (reject_reason == '') {
             swal({
                 type: 'warning',
                 title: 'Warning !',
-                text: 'Please fill the reject reason first !'
+                text: 'Reject reason must filled !',
+                showConfirmButton: false,
+                showCancelButton: false,
+                timer: 3000
             });
 
             return false;
-        } else {
-            swal({
-                type: 'warning',
-                title: 'Are you sure ?',
-                text: 'This data will be rejected !',
-                showCancelButton: true
-            }, function(next) {
-                if (next) {
-                    $.ajax({
-                        type: 'POST',
-                        url: siteurl + active_controller + 'reject_expense_report',
-                        data: {
-                            'id_spk_budgeting': id_spk_budgeting,
-                            'reject_reason': reject_reason
-                        },
-                        cache: false,
-                        dataType: 'json',
-                        success: function(result) {
-                            if (result.status == 1) {
-                                swal({
-                                    type: 'success',
-                                    title: 'Success !',
-                                    text: result.pesan
-                                }, function(lanjut) {
-                                    window.location.href = siteurl + 'approval_expense_report_project';
-                                });
-                            } else {
-                                swal({
-                                    type: 'warning',
-                                    title: 'Failed !',
-                                    text: result.pesan
-                                });
-                            }
-                        },
-                        error: function(result) {
+        }
+        swal({
+            type: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be rejected !',
+            showCancelButton: true
+        }, function(lanjut) {
+            if (lanjut) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'reject_expense_report',
+                    cache: false,
+                    data: {
+                        'id_header': id_header,
+                        'reject_reason': reject_reason
+                    },
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.status == '1') {
                             swal({
-                                type: 'error',
-                                title: 'Error !',
-                                text: 'Please try again later !'
+                                type: 'success',
+                                title: 'Success !',
+                                text: result.msg,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                timer: 3000
+                            }, function(next) {
+                                window.location.href = siteurl + active_controller + 'approval_expense_report_project';
+                            });
+                        } else {
+                            swal({
+                                type: 'warning',
+                                title: 'Failed !',
+                                text: result.msg,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                timer: 3000
                             });
                         }
-                    });
-                }
-            });
-        }
+                    },
+                    error: function(result) {
+                        swal({
+                            type: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !',
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            timer: 3000
+                        });
+                    }
+                })
+            }
+        });
     });
 </script>
