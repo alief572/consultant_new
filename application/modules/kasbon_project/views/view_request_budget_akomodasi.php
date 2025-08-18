@@ -3,6 +3,11 @@ $ENABLE_ADD     = has_permission('Kasbon_Project.Add');
 $ENABLE_MANAGE  = has_permission('Kasbon_Project.Manage');
 $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
+
+$enable_reject_reason = 'd-none';
+if ($reject_reason !== null && $reject_reason !== '') {
+    $enable_reject_reason = '';
+}
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -60,6 +65,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     .valign-middle {
         vertical-align: middle !important;
     }
+
+    .d-none {
+        display: none;
+    }
 </style>
 
 <form action="" method="post" id="frm-data" enctype="multipart/form-data">
@@ -67,6 +76,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     <div class="box">
         <div class="box-header">
             <h4 style="font-weight: 800;">Request Over Budget Akomodasi</h4>
+        </div>
+
+        <div class="col-md-6 <?= $enable_reject_reason ?>">
+            <div class="alert alert-danger">
+                <span>
+                    <i class="fa fa-warning"></i> Reject Reason
+
+                    <br><br>
+
+                    <?= $reject_reason ?>
+                </span>
+            </div>
         </div>
 
         <div class="box-body">
@@ -85,6 +106,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <?php
                     $no = 1;
 
+                    $ttl_total_tambahan = 0;
                     foreach ($list_data_ovb as $item) {
 
                         echo '<tr>';
@@ -99,9 +121,17 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</tr>';
 
                         $no++;
+                        $ttl_total_tambahan += ($item['qty_budget_tambahan'] * $item['budget_tambahan']);
                     }
                     ?>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-right">Grand Total</th>
+                        <th class="text-right"><?= number_format($ttl_total_tambahan) ?></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
             </table>
 
             <div class="col-md-12 mt-5">

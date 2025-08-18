@@ -142,12 +142,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>On Process</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
                                     <h3 style="font-weight: 800;" class="budget_subcont_on_process">Rp. <?= number_format($nilai_kasbon_on_proses) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_subcont_on_process">Rp. <?= number_format($budget_subcont - $nilai_kasbon_on_proses) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -168,6 +184,22 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <br><br>
+
+        <h4 style="font-weight: 800;">Overbudget Subcont</h4>
+        <table class="table custom-table mt-5" id="table_ovb_subcont" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">ID Request</th>
+                    <th class="text-center">Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -205,12 +237,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>On Process</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
                                     <h3 style="font-weight: 800;" class="budget_akomodasi_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_akomodasi) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_akomodasi_on_process">Rp. <?= number_format($budget_akomodasi - $nilai_kasbon_on_proses_akomodasi) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -284,12 +332,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>On Process</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
                                     <h3 style="font-weight: 800;" class="budget_others_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_others) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_others_on_process">Rp. <?= number_format($budget_others - $nilai_kasbon_on_proses_others) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -310,6 +374,22 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <br><br>
+
+        <h4 style="font-weight: 800;">Overbudget Others</h4>
+        <table class="table custom-table mt-5" id="table_ovb_others" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">ID Request</th>
+                    <th class="text-center">Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -347,12 +427,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>On Process</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
                                     <h3 style="font-weight: 800;" class="budget_lab_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_lab) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_lab_on_process">Rp. <?= number_format($budget_lab - $nilai_kasbon_on_proses_lab) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -373,6 +469,22 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <br><br>
+
+        <h4 style="font-weight: 800;">Overbudget Others</h4>
+        <table class="table custom-table mt-5" id="table_ovb_lab" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">ID Request</th>
+                    <th class="text-center">Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -410,12 +522,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>On Process</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
                                     <h3 style="font-weight: 800;" class="budget_subcont_tenaga_ahli_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_subcont_tenaga_ahli) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_subcont_tenaga_ahli_on_process">Rp. <?= number_format($budget_subcont_tenaga_ahli - $nilai_kasbon_on_proses_subcont_tenaga_ahli) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -436,6 +564,22 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Total</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <br><br>
+
+        <h4 style="font-weight: 800;">Overbudget Subcont Tenaga Ahli</h4>
+        <table class="table custom-table mt-5" id="table_ovb_subcont_tenaga_ahli" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">ID Request</th>
+                    <th class="text-center">Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -473,12 +617,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>On Process</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
                                     <h3 style="font-weight: 800;" class="budget_subcont_perusahaan_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_subcont_perusahaan) ?></h3>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </th>
+                <th class="pd-5">
+                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
+                        <table border="0" style="width: 100%;">
+                            <tr>
+                                <th class="">
+                                    <h4>Sisa Budget</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="">
+                                    <h3 style="font-weight: 800;" class="budget_subcont_perusahaan_on_process">Rp. <?= number_format($budget_subcont_perusahaan - $nilai_kasbon_on_proses_subcont_perusahaan) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -506,6 +666,24 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             </tbody>
         </table>
 
+        <br><br>
+
+        <h4 style="font-weight: 800;">Overbudget Subcont Perusahaan</h4>
+        <table class="table custom-table mt-5" id="table_ovb_subcont_perusahaan" style="overflow: visible !important;">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">ID Request</th>
+                    <th class="text-center">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <br><br>
+
         <a href="<?= base_url('kasbon_project') ?>" class="btn btn-sm btn-danger">
             <i class="fa fa-arrow-left"></i> Back
         </a>
@@ -525,7 +703,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         DataTables_kasbon_lab('view');
         DataTables_kasbon_subcont_tenaga_ahli('view');
         DataTables_kasbon_subcont_perusahaan('view');
+        DataTables_ovb_subcont('view');
         DataTables_ovb_akomodasi('view');
+        DataTables_ovb_others('view');
+        DataTables_ovb_lab('view');
+        DataTables_ovb_subcont_tenaga_ahli('view');
+        DataTables_ovb_subcont_perusahaan('view');
     });
 
     function DataTables_kasbon_subcont(view = null) {
@@ -780,6 +963,36 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     }
 
+    function DataTables_ovb_subcont(view = null) {
+        var dataTables_ovb_subcont = $('#table_ovb_subcont').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_ovb_subcont.destroy();
+        dataTables_ovb_subcont = $('#table_ovb_subcont').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_ovb_subcont',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = null
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_request_ovb'
+                },
+                {
+                    data: 'amount'
+                }
+            ]
+        });
+    }
+
     function DataTables_ovb_akomodasi(view = null) {
         var dataTables_ovb_akomodasi = $('#table_ovb_akomodasi').DataTable();
 
@@ -790,6 +1003,126 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             serverSide: true,
             ajax: {
                 url: siteurl + active_controller + 'get_data_ovb_akomodasi',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = null
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_request_ovb'
+                },
+                {
+                    data: 'amount'
+                }
+            ]
+        });
+    }
+
+    function DataTables_ovb_others(view = null) {
+        var dataTables_ovb_others = $('#table_ovb_others').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_ovb_others.destroy();
+        dataTables_ovb_others = $('#table_ovb_others').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_ovb_others',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = null
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_request_ovb'
+                },
+                {
+                    data: 'amount'
+                }
+            ]
+        });
+    }
+
+    function DataTables_ovb_lab(view = null) {
+        var dataTables_ovb_lab = $('#table_ovb_lab').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_ovb_lab.destroy();
+        dataTables_ovb_lab = $('#table_ovb_lab').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_ovb_lab',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = null
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_request_ovb'
+                },
+                {
+                    data: 'amount'
+                }
+            ]
+        });
+    }
+
+    function DataTables_ovb_subcont_tenaga_ahli(view = null) {
+        var dataTables_ovb_subcont_tenaga_ahli = $('#table_ovb_subcont_tenaga_ahli').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_ovb_subcont_tenaga_ahli.destroy();
+        dataTables_ovb_subcont_tenaga_ahli = $('#table_ovb_subcont_tenaga_ahli').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_ovb_subcont_tenaga_ahli',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
+                    d.view = null
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_request_ovb'
+                },
+                {
+                    data: 'amount'
+                }
+            ]
+        });
+    }
+
+    function DataTables_ovb_subcont_perusahaan(view = null) {
+        var dataTables_ovb_subcont_perusahaan = $('#table_ovb_subcont_perusahaan').DataTable();
+
+        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
+        dataTables_ovb_subcont_perusahaan.destroy();
+        dataTables_ovb_subcont_perusahaan = $('#table_ovb_subcont_perusahaan').dataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: siteurl + active_controller + 'get_data_ovb_subcont_perusahaan',
                 type: "POST",
                 dataType: "JSON",
                 data: function(d) {

@@ -3118,7 +3118,8 @@ class Kasbon_project extends Admin_Controller
         $data = [
             'id_spk_budgeting' => $get_data_ovb_header['id_spk_budgeting'],
             'list_budgeting' => $get_budgeting,
-            'list_data_ovb' => $get_data_ovb
+            'list_data_ovb' => $get_data_ovb,
+            'reject_reason' => $get_data_ovb_header['reject_reason'],
         ];
 
         $this->template->set($data);
@@ -3149,7 +3150,8 @@ class Kasbon_project extends Admin_Controller
         $data = [
             'id_spk_budgeting' => $get_data_ovb_header['id_spk_budgeting'],
             'list_budgeting' => $get_budgeting,
-            'list_data_ovb' => $get_data_ovb
+            'list_data_ovb' => $get_data_ovb,
+            'reject_reason' => $get_data_ovb_header['reject_reason'],
         ];
 
         $this->template->set($data);
@@ -3181,7 +3183,8 @@ class Kasbon_project extends Admin_Controller
         $data = [
             'id_spk_budgeting' => $get_data_ovb_header['id_spk_budgeting'],
             'list_budgeting' => $get_budgeting,
-            'list_data_ovb' => $get_data_ovb
+            'list_data_ovb' => $get_data_ovb,
+            'reject_reason' => $get_data_ovb_header['reject_reason'],
         ];
 
         $this->template->set($data);
@@ -3213,7 +3216,8 @@ class Kasbon_project extends Admin_Controller
         $data = [
             'id_spk_budgeting' => $get_data_ovb_header['id_spk_budgeting'],
             'list_budgeting' => $get_budgeting,
-            'list_data_ovb' => $get_data_ovb
+            'list_data_ovb' => $get_data_ovb,
+            'reject_reason' => $get_data_ovb_header['reject_reason'],
         ];
 
         $this->template->set($data);
@@ -3245,7 +3249,8 @@ class Kasbon_project extends Admin_Controller
         $data = [
             'id_spk_budgeting' => $get_data_ovb_header['id_spk_budgeting'],
             'list_budgeting' => $get_budgeting,
-            'list_data_ovb' => $get_data_ovb
+            'list_data_ovb' => $get_data_ovb,
+            'reject_reason' => $get_data_ovb_header['reject_reason'],
         ];
 
         $this->template->set($data);
@@ -3277,7 +3282,8 @@ class Kasbon_project extends Admin_Controller
         $data = [
             'id_spk_budgeting' => $get_data_ovb_header['id_spk_budgeting'],
             'list_budgeting' => $get_budgeting,
-            'list_data_ovb' => $get_data_ovb
+            'list_data_ovb' => $get_data_ovb,
+            'reject_reason' => $get_data_ovb_header['reject_reason'],
         ];
 
         $this->template->set($data);

@@ -23,6 +23,7 @@ if ($tipe == '6') {
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
     .btn {
@@ -228,13 +229,17 @@ if ($tipe == '6') {
                         </tr>
                     </table>
                 </div>
+
             </div>
-            <a href="<?= base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
-                <i class="fa fa-arrow-left"></i> Back
-            </a>
-            <button type="submit" class="btn btn-sm btn-success">
-                <i class="fa fa-save"></i> Save
-            </button>
+
+            <div class="col-md-12">
+                <a href="<?= base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
+                    <i class="fa fa-arrow-left"></i> Back
+                </a>
+                <button type="submit" class="btn btn-sm btn-success">
+                    <i class="fa fa-save"></i> Save
+                </button>
+            </div>
         </div>
     </div>
 </form>
@@ -243,10 +248,14 @@ if ($tipe == '6') {
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
+        $('.select2').select2({
+            width: '100%'
+        });
     });
 
     $(document).on('submit', '#frm-data', function(e) {

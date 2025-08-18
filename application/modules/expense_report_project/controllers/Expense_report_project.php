@@ -19,6 +19,9 @@ class Expense_report_project extends Admin_Controller
     protected $managePermission = 'Expense_Report_Project.Manage';
     protected $deletePermission = 'Expense_Report_Project.Delete';
 
+    protected $accounting;
+    protected $sendigs;
+
     public function __construct()
     {
         parent::__construct();
@@ -27,6 +30,9 @@ class Expense_report_project extends Admin_Controller
         $this->load->library('upload');
         $this->load->model(array('Expense_report_project/Expense_report_project_model'));
         date_default_timezone_set('Asia/Bangkok');
+
+        $this->accounting = $this->load->database('gl_sendigs', true);
+        $this->sendigs = $this->load->database('sendigs_finance', true);
     }
 
     // View Page Function
@@ -397,10 +403,22 @@ class Expense_report_project extends Admin_Controller
         $id_header = str_replace('|', '/', $id_header);
 
         $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header a', ['a.id' => $id_header])->row();
+        $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_kasbon_header->id_penawaran])->row();
+        $get_company = $this->db->get_where('kons_tr_company', ['id' => $get_penawaran->company])->row();
+
+        $this->sendigs->select('a.id, a.rekening, a.nama, a.coa_bank, b.nama_bank');
+        $this->sendigs->from('ms_bank a');
+        $this->sendigs->join('list_bank b', 'b.id = a.bank');
+        $this->sendigs->where('a.deleted', '0');
+        $get_bank = $this->sendigs->get()->result();
+
+        $id_company = (!empty($get_company)) ? $get_company->id : '';
+        $nm_company = (!empty($get_company)) ? $get_company->nm_company : '';
 
         $datalist_item = [];
 
         if ($get_kasbon_header->tipe == 1) {
+
             $this->db->select('a.*');
             $this->db->from('kons_tr_spk_budgeting_aktifitas a');
             $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
@@ -627,13 +645,85 @@ class Expense_report_project extends Admin_Controller
             }
         }
 
+        $hasil_jurnal = '';
+
+        if ($get_kasbon_header->tipe == '3') {
+            $arr_coa_jurnal = ['5010-12-5', '1030-20-4'];
+        }
+
+        $ttl_debit = 0;
+        $ttl_kredit = 0;
+        $no_jurnal = 0;
+        if (!empty($arr_coa_jurnal)) {
+            $this->accounting->select('a.no_perkiraan, a.nama as nm_coa');
+            $this->accounting->from('coa_master a');
+            $this->accounting->where_in('a.no_perkiraan', $arr_coa_jurnal);
+            $get_coa_jurnal = $this->accounting->get()->result();
+
+            foreach ($get_coa_jurnal as $item_jurnal) {
+                $no_jurnal++;
+
+                $debit = 0;
+                if ($item_jurnal->no_perkiraan == '5010-12-5') {
+                    $debit = $get_kasbon_header->grand_total;
+                }
+
+                $kredit = 0;
+                if ($item_jurnal->no_perkiraan == '1030-20-4') {
+                    $kredit = $get_kasbon_header->grand_total;
+                }
+
+                $hasil_jurnal .= '<tr>';
+
+                $hasil_jurnal .= '<td class="text-center">';
+                $hasil_jurnal .= date('d F Y');
+                $hasil_jurnal .= '<input type="hidden" name="tgl_jurnal_' . $item_jurnal->no_perkiraan . '" value="' . date('Y-m-d') . '">';
+                $hasil_jurnal .= '</td>';
+
+                $hasil_jurnal .= '<td class="text-center">';
+                $hasil_jurnal .= $item_jurnal->no_perkiraan;
+                $hasil_jurnal .= '<input type="hidden" name="nomor_coa_' . $item_jurnal->no_perkiraan . '" value="' . $item_jurnal->no_perkiraan . '">';
+                $hasil_jurnal .= '</td>';
+
+                $hasil_jurnal .= '<td class="text-center">';
+                $hasil_jurnal .= $nm_company;
+                $hasil_jurnal .= '<input type="hidden" name="id_company_' . $item_jurnal->no_perkiraan . '" value="' . $id_company . '">';
+                $hasil_jurnal .= '<input type="hidden" name="nm_company_' . $item_jurnal->no_perkiraan . '" value="' . $nm_company . '">';
+                $hasil_jurnal .= '</td>';
+
+                $hasil_jurnal .= '<td class="text-center">';
+                $hasil_jurnal .= $item_jurnal->nm_coa;
+                $hasil_jurnal .= '<input type="hidden" name="nm_coa_' . $item_jurnal->no_perkiraan . '" value="' . $item_jurnal->nm_coa . '">';
+                $hasil_jurnal .= '</td>';
+
+                $hasil_jurnal .= '<td class="text-right">';
+                $hasil_jurnal .= number_format($debit);
+                $hasil_jurnal .= '<input type="hidden" name="debit_' . $item_jurnal->no_perkiraan . '" value="' . $debit . '">';
+                $hasil_jurnal .= '</td>';
+
+                $hasil_jurnal .= '<td class="text-right">';
+                $hasil_jurnal .= number_format($kredit);
+                $hasil_jurnal .= '<input type="hidden" name="kredit_' . $item_jurnal->no_perkiraan . '" value="' . $kredit . '">';
+                $hasil_jurnal .= '</td>';
+
+                $hasil_jurnal .= '</tr>';
+
+                $ttl_debit += $debit;
+                $ttl_kredit += $kredit;
+            }
+        }
+
         $data = [
             'datalist_item' => $datalist_item,
             'id_spk_budgeting' => $get_kasbon_header->id_spk_budgeting,
             'id_header' => $id_header,
             'id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran,
             'id_penawaran' => $get_kasbon_header->id_penawaran,
-            'tipe' => $get_kasbon_header->tipe
+            'tipe' => $get_kasbon_header->tipe,
+            'data_bank' => $get_bank,
+            'hasil_jurnal' => $hasil_jurnal,
+            'ttl_debit' => $ttl_debit,
+            'ttl_kredit' => $ttl_kredit
         ];
 
         $this->template->set($data);
