@@ -1702,7 +1702,7 @@ class Expense_report_project extends Admin_Controller
                     if ($check_expense->row()->sts == 1) {
                         $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
                     }
-                    if ($check_expense->row()->sts == 2) {
+                    if ($check_expense->row()->sts == 2 || $check_expense->row()->reject_reason !== '') {
                         $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
                     }
                 }
@@ -1898,7 +1898,7 @@ class Expense_report_project extends Admin_Controller
                     if ($check_expense->row()->sts == 1) {
                         $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
                     }
-                    if ($check_expense->row()->sts == 2) {
+                    if ($check_expense->row()->sts == 2 || $check_expense->row()->reject_reason !== '') {
                         $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
                     }
                 }
@@ -2063,7 +2063,7 @@ class Expense_report_project extends Admin_Controller
                     if ($check_expense->row()->sts == 1) {
                         $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
                     }
-                    if ($check_expense->row()->sts == 2) {
+                    if ($check_expense->row()->sts == 2 || $check_expense->row()->reject_reason !== '') {
                         $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
                     }
                 }
@@ -2231,7 +2231,7 @@ class Expense_report_project extends Admin_Controller
                     if ($check_expense->row()->sts == 1) {
                         $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
                     }
-                    if ($check_expense->row()->sts == 2) {
+                    if ($check_expense->row()->sts == 2 || $check_expense->row()->reject_reason !== '') {
                         $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
                     }
                 }
@@ -2399,7 +2399,7 @@ class Expense_report_project extends Admin_Controller
                     if ($check_expense->row()->sts == 1) {
                         $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
                     }
-                    if ($check_expense->row()->sts == 2) {
+                    if ($check_expense->row()->sts == 2 || $check_expense->row()->reject_reason !== '') {
                         $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
                     }
                 }
@@ -2567,7 +2567,7 @@ class Expense_report_project extends Admin_Controller
                     if ($check_expense->row()->sts == 1) {
                         $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
                     }
-                    if ($check_expense->row()->sts == 2) {
+                    if ($check_expense->row()->sts == 2 || $check_expense->row()->reject_reason !== '') {
                         $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
                     }
                 }

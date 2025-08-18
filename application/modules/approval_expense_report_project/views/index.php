@@ -5,7 +5,7 @@ $ENABLE_VIEW    = has_permission('Approval_expense_Report_Project.View');
 $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
 
 <style>
     .btn {
@@ -30,10 +30,14 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
                 <tr>
                     <th align="center">No</th>
                     <th align="center">Nomor SPK</th>
+                    <th align="center">Nomor Expense</th>
                     <th align="center">Customer</th>
                     <th align="center">Sales</th>
                     <th align="center">Project Leader</th>
                     <th align="center">Package</th>
+                    <th align="center">Keterangan</th>
+                    <th align="center">Tipe</th>
+                    <th align="center">Nominal</th>
                     <th align="center">Action</th>
                 </tr>
             </thead>
@@ -47,7 +51,7 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
 <!-- <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
 
-<script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
 <!-- page script -->
 <script type="text/javascript">
     $(document).ready(function() {
@@ -164,28 +168,40 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
                 }
             },
             columns: [{
-                    data: 'no',
-                }, {
-                    data: 'id_spk_penawaran'
+                    data: 'no'
                 },
                 {
-                    data: 'nm_customer'
+                    data: 'nomor_spk'
                 },
                 {
-                    data: 'nm_sales'
+                    data: 'nomor_expense'
                 },
                 {
-                    data: 'nm_project_leader'
+                    data: 'customer'
                 },
                 {
-                    data: 'nm_project'
+                    data: 'sales'
                 },
                 {
-                    data: 'option'
+                    data: 'project_leader'
+                },
+                {
+                    data: 'package'
+                },
+                {
+                    data: 'keterangan'
+                },
+                {
+                    data: 'tipe'
+                },
+                {
+                    data: 'nominal'
+                },
+                {
+                    data: 'action'
                 }
             ],
-            responsive: true,
-            processing: true,
+            processing: false,
             serverSide: true,
             stateSave: true,
             destroy: true,

@@ -14,6 +14,17 @@ if ($tipe == '3') {
 if ($tipe == '4') {
     $title_header = 'Lab';
 }
+if ($tipe == '5') {
+    $title_header = 'Subcont Tenaga Ahli';
+}
+if ($tipe == '6') {
+    $title_header = 'Subcont Perusahaan';
+}
+
+$enb_reject_reason = 'd-none';
+if ($header->reject_reason !== '') {
+    $enb_reject_reason = '';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -76,6 +87,10 @@ if ($tipe == '4') {
         right: 0;
         /* Align with left edge */
     }
+
+    .d-none {
+        display: none;
+    }
 </style>
 
 <input type="hidden" name="id_expense" value="<?= $header->id ?>">
@@ -88,7 +103,19 @@ if ($tipe == '4') {
         <h3>List Item <?= $title_header ?></h3>
     </div>
 
+
     <div class="box-body" style="z-index: 1 !important;">
+        <div class="col-md-6 <?= $enb_reject_reason ?>">
+            <div class="alert alert-dismissable alert-danger">
+                <span>
+                    <i class="fa fa-close"></i> Reject Reason
+                </span>
+
+                <br><br>
+
+                <span class="text-bold"><?= $header->reject_reason ?></span>
+            </div>
+        </div>
         <table class="table custom-table mt-5">
             <thead>
                 <tr>
