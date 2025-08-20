@@ -17,6 +17,7 @@ if ($tipe == '4') {
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
     .btn {
@@ -78,17 +79,18 @@ if ($tipe == '4') {
     }
 </style>
 
-<input type="hidden" name="id_expense" value="<?= $header->id ?>">
-<input type="hidden" name="id_header" value="<?= $id_header ?>">
-<input type="hidden" name="id_spk_budgeting" value="<?= $id_spk_budgeting ?>">
-<input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
-<input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
+
 <div class="box">
     <div class="box-header">
         <h3>List Item <?= $title_header ?></h3>
     </div>
 
     <form id="data_form">
+        <input type="hidden" name="id_expense" value="<?= $header->id ?>">
+        <input type="hidden" name="id_header" value="<?= $id_header ?>">
+        <input type="hidden" name="id_spk_budgeting" value="<?= $id_spk_budgeting ?>">
+        <input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
+        <input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
         <div class="box-body" style="z-index: 1 !important;">
             <table class="table custom-table mt-5">
                 <thead>
@@ -97,7 +99,7 @@ if ($tipe == '4') {
                         <th class="text-center" rowspan="2">Item</th>
                         <th class="text-center" colspan="2">Kasbon</th>
                         <th class="text-center" colspan="2">Expense Report</th>
-                        <th class="text-center" rowspan="2">Keterangan</th>
+                        <th class="text-center" rowspan="2" colspan="2">Keterangan</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
@@ -129,7 +131,7 @@ if ($tipe == '4') {
                         echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][id_detail_kasbon]" value="' . $item['id_detail_kasbon'] . '">';
                         echo '</td>';
 
-                        echo '<td width="500">' . $item['nm_item'] . '</td>';
+                        echo '<td width="300">' . $item['nm_item'] . '</td>';
 
                         echo '<td class="text-center" width="200">';
                         echo number_format($item['qty_kasbon'], 2);
@@ -149,7 +151,7 @@ if ($tipe == '4') {
                         echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $nominal_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
                         echo '</td>';
 
-                        echo '<td width="200">';
+                        echo '<td colspan="2">';
                         echo '<textarea class="form-control form-control-sm" readonly>' . $keterangan . '</textarea>';
                         echo '</td>';
 
@@ -160,23 +162,35 @@ if ($tipe == '4') {
 
                         $count_no++;
                     }
+
+                    $kelebihan_kasbon = ($ttl_kasbon > $ttl_expense_report) ? ($ttl_kasbon - $ttl_expense_report) : 0;
+                    $kelebihan_expense = ($ttl_expense_report > $ttl_kasbon) ? ($ttl_expense_report - $ttl_kasbon) : 0;
                     ?>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="5" class="text-right">Total Kasbon</td>
                         <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
-                        <td></td>
+                        <td>Kelebihan Kasbon</td>
+                        <td>
+                            <input type="text" name="kelebihan_kasbon" class="form-control form-control-sm text-right auto_num kelebihan_kasbon" value="<?= $kelebihan_kasbon ?>" readonly>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="5" class="text-right">Total Expense Report</td>
                         <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
-                        <td></td>
+                        <td>Kelebihan Expense</td>
+                        <td>
+                            <input type="text" name="kelebihan_expense" class="form-control form-control-sm text-right auto_num kelebihan_expense" value="<?= $kelebihan_expense ?>" readonly>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="5" class="text-right">Selisih</td>
                         <td class="text-right col_selisih"><?= number_format($header->selisih, 2) ?></td>
-                        <td></td>
+                        <td>Kontrol</td>
+                        <td>
+                            <input type="text" name="kontrol" class="form-control form-control-sm text-right kontrol" value="<?= number_format($header->selisih, 2) ?>" readonly>
+                        </td>
                     </tr>
                 </tfoot>
             </table>
@@ -212,6 +226,23 @@ if ($tipe == '4') {
                         </tr>
                     </table>
                 </div>
+                <div class="col-md-6">
+                    <table style="width: 100%">
+                        <tr>
+                            <th style="padding: 5px;">Bank</th>
+                            <td style="padding: 5px;">
+                                <select name="bank" class="form-control form-control-sm select2" onchange="set_jurnal()">
+                                    <option value="">- Pilih Bank -</option>
+                                    <?php
+                                    foreach ($list_bank  as $item) :
+                                        echo '<option value="' . $item->id . '">' . $item->nama_bank . ' - ' . $item->rekening . ' - ' . $item->nama . '</option>';
+                                    endforeach;
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
 
             <br>
@@ -222,7 +253,35 @@ if ($tipe == '4') {
                     <textarea class="form-control form-control-sm" name="reject_reason"></textarea>
                 </div>
             </div>
-            <div class="col-md-6"></div>
+
+            <br>
+
+            <div class="col-md-12">
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Tanggal Jurnal</th>
+                            <th class="text-center">COA</th>
+                            <th class="text-center">Nama Company</th>
+                            <th class="text-center">Nama Account</th>
+                            <th class="text-center">Debit</th>
+                            <th class="text-center">Credit</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody_jurnal">
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" class="text-center">Balancing</th>
+                            <th class="text-right ttl_debit">0.00</th>
+                            <th class="text-right ttl_kredit">0.00</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <input type="hidden" name="ttl_debit">
+            <input type="hidden" name="ttl_kredit">
 
             <br>
             <div class="col-md-12">
@@ -306,10 +365,16 @@ if ($tipe == '4') {
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
+    set_jurnal();
+
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
+        $('.select2').select2({
+            width: '100%'
+        });
     });
 
     $(document).on('submit', '#frm-data', function(e) {
@@ -426,6 +491,21 @@ if ($tipe == '4') {
 
         var id_header = $('input[name="id_header"]').val();
 
+        var bank = $('select[name="bank"]').val();
+
+        if (bank == '') {
+            swal({
+                type: 'warning',
+                title: 'Warning !',
+                text: 'Bank must be choosen !',
+                showConfirmButton: false,
+                showCancelButton: false,
+                timer: 3000
+            });
+
+            return false;
+        }
+
         swal({
             type: 'warning',
             title: 'Are you sure ?',
@@ -433,12 +513,11 @@ if ($tipe == '4') {
             showCancelButton: true
         }, function(lanjut) {
             if (lanjut) {
+                var formdata = $('#data_form').serialize();
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'approve_expense_report',
-                    data: {
-                        'id_header': id_header
-                    },
+                    data: formdata,
                     cache: false,
                     dataType: 'json',
                     success: function(result) {
@@ -550,4 +629,30 @@ if ($tipe == '4') {
             }
         });
     });
+
+    function set_jurnal() {
+        var id_expense = "<?= $header->id ?>";
+        var id_header = "<?= $id_header ?>";
+        var id_bank = $('select[name="bank"]').val();
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'set_jurnal_expense',
+            data: {
+                'id_expense': id_expense,
+                'id_header': id_header,
+                'id_bank': id_bank
+            },
+            cache: false,
+            dataType: 'json',
+            success: function(result) {
+                $('.tbody_jurnal').html(result.hasil);
+                $('.ttl_debit').html(number_format(result.ttl_debit));
+                $('.ttl_kredit').html(number_format(result.ttl_kredit));
+
+                $('input[name="ttl_debit"]').val(result.ttl_debit);
+                $('input[name="ttl_kredit"]').val(result.ttl_kredit);
+            }
+        });
+    }
 </script>
