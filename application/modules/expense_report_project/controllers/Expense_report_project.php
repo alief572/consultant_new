@@ -1385,6 +1385,12 @@ class Expense_report_project extends Admin_Controller
             }
         }
 
+        $this->sendigs->select('a.id, a.rekening, a.nama, a.coa_bank, b.nama_bank');
+        $this->sendigs->from('ms_bank a');
+        $this->sendigs->join('list_bank b', 'b.id = a.bank', 'left');
+        $this->sendigs->where('a.deleted', '0');
+        $get_bank_acc = $this->sendigs->get()->result();
+
         $data = [
             'header' => $get_header,
             'list_bukti_pengembalian' => $get_bukti_pengembalian,
@@ -1395,7 +1401,8 @@ class Expense_report_project extends Admin_Controller
             'id_header' => $id_header,
             'id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran,
             'id_penawaran' => $get_kasbon_header->id_penawaran,
-            'tipe' => $get_kasbon_header->tipe
+            'tipe' => $get_kasbon_header->tipe,
+            'list_bank' => $get_bank_acc
         ];
 
         $this->template->set($data);
