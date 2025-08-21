@@ -104,7 +104,7 @@ if ($tipe == '6') {
                         <th class="text-center" rowspan="2">Item</th>
                         <th class="text-center" colspan="3">Kasbon</th>
                         <th class="text-center" colspan="3">Expense Report</th>
-                        <th class="text-center" rowspan="2" width="380">Keterangan</th>
+                        <th class="text-center" rowspan="2" colspan="2">Keterangan</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
@@ -169,7 +169,7 @@ if ($tipe == '6') {
                         echo '<input type="text" name="detail_subcont[' . $item['no'] . '][total_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $item['total_kasbon'] . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" readonly>';
                         echo '</td>';
 
-                        echo '<td width="50">';
+                        echo '<td width="50" colspan="2">';
                         echo '<textarea class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][keterangan]"  ' . $readonly_nominal . ' rows="5"></textarea>';
                         echo '</td>';
 
@@ -186,17 +186,26 @@ if ($tipe == '6') {
                     <tr>
                         <td colspan="7" class="text-right">Total Kasbon</td>
                         <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
-                        <td></td>
+                        <td>Kelebihan Kasbon</td>
+                        <td>
+                            <input type="text" name="kelebihan_kasbon" class="form-control form-control-sm text-right kelebihan_kasbon" value="0" readonly>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="7" class="text-right">Total Expense Report</td>
                         <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
-                        <td></td>
+                        <td>Kelebihan Expense</td>
+                        <td>
+                            <input type="text" name="kelebihan_expense" class="form-control form-control-sm text-right kelebihan_expense" value="0" readonly>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="7" class="text-right">Selisih</td>
                         <td class="text-right col_selisih">0.00</td>
-                        <td></td>
+                        <td>Kontrol</td>
+                        <td>
+                            <input type="text" name="kontrol" class="form-control form-control-sm text-right kontrol" value="0" readonly>
+                        </td>
                     </tr>
 
                 </tfoot>
@@ -229,7 +238,52 @@ if ($tipe == '6') {
                         </tr>
                     </table>
                 </div>
+                <div class="col-md-6">
+                    <table style="width: 100%">
+                        <tr>
+                            <th style="padding: 5px;">Bank</th>
+                            <td style="padding: 5px;">
+                                <select name="bank" class="form-control form-control-sm select2" onchange="set_jurnal()">
+                                    <option value="">- Pilih Bank -</option>
+                                    <?php
+                                    foreach ($list_bank  as $item) :
+                                        echo '<option value="' . $item->id . '">' . $item->nama_bank . ' - ' . $item->rekening . ' - ' . $item->nama . '</option>';
+                                    endforeach;
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
 
+                <div class="col-md-12">
+                    <br><br>
+
+                    <table class="table custom-table">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Tanggal Jurnal</th>
+                                <th class="text-center">COA</th>
+                                <th class="text-center">Nama Company</th>
+                                <th class="text-center">Nama Account</th>
+                                <th class="text-center">Debit</th>
+                                <th class="text-center">Credit</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody_jurnal">
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="4" class="text-center">Balancing</th>
+                                <th class="text-right ttl_debit">0.00</th>
+                                <th class="text-right ttl_kredit">0.00</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <input type="hidden" name="ttl_debit">
+                <input type="hidden" name="ttl_kredit">
             </div>
 
             <div class="col-md-12">
@@ -252,10 +306,16 @@ if ($tipe == '6') {
 
 <script>
     $(document).ready(function() {
-        $('.auto_num').autoNumeric();
+        $('.auto_num').autoNumeric('init', {
+            allowNegative: true,
+            minimumValue: '-999999999', // Atur sesuai kebutuhan
+            maximumValue: '999999999'
+        });
         $('.select2').select2({
             width: '100%'
         });
+
+        set_jurnal();
     });
 
     $(document).on('submit', '#frm-data', function(e) {
@@ -379,5 +439,65 @@ if ($tipe == '6') {
         $('.col_ttl_expense_report').html(number_format(ttl_expense_report, 2));
         $('.col_ttl_kasbon').html(number_format(ttl_kasbon, 2));
         $('.col_selisih').html(number_format(selisih, 2));
+        $('input[name="kontrol"]').val(number_format(selisih, 2));
+
+        hitung_kelebihan_dan_control();
+    }
+
+    function hitung_kelebihan_dan_control() {
+        var total_kasbon = get_num($('.col_ttl_kasbon').html());
+        var total_expense = get_num($('.col_ttl_expense_report').html());
+
+        var kelebihan_kasbon = 0;
+        var kelebihan_expense = 0;
+
+        if (total_kasbon > total_expense) {
+            kelebihan_kasbon = (total_kasbon - total_expense);
+        }
+        if (total_expense > total_kasbon) {
+            kelebihan_expense = (total_expense - total_kasbon);
+        }
+
+        // alert(kelebihan_kasbon + ' - ' + kelebihan_expense);
+
+        $('input[name="kelebihan_kasbon"]').val(number_format(kelebihan_kasbon, 2));
+        $('input[name="kelebihan_expense"]').val(number_format(kelebihan_expense, 2));
+
+        set_jurnal();
+    }
+
+    function set_jurnal() {
+
+        var kelebihan_kasbon = get_num($('input[name="kelebihan_kasbon"]').val());
+        var kelebihan_expense = get_num($('input[name="kelebihan_expense"]').val());
+        var kontrol = get_num($('input[name="kontrol"]').val());
+
+        var total_kasbon = get_num($('.col_ttl_kasbon').html());
+        var total_expense = get_num($('.col_ttl_expense_report').html());
+
+        var id_bank = $('select[name="bank"]').val();
+
+        var id_penawaran = "<?= $id_penawaran ?>";
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'set_jurnal_expense',
+            data: {
+                'kelebihan_kasbon': kelebihan_kasbon,
+                'kelebihan_expense': kelebihan_expense,
+                'kontrol': kontrol,
+                'total_kasbon': total_kasbon,
+                'total_expense': total_expense,
+                'id_penawaran': id_penawaran,
+                'id_bank': id_bank
+            },
+            cache: false,
+            dataType: 'json',
+            success: function(result) {
+                $('.tbody_jurnal').html(result.hasil);
+                $('.ttl_debit').html(number_format(result.ttl_debit));
+                $('.ttl_kredit').html(number_format(result.ttl_kredit));
+            }
+        });
     }
 </script>

@@ -235,7 +235,11 @@ if ($tipe == '4') {
                                     <option value="">- Pilih Bank -</option>
                                     <?php
                                     foreach ($list_bank  as $item) :
-                                        echo '<option value="' . $item->id . '">' . $item->nama_bank . ' - ' . $item->rekening . ' - ' . $item->nama . '</option>';
+                                        $selected = '';
+                                        if ($header->id_bank == $item->id) {
+                                            $selected = 'selected';
+                                        }
+                                        echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama_bank . ' - ' . $item->rekening . ' - ' . $item->nama . '</option>';
                                     endforeach;
                                     ?>
                                 </select>
