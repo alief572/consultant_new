@@ -43,12 +43,38 @@ class Project_budgeting extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*, b.grand_total');
+        $status_s = $this->input->post('status');
+
+        $this->db->select('
+            a.*, 
+            b.grand_total,
+            CASE
+                WHEN c.id_spk_budgeting IS NULL THEN 1
+                WHEN c.sts = "1" THEN 2
+                WHEN c.sts = "2" THEN 3
+                WHEN c.sts NOT IN ("1","2") THEN 4
+            END as status
+        ', false);
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->join('kons_tr_spk_budgeting c', 'c.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', 1);
+        if ($status_s == '1') {
+            $this->db->where('c.id_spk_budgeting', null);
+        }
+        if ($status_s == '2') {
+            $this->db->where('c.sts', '1');
+        }
+        if ($status_s == '3') {
+            $this->db->where('c.sts', '2');
+        }
+        if ($status_s == '4') {
+            $this->db->where('c.id_spk_budgeting IS NOT NULL');
+            $this->db->where('c.sts <>', '1');
+            $this->db->where('c.sts <>', '2');
+        }
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
@@ -58,33 +84,19 @@ class Project_budgeting extends Admin_Controller
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
             $this->db->group_end();
         }
+
+        $db_clone = clone $this->db;
+        $count_all = $db_clone->count_all_results();
+
+        $this->db->order_by('status', 'asc');
         $this->db->order_by('a.input_date', 'desc');
         $this->db->limit($length, $start);
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*, b.grand_total');
-        $this->db->from('kons_tr_spk_penawaran a');
-        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
-        $this->db->where(1, 1);
-        $this->db->where('a.deleted_by', null);
-        $this->db->where('a.sts_spk', 1);
-        if (!empty($search)) {
-            $this->db->group_start();
-            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
-            $this->db->or_like('a.nm_sales', $search['value'], 'both');
-            $this->db->or_like('a.nm_project', $search['value'], 'both');
-            $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
-            $this->db->group_end();
-        }
-        $this->db->order_by('a.input_date', 'desc');
-
-        $get_data_all = $this->db->get();
-
         $hasil = [];
 
-        $no = 1;
+        $no = (1 + $start);
         foreach ($get_data->result() as $item) {
 
             $status = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
@@ -160,6 +172,7 @@ class Project_budgeting extends Admin_Controller
 
             $nm_customer = $item->nm_customer;
 
+            // if ($value_show == '1') {
             $hasil[] = [
                 'no' => $no,
                 'id_spk_penawaran' => $item->id_spk_penawaran,
@@ -170,14 +183,14 @@ class Project_budgeting extends Admin_Controller
                 'status' => $status,
                 'option' => $option
             ];
-
             $no++;
+            // }
         }
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data_all->num_rows(),
-            'recordsFiltered' => $get_data_all->num_rows(),
+            'recordsTotal' => $count_all,
+            'recordsFiltered' => $count_all,
             'data' => $hasil
         ]);
     }

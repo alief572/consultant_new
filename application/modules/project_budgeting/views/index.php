@@ -21,9 +21,18 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 <div class="box">
     <div class="box-header">
-        <?php if ($ENABLE_ADD) : ?>
-
-        <?php endif; ?>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">Status</label>
+                <select class="form-control form-control-sm status" onchange="DataTables()">
+                    <option value=""> Status </option>
+                    <option value="1"> Draft </option>
+                    <option value="2"> Approved </option>
+                    <option value="3"> Rejected </option>
+                    <option value="4"> Waiting Approval </option>
+                </select>
+            </div>
+        </div>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
@@ -108,13 +117,15 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         // var dataTables = $('#table_penawaran').dataTable();
         // dataTables.destroy();
 
+        var status = $('.status').val();
+
         var dataTables = $('#table_penawaran').dataTable({
             ajax: {
                 url: siteurl + active_controller + 'get_data_spk',
                 type: "POST",
                 dataType: "JSON",
                 data: function(d) {
-
+                    d.status = status;
                 }
             },
             columns: [{
