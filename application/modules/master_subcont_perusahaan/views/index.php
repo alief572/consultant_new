@@ -28,6 +28,7 @@ $ENABLE_DELETE  = has_permission('Master_Subcont_Perusahaan.Delete');
 				<tr>
 					<th>#</th>
 					<th>Nama Biaya</th>
+					<th>COA</th>
 					<th>Action</th>
 				</tr>
 			</thead>
@@ -91,6 +92,8 @@ $ENABLE_DELETE  = has_permission('Master_Subcont_Perusahaan.Delete');
 					data: 'no',
 				}, {
 					data: 'nm_biaya'
+				}, {
+					data: 'coa'
 				}, {
 					data: 'option'
 				}],

@@ -8,12 +8,21 @@
 
 class Master_lab_model extends BF_Model
 {
+    protected $ENABLE_ADD;
+    protected $ENABLE_MANAGE;
+    protected $ENABLE_VIEW;
+    protected $ENABLE_DELETE;
+
+    protected $gl;
+
     public function __construct()
     {
         $this->ENABLE_ADD     = 'Master_Lab.Add';
         $this->ENABLE_MANAGE  = 'Master_Lab.Manage';
         $this->ENABLE_VIEW    = 'Master_Lab.View';
         $this->ENABLE_DELETE  = 'Master_Lab.Delete';
+
+        $this->gl = $this->load->database('gl_sendigs', true);
     }
 
     public function save_lab()
@@ -26,6 +35,11 @@ class Master_lab_model extends BF_Model
         $harga_ssc = str_replace(',', '', $post['harga_ssc']);
         $harga_lab = str_replace(',', '', $post['harga_lab']);
         $peraturan = $post['peraturan'];
+        $coa = $post['coa'];
+
+        $get_coa = $this->gl->get_where('coa_master', ['no_perkiraan' => $coa])->row();
+
+        $nm_coa = (!empty($get_coa)) ? $get_coa->nama : '';
 
         $this->db->trans_begin();
 
@@ -36,6 +50,8 @@ class Master_lab_model extends BF_Model
                 'waktu' => $waktu,
                 'harga_ssc' => $harga_ssc,
                 'harga_lab' => $harga_lab,
+                'no_coa' => $coa,
+                'nm_coa' => $nm_coa,
                 'created_by' => $this->auth->user_id(),
                 'created_date' => date('Y-m-d H:i:s')
             ];
@@ -66,6 +82,8 @@ class Master_lab_model extends BF_Model
                 'waktu' => $waktu,
                 'harga_ssc' => $harga_ssc,
                 'harga_lab' => $harga_lab,
+                'no_coa' => $coa,
+                'nm_coa' => $nm_coa,
                 'updated_by' => $this->auth->user_id(),
                 'updated_date' => date('Y-m-d H:i:s')
             ];
@@ -97,7 +115,8 @@ class Master_lab_model extends BF_Model
         ]);
     }
 
-    public function del_lab($id) {
+    public function del_lab($id)
+    {
         $this->db->trans_begin();
 
         $delete_lab = $this->db->update('kons_master_lab', array('deleted_by' => $this->auth->user_id(), 'deleted_date' => date('Y-m-d H:i:s')), array('id' => $id));
@@ -128,12 +147,21 @@ class Master_lab_model extends BF_Model
 
     public function get_data_spec($id)
     {
-        $this->db->select('a.id, a.isu_lingkungan, a.peraturan, a.waktu, a.harga_ssc, a.harga_lab');
+        $this->db->select('a.id, a.isu_lingkungan, a.peraturan, a.waktu, a.harga_ssc, a.harga_lab, a.no_coa, a.nm_coa');
         $this->db->from('kons_master_lab a');
         $this->db->where('a.id', $id);
         $get_data = $this->db->get()->row();
 
         return $get_data;
+    }
+
+    public function get_coa_all()
+    {
+        $this->gl->select('a.no_perkiraan, a.nama as nm_coa');
+        $this->gl->from('coa_master a');
+        $get_coa = $this->gl->get();
+
+        return $get_coa->result();
     }
 
     public function get_data_lab()
@@ -143,7 +171,7 @@ class Master_lab_model extends BF_Model
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.id, a.isu_lingkungan, a.peraturan, a.waktu, a.harga_ssc, a.harga_lab');
+        $this->db->select('a.id, a.isu_lingkungan, a.peraturan, a.waktu, a.harga_ssc, a.harga_lab, a.no_coa, a.nm_coa');
         $this->db->from('kons_master_lab a');
         $this->db->where('a.deleted_by', null);
         if (!empty($search)) {
@@ -155,28 +183,17 @@ class Master_lab_model extends BF_Model
             $this->db->or_like('a.harga_lab', $search['value'], 'both');
             $this->db->group_end();
         }
+
+        $db_clone = clone $this->db;
+        $count_all = $db_clone->count_all_results();
+
         $this->db->order_by('a.id', 'asc');
         $this->db->limit($length, $start);
         $get_data = $this->db->get();
 
-        $this->db->select('a.id, a.isu_lingkungan, a.peraturan, a.waktu, a.harga_ssc, a.harga_lab');
-        $this->db->from('kons_master_lab a');
-        $this->db->where('a.deleted_by', null);
-        if (!empty($search)) {
-            $this->db->group_start();
-            $this->db->like('a.isu_lingkungan', $search['value'], 'both');
-            $this->db->or_like('a.peraturan', $search['value'], 'both');
-            $this->db->or_like('a.waktu', $search['value'], 'both');
-            $this->db->or_like('a.harga_ssc', $search['value'], 'both');
-            $this->db->or_like('a.harga_lab', $search['value'], 'both');
-            $this->db->group_end();
-        }
-        $this->db->order_by('a.id', 'asc');
-        $get_data_all = $this->db->get();
-
         $hasil = [];
 
-        $no = 0;
+        $no = (0 + $start);
         foreach ($get_data->result() as $item) {
             $no++;
 
@@ -188,21 +205,27 @@ class Master_lab_model extends BF_Model
                 $option = '';
             }
 
+            $coa = '';
+            if ($item->no_coa !== '' && $item->no_coa !== null) {
+                $coa = '(' . $item->no_coa . ') - ' . $item->nm_coa;
+            }
+
             $hasil[] = [
                 'no' => $no,
                 'isu_lingkungan' => $item->isu_lingkungan,
                 'peraturan' => $item->peraturan,
                 'waktu' => $item->waktu . ' Jam',
-                'harga_ssc' => number_format($item->harga_ssc, 2),
-                'harga_lab' => number_format($item->harga_lab, 2),
+                'harga_ssc' => number_format($item->harga_ssc),
+                'harga_lab' => number_format($item->harga_lab),
+                'coa' => $coa,
                 'option' => $option
             ];
         }
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data_all->num_rows(),
-            'recordsFiltered' => $get_data_all->num_rows(),
+            'recordsTotal' => $count_all,
+            'recordsFiltered' => $count_all,
             'data' => $hasil
         ]);
     }

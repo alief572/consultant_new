@@ -28,6 +28,7 @@ $ENABLE_DELETE  = has_permission('Master_Tenaga_Ahli.Delete');
 				<tr>
 					<th>#</th>
 					<th>Nama Biaya</th>
+					<th>COA</th>
 					<th>Action</th>
 				</tr>
 			</thead>
@@ -88,12 +89,17 @@ $ENABLE_DELETE  = has_permission('Master_Tenaga_Ahli.Delete');
 					}
 				},
 				columns: [{
-					data: 'no',
-				}, {
-					data: 'nm_biaya'
-				}, {
-					data: 'option'
-				}],
+						data: 'no',
+					}, {
+						data: 'nm_biaya'
+					},
+					{
+						data: 'coa'
+					},
+					{
+						data: 'option'
+					}
+				],
 				responsive: true,
 				processing: true,
 				serverSide: true,

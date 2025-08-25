@@ -15,6 +15,8 @@ class Master_subcont_perusahaan extends Admin_Controller
     protected $managePermission = 'Master_Subcont_Perusahaan.Manage';
     protected $deletePermission = 'Master_Subcont_Perusahaan.Delete';
 
+    protected $gl;
+
     public function __construct()
     {
         parent::__construct();
@@ -22,8 +24,11 @@ class Master_subcont_perusahaan extends Admin_Controller
         $this->load->library(array('upload', 'Image_lib'));
         $this->template->title('Manage Data Supplier');
         $this->template->page_icon('fa fa-table');
+        $this->load->model(array('Master_subcont_perusahaan/Master_subcont_perusahaan_model'));
 
         date_default_timezone_set("Asia/Bangkok");
+
+        $this->gl = $this->load->database('gl_sendigs', true);
     }
 
     public function index()
@@ -36,6 +41,9 @@ class Master_subcont_perusahaan extends Admin_Controller
 
     public function add()
     {
+        $list_coa = $this->Master_subcont_perusahaan_model->get_coa_all();
+
+        $this->template->set('list_coa', $list_coa);
         $this->template->render('add');
     }
 
@@ -45,6 +53,9 @@ class Master_subcont_perusahaan extends Admin_Controller
 
         $get_biaya = $this->db->get_where('kons_master_subcont_perusahaan', ['id' => $id])->row();
 
+        $list_coa = $this->Master_subcont_perusahaan_model->get_coa_all();
+
+        $this->template->set('list_coa', $list_coa);
         $this->template->set('data_biaya', $get_biaya);
         $this->template->render('edit');
     }
@@ -56,9 +67,16 @@ class Master_subcont_perusahaan extends Admin_Controller
         $this->db->trans_begin();
 
         if ($post['id'] == '') {
+
+            $get_coa = $this->gl->get_where('coa_master', ['no_perkiraan' => $post['coa']])->row();
+
+            $nm_coa = (!empty($get_coa)) ? $get_coa->nama : '';
+
             $this->db->insert('kons_master_subcont_perusahaan', [
                 'nm_biaya' => $post['nm_biaya'],
                 'tipe_biaya' => 1,
+                'no_coa' => $post['coa'],
+                'nm_coa' => $nm_coa,
                 'input_by' => $this->auth->user_id(),
                 'input_date' => date('Y-m-d H:i:s')
             ]);
@@ -75,9 +93,14 @@ class Master_subcont_perusahaan extends Admin_Controller
                 $pesan = 'Saving data is success !';
             }
         } else {
+            $get_coa = $this->gl->get_where('coa_master', ['no_perkiraan' => $post['coa']])->row();
+
+            $nm_coa = (!empty($get_coa)) ? $get_coa->nama : '';
             $this->db->update('kons_master_subcont_perusahaan', [
                 'nm_biaya' => $post['nm_biaya'],
                 'tipe_biaya' => 1,
+                'no_coa' => $post['coa'],
+                'nm_coa' => $nm_coa,
                 'input_by' => $this->auth->user_id(),
                 'input_date' => date('Y-m-d H:i:s')
             ], [
@@ -136,7 +159,7 @@ class Master_subcont_perusahaan extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.id, a.nm_biaya');
+        $this->db->select('a.id, a.nm_biaya, a.no_coa, a.nm_coa');
         $this->db->from('kons_master_subcont_perusahaan a');
         $this->db->where('a.deleted_by', null);
         if (!empty($search)) {
@@ -144,6 +167,10 @@ class Master_subcont_perusahaan extends Admin_Controller
             $this->db->like('a.nm_biaya', $search['value'], 'both');
             $this->db->group_end();
         }
+
+        $db_clone = clone $this->db;
+        $count_all = $db_clone->count_all_results();
+
         $this->db->order_by('a.id', 'desc');
         $this->db->limit($length, $start);
 
@@ -167,9 +194,15 @@ class Master_subcont_perusahaan extends Admin_Controller
 
             $buttons = $edit . ' ' . $delete;
 
+            $coa = '';
+            if ($item->no_coa !== null && $item->nm_coa !== null) {
+                $coa = '(' . $item->no_coa . ') - ' . $item->nm_coa;
+            }
+
             $hasil[] = [
                 'no' => $no,
                 'nm_biaya' => $item->nm_biaya,
+                'coa' => $coa,
                 'option' => $buttons
             ];
 
@@ -178,8 +211,8 @@ class Master_subcont_perusahaan extends Admin_Controller
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data_biaya->num_rows(),
-            'recordsFiltered' => $get_data_biaya->num_rows(),
+            'recordsTotal' => $count_all,
+            'recordsFiltered' => $count_all,
             'data' => $hasil
         ]);
     }
