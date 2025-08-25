@@ -38,6 +38,9 @@ class Master_lab extends Admin_Controller
 
     public function add_data()
     {
+        $list_coa = $this->Master_lab_model->get_coa_all();
+
+        $this->template->set('list_coa', $list_coa);
         $this->template->render('add_data_lab');
     }
 
@@ -47,7 +50,10 @@ class Master_lab extends Admin_Controller
 
         $get_data_lab = $this->Master_lab_model->get_data_spec($id);
 
+        $list_coa = $this->Master_lab_model->get_coa_all();
+
         $this->template->set('data_lab', $get_data_lab);
+        $this->template->set('list_coa', $list_coa);
         $this->template->render('view_data_lab');
     }
 
@@ -57,11 +63,15 @@ class Master_lab extends Admin_Controller
 
         $get_data_lab = $this->Master_lab_model->get_data_spec($id);
 
+        $list_coa = $this->Master_lab_model->get_coa_all();
+
         $this->template->set('data_lab', $get_data_lab);
+        $this->template->set('list_coa', $list_coa);
         $this->template->render('edit_data_lab');
     }
 
-    public function del_lab(){
+    public function del_lab()
+    {
         $id = $this->input->post('id');
 
         $this->Master_lab_model->del_lab($id);

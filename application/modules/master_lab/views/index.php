@@ -40,6 +40,7 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
                     <th align="center">Waktu</th>
                     <th align="center">Harga SSC / Titik</th>
                     <th align="center">Harga Lab / Titik</th>
+                    <th align="center">COA</th>
                     <th align="center">Action</th>
                 </tr>
             </thead>
@@ -74,8 +75,6 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
 </div>
 
 <!-- DataTables -->
-<!-- <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
-<script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
 
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
 <script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
@@ -83,6 +82,10 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
 <script type="text/javascript">
     $(document).ready(function() {
         DataTables();
+
+        $('.select2').select2({
+            width: '100%'
+        })
     });
 
     $(document).on('click', '.add_data', function() {
@@ -214,6 +217,7 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
         var isu_lingkungan = $('input[name="isu_lingkungan"]').val();
         var harga_ssc = get_num($('input[name="harga_ssc"]').val());
         var harga_lab = get_num($('input[name="harga_lab"]').val());
+        var coa = $('select[name="coa"]').val();
 
         if (isu_lingkungan == '') {
             swal({
@@ -325,6 +329,9 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
                 },
                 {
                     data: 'harga_lab'
+                },
+                {
+                    data: 'coa'
                 },
                 {
                     data: 'option'

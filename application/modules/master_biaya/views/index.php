@@ -29,6 +29,7 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 					<th>#</th>
 					<th>Nama Biaya</th>
 					<th>Tipe Biaya</th>
+					<th>COA</th>
 					<th>Action</th>
 				</tr>
 			</thead>
@@ -89,14 +90,18 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 					}
 				},
 				columns: [{
-					data: 'no',
-				}, {
-					data: 'nm_biaya'
-				}, {
-					data: 'tipe_biaya'
-				}, {
-					data: 'option'
-				}],
+						data: 'no',
+					}, {
+						data: 'nm_biaya'
+					}, {
+						data: 'tipe_biaya'
+					},
+					{
+						data: 'coa'
+					}, {
+						data: 'option'
+					}
+				],
 				responsive: true,
 				processing: true,
 				serverSide: true,
