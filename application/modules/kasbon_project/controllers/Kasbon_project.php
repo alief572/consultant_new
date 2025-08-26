@@ -22,7 +22,7 @@ class Kasbon_project extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->template->title('Kasbon Project');
+        $this->template->title('Pengajuan');
         $this->template->page_icon('fa fa-cubes');
         $this->load->library('upload');
         $this->load->model(array('Kasbon_project/Kasbon_project_model'));
@@ -3342,8 +3342,6 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_custom_ovb_subcont a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $get_ovb_subcont_custom = $this->db->get()->result();
-        // print_r($data_kasbon_subcont);
-        // exit;
 
         $data_kasbon_custom = [];
 
@@ -3474,7 +3472,6 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_subcont a');
         $this->db->where('a.id_header', $id_header);
-        $this->db->where('a.custom_subcont', '0');
         $get_kasbon_subcont = $this->db->get()->result();
 
         // print_r($this->db->last_query());
@@ -4537,6 +4534,9 @@ class Kasbon_project extends Admin_Controller
         if (isset($post['detail_subcont'])) {
             foreach ($post['detail_subcont'] as $item) {
                 if (str_replace(',', '', $item['qty_pengajuan']) > 0 && str_replace(',', '', $item['nominal_pengajuan']) > 0) {
+
+                    $custom_subcont = (isset($item['custom_subcont'])) ? $item['custom_subcont'] : 0;
+
                     $data_insert_detail[] = [
                         'id_header' => $id_header,
                         'id_spk_budgeting' => $post['id_spk_budgeting'],
@@ -4558,6 +4558,7 @@ class Kasbon_project extends Admin_Controller
                         'qty_overbudget' => $item['qty_overbudget'],
                         'nominal_overbudget' => $item['nominal_overbudget'],
                         'total_overbudget' => $item['total_overbudget'],
+                        'custom_subcont' => $custom_subcont,
                         'created_by' => $this->auth->user_id(),
                         'created_date' => date('Y-m-d H:i:s')
                     ];
@@ -4569,42 +4570,42 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
-        if (isset($post['subcont_custom'])) {
-            foreach ($post['subcont_custom'] as $item) {
-                if (str_replace(',', '', $item['qty_budget']) > 0 && str_replace(',', '', $item['nominal_budget'])) {
+        // if (isset($post['subcont_custom'])) {
+        //     foreach ($post['subcont_custom'] as $item) {
+        //         if (str_replace(',', '', $item['qty_budget']) > 0 && str_replace(',', '', $item['nominal_budget'])) {
 
-                    $data_insert_detail[] = [
-                        'id_header' => $id_header,
-                        'id_spk_budgeting' => $post['id_spk_budgeting'],
-                        'id_spk_penawaran' => $post['id_spk_penawaran'],
-                        'id_penawaran' => $post['id_penawaran'],
-                        'id_aktifitas' => $item['id'],
-                        'nm_aktifitas' => $item['nm_item'],
-                        'qty_pengajuan' => str_replace(',', '', $item['qty_budget']),
-                        'nominal_pengajuan' => str_replace(',', '', $item['nominal_budget']),
-                        'total_pengajuan' => str_replace(',', '', $item['total_budget']),
-                        'qty_estimasi' => $item['estimasi_qty'],
-                        'price_unit_estimasi' => $item['price_unit_estimasi'],
-                        'total_budget_estimasi' => $item['total_estimasi'],
-                        'aktual_terpakai' => $item['aktual_terpakai'],
-                        'sisa_budget' => $item['sisa_budget'],
-                        'qty_terpakai' => $item['qty_terpakai'],
-                        'nominal_terpakai' => $item['nominal_terpakai'],
-                        'total_terpakai' => $item['total_terpakai'],
-                        'qty_overbudget' => $item['qty_overbudget'],
-                        'nominal_overbudget' => $item['nominal_overbudget'],
-                        'total_overbudget' => $item['total_overbudget'],
-                        'created_by' => $this->auth->user_id(),
-                        'created_date' => date('Y-m-d H:i:s'),
-                        'custom_subcont' => 1
-                    ];
+        //             $data_insert_detail[] = [
+        //                 'id_header' => $id_header,
+        //                 'id_spk_budgeting' => $post['id_spk_budgeting'],
+        //                 'id_spk_penawaran' => $post['id_spk_penawaran'],
+        //                 'id_penawaran' => $post['id_penawaran'],
+        //                 'id_aktifitas' => $item['id'],
+        //                 'nm_aktifitas' => $item['nm_item'],
+        //                 'qty_pengajuan' => str_replace(',', '', $item['qty_budget']),
+        //                 'nominal_pengajuan' => str_replace(',', '', $item['nominal_budget']),
+        //                 'total_pengajuan' => str_replace(',', '', $item['total_budget']),
+        //                 'qty_estimasi' => $item['estimasi_qty'],
+        //                 'price_unit_estimasi' => $item['price_unit_estimasi'],
+        //                 'total_budget_estimasi' => $item['total_estimasi'],
+        //                 'aktual_terpakai' => $item['aktual_terpakai'],
+        //                 'sisa_budget' => $item['sisa_budget'],
+        //                 'qty_terpakai' => $item['qty_terpakai'],
+        //                 'nominal_terpakai' => $item['nominal_terpakai'],
+        //                 'total_terpakai' => $item['total_terpakai'],
+        //                 'qty_overbudget' => $item['qty_overbudget'],
+        //                 'nominal_overbudget' => $item['nominal_overbudget'],
+        //                 'total_overbudget' => $item['total_overbudget'],
+        //                 'created_by' => $this->auth->user_id(),
+        //                 'created_date' => date('Y-m-d H:i:s'),
+        //                 'custom_subcont' => 1
+        //             ];
 
-                    $grand_total += (str_replace(',', '', $item['total_budget']));
+        //             $grand_total += (str_replace(',', '', $item['total_budget']));
 
-                    $no++;
-                }
-            }
-        }
+        //             $no++;
+        //         }
+        //     }
+        // }
 
         $data_insert_header = [
             'id' => $id_header,
@@ -4724,6 +4725,8 @@ class Kasbon_project extends Admin_Controller
                 $price_unit_estimasi = str_replace(',', '', $item['price_unit_estimasi']);
                 $total_estimasi = str_replace(',', '', $item['total_budget_estimasi']);
 
+                $custom_subcont = (isset($item['custom_subcont'])) ? $item['custom_subcont'] : 0;
+
                 if ($qty_pengajuan > 0 && $nominal_pengajuan > 0) {
                     $data_insert_detail[] = [
                         'id_header' => $post['id'],
@@ -4746,6 +4749,7 @@ class Kasbon_project extends Admin_Controller
                         'qty_overbudget' => $item['qty_overbudget'],
                         'nominal_overbudget' => $item['price_unit_overbudget'],
                         'total_overbudget' => $item['total_budget_overbudget'],
+                        'custom_subcont' => $custom_subcont,
                         'created_by' => $this->auth->user_id(),
                         'created_date' => date('Y-m-d H:i:s')
                     ];
@@ -4755,49 +4759,49 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
-        if (isset($post['subcont_custom'])) :
-            if (!empty($post['subcont_custom'])) :
-                foreach ($post['subcont_custom'] as $item) :
-                    $qty_pengajuan = str_replace(',', '', $item['qty_pengajuan']);
-                    $nominal_pengajuan = str_replace(',', '', $item['nominal_pengajuan']);
-                    $total_pengajuan = str_replace(',', '', $item['total_pengajuan']);
+        // if (isset($post['subcont_custom'])) :
+        //     if (!empty($post['subcont_custom'])) :
+        //         foreach ($post['subcont_custom'] as $item) :
+        //             $qty_pengajuan = str_replace(',', '', $item['qty_pengajuan']);
+        //             $nominal_pengajuan = str_replace(',', '', $item['nominal_pengajuan']);
+        //             $total_pengajuan = str_replace(',', '', $item['total_pengajuan']);
 
-                    $qty_estimasi = str_replace(',', '', $item['qty_estimasi']);
-                    $price_unit_estimasi = str_replace(',', '', $item['price_unit_estimasi']);
-                    $total_estimasi = str_replace(',', '', $item['total_budget_estimasi']);
+        //             $qty_estimasi = str_replace(',', '', $item['qty_estimasi']);
+        //             $price_unit_estimasi = str_replace(',', '', $item['price_unit_estimasi']);
+        //             $total_estimasi = str_replace(',', '', $item['total_budget_estimasi']);
 
-                    if ($qty_pengajuan > 0 && $nominal_pengajuan > 0) {
-                        $data_insert_detail[] = [
-                            'id_header' => $post['id'],
-                            'id_spk_budgeting' => $post['id_spk_budgeting'],
-                            'id_spk_penawaran' => $post['id_spk_penawaran'],
-                            'id_penawaran' => $post['id_penawaran'],
-                            'id_aktifitas' => $item['id_aktifitas'],
-                            'nm_aktifitas' => $item['nm_aktifitas'],
-                            'qty_pengajuan' => $qty_pengajuan,
-                            'nominal_pengajuan' => $nominal_pengajuan,
-                            'total_pengajuan' => $total_pengajuan,
-                            'qty_estimasi' => $qty_estimasi,
-                            'price_unit_estimasi' => $price_unit_estimasi,
-                            'total_budget_estimasi' => $total_estimasi,
-                            'aktual_terpakai' => $item['aktual_terpakai'],
-                            'sisa_budget' => $item['sisa_budget'],
-                            'qty_terpakai' => $item['qty_terpakai'],
-                            'nominal_terpakai' => $item['price_unit_terpakai'],
-                            'total_terpakai' => $item['total_budget_terpakai'],
-                            'qty_overbudget' => $item['qty_overbudget'],
-                            'nominal_overbudget' => $item['price_unit_overbudget'],
-                            'total_overbudget' => $item['total_budget_overbudget'],
-                            'created_by' => $this->auth->user_id(),
-                            'created_date' => date('Y-m-d H:i:s'),
-                            'custom_subcont' => 1
-                        ];
+        //             if ($qty_pengajuan > 0 && $nominal_pengajuan > 0) {
+        //                 $data_insert_detail[] = [
+        //                     'id_header' => $post['id'],
+        //                     'id_spk_budgeting' => $post['id_spk_budgeting'],
+        //                     'id_spk_penawaran' => $post['id_spk_penawaran'],
+        //                     'id_penawaran' => $post['id_penawaran'],
+        //                     'id_aktifitas' => $item['id_aktifitas'],
+        //                     'nm_aktifitas' => $item['nm_aktifitas'],
+        //                     'qty_pengajuan' => $qty_pengajuan,
+        //                     'nominal_pengajuan' => $nominal_pengajuan,
+        //                     'total_pengajuan' => $total_pengajuan,
+        //                     'qty_estimasi' => $qty_estimasi,
+        //                     'price_unit_estimasi' => $price_unit_estimasi,
+        //                     'total_budget_estimasi' => $total_estimasi,
+        //                     'aktual_terpakai' => $item['aktual_terpakai'],
+        //                     'sisa_budget' => $item['sisa_budget'],
+        //                     'qty_terpakai' => $item['qty_terpakai'],
+        //                     'nominal_terpakai' => $item['price_unit_terpakai'],
+        //                     'total_terpakai' => $item['total_budget_terpakai'],
+        //                     'qty_overbudget' => $item['qty_overbudget'],
+        //                     'nominal_overbudget' => $item['price_unit_overbudget'],
+        //                     'total_overbudget' => $item['total_budget_overbudget'],
+        //                     'created_by' => $this->auth->user_id(),
+        //                     'created_date' => date('Y-m-d H:i:s'),
+        //                     'custom_subcont' => 1
+        //                 ];
 
-                        $total_subcont += $total_pengajuan;
-                    }
-                endforeach;
-            endif;
-        endif;
+        //                 $total_subcont += $total_pengajuan;
+        //             }
+        //         endforeach;
+        //     endif;
+        // endif;
 
         if (!empty($data_insert_detail)) {
             $insert_detail = $this->db->insert_batch('kons_tr_kasbon_project_subcont', $data_insert_detail);

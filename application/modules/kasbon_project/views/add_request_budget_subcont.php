@@ -70,7 +70,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
     <div class="box">
         <div class="box-header">
-            <h4 style="font-weight: 800;">Request Over Budget Akomodasi</h4>
+            <h4 style="font-weight: 800;">Request Over Budget Subcont</h4>
         </div>
 
         <div class="box-body">
@@ -292,7 +292,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         html += '</td>';
 
         html += '<td class="text-center">';
-        html += '<button type="button" class="btn btn-sm btn-danger" onclick="del_custom_subcont('+no+')"><i class="fa fa-trash"></i></button>';
+        html += '<button type="button" class="btn btn-sm btn-danger" onclick="del_custom_subcont(' + no + ')"><i class="fa fa-trash"></i></button>';
         html += '</td>';
 
         html += '</tr>';
@@ -314,7 +314,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
     function hitung_est_total() {
         var total_estimasi = 0;
-        for(i = 1; i <= no; i++){
+        for (i = 1; i <= no; i++) {
             var estimasi_total = get_num($('input[name="custom_subcont[' + i + '][estimasi_total]"]').val());
             total_estimasi += estimasi_total;
         }
@@ -334,11 +334,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
     function hitung_total_budget() {
         var total_budget = 0;
-        for(i = 1; i <= no; i++){
+        for (i = 1; i <= no; i++) {
             var total_budget_tambahan = get_num($('input[name="custom_subcont[' + i + '][total_budget_tambahan]"]').val());
             total_budget += total_budget_tambahan;
         }
-        $('.ttl_new_budget').html(number_format(total_budget, 2)); 
+        $('.ttl_new_budget').html(number_format(total_budget, 2));
     }
 
     function del_custom_subcont(no) {

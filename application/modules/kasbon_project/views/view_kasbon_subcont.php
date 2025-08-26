@@ -230,6 +230,60 @@ if ($header->metode_pembayaran == '3') {
                     }
                     ?>
                 </tbody>
+                <tbody>
+                    <?php
+                    foreach ($data_list_kasbon_subcont_custom as $item) {
+                        if (isset($data_list_kasbon_subcont[$item->id_aktifitas])) {
+                            $no++;
+
+                            $qty_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_pengajuan'] : 0;
+                            $qty_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_estimasi'] : 0;
+                            $price_unit_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['price_unit_estimasi'] : 0;
+                            $total_budgeting_estimasi = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_budgeting_estimasi'] : 0;
+                            $aktual_terpakai = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['aktual_terpakai'] : 0;
+                            $sisa_budget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['sisa_budget'] : 0;
+
+                            $qty_terpakai = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_terpakai'] : 0;
+                            $nominal_terpakai = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['nominal_terpakai'] : 0;
+                            $total_terpakai = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_terpakai'] : 0;
+                            $qty_overbudget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_overbudget'] : 0;
+                            $nominal_overbudget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['nominal_overbudget'] : 0;
+                            $total_overbudget = (isset($data_list_kasbon_subcont[$item->id_aktifitas])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_overbudget'] : 0;
+
+                            echo '<tr>';
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td>' . $item->nm_aktifitas . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_estimasi) . '</td>';
+                            echo '<td class="text-right">' . number_format($price_unit_estimasi, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($total_budgeting_estimasi, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_terpakai) . '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-center">' . number_format($qty_overbudget) . '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
+                            echo '</td>';
+                            echo '</tr>';
+
+                            $ttl_qty_estimasi += $qty_estimasi;
+                            $ttl_total_estimasi += $total_budgeting_estimasi;
+                            $ttl_qty_terpakai += $qty_terpakai;
+                            $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
+                            $ttl_qty_overbudget += $qty_overbudget;
+                            $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
+                        }
+                    }
+                    ?>
+                </tbody>
                 <tfoot>
                     <tr>
                         <th colspan="2" class="text-center">Grand Total</th>
@@ -271,6 +325,30 @@ if ($header->metode_pembayaran == '3') {
                     $ttl_qty_pengajuan = 0;
                     $ttl_total_pengajuan = 0;
                     foreach ($list_data_kasbon as $item) {
+                        if (isset($data_list_kasbon_subcont[$item->id_aktifitas])) {
+                            $no++;
+
+                            $qty_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($data_list_kasbon_subcont[$item->id_aktifitas]['total_pengajuan'])) ? $data_list_kasbon_subcont[$item->id_aktifitas]['total_pengajuan'] : 0;
+
+                            echo '<tr>';
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td>' . $item->nm_aktifitas . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
+                            echo '</tr>';
+
+                            $ttl_qty_pengajuan += $qty_pengajuan;
+                            $ttl_total_pengajuan += $total_pengajuan;
+                        }
+                    }
+                    ?>
+                </tbody>
+                <tbody>
+                    <?php
+                    foreach ($data_list_kasbon_subcont_custom as $item) {
                         if (isset($data_list_kasbon_subcont[$item->id_aktifitas])) {
                             $no++;
 

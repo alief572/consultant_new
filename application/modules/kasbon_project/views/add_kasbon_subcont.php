@@ -257,6 +257,91 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     }
                     ?>
                 </tbody>
+                <tbody>
+                    <?php
+                    foreach ($data_ovb_subcont_custom as $item) {
+                        $no++;
+
+                        $qty_budget_tambahan = (isset($data_overbudget_subcont[$item->id]['qty_budget_tambahan'])) ? $data_overbudget_subcont[$item->id]['qty_budget_tambahan'] : 0;
+
+                        $budget_tambahan = (isset($data_overbudget_subcont[$item->id]['budget_tambahan'])) ? $data_overbudget_subcont[$item->id]['budget_tambahan'] : 0;
+
+                        $pengajuan_budget = (isset($data_overbudget_subcont[$item->id]['pengajuan_budget'])) ? $data_overbudget_subcont[$item->id]['pengajuan_budget'] : 0;
+
+
+                        $aktual_terpakai = (isset($data_kasbon_subcont[$item->id]['ttl_qty_pengajuan'])) ? $data_kasbon_subcont[$item->id]['ttl_qty_pengajuan'] : 0;
+                        $total_terpakai = (isset($data_kasbon_subcont[$item->id]['ttl_total_pengajuan'])) ? $data_kasbon_subcont[$item->id]['ttl_total_pengajuan'] : 0;
+                        $sisa_budget = (isset($data_kasbon_subcont[$item->id]['ttl_total_pengajuan'])) ? (($item->estimasi_harga * $item->estimasi_qty) - $data_kasbon_subcont[$item->id]['ttl_total_pengajuan']) : ($item->estimasi_harga * $item->estimasi_qty);
+
+                        $readonly = '';
+                        if (($sisa_budget + ($qty_budget_tambahan * $budget_tambahan)) <= 0) {
+                            $readonly = 'readonly';
+                        }
+
+                        echo '<tr>';
+
+                        echo '<td class="text-center">' . $no . '</td>';
+
+                        echo '<td>';
+                        echo $item->nm_item;
+                        echo '</td>';
+
+                        echo '<td class="text-center valign-middle">';
+                        echo number_format($item->estimasi_qty);
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][qty_estimasi]" value="' . $item->estimasi_qty . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center valign-middle">';
+                        echo number_format($item->estimasi_harga, 2);
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][price_unit_estimasi]" value="' . $item->estimasi_harga . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center valign-middle">';
+                        echo number_format(($item->estimasi_harga * $item->estimasi_qty), 2);
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][total_estimasi]" value="' . ($item->estimasi_harga * $item->estimasi_qty) . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center valign-middle">';
+                        echo number_format($aktual_terpakai, 2);
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][qty_terpakai]" value="' . $aktual_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center valign-middle">';
+                        echo ($aktual_terpakai > 0) ? number_format($item->estimasi_harga, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][nominal_terpakai]" value="' . $item->estimasi_harga . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center valign-middle">';
+                        echo ($aktual_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][total_terpakai]" value="' . $total_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center valign-middle">';
+                        echo number_format($qty_budget_tambahan, 2);
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][qty_overbudget]" value="' . $qty_budget_tambahan . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center valign-middle">';
+                        echo ($qty_budget_tambahan > 0) ? number_format($item->estimasi_harga, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][nominal_overbudget]" value="' . $item->estimasi_harga . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center valign-middle">';
+                        echo ($qty_budget_tambahan > 0) ? number_format($budget_tambahan, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][total_overbudget]" value="' . $budget_tambahan . '">';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_qty_estimasi += $item->estimasi_qty;
+                        $ttl_total_estimasi += ($item->estimasi_harga * $item->estimasi_qty);
+                        $ttl_qty_terpakai = $aktual_terpakai;
+                        $ttl_total_terpakai = ($aktual_terpakai > 0) ? $total_terpakai : 0;
+                        $ttl_qty_overbudget = $qty_budget_tambahan;
+                        $ttl_total_overbudget = ($qty_budget_tambahan > 0) ? $budget_tambahan : 0;
+                    }
+                    ?>
+                </tbody>
                 <tfoot>
                     <tr>
                         <th colspan="2" class="text-center">Grand Total</th>
@@ -335,6 +420,50 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<td>';
                         echo '<input type="text" name="detail_subcont[' . $no . '][total_pengajuan]" class="form-control form-control-sm text-right auto_num" readonly>';
                         echo '<input type="hidden" name="detail_subcont[' . $no . '][aktual_terpakai]" value="' . ($item->mandays_subcont_final - $aktual_terpakai + $qty_budget_tambahan) . '">';
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][sisa_budget]" value="' . ($sisa_budget + ($qty_budget_tambahan * $budget_tambahan)) . '">';
+                        echo '</td>';
+                    }
+                    ?>
+                </tbody>
+                <tbody>
+                    <?php
+                    foreach ($data_ovb_subcont_custom as $item) {
+                        $no++;
+
+                        $qty_budget_tambahan = (isset($data_overbudget_subcont[$item->id]['qty_budget_tambahan'])) ? $data_overbudget_subcont[$item->id]['qty_budget_tambahan'] : 0;
+                        $budget_tambahan = (isset($data_overbudget_subcont[$item->id]['budget_tambahan'])) ? $data_overbudget_subcont[$item->id]['budget_tambahan'] : 0;
+                        $pengajuan_budget = (isset($data_overbudget_subcont[$item->id]['pengajuan_budget'])) ? $data_overbudget_subcont[$item->id]['pengajuan_budget'] : 0;
+
+
+                        $aktual_terpakai = (isset($data_kasbon_subcont[$item->id]['ttl_qty_pengajuan'])) ? $data_kasbon_subcont[$item->id]['ttl_qty_pengajuan'] : 0;
+                        $sisa_budget = (isset($data_kasbon_subcont[$item->id]['ttl_total_pengajuan'])) ? (($item->estimasi_harga * $item->estimasi_qty) - $data_kasbon_subcont[$item->id]['ttl_total_pengajuan']) : ($item->estimasi_harga * $item->estimasi_qty);
+
+                        $readonly = '';
+                        if (($sisa_budget + ($qty_budget_tambahan * $budget_tambahan)) <= 0) {
+                            $readonly = 'readonly';
+                        }
+
+                        echo '<tr>';
+
+                        echo '<td class="text-center">' . $no . '</td>';
+                        echo '<td>';
+                        echo $item->nm_item;
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][id_aktifitas]" value="' . $item->id . '">';
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][nm_aktifitas]" value="' . $item->nm_item . '">';
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][custom_subcont]" value="1">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="number" name="detail_subcont[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right" onchange="hitung_all_pengajuan()" min="0" step="0.01" ' . $readonly . '>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" value="' . $item->estimasi_harga . '" data-no="' . $no . '" data-budget="' . ($item->estimasi_harga) . '" ' . $readonly . '>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" name="detail_subcont[' . $no . '][total_pengajuan]" class="form-control form-control-sm text-right auto_num" readonly>';
+                        echo '<input type="hidden" name="detail_subcont[' . $no . '][aktual_terpakai]" value="' . ($item->estimasi_qty - $aktual_terpakai + $qty_budget_tambahan) . '">';
                         echo '<input type="hidden" name="detail_subcont[' . $no . '][sisa_budget]" value="' . ($sisa_budget + ($qty_budget_tambahan * $budget_tambahan)) . '">';
                         echo '</td>';
                     }
