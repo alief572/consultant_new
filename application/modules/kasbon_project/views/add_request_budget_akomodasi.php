@@ -74,6 +74,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         </div>
 
         <div class="box-body">
+            <button type="button" class="btn btn-sm btn-success" onclick="add_custom_item();">
+                <i class="fa fa-plus"></i> Add New Item
+            </button> <br><br>
             <table class="table custom-table">
                 <thead>
                     <tr>
@@ -93,7 +96,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <th class="text-center valign-middle">Reason</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="list_informasi_akomodasi">
                     <?php
                     $no = 1;
 
@@ -156,7 +159,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 <tfoot>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="text-center">
+                        <td class="text-center ttl_budget_estimasi">
                             <?= number_format($ttl_total_budget_estimasi, 2) ?>
                         </td>
                         <td colspan="2"></td>
@@ -191,6 +194,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
     });
+
+    var no = parseInt(<?= $no ?>);
 
     function number_format(number, decimals, dec_point, thousands_sep) {
         // Strip all characters but numerical ones.
@@ -228,10 +233,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     }
 
     function hitung_all() {
-        var no = "<?= $no ?>";
 
         var ttl_budget = 0;
         var ttl_pengajuan_new_budget = 0;
+        var ttl_budget_estimasi = 0;
 
         for (i = 1; i <= no; i++) {
             var total_budget = get_num($('input[name="req_akomodasi[' + i + '][total_budget]"]').val());
@@ -247,10 +252,74 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
             ttl_pengajuan_new_budget += pengajuan_budget_new;
             ttl_budget += (qty_budget_tambahan * budget_tambahan);
+
+            var price_custom = 0;
+            if ($('input[name="custom_akomodasi[' + i + '][qty_estimasi_akomodasi]"]').length > 0) {
+                price_custom = get_num($('input[name="custom_akomodasi[' + i + '][harga_estimasi_akomodasi]"]').val());
+            }
+
+            var qty_custom = 0;
+            if ($('input[name="custom_akomodasi[' + i + '][qty_estimasi_akomodasi]"]').length > 0) {
+                qty_custom = $('input[name="custom_akomodasi[' + i + '][qty_estimasi_akomodasi]"]').val();
+            }
+
+            var total_budget_estimasi = get_num($('input[name="req_akomodasi[' + i + '][total_budget]"]').val());
+
+            var total_custom = (qty_custom * price_custom);
+
+            if ($('.total_estimasi_akomodasi_' + i).length > 0) {
+                $('.total_estimasi_akomodasi_' + i).autoNumeric('set', total_custom);
+            }
+
+            ttl_budget_estimasi += (total_custom + total_budget_estimasi);
+
         }
 
         $('.ttl_budget').html(number_format(ttl_budget, 2));
         $('.ttl_new_budget').html(number_format(ttl_pengajuan_new_budget, 2));
+        $('.ttl_budget_estimasi').html(number_format(ttl_budget_estimasi));
+    }
+
+    function add_custom_item() {
+        var html = '';
+
+        html += '<tr>';
+
+        html += '<td class="text-center">';
+        html += no;
+        html += '</td>';
+
+        html += '<td>';
+        html += '<textarea class="form-control form-control-sm" name="custom_akomodasi[' + no + '][nm_item]"></textarea>';
+        html += '</td>';
+
+        html += '<td>';
+        html += '<input type="number" class="form-control form-control-sm text-right" min="0" name="custom_akomodasi[' + no + '][qty_estimasi_akomodasi]" onchange="hitung_all();">';
+        html += '</td>';
+
+        html += '<td>';
+        html += '<input type="text" class="form-control form-control-sm auto_num text-right" name="custom_akomodasi[' + no + '][harga_estimasi_akomodasi]" onchange="hitung_all();">';
+        html += '</td>';
+
+        html += '<td>';
+        html += '<input type="text" class="form-control form-control-sm auto_num text-right total_estimasi_akomodasi_' + no + '" name="custom_akomodasi[' + no + '][total_estimasi_akomodasi]" readonly>';
+        html += '</td>';
+
+        html += '<td></td>';
+        html += '<td></td>';
+        html += '<td></td>';
+        html += '<td></td>';
+
+        html += '<td>';
+        html += '<textarea class="form-control form-control-sm" name="custom_akomodasi[' + no + '][reason]"></textarea>';
+        html += '</td>';
+
+        html += '</tr>';
+
+        $('.list_informasi_akomodasi').append(html);
+        no += 1;
+
+        $('.auto_num').autoNumeric('init');
     }
 
     $(document).on('submit', '#frm-data', function(e) {

@@ -223,6 +223,51 @@ if ($header->metode_pembayaran == '3') {
                             $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
                         }
                     }
+
+                    foreach ($list_data_lab_custom as $item) {
+                        if (isset($list_arr_kasbon[$item->id])) {
+                            $no++;
+
+                            $qty_terpakai = (isset($list_arr_kasbon[$item->id]['qty_terpakai'])) ? $list_arr_kasbon[$item->id]['qty_terpakai'] : 0;
+                            $nominal_terpakai = (isset($list_arr_kasbon[$item->id]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id]['nominal_terpakai'] : 0;
+                            $total_terpakai = (isset($list_arr_kasbon[$item->id]['total_terpakai'])) ? $list_arr_kasbon[$item->id]['total_terpakai'] : 0;
+
+                            $qty_overbudget = (isset($list_arr_kasbon[$item->id]['qty_overbudget'])) ? $list_arr_kasbon[$item->id]['qty_overbudget'] : 0;
+                            $nominal_overbudget = (isset($list_arr_kasbon[$item->id]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id]['nominal_overbudget'] : 0;
+                            $total_overbudget = (isset($list_arr_kasbon[$item->id]['total_overbudget'])) ? $list_arr_kasbon[$item->id]['total_overbudget'] : 0;
+
+                            echo '<tr>';
+
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td>' . $item->nm_item . '</td>';
+                            echo '<td class="text-center">' . number_format($item->estimasi_qty, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($item->estimasi_harga, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($item->estimasi_total, 2) . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_terpakai, 2) . '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-center">' . number_format($qty_overbudget, 2) . '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
+                            echo '</td>';
+                            echo '<td class="text-right">';
+                            echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
+                            echo '</td>';
+
+                            echo '</tr>';
+
+                            $ttl_qty_estimasi += $item->estimasi_qty;
+                            $ttl_total_estimasi += $item->estimasi_total;
+                            $ttl_qty_terpakai += $qty_terpakai;
+                            $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
+                            $ttl_qty_overbudget += $qty_overbudget;
+                            $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
+                        }
+                    }
                     ?>
                 </tbody>
                 <tfoot>
@@ -276,6 +321,26 @@ if ($header->metode_pembayaran == '3') {
 
                             echo '<td class="text-center">' . $no . '</td>';
                             echo '<td>' . $item->nm_biaya . '</td>';
+                            echo '<td class="text-center">' . number_format($qty_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
+                            echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
+
+                            echo '</tr>';
+                        }
+                    }
+
+                    foreach ($list_data_lab_custom as $item) {
+                        if (isset($list_arr_kasbon[$item->id])) {
+                            $no++;
+
+                            $qty_pengajuan = (isset($list_arr_kasbon[$item->id]['qty_pengajuan'])) ? $list_arr_kasbon[$item->id]['qty_pengajuan'] : 0;
+                            $nominal_pengajuan = (isset($list_arr_kasbon[$item->id]['nominal_pengajuan'])) ? $list_arr_kasbon[$item->id]['nominal_pengajuan'] : 0;
+                            $total_pengajuan = (isset($list_arr_kasbon[$item->id]['total_pengajuan'])) ? $list_arr_kasbon[$item->id]['total_pengajuan'] : 0;
+
+                            echo '<tr>';
+
+                            echo '<td class="text-center">' . $no . '</td>';
+                            echo '<td>' . $item->nm_item . '</td>';
                             echo '<td class="text-center">' . number_format($qty_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';

@@ -260,7 +260,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         html += '<input type="hidden" name="custom_subcont[' + no + '][id_spk_budgeting]" value="<?= $list_budgeting->id_spk_budgeting ?>">';
         html += '<input type="hidden" name="custom_subcont[' + no + '][id_spk_penawaran]" value="<?= $list_budgeting->id_spk_penawaran ?>">';
         html += '<input type="hidden" name="custom_subcont[' + no + '][id_penawaran]" value="<?= $list_budgeting->id_penawaran ?>">';
-        html += '<input type="text" class="form-control form-control-sm" name="custom_subcont[' + no + '][nm_item]">';
+        html += '<textarea class="form-control form-control-sm" name="custom_subcont[' + no + '][nm_item]"></textarea>';
         html += '</td>';
 
         html += '<td class="text-left">';

@@ -190,28 +190,28 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->where('a.sts', null);
         $get_kasbon_akomodasi = $this->db->get()->result();
 
-        $this->db->select('a.*, b.nm_biaya');
+        $this->db->select('a.*, IF(a.custom_others = 1, a.nm_item, b.nm_biaya) as nm_biaya');
         $this->db->from('kons_tr_kasbon_project_others a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_kasbon);
         $this->db->where('a.sts', null);
         $get_kasbon_others = $this->db->get()->result();
 
-        $this->db->select('a.*, b.isu_lingkungan as nm_biaya');
+        $this->db->select('a.*, IF(a.custom_lab = 1, a.nm_item, b.isu_lingkungan) as nm_biaya');
         $this->db->from('kons_tr_kasbon_project_lab a');
         $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_kasbon);
         $this->db->where('a.sts', null);
         $get_kasbon_lab = $this->db->get()->result();
 
-        $this->db->select('a.*, b.nm_biaya as nm_biaya');
+        $this->db->select('a.*, IF(a.custom_subcont_tenaga_ahli = 1, a.nm_item, b.nm_biaya) as nm_biaya');
         $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
         $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_kasbon);
         $this->db->where('a.sts', null);
         $get_kasbon_subcont_tenaga_ahli = $this->db->get()->result();
 
-        $this->db->select('a.*, b.nm_biaya as nm_biaya');
+        $this->db->select('a.*, IF(a.custom_subcont_perusahaan = 1, a.nm_item, b.nm_biaya) as nm_biaya');
         $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
         $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_kasbon);
