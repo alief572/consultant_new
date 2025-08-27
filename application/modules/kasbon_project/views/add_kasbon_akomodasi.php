@@ -258,6 +258,95 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         $ttl_qty_overbudget += $ttl_qty_tambahan;
                         $ttl_total_overbudget += ($ttl_qty_tambahan > 0) ? $total_budget_tambahan : 0;
                     }
+
+                    foreach ($list_akomodasi_custom as $item) {
+                        $no++;
+
+                        $aktual_terpakai = (isset($data_kasbon_akomodasi[$item->id]['ttl_qty_pengajuan'])) ? $data_kasbon_akomodasi[$item->id]['ttl_qty_pengajuan'] : 0;
+
+                        $total_budget_tambahan = (isset($data_ovb_akomodasi[$item->id])) ? $data_ovb_akomodasi[$item->id]['total_budget_tambahan'] : 0;
+                        $ttl_qty_tambahan = (isset($data_ovb_akomodasi[$item->id])) ? $data_ovb_akomodasi[$item->id]['ttl_qty_tambahan'] : 0;
+
+                        $sisa_budget = (isset($data_kasbon_akomodasi[$item->id]['ttl_total_pengajuan'])) ? (($item->estimasi_harga * $item->estimasi_qty) - $data_kasbon_akomodasi[$item->id]['ttl_total_pengajuan']) : ($item->estimasi_harga * $item->estimasi_qty);
+
+                        $sisa_budget = ($sisa_budget + $total_budget_tambahan);
+
+                        $readonly = '';
+                        if ($sisa_budget <= 0) {
+                            $readonly = 'readonly';
+                        }
+
+                        $sisa_qty = (($item->estimasi_qty + $ttl_qty_tambahan) - $aktual_terpakai);
+
+                        $qty_terpakai = $aktual_terpakai;
+                        $nominal_terpakai = $item->estimasi_harga;
+                        $total_terpakai = (isset($data_kasbon_akomodasi[$item->id]['ttl_total_pengajuan'])) ? $data_kasbon_akomodasi[$item->id]['ttl_total_pengajuan'] : 0;
+
+                        echo '<tr>';
+
+                        echo '<td class="text-center">' . $no . '</td>';
+                        echo '<td>';
+                        echo $item->nm_item;
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][id_akomodasi]" value="' . $item->id . '">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][id_item]" value="' . $item->id . '">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][nm_item]" value="' . $item->nm_item . '">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][custom_akomodasi]" value="1">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($item->estimasi_qty);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][qty_estimasi]" value="' . $item->estimasi_qty . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($item->estimasi_harga, 2);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][price_unit_estimasi]" value="' . $item->estimasi_harga . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($item->estimasi_total, 2);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][total_estimasi]" value="' . $item->estimasi_total . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($qty_terpakai, 2);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][qty_terpakai]" value="' . $qty_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo ($aktual_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][nominal_terpakai]" value="' . $nominal_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo ($aktual_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][total_terpakai]" value="' . $total_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($ttl_qty_tambahan, 2);
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][qty_overbudget]" value="' . $ttl_qty_tambahan . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo ($ttl_qty_tambahan > 0) ? number_format($item->estimasi_harga, 2) : '-';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][nominal_overbudget]" value="' . $item->estimasi_harga . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo ($ttl_qty_tambahan > 0) ? number_format($total_budget_tambahan, 2) : '-';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][total_overbudget]" value="' . $total_budget_tambahan . '">';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_qty_estimasi += $item->estimasi_qty;
+                        $ttl_total_estimasi += $item->estimasi_total;
+                        $ttl_qty_terpakai += $qty_terpakai;
+                        $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
+                        $ttl_qty_overbudget += $ttl_qty_tambahan;
+                        $ttl_total_overbudget += ($ttl_qty_tambahan > 0) ? $total_budget_tambahan : 0;
+                    }
                     ?>
                 </tbody>
                 <tfoot>
@@ -337,6 +426,55 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                         echo '<td>';
                         echo '<input type="text" name="detail_akomodasi[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" value="' . $item->price_unit_final . '" data-no="' . $no . '" data-budget="' . ($item->price_unit_final) . '" ' . $readonly . '>';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" name="detail_akomodasi[' . $no . '][total_pengajuan]" class="form-control form-control-sm text-right auto_num" value="" readonly>';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][qty_budget_tambahan]" value="' . $ttl_qty_tambahan . '">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][budget_tambahan]" value="' . $total_budget_tambahan . '">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][aktual_terpakai]" value="' . ($sisa_qty) . '">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
+                        echo '</td>';
+
+                        echo '</tr>';
+                    }
+
+                    foreach ($list_akomodasi_custom as $item) {
+                        $no++;
+
+                        $aktual_terpakai = (isset($data_kasbon_akomodasi[$item->id]['ttl_qty_pengajuan'])) ? $data_kasbon_akomodasi[$item->id]['ttl_qty_pengajuan'] : 0;
+
+                        $total_budget_tambahan = (isset($data_ovb_akomodasi[$item->id])) ? $data_ovb_akomodasi[$item->id]['total_budget_tambahan'] : 0;
+                        $ttl_qty_tambahan = (isset($data_ovb_akomodasi[$item->id])) ? $data_ovb_akomodasi[$item->id]['ttl_qty_tambahan'] : 0;
+
+                        $sisa_budget = (isset($data_kasbon_akomodasi[$item->id]['ttl_total_pengajuan'])) ? (($item->estimasi_harga * $item->estimasi_qty) - $data_kasbon_akomodasi[$item->id]['ttl_total_pengajuan']) : ($item->estimasi_harga * $item->estimasi_qty);
+
+                        $sisa_budget = ($sisa_budget + $total_budget_tambahan);
+
+                        $readonly = '';
+                        if ($sisa_budget <= 0) {
+                            $readonly = 'readonly';
+                        }
+
+                        $sisa_qty = (($item->estimasi_qty + $ttl_qty_tambahan) - $aktual_terpakai);
+
+                        echo '<tr>';
+
+                        echo '<td class="text-center">' . $no . '</td>';
+                        echo '<td>';
+                        echo $item->nm_item;
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][id_akomodasi]" value="' . $item->id . '">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][id_item]" value="' . $item->id . '">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][nm_item]" value="' . $item->nm_item . '">';
+                        echo '<input type="hidden" name="detail_akomodasi[' . $no . '][detail_akomodasi]" value="1">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="number" name="detail_akomodasi[' . $no . '][qty_pengajuan]" class="form-control form-control-sm text-right qty_pengajuan qty_pengajuan_' . $no . '" step="0.01" onchange="hitung_all_pengajuan()" ' . $readonly . ' data-no_urut="' . $no . '" data-price_unit="' . $item->estimasi_harga . '">';
+                        echo '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" name="detail_akomodasi[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" value="' . $item->estimasi_harga . '" data-no="' . $no . '" data-budget="' . ($item->estimasi_harga) . '" ' . $readonly . '>';
                         echo '</td>';
 
                         echo '<td>';
@@ -515,7 +653,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         for (i = 1; i <= no; i++) {
             var qty_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][qty_pengajuan]"]').val());
             var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
-            var budget_tambahan = get_num($('input[name="detail_akomodasi[' + i + '][budget_tamabahan]"]').val());
+            var budget_tambahan = get_num($('input[name="detail_akomodasi[' + i + '][budget_tambahan]"]').val());
             var sisa_budget = get_num($('input[name="detail_akomodasi[' + i + '][sisa_budget]"]').val());
 
             if (qty_pengajuan > 0 && qty_pengajuan < 1) {

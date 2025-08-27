@@ -3,6 +3,11 @@
 class Kasbon_project_model extends BF_Model
 {
 
+    protected $ENABLE_ADD;
+    protected $ENABLE_MANAGE;
+    protected $ENABLE_DELETE;
+    protected $ENABLE_VIEW;
+
     public function __construct()
     {
         parent::__construct();

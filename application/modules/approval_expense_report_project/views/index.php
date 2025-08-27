@@ -25,24 +25,25 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <table id="table_penawaran" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th align="center">No</th>
-                    <th align="center">Nomor SPK</th>
-                    <th align="center">Nomor Expense</th>
-                    <th align="center">Customer</th>
-                    <th align="center">Sales</th>
-                    <th align="center">Project Leader</th>
-                    <th align="center">Package</th>
-                    <th align="center">Keterangan</th>
-                    <th align="center">Tipe</th>
-                    <th align="center">Nominal</th>
-                    <th align="center">Action</th>
-                </tr>
-            </thead>
-
-        </table>
+        <div class="table-responsive">
+            <table id="table_penawaran" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th align="center">No</th>
+                        <th align="center">Nomor SPK</th>
+                        <th align="center">Nomor Expense</th>
+                        <th align="center">Customer</th>
+                        <th align="center">Sales</th>
+                        <th align="center">Project Leader</th>
+                        <th align="center">Package</th>
+                        <th align="center">Keterangan</th>
+                        <th align="center">Tipe</th>
+                        <th align="center">Nominal</th>
+                        <th align="center">Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
     <!-- /.box-body -->
 </div>

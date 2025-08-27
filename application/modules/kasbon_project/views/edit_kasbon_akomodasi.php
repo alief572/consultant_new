@@ -297,6 +297,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             echo '<td class="text-center">';
                             echo $no;
                             echo '<input type="hidden" name="dt[' . $no . '][id]" value="' . $item->id . '">';
+                            echo '<input type="hidden" name="dt[' . $no . '][custom_akomodasi]" value="' . $item->custom_akomodasi . '">';
                             echo '</td>';
                             echo '<td>';
                             echo $item->nm_item;
