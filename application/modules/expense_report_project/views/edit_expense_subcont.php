@@ -22,12 +22,18 @@ if ($tipe == '6') {
 }
 
 $enb_reject_reason = 'd-none';
-if ($header->reject_reason !== '') {
+if ($header->reject_reason !== '' && $header->reject_reason !== null) {
     $enb_reject_reason = '';
+}
+
+$hide_jurnal_pph21 = 'd-none';
+if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
+    $hide_jurnal_pph21 = '';
 }
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
     .btn {
@@ -122,15 +128,17 @@ if ($header->reject_reason !== '') {
                     <tr>
                         <th class="text-center" rowspan="2">No.</th>
                         <th class="text-center" rowspan="2">Item</th>
-                        <th class="text-center" colspan="2">Kasbon</th>
-                        <th class="text-center" colspan="2">Expense Report</th>
-                        <th class="text-center" rowspan="2">Keterangan</th>
+                        <th class="text-center" colspan="3">Kasbon</th>
+                        <th class="text-center" colspan="3">Expense Report</th>
+                        <th class="text-center" rowspan="2" colspan="2">Keterangan</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Nominal</th>
+                        <th class="text-center">Total Kasbon</th>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Nominal</th>
+                        <th class="text-center">Total Expense</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -141,19 +149,18 @@ if ($header->reject_reason !== '') {
                     $count_no = 0;
                     foreach ($datalist_item as $item) {
 
-                        $readonly_qty = '';
-                        $readonly_nominal = '';
-
-                        if ($item['qty_kasbon'] <= 0) {
-                            $readonly_qty = 'readonly';
-                        }
-                        if ($item['nominal_kasbon'] <= 0) {
-                            $readonly_nominal = 'readonly';
-                        }
+                        $readonly_qty = 'readonly';
+                        $readonly_nominal = 'readonly';
 
                         $qty_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['qty_expense'] : 0;
                         $nominal_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['nominal_expense'] : 0;
+                        $total_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['total_expense'] : 0;
                         $keterangan = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['keterangan'] : '';
+
+                        if ($qty_expense > 0) {
+                            $readonly_qty = '';
+                            $readonly_nominal = '';
+                        }
 
                         echo '<tr>';
 
@@ -162,16 +169,20 @@ if ($header->reject_reason !== '') {
                         echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][id_detail_kasbon]" value="' . $item['id_detail_kasbon'] . '">';
                         echo '</td>';
 
-                        echo '<td width="500">' . $item['nm_item'] . '</td>';
+                        echo '<td width="300">' . $item['nm_item'] . '</td>';
 
                         echo '<td class="text-center" width="200">';
-                        echo number_format($item['qty_kasbon']);
+                        echo number_format($item['qty_kasbon'], 2);
                         echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][qty_kasbon]" value="' . $item['qty_kasbon'] . '">';
                         echo '</td>';
 
                         echo '<td class="text-center" width="200">';
                         echo number_format($item['nominal_kasbon'], 2);
                         echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][nominal_kasbon]" value="' . $item['nominal_kasbon'] . '">';
+                        echo '</td>';
+
+                        echo '<td width="200">';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][total_kasbon]" class="form-control form-control-sm auto_num text-right " value="' . ($item['qty_kasbon'] * $item['nominal_kasbon']) . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" readonly>';
                         echo '</td>';
 
                         echo '<td width="200">';
@@ -183,32 +194,51 @@ if ($header->reject_reason !== '') {
                         echo '</td>';
 
                         echo '<td width="200">';
-                        echo '<textarea class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][keterangan]" ' . $readonly_nominal . '>' . $keterangan . '</textarea>';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][total_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . ($nominal_expense * $qty_expense) . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
+                        echo '</td>';
+
+                        echo '<td width="400" colspan="2">';
+                        echo '<textarea class="form-control form-control-sm" readonly>' . $keterangan . '</textarea>';
                         echo '</td>';
 
                         echo '</tr>';
 
-                        $ttl_kasbon += ($qty_expense * $nominal_expense);
-                        $ttl_expense_report += ($qty_expense * $nominal_expense);
+                        $ttl_kasbon += ($item['qty_kasbon'] * $item['nominal_kasbon']);
+                        $ttl_expense_report += ($total_expense);
 
                         $count_no++;
                     }
+
+                    $kelebihan_kasbon = ($ttl_kasbon > $ttl_expense_report) ? ($ttl_kasbon - $ttl_expense_report) : 0;
+                    $kelebihan_expense = ($ttl_expense_report > $ttl_kasbon) ? ($ttl_expense_report - $ttl_kasbon) : 0;
                     ?>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="5" class="text-right">Total Kasbon</td>
                         <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
+                        <td>Kelebihan Kasbon</td>
+                        <td>
+                            <input type="text" name="kelebihan_kasbon" class="form-control form-control-sm text-right kelebihan_kasbon" value="<?= number_format($kelebihan_kasbon, 2) ?>" readonly>
+                        </td>
                         <td></td>
                     </tr>
                     <tr>
                         <td colspan="5" class="text-right">Total Expense Report</td>
                         <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
+                        <td>Kelebihan Expense</td>
+                        <td>
+                            <input type="text" name="kelebihan_expense" class="form-control form-control-sm text-right kelebihan_expense" value="<?= number_format($kelebihan_expense, 2) ?>" readonly>
+                        </td>
                         <td></td>
                     </tr>
                     <tr>
                         <td colspan="5" class="text-right">Selisih</td>
                         <td class="text-right col_selisih"><?= number_format($header->selisih, 2) ?></td>
+                        <td>Kontrol</td>
+                        <td>
+                            <input type="text" name="kontrol" class="form-control form-control-sm text-right kontrol" value="<?= number_format($header->selisih, 2) ?>" readonly>
+                        </td>
                         <td></td>
                     </tr>
                 </tfoot>
@@ -255,6 +285,77 @@ if ($header->reject_reason !== '') {
                         </tr>
                     </table>
                 </div>
+                <div class="col-md-6">
+                    <table style="width: 100%">
+                        <tr>
+                            <th style="padding: 5px;">Bank</th>
+                            <td style="padding: 5px;">
+                                <select name="bank" class="form-control form-control-sm select2" onchange="set_jurnal()">
+                                    <option value="">- Pilih Bank -</option>
+                                    <?php
+                                    foreach ($list_bank  as $item) :
+                                        echo '<option value="' . $item->id . '">' . $item->nama_bank . ' - ' . $item->rekening . ' - ' . $item->nama . '</option>';
+                                    endforeach;
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-12">
+                    <br><br>
+
+                    <table class="table custom-table">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Tanggal Jurnal</th>
+                                <th class="text-center">COA</th>
+                                <th class="text-center">Nama Company</th>
+                                <th class="text-center">Nama Account</th>
+                                <th class="text-center">Deskripsi</th>
+                                <th class="text-center">Debit</th>
+                                <th class="text-center">Credit</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody_jurnal">
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="5" class="text-center">Balancing</th>
+                                <th class="text-right ttl_debit">0.00</th>
+                                <th class="text-right ttl_kredit">0.00</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="col-md-12 <?= $hide_jurnal_pph21 ?>">
+                    <h4>Jurnal PPh 21</h4>
+                    <table class="table custom-table">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Tanggal Jurnal</th>
+                                <th class="text-center">COA</th>
+                                <th class="text-center">Nama Company</th>
+                                <th class="text-center">Nama Account</th>
+                                <th class="text-center">Deskripsi</th>
+                                <th class="text-center">Debit</th>
+                                <th class="text-center">Credit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?= $list_jurnal_pph21['hasil'] ?>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="5" class="text-center">
+                                    Balancing
+                                </th>
+                                <th class="text-right jurnal_pph_debit"><?= number_format(0) ?></th>
+                                <th class="text-right jurnal_pph_kredit"><?= number_format($list_jurnal_pph21['nominal_pph']) ?></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
             <a href="<?= base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
                 <i class="fa fa-arrow-left"></i> Back
@@ -264,6 +365,9 @@ if ($header->reject_reason !== '') {
             </button>
         </div>
     </div>
+
+    <input type="hidden" name="ttl_debit">
+    <input type="hidden" name="ttl_kredit">
 </form>
 
 <div class="modal modal-default fade" id="dialog-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -303,6 +407,8 @@ if ($header->reject_reason !== '') {
         </div>
     </div>
 </div>
+
+
 
 <div class="modal modal-default fade" id="dialog-popup2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" style='width:70%; '>
@@ -344,10 +450,17 @@ if ($header->reject_reason !== '') {
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
+
+        $('.select2').select2({
+            width: '100%'
+        });
+
+        set_jurnal();
     });
 
     $(document).on('click', '.del_bukti_penggunaan', function() {
@@ -537,10 +650,20 @@ if ($header->reject_reason !== '') {
 
         for (i = 1; i <= count_no; i++) {
             var qty_kasbon = get_num($('input[name="detail_subcont[' + i + '][qty_kasbon]"]').val());
+            if (qty_kasbon < 1) {
+                qty_kasbon = 1;
+            }
             var nominal_kasbon = get_num($('input[name="detail_subcont[' + i + '][nominal_kasbon]"]').val());
 
             var qty_expense = get_num($('input[name="detail_subcont[' + i + '][qty_expense]"]').val());
+            if (qty_expense < 1) {
+                qty_expense = 1;
+            }
             var nominal_expense = get_num($('input[name="detail_subcont[' + i + '][nominal_expense]"]').val());
+
+            var total_expense = parseFloat(qty_expense * nominal_expense);
+
+            $('input[name="detail_subcont[' + i + '][total_expense]"]').val(number_format(total_expense, 2));
 
             ttl_expense_report += (qty_expense * nominal_expense);
             ttl_kasbon += (qty_kasbon * nominal_kasbon);
@@ -551,5 +674,80 @@ if ($header->reject_reason !== '') {
         $('.col_ttl_expense_report').html(number_format(ttl_expense_report, 2));
         $('.col_ttl_kasbon').html(number_format(ttl_kasbon, 2));
         $('.col_selisih').html(number_format(selisih, 2));
+        $('input[name="kontrol"]').val(number_format(selisih, 2));
+
+        hitung_kelebihan_dan_control();
+        set_jurnal();
+    }
+
+    function set_jurnal() {
+        var count_no = parseInt(<?= $count_no ?>)
+        var id_header = $('input[name="id_header"]').val();
+
+        var kelebihan_kasbon = get_num($('input[name="kelebihan_kasbon"]').val());
+        var kelebihan_expense = get_num($('input[name="kelebihan_expense"]').val());
+        var kontrol = get_num($('input[name="kontrol"]').val());
+
+        var total_kasbon = get_num($('.col_ttl_kasbon').html());
+        var total_expense = get_num($('.col_ttl_expense_report').html());
+
+        var id_bank = $('select[name="bank"]').val();
+
+        var id_penawaran = "<?= $id_penawaran ?>";
+
+        var arr_total_expense = {};
+        for (i = 1; i <= count_no; i++) {
+            var id_detail_kasbon = $('input[name="detail_subcont[' + i + '][id_detail_kasbon]"]').val();
+            var total_expense = get_num($('input[name="detail_subcont[' + i + '][total_expense]"]').val());
+
+            var arr = [];
+
+            arr_total_expense[id_detail_kasbon] = total_expense;
+        }
+
+        $.ajax({
+            type: 'post',
+            url: siteurl + active_controller + 'set_jurnal_expense',
+            data: {
+                'kelebihan_kasbon': kelebihan_kasbon,
+                'kelebihan_expense': kelebihan_expense,
+                'kontrol': kontrol,
+                'total_kasbon': total_kasbon,
+                'total_expense': total_expense,
+                'id_penawaran': id_penawaran,
+                'id_bank': id_bank,
+                'id_header': id_header,
+                'arr_total_expense': arr_total_expense
+            },
+            cache: false,
+            dataType: 'json',
+            success: function(result) {
+                $('.tbody_jurnal').html(result.hasil);
+                $('.ttl_debit').html(number_format(result.ttl_debit));
+                $('.ttl_kredit').html(number_format(result.ttl_kredit));
+            }
+        });
+    }
+
+    function hitung_kelebihan_dan_control() {
+        var total_kasbon = get_num($('.col_ttl_kasbon').html());
+        var total_expense = get_num($('.col_ttl_expense_report').html());
+
+        var kelebihan_kasbon = 0;
+        var kelebihan_expense = 0;
+
+        if (total_kasbon > total_expense) {
+            kelebihan_kasbon = (total_kasbon - total_expense);
+        }
+        if (total_expense > total_kasbon) {
+            kelebihan_expense = (total_expense - total_kasbon);
+        }
+
+        // alert(kelebihan_kasbon + ' - ' + kelebihan_expense);
+
+        $('input[name="kelebihan_kasbon"]').val(number_format(kelebihan_kasbon, 2));
+        $('input[name="kelebihan_expense"]').val(number_format(kelebihan_expense, 2));
+
+        set_jurnal();
     }
 </script>

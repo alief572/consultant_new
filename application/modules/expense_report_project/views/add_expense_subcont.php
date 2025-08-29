@@ -20,6 +20,11 @@ if ($tipe == '5') {
 if ($tipe == '6') {
     $title_header = 'Subcont Perusahaan';
 }
+
+$hide_jurnal_pph21 = 'd-none';
+if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
+    $hide_jurnal_pph21 = '';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -82,6 +87,10 @@ if ($tipe == '6') {
         /* Position below the button */
         right: 0;
         /* Align with left edge */
+    }
+
+    .d-none {
+        display: none;
     }
 </style>
 
@@ -266,17 +275,47 @@ if ($tipe == '6') {
                                 <th class="text-center">COA</th>
                                 <th class="text-center">Nama Company</th>
                                 <th class="text-center">Nama Account</th>
+                                <th class="text-center">Deskripsi</th>
                                 <th class="text-center">Debit</th>
-                                <th class="text-center">Credit</th>
+                                <th class="text-center">Kredit</th>
                             </tr>
                         </thead>
                         <tbody class="tbody_jurnal">
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="4" class="text-center">Balancing</th>
+                                <th colspan="5" class="text-center">Balancing</th>
                                 <th class="text-right ttl_debit">0.00</th>
                                 <th class="text-right ttl_kredit">0.00</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="col-md-12 <?= $hide_jurnal_pph21 ?>">
+                    <h4>Jurnal PPh 21</h4>
+                    <table class="table custom-table">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Tanggal Jurnal</th>
+                                <th class="text-center">COA</th>
+                                <th class="text-center">Nama Company</th>
+                                <th class="text-center">Nama Account</th>
+                                <th class="text-center">Deskripsi</th>
+                                <th class="text-center">Debit</th>
+                                <th class="text-center">Credit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?= $list_jurnal_pph21['hasil'] ?>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="5" class="text-center">
+                                    Balancing
+                                </th>
+                                <th class="text-right jurnal_pph_debit"><?= number_format(0) ?></th>
+                                <th class="text-right jurnal_pph_kredit"><?= number_format($list_jurnal_pph21['nominal_pph']) ?></th>
                             </tr>
                         </tfoot>
                     </table>
@@ -467,6 +506,8 @@ if ($tipe == '6') {
     }
 
     function set_jurnal() {
+        var count_no = parseInt(<?= $count_no ?>)
+        var id_header = $('input[name="id_header"]').val();
 
         var kelebihan_kasbon = get_num($('input[name="kelebihan_kasbon"]').val());
         var kelebihan_expense = get_num($('input[name="kelebihan_expense"]').val());
@@ -479,6 +520,16 @@ if ($tipe == '6') {
 
         var id_penawaran = "<?= $id_penawaran ?>";
 
+        var arr_total_expense = {};
+        for (i = 1; i <= count_no; i++) {
+            var id_detail_kasbon = $('input[name="detail_subcont[' + i + '][id_detail_kasbon]"]').val();
+            var total_expense = get_num($('input[name="detail_subcont[' + i + '][total_expense]"]').val());
+
+            var arr = [];
+
+            arr_total_expense[id_detail_kasbon] = total_expense;
+        }
+
         $.ajax({
             type: 'post',
             url: siteurl + active_controller + 'set_jurnal_expense',
@@ -489,7 +540,9 @@ if ($tipe == '6') {
                 'total_kasbon': total_kasbon,
                 'total_expense': total_expense,
                 'id_penawaran': id_penawaran,
-                'id_bank': id_bank
+                'id_bank': id_bank,
+                'id_header': id_header,
+                'arr_total_expense': arr_total_expense
             },
             cache: false,
             dataType: 'json',

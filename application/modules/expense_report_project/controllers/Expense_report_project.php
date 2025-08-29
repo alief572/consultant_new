@@ -437,6 +437,7 @@ class Expense_report_project extends Admin_Controller
                 $this->db->from('kons_tr_kasbon_project_subcont a');
                 $this->db->where('a.id_header', $id_header);
                 $this->db->where('a.id_aktifitas', $item->id_aktifitas);
+                $this->db->where('a.custom_subcont', 0);
                 $get_kasbon = $this->db->get()->row();
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
@@ -453,6 +454,40 @@ class Expense_report_project extends Admin_Controller
                     'total_kasbon' => $total_kasbon
                 ];
             }
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_ovb_subcont a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_subcont_custom = $this->db->get()->result();
+
+            foreach ($get_list_subcont_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_aktifitas', $item->id);
+                $this->db->where('a.custom_subcont', 1);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
         }
 
         if ($get_kasbon_header->tipe == 2) {
@@ -462,6 +497,520 @@ class Expense_report_project extends Admin_Controller
             $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
             $this->db->order_by('a.id_item', 'asc');
             $get_list_akomodasi = $this->db->get()->result();
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_akomodasi a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_akomodasi_custom = $this->db->get()->result();
+
+            $no = 0;
+            foreach ($get_list_akomodasi as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_akomodasi a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_akomodasi', $item->id_akomodasi);
+                $this->db->where('a.custom_akomodasi', 0);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_biaya,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_akomodasi_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_akomodasi a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_akomodasi', $item->id);
+                $this->db->where('a.custom_akomodasi', 1);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+        }
+
+        if ($get_kasbon_header->tipe == 3) {
+            $this->db->select('a.*, b.nm_biaya');
+            $this->db->from('kons_tr_spk_budgeting_others a');
+            $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $this->db->order_by('a.id_item', 'asc');
+            $get_list_others = $this->db->get()->result();
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_others a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_others_custom = $this->db->get()->result();
+
+            $no = 0;
+            foreach ($get_list_others as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_others a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_others', $item->id_others);
+                $this->db->where('a.custom_others', 0);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_biaya,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_others_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_others a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_others', $item->id);
+                $this->db->where('a.custom_others', 1);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+        }
+
+        if ($get_kasbon_header->tipe == 4) {
+            $this->db->select('a.*, b.isu_lingkungan as nm_biaya');
+            $this->db->from('kons_tr_spk_budgeting_lab a');
+            $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $this->db->order_by('a.id_item', 'asc');
+            $get_list_lab = $this->db->get()->result();
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_lab a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_lab_custom = $this->db->get()->result();
+
+            $no = 0;
+            foreach ($get_list_lab as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_lab a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_lab', $item->id_lab);
+                $this->db->where('a.custom_lab', 0);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_biaya,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_lab_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_lab a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_lab', $item->id);
+                $this->db->where('a.custom_lab', 1);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+        }
+
+        if ($get_kasbon_header->tipe == 5) {
+            $this->db->select('a.*, b.nm_biaya as nm_biaya');
+            $this->db->from('kons_tr_spk_budgeting_subcont_tenaga_ahli a');
+            $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $this->db->order_by('a.id_item', 'asc');
+            $get_list_subcont_tenaga_ahli = $this->db->get()->result();
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_subcont_tenaga_ahli a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_subcont_tenaga_ahli_custom = $this->db->get()->result();
+
+            $no = 0;
+            foreach ($get_list_subcont_tenaga_ahli as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_subcont', $item->id_subcont);
+                $this->db->where('a.custom_subcont_tenaga_ahli', 0);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_biaya,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_subcont_tenaga_ahli_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_subcont', $item->id);
+                $this->db->where('a.custom_subcont_tenaga_ahli', 1);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+        }
+
+        if ($get_kasbon_header->tipe == 6) {
+            $this->db->select('a.*, b.nm_biaya as nm_biaya');
+            $this->db->from('kons_tr_spk_budgeting_subcont_perusahaan a');
+            $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $this->db->order_by('a.id_item', 'asc');
+            $get_list_subcont_perusahaan = $this->db->get()->result();
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_subcont_perusahaan a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_subcont_perusahaan_custom = $this->db->get()->result();
+
+            $no = 0;
+            foreach ($get_list_subcont_perusahaan as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_subcont', $item->id_subcont);
+                $this->db->where('a.custom_subcont_perusahaan', 0);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_biaya,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_subcont_perusahaan_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_subcont', $item->id);
+                $this->db->where('a.custom_subcont_perusahaan', 1);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+        }
+
+        $this->sendigs->select('a.id, a.rekening, a.nama, a.coa_bank, b.nama_bank');
+        $this->sendigs->from('ms_bank a');
+        $this->sendigs->join('list_bank b', 'b.id = a.bank', 'left');
+        $this->sendigs->where('a.deleted', '0');
+        $get_bank_acc = $this->sendigs->get()->result();
+
+        $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
+
+        $data = [
+            'datalist_item' => $datalist_item,
+            'id_spk_budgeting' => $get_kasbon_header->id_spk_budgeting,
+            'id_header' => $id_header,
+            'id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran,
+            'id_penawaran' => $get_kasbon_header->id_penawaran,
+            'tipe' => $get_kasbon_header->tipe,
+            'data_bank' => $get_bank,
+            'list_bank' => $get_bank_acc,
+            'list_jurnal_pph21' => $list_jurnal_pph21
+        ];
+
+        $this->template->set($data);
+        $this->template->render('add_expense_subcont');
+    }
+
+    public function edit_expense_subcont($id_header)
+    {
+        $id_header = urldecode($id_header);
+        $id_header = str_replace('|', '/', $id_header);
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->where('a.id_header', $id_header);
+        $get_header = $this->db->get()->row();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_expense_report_bukti_pengembalian a');
+        $this->db->where('a.id_header_expense', $get_header->id);
+        $get_bukti_pengembalian = $this->db->get()->result();
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_bukti_penggunaan_expense a');
+        $this->db->where('a.id_header_expense', $get_header->id);
+        $get_bukti_penggunaan = $this->db->get()->result();
+
+        $this->sendigs->select('a.id, a.rekening, a.nama, a.coa_bank, b.nama_bank');
+        $this->sendigs->from('ms_bank a');
+        $this->sendigs->join('list_bank b', 'b.id = a.bank');
+        $this->sendigs->where('a.deleted', '0');
+        $get_bank = $this->sendigs->get()->result();
+
+        $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header a', ['a.id' => $id_header])->row();
+
+        $datalist_item = [];
+        $datalist_item_expense = [];
+
+        if ($get_kasbon_header->tipe == 1) {
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_spk_budgeting_aktifitas a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $this->db->order_by('a.id_aktifitas', 'asc');
+            $get_list_subcont = $this->db->get()->result();
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_subcont a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_subcont_custom = $this->db->get()->result();
+
+            $no = 0;
+            foreach ($get_list_subcont as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_aktifitas', $item->id_aktifitas);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_aktifitas,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_subcont_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_aktifitas', $item->id);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_expense_report_project_detail a');
+            $this->db->where('a.id_header_kasbon', $id_header);
+            $get_expense_detail = $this->db->get()->result();
+
+            $no = 1;
+            foreach ($get_expense_detail as $item) {
+                $qty_expense = ($item->qty_expense >= 1) ? $item->qty_expense : 1;
+                $datalist_item_expense[$item->id_detail_kasbon] = [
+                    'id' => $item->id,
+                    'id_detail_kasbon' => $item->id_detail_kasbon,
+                    'tipe' => $item->tipe,
+                    'qty_expense' => $item->qty_expense,
+                    'nominal_expense' => $item->nominal_expense,
+                    'keterangan' => $item->keterangan,
+                    'total_expense' => ($qty_expense * $item->nominal_expense)
+                ];
+            }
+        }
+
+        if ($get_kasbon_header->tipe == 2) {
+            $this->db->select('a.*, b.nm_biaya');
+            $this->db->from('kons_tr_spk_budgeting_akomodasi a');
+            $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $this->db->order_by('a.id_item', 'asc');
+            $get_list_akomodasi = $this->db->get()->result();
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_akomodasi a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_akomodasi_custom = $this->db->get()->result();
 
             $no = 0;
             foreach ($get_list_akomodasi as $item) {
@@ -491,6 +1040,53 @@ class Expense_report_project extends Admin_Controller
                     'total_kasbon' => $total_kasbon
                 ];
             }
+
+            foreach ($get_list_akomodasi_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_akomodasi a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_akomodasi', $item->id);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_expense_report_project_detail a');
+            $this->db->where('a.id_header_kasbon', $id_header);
+            $get_expense_detail = $this->db->get()->result();
+
+            $no = 1;
+            foreach ($get_expense_detail as $item) {
+                $qty_expense = ($item->qty_expense >= 1) ? $item->qty_expense : 1;
+                $datalist_item_expense[$item->id_detail_kasbon] = [
+                    'id' => $item->id,
+                    'id_detail_kasbon' => $item->id_detail_kasbon,
+                    'tipe' => $item->tipe,
+                    'qty_expense' => $item->qty_expense,
+                    'nominal_expense' => $item->nominal_expense,
+                    'keterangan' => $item->keterangan,
+                    'total_expense' => ($qty_expense * $item->nominal_expense)
+                ];
+            }
         }
 
         if ($get_kasbon_header->tipe == 3) {
@@ -500,6 +1096,11 @@ class Expense_report_project extends Admin_Controller
             $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
             $this->db->order_by('a.id_item', 'asc');
             $get_list_others = $this->db->get()->result();
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_others a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_others_custom = $this->db->get()->result();
 
             $no = 0;
             foreach ($get_list_others as $item) {
@@ -529,6 +1130,53 @@ class Expense_report_project extends Admin_Controller
                     'total_kasbon' => $total_kasbon
                 ];
             }
+
+            foreach ($get_list_others_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_others a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_others', $item->id);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_expense_report_project_detail a');
+            $this->db->where('a.id_header_kasbon', $id_header);
+            $get_expense_detail = $this->db->get()->result();
+
+            $no = 1;
+            foreach ($get_expense_detail as $item) {
+                $qty_expense = ($item->qty_expense >= 1) ? $item->qty_expense : 1;
+                $datalist_item_expense[$item->id_detail_kasbon] = [
+                    'id' => $item->id,
+                    'id_detail_kasbon' => $item->id_detail_kasbon,
+                    'tipe' => $item->tipe,
+                    'qty_expense' => $item->qty_expense,
+                    'nominal_expense' => $item->nominal_expense,
+                    'keterangan' => $item->keterangan,
+                    'total_expense' => ($qty_expense * $item->nominal_expense)
+                ];
+            }
         }
 
         if ($get_kasbon_header->tipe == 4) {
@@ -538,6 +1186,11 @@ class Expense_report_project extends Admin_Controller
             $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
             $this->db->order_by('a.id_item', 'asc');
             $get_list_lab = $this->db->get()->result();
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_lab a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_lab_custom = $this->db->get()->result();
 
             $no = 0;
             foreach ($get_list_lab as $item) {
@@ -567,316 +1220,32 @@ class Expense_report_project extends Admin_Controller
                     'total_kasbon' => $total_kasbon
                 ];
             }
-        }
 
-        if ($get_kasbon_header->tipe == 5) {
-            $this->db->select('a.*, b.nm_biaya as nm_biaya');
-            $this->db->from('kons_tr_spk_budgeting_subcont_tenaga_ahli a');
-            $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
-            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
-            $this->db->order_by('a.id_item', 'asc');
-            $get_list_subcont_tenaga_ahli = $this->db->get()->result();
-
-            $no = 0;
-            foreach ($get_list_subcont_tenaga_ahli as $item) {
+            foreach ($get_list_lab_custom as $item) {
                 $no++;
 
                 $qty_kasbon = 0;
                 $nominal_kasbon = 0;
                 $total_kasbon = 0;
-
-                $this->db->select('a.*');
-                $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
-                $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_subcont', $item->id_subcont);
-                $get_kasbon = $this->db->get()->row();
-                if (!empty($get_kasbon)) {
-                    $qty_kasbon = $get_kasbon->qty_pengajuan;
-                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
-                    $total_kasbon = $get_kasbon->total_pengajuan;
-                }
-
-                $datalist_item[] = [
-                    'no' => $no,
-                    'id_detail_kasbon' => $item->id,
-                    'nm_item' => $item->nm_biaya,
-                    'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon,
-                    'total_kasbon' => $total_kasbon
-                ];
-            }
-        }
-
-        if ($get_kasbon_header->tipe == 6) {
-            $this->db->select('a.*, b.nm_biaya as nm_biaya');
-            $this->db->from('kons_tr_spk_budgeting_subcont_perusahaan a');
-            $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
-            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
-            $this->db->order_by('a.id_item', 'asc');
-            $get_list_subcont_perusahaan = $this->db->get()->result();
-
-            $no = 0;
-            foreach ($get_list_subcont_perusahaan as $item) {
-                $no++;
-
-                $qty_kasbon = 0;
-                $nominal_kasbon = 0;
-                $total_kasbon = 0;
-
-                $this->db->select('a.*');
-                $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
-                $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_subcont', $item->id_subcont);
-                $get_kasbon = $this->db->get()->row();
-                if (!empty($get_kasbon)) {
-                    $qty_kasbon = $get_kasbon->qty_pengajuan;
-                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
-                    $total_kasbon = $get_kasbon->total_pengajuan;
-                }
-
-                $datalist_item[] = [
-                    'no' => $no,
-                    'id_detail_kasbon' => $item->id,
-                    'nm_item' => $item->nm_biaya,
-                    'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon,
-                    'total_kasbon' => $total_kasbon
-                ];
-            }
-        }
-
-        $this->sendigs->select('a.id, a.rekening, a.nama, a.coa_bank, b.nama_bank');
-        $this->sendigs->from('ms_bank a');
-        $this->sendigs->join('list_bank b', 'b.id = a.bank', 'left');
-        $this->sendigs->where('a.deleted', '0');
-        $get_bank_acc = $this->sendigs->get()->result();
-
-        $data = [
-            'datalist_item' => $datalist_item,
-            'id_spk_budgeting' => $get_kasbon_header->id_spk_budgeting,
-            'id_header' => $id_header,
-            'id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran,
-            'id_penawaran' => $get_kasbon_header->id_penawaran,
-            'tipe' => $get_kasbon_header->tipe,
-            'data_bank' => $get_bank,
-            'list_bank' => $get_bank_acc
-        ];
-
-        $this->template->set($data);
-        $this->template->render('add_expense_subcont');
-    }
-
-    public function edit_expense_subcont($id_header)
-    {
-        $id_header = urldecode($id_header);
-        $id_header = str_replace('|', '/', $id_header);
-
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_expense_report_project_header a');
-        $this->db->where('a.id_header', $id_header);
-        $get_header = $this->db->get()->row();
-
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_expense_report_bukti_pengembalian a');
-        $this->db->where('a.id_header_expense', $get_header->id);
-        $get_bukti_pengembalian = $this->db->get()->result();
-
-        $this->db->select('a.*');
-        $this->db->from('kons_tr_bukti_penggunaan_expense a');
-        $this->db->where('a.id_header_expense', $get_header->id);
-        $get_bukti_penggunaan = $this->db->get()->result();
-
-        $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header a', ['a.id' => $id_header])->row();
-
-        $datalist_item = [];
-        $datalist_item_expense = [];
-
-        if ($get_kasbon_header->tipe == 1) {
-            $this->db->select('a.*');
-            $this->db->from('kons_tr_spk_budgeting_aktifitas a');
-            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
-            $this->db->order_by('a.id_aktifitas', 'asc');
-            $get_list_subcont = $this->db->get()->result();
-
-            $no = 0;
-            foreach ($get_list_subcont as $item) {
-                $no++;
-
-                $qty_kasbon = 0;
-                $nominal_kasbon = 0;
-
-                $this->db->select('a.*');
-                $this->db->from('kons_tr_kasbon_project_subcont a');
-                $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_aktifitas', $item->id_aktifitas);
-                $get_kasbon = $this->db->get()->row();
-                if (!empty($get_kasbon)) {
-                    $qty_kasbon = $get_kasbon->qty_pengajuan;
-                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
-                }
-
-                $datalist_item[] = [
-                    'no' => $no,
-                    'id_detail_kasbon' => $item->id,
-                    'nm_item' => $item->nm_aktifitas,
-                    'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
-                ];
-            }
-
-            $this->db->select('a.*');
-            $this->db->from('kons_tr_expense_report_project_detail a');
-            $this->db->where('a.id_header_kasbon', $id_header);
-            $get_expense_detail = $this->db->get()->result();
-
-            $no = 1;
-            foreach ($get_expense_detail as $item) {
-                $datalist_item_expense[$item->id_detail_kasbon] = [
-                    'id' => $item->id,
-                    'id_detail_kasbon' => $item->id_detail_kasbon,
-                    'tipe' => $item->tipe,
-                    'qty_expense' => $item->qty_expense,
-                    'nominal_expense' => $item->nominal_expense,
-                    'keterangan' => $item->keterangan
-                ];
-            }
-        }
-
-        if ($get_kasbon_header->tipe == 2) {
-            $this->db->select('a.*, b.nm_biaya');
-            $this->db->from('kons_tr_spk_budgeting_akomodasi a');
-            $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
-            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
-            $this->db->order_by('a.id_item', 'asc');
-            $get_list_akomodasi = $this->db->get()->result();
-
-            $no = 0;
-            foreach ($get_list_akomodasi as $item) {
-                $no++;
-
-                $qty_kasbon = 0;
-                $nominal_kasbon = 0;
-
-                $this->db->select('a.*');
-                $this->db->from('kons_tr_kasbon_project_akomodasi a');
-                $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_item', $item->id_item);
-                $get_kasbon = $this->db->get()->row();
-                if (!empty($get_kasbon)) {
-                    $qty_kasbon = $get_kasbon->qty_pengajuan;
-                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
-                }
-
-                $datalist_item[] = [
-                    'no' => $no,
-                    'id_detail_kasbon' => $item->id,
-                    'nm_item' => $item->nm_biaya,
-                    'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
-                ];
-            }
-
-            $this->db->select('a.*');
-            $this->db->from('kons_tr_expense_report_project_detail a');
-            $this->db->where('a.id_header_kasbon', $id_header);
-            $get_expense_detail = $this->db->get()->result();
-
-            $no = 1;
-            foreach ($get_expense_detail as $item) {
-                $datalist_item_expense[$item->id_detail_kasbon] = [
-                    'id' => $item->id,
-                    'id_detail_kasbon' => $item->id_detail_kasbon,
-                    'tipe' => $item->tipe,
-                    'qty_expense' => $item->qty_expense,
-                    'nominal_expense' => $item->nominal_expense,
-                    'keterangan' => $item->keterangan
-                ];
-            }
-        }
-
-        if ($get_kasbon_header->tipe == 3) {
-            $this->db->select('a.*, b.nm_biaya');
-            $this->db->from('kons_tr_spk_budgeting_others a');
-            $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
-            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
-            $this->db->order_by('a.id_item', 'asc');
-            $get_list_others = $this->db->get()->result();
-
-            $no = 0;
-            foreach ($get_list_others as $item) {
-                $no++;
-
-                $qty_kasbon = 0;
-                $nominal_kasbon = 0;
-
-                $this->db->select('a.*');
-                $this->db->from('kons_tr_kasbon_project_others a');
-                $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_item', $item->id_item);
-                $get_kasbon = $this->db->get()->row();
-                if (!empty($get_kasbon)) {
-                    $qty_kasbon = $get_kasbon->qty_pengajuan;
-                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
-                }
-
-                $datalist_item[] = [
-                    'no' => $no,
-                    'id_detail_kasbon' => $item->id,
-                    'nm_item' => $item->nm_biaya,
-                    'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
-                ];
-            }
-
-            $this->db->select('a.*');
-            $this->db->from('kons_tr_expense_report_project_detail a');
-            $this->db->where('a.id_header_kasbon', $id_header);
-            $get_expense_detail = $this->db->get()->result();
-
-            $no = 1;
-            foreach ($get_expense_detail as $item) {
-                $datalist_item_expense[$item->id_detail_kasbon] = [
-                    'id' => $item->id,
-                    'id_detail_kasbon' => $item->id_detail_kasbon,
-                    'tipe' => $item->tipe,
-                    'qty_expense' => $item->qty_expense,
-                    'nominal_expense' => $item->nominal_expense,
-                    'keterangan' => $item->keterangan
-                ];
-            }
-        }
-
-        if ($get_kasbon_header->tipe == 4) {
-            $this->db->select('a.*, b.isu_lingkungan as nm_biaya');
-            $this->db->from('kons_tr_spk_budgeting_lab a');
-            $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
-            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
-            $this->db->order_by('a.id_item', 'asc');
-            $get_list_lab = $this->db->get()->result();
-
-            $no = 0;
-            foreach ($get_list_lab as $item) {
-                $no++;
-
-                $qty_kasbon = 0;
-                $nominal_kasbon = 0;
 
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_lab a');
                 $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_item', $item->id_item);
+                $this->db->where('a.id_lab', $item->id);
                 $get_kasbon = $this->db->get()->row();
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
                     $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
                 }
 
                 $datalist_item[] = [
                     'no' => $no,
                     'id_detail_kasbon' => $item->id,
-                    'nm_item' => $item->nm_biaya,
+                    'nm_item' => $item->nm_item,
                     'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
                 ];
             }
 
@@ -887,13 +1256,15 @@ class Expense_report_project extends Admin_Controller
 
             $no = 1;
             foreach ($get_expense_detail as $item) {
+                $qty_expense = ($item->qty_expense >= 1) ? $item->qty_expense : 1;
                 $datalist_item_expense[$item->id_detail_kasbon] = [
                     'id' => $item->id,
                     'id_detail_kasbon' => $item->id_detail_kasbon,
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
                     'nominal_expense' => $item->nominal_expense,
-                    'keterangan' => $item->keterangan
+                    'keterangan' => $item->keterangan,
+                    'total_expense' => ($qty_expense * $item->nominal_expense)
                 ];
             }
         }
@@ -906,21 +1277,28 @@ class Expense_report_project extends Admin_Controller
             $this->db->order_by('a.id_item', 'asc');
             $get_list_subcont_tenaga_ahli = $this->db->get()->result();
 
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_subcont_tenaga_ahli a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_subcont_tenaga_ahli_custom = $this->db->get()->result();
+
             $no = 0;
             foreach ($get_list_subcont_tenaga_ahli as $item) {
                 $no++;
 
                 $qty_kasbon = 0;
                 $nominal_kasbon = 0;
+                $total_kasbon = 0;
 
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
                 $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_item', $item->id_item);
+                $this->db->where('a.id_subcont', $item->id_subcont);
                 $get_kasbon = $this->db->get()->row();
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
                     $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
                 }
 
                 $datalist_item[] = [
@@ -928,7 +1306,36 @@ class Expense_report_project extends Admin_Controller
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_biaya,
                     'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_subcont_tenaga_ahli_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_subcont', $item->id);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
                 ];
             }
 
@@ -939,13 +1346,15 @@ class Expense_report_project extends Admin_Controller
 
             $no = 1;
             foreach ($get_expense_detail as $item) {
+                $qty_expense = ($item->qty_expense >= 1) ? $item->qty_expense : 1;
                 $datalist_item_expense[$item->id_detail_kasbon] = [
                     'id' => $item->id,
                     'id_detail_kasbon' => $item->id_detail_kasbon,
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
                     'nominal_expense' => $item->nominal_expense,
-                    'keterangan' => $item->keterangan
+                    'keterangan' => $item->keterangan,
+                    'total_expense' => ($qty_expense * $item->nominal_expense)
                 ];
             }
         }
@@ -958,29 +1367,37 @@ class Expense_report_project extends Admin_Controller
             $this->db->order_by('a.id_item', 'asc');
             $get_list_subcont_perusahaan = $this->db->get()->result();
 
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_subcont_perusahaan a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_subcont_perusahaan_custom = $this->db->get()->result();
+
             $no = 0;
             foreach ($get_list_subcont_perusahaan as $item) {
                 $no++;
 
                 $qty_kasbon = 0;
                 $nominal_kasbon = 0;
+                $total_kasbon = 0;
 
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
                 $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_item', $item->id_item);
+                $this->db->where('a.id_subcont', $item->id);
                 $get_kasbon = $this->db->get()->row();
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
                     $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
                 }
 
                 $datalist_item[] = [
                     'no' => $no,
                     'id_detail_kasbon' => $item->id,
-                    'nm_item' => $item->nm_biaya,
+                    'nm_item' => $item->nm_item,
                     'qty_kasbon' => $qty_kasbon,
-                    'nominal_kasbon' => $nominal_kasbon
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
                 ];
             }
 
@@ -991,16 +1408,20 @@ class Expense_report_project extends Admin_Controller
 
             $no = 1;
             foreach ($get_expense_detail as $item) {
+                $qty_expense = ($item->qty_expense >= 1) ? $item->qty_expense : 1;
                 $datalist_item_expense[$item->id_detail_kasbon] = [
                     'id' => $item->id,
                     'id_detail_kasbon' => $item->id_detail_kasbon,
                     'tipe' => $item->tipe,
                     'qty_expense' => $item->qty_expense,
                     'nominal_expense' => $item->nominal_expense,
-                    'keterangan' => $item->keterangan
+                    'keterangan' => $item->keterangan,
+                    'total_expense' => ($qty_expense * $item->nominal_expense)
                 ];
             }
         }
+
+        $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
 
         $data = [
             'header' => $get_header,
@@ -1012,7 +1433,9 @@ class Expense_report_project extends Admin_Controller
             'id_header' => $id_header,
             'id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran,
             'id_penawaran' => $get_kasbon_header->id_penawaran,
-            'tipe' => $get_kasbon_header->tipe
+            'tipe' => $get_kasbon_header->tipe,
+            'list_bank' => $get_bank,
+            'list_jurnal_pph21' => $list_jurnal_pph21
         ];
 
         $this->template->set($data);
@@ -1051,6 +1474,11 @@ class Expense_report_project extends Admin_Controller
             $this->db->order_by('a.id_aktifitas', 'asc');
             $get_list_subcont = $this->db->get()->result();
 
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_subcont a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_subcont_custom = $this->db->get()->result();
+
             $no = 0;
             foreach ($get_list_subcont as $item) {
                 $no++;
@@ -1074,6 +1502,34 @@ class Expense_report_project extends Admin_Controller
                     'no' => $no,
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_aktifitas,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_subcont_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_aktifitas', $item->id);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
                     'qty_kasbon' => $qty_kasbon,
                     'nominal_kasbon' => $nominal_kasbon,
                     'total_kasbon' => $total_kasbon
@@ -1108,6 +1564,11 @@ class Expense_report_project extends Admin_Controller
             $this->db->order_by('a.id_item', 'asc');
             $get_list_akomodasi = $this->db->get()->result();
 
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_akomodasi a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_akomodasi_custom = $this->db->get()->result();
+
             $no = 0;
             foreach ($get_list_akomodasi as $item) {
                 $no++;
@@ -1131,6 +1592,34 @@ class Expense_report_project extends Admin_Controller
                     'no' => $no,
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_biaya,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_akomodasi_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_akomodasi a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_akomodasi', $item->id);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
                     'qty_kasbon' => $qty_kasbon,
                     'nominal_kasbon' => $nominal_kasbon,
                     'total_kasbon' => $total_kasbon
@@ -1165,6 +1654,11 @@ class Expense_report_project extends Admin_Controller
             $this->db->order_by('a.id_item', 'asc');
             $get_list_others = $this->db->get()->result();
 
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_others a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_others_custom = $this->db->get()->result();
+
             $no = 0;
             foreach ($get_list_others as $item) {
                 $no++;
@@ -1188,6 +1682,34 @@ class Expense_report_project extends Admin_Controller
                     'no' => $no,
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_biaya,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_others_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_others a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_others', $item->id);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
                     'qty_kasbon' => $qty_kasbon,
                     'nominal_kasbon' => $nominal_kasbon,
                     'total_kasbon' => $total_kasbon
@@ -1222,6 +1744,11 @@ class Expense_report_project extends Admin_Controller
             $this->db->order_by('a.id_item', 'asc');
             $get_list_lab = $this->db->get()->result();
 
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_lab a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_lab_custom = $this->db->get()->result();
+
             $no = 0;
             foreach ($get_list_lab as $item) {
                 $no++;
@@ -1245,6 +1772,34 @@ class Expense_report_project extends Admin_Controller
                     'no' => $no,
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_biaya,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_lab_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_lab a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_lab', $item->id);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
                     'qty_kasbon' => $qty_kasbon,
                     'nominal_kasbon' => $nominal_kasbon,
                     'total_kasbon' => $total_kasbon
@@ -1279,6 +1834,11 @@ class Expense_report_project extends Admin_Controller
             $this->db->order_by('a.id_item', 'asc');
             $get_list_subcont_tenaga_ahli = $this->db->get()->result();
 
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_subcont_tenaga_ahli a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_subcont_tenaga_ahli_custom = $this->db->get()->result();
+
             $no = 0;
             foreach ($get_list_subcont_tenaga_ahli as $item) {
                 $no++;
@@ -1302,6 +1862,34 @@ class Expense_report_project extends Admin_Controller
                     'no' => $no,
                     'id_detail_kasbon' => $item->id,
                     'nm_item' => $item->nm_biaya,
+                    'qty_kasbon' => $qty_kasbon,
+                    'nominal_kasbon' => $nominal_kasbon,
+                    'total_kasbon' => $total_kasbon
+                ];
+            }
+
+            foreach ($get_list_subcont_tenaga_ahli_custom as $item) {
+                $no++;
+
+                $qty_kasbon = 0;
+                $nominal_kasbon = 0;
+                $total_kasbon = 0;
+
+                $this->db->select('a.*');
+                $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+                $this->db->where('a.id_header', $id_header);
+                $this->db->where('a.id_subcont', $item->id);
+                $get_kasbon = $this->db->get()->row();
+                if (!empty($get_kasbon)) {
+                    $qty_kasbon = $get_kasbon->qty_pengajuan;
+                    $nominal_kasbon = $get_kasbon->nominal_pengajuan;
+                    $total_kasbon = $get_kasbon->total_pengajuan;
+                }
+
+                $datalist_item[] = [
+                    'no' => $no,
+                    'id_detail_kasbon' => $item->id,
+                    'nm_item' => $item->nm_item,
                     'qty_kasbon' => $qty_kasbon,
                     'nominal_kasbon' => $nominal_kasbon,
                     'total_kasbon' => $total_kasbon
@@ -1336,6 +1924,11 @@ class Expense_report_project extends Admin_Controller
             $this->db->order_by('a.id_item', 'asc');
             $get_list_subcont_perusahaan = $this->db->get()->result();
 
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_kasbon_custom_subcont_perusahaan a');
+            $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+            $get_list_subcont_perusahaan_custom = $this->db->get()->result();
+
             $no = 0;
             foreach ($get_list_subcont_perusahaan as $item) {
                 $no++;
@@ -1347,7 +1940,7 @@ class Expense_report_project extends Admin_Controller
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
                 $this->db->where('a.id_header', $id_header);
-                $this->db->where('a.id_subcont', $item->id_subcont);
+                $this->db->where('a.id_subcont', $item->id);
                 $get_kasbon = $this->db->get()->row();
                 if (!empty($get_kasbon)) {
                     $qty_kasbon = $get_kasbon->qty_pengajuan;
@@ -1358,7 +1951,7 @@ class Expense_report_project extends Admin_Controller
                 $datalist_item[] = [
                     'no' => $no,
                     'id_detail_kasbon' => $item->id,
-                    'nm_item' => $item->nm_biaya,
+                    'nm_item' => $item->nm_item,
                     'qty_kasbon' => $qty_kasbon,
                     'nominal_kasbon' => $nominal_kasbon,
                     'total_kasbon' => $total_kasbon
@@ -1391,6 +1984,8 @@ class Expense_report_project extends Admin_Controller
         $this->sendigs->where('a.deleted', '0');
         $get_bank_acc = $this->sendigs->get()->result();
 
+        $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
+
         $data = [
             'header' => $get_header,
             'list_bukti_pengembalian' => $get_bukti_pengembalian,
@@ -1402,7 +1997,8 @@ class Expense_report_project extends Admin_Controller
             'id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran,
             'id_penawaran' => $get_kasbon_header->id_penawaran,
             'tipe' => $get_kasbon_header->tipe,
-            'list_bank' => $get_bank_acc
+            'list_bank' => $get_bank_acc,
+            'list_jurnal_pph21' => $list_jurnal_pph21
         ];
 
         $this->template->set($data);

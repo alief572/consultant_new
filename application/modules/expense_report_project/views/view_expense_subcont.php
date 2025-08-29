@@ -25,6 +25,11 @@ $enb_reject_reason = 'd-none';
 if ($header->reject_reason !== '' && $header->reject_reason !== null) {
     $enb_reject_reason = '';
 }
+
+$hide_jurnal_pph21 = 'd-none';
+if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
+    $hide_jurnal_pph21 = '';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -121,15 +126,17 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
                 <tr>
                     <th class="text-center" rowspan="2">No.</th>
                     <th class="text-center" rowspan="2">Item</th>
-                    <th class="text-center" colspan="2">Kasbon</th>
-                    <th class="text-center" colspan="2">Expense Report</th>
+                    <th class="text-center" colspan="3">Kasbon</th>
+                    <th class="text-center" colspan="3">Expense Report</th>
                     <th class="text-center" rowspan="2" colspan="2">Keterangan</th>
                 </tr>
                 <tr>
                     <th class="text-center">Qty</th>
                     <th class="text-center">Nominal</th>
+                    <th class="text-center">Total Kasbon</th>
                     <th class="text-center">Qty</th>
                     <th class="text-center">Nominal</th>
+                    <th class="text-center">Total Expense</th>
                 </tr>
             </thead>
             <tbody>
@@ -168,11 +175,19 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
                     echo '</td>';
 
                     echo '<td width="200">';
+                    echo '<input type="text" name="detail_subcont[' . $item['no'] . '][total_kasbon]" class="form-control form-control-sm auto_num text-right " value="' . ($item['qty_kasbon'] * $item['nominal_kasbon']) . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_qty . '>';
+                    echo '</td>';
+
+                    echo '<td width="200">';
                     echo '<input type="text" name="detail_subcont[' . $item['no'] . '][qty_expense]" class="form-control form-control-sm auto_num text-right qty_expense" value="' . $qty_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_qty . '>';
                     echo '</td>';
 
                     echo '<td width="200">';
                     echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $nominal_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
+                    echo '</td>';
+
+                    echo '<td width="200">';
+                    echo '<input type="text" name="detail_subcont[' . $item['no'] . '][total_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . ($nominal_expense * $qty_expense) . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
                     echo '</td>';
 
                     echo '<td width="400" colspan="2">';
@@ -199,6 +214,7 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
                     <td>
                         <input type="text" name="kelebihan_kasbon" class="form-control form-control-sm text-right kelebihan_kasbon" value="<?= number_format($kelebihan_kasbon, 2) ?>" readonly>
                     </td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td colspan="5" class="text-right">Total Expense Report</td>
@@ -207,6 +223,7 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
                     <td>
                         <input type="text" name="kelebihan_expense" class="form-control form-control-sm text-right kelebihan_expense" value="<?= number_format($kelebihan_expense, 2) ?>" readonly>
                     </td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td colspan="5" class="text-right">Selisih</td>
@@ -215,6 +232,7 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
                     <td>
                         <input type="text" name="kontrol" class="form-control form-control-sm text-right kontrol" value="<?= number_format($header->selisih, 2) ?>" readonly>
                     </td>
+                    <td></td>
                 </tr>
             </tfoot>
         </table>
@@ -278,6 +296,7 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
                             <th class="text-center">COA</th>
                             <th class="text-center">Nama Company</th>
                             <th class="text-center">Nama Account</th>
+                            <th class="text-center">Deskripsi</th>
                             <th class="text-center">Debit</th>
                             <th class="text-center">Credit</th>
                         </tr>
@@ -286,9 +305,37 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="4" class="text-center">Balancing</th>
+                            <th colspan="5" class="text-center">Balancing</th>
                             <th class="text-right ttl_debit">0.00</th>
                             <th class="text-right ttl_kredit">0.00</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="col-md-12 <?= $hide_jurnal_pph21 ?>">
+                <h4>Jurnal PPh 21</h4>
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Tanggal Jurnal</th>
+                            <th class="text-center">COA</th>
+                            <th class="text-center">Nama Company</th>
+                            <th class="text-center">Nama Account</th>
+                            <th class="text-center">Deskripsi</th>
+                            <th class="text-center">Debit</th>
+                            <th class="text-center">Credit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?= $list_jurnal_pph21['hasil'] ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" class="text-center">
+                                Balancing
+                            </th>
+                            <th class="text-right jurnal_pph_debit"><?= number_format(0) ?></th>
+                            <th class="text-right jurnal_pph_kredit"><?= number_format($list_jurnal_pph21['nominal_pph']) ?></th>
                         </tr>
                     </tfoot>
                 </table>
@@ -491,6 +538,8 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
     }
 
     function set_jurnal() {
+        var count_no = parseInt(<?= $count_no ?>)
+        var id_header = $('input[name="id_header"]').val();
 
         var kelebihan_kasbon = get_num($('input[name="kelebihan_kasbon"]').val());
         var kelebihan_expense = get_num($('input[name="kelebihan_expense"]').val());
@@ -503,6 +552,16 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
 
         var id_penawaran = "<?= $id_penawaran ?>";
 
+        var arr_total_expense = {};
+        for (i = 1; i <= count_no; i++) {
+            var id_detail_kasbon = $('input[name="detail_subcont[' + i + '][id_detail_kasbon]"]').val();
+            var total_expense = get_num($('input[name="detail_subcont[' + i + '][total_expense]"]').val());
+
+            var arr = [];
+
+            arr_total_expense[id_detail_kasbon] = total_expense;
+        }
+
         $.ajax({
             type: 'post',
             url: siteurl + active_controller + 'set_jurnal_expense',
@@ -513,7 +572,9 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
                 'total_kasbon': total_kasbon,
                 'total_expense': total_expense,
                 'id_penawaran': id_penawaran,
-                'id_bank': id_bank
+                'id_bank': id_bank,
+                'id_header': id_header,
+                'arr_total_expense': arr_total_expense
             },
             cache: false,
             dataType: 'json',

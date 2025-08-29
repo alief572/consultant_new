@@ -38,9 +38,93 @@ class Expense_report_project_model extends BF_Model
         return $kode_trans;
     }
 
+    public function list_jurnal_pph21($id_header)
+    {
+        $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id_header])->row();
+
+        $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_kasbon->id_penawaran])->row();
+        $get_company = $this->db->get_where('kons_tr_company', ['id' => $get_penawaran->company])->row();
+
+        $id_company = (!empty($get_company)) ? $get_company->id : '';
+        $nm_company = (!empty($get_company)) ? $get_company->nm_company : '';
+
+        $hasil = '';
+        $nominal_pph = 0;
+
+        if (!empty($get_kasbon) && $get_kasbon->tipe == '2') {
+            $nominal = 0;
+
+            $this->db->select('a.total_pengajuan as ttl_kasbon');
+            $this->db->from('kons_tr_kasbon_project_akomodasi a');
+            $this->db->where('a.id_header', $id_header);
+            $this->db->where('a.id_item', '15');
+            $get_poin_pph = $this->db->get()->result();
+
+            foreach ($get_poin_pph as $item_pph) :
+                $nominal += $item_pph->ttl_kasbon;
+            endforeach;
+
+            $nominal_w_pph = (100 / (100 - 10) * $nominal);
+            $nominal_pph = ($nominal_w_pph - $nominal);
+
+            $coa_pph = '1030-20-4';
+            $get_coa_pph = $this->gl->get_where('coa_master', ['no_perkiraan' => $coa_pph])->row();
+
+            $hasil .= '<tr>';
+
+            $hasil .= '<td class="text-center">';
+            $hasil .= date('d F Y');
+            $hasil .= '<input type="hidden" name="jurnal_pph[1][tanggal_jurnal]" value="' . date('Y-m-d') . '">';
+            $hasil .= '</td>';
+
+            $hasil .= '<td>';
+            $hasil .= $get_coa_pph->no_perkiraan;
+            $hasil .= '<input type="hidden" name="jurnal_pph[1][coa]" value="' . $get_coa_pph->no_perkiraan . '">';
+            $hasil .= '</td>';
+
+            $hasil .= '<td>';
+            $hasil .= $nm_company;
+            $hasil .= '<input type="hidden" name="jurnal_pph[1][id_company]" value="' . $id_company . '">';
+            $hasil .= '<input type="hidden" name="jurnal_pph[1][nm_company]" value="' . $nm_company . '">';
+            $hasil .= '</td>';
+
+            $hasil .= '<td>';
+            $hasil .= $get_coa_pph->nama;
+            $hasil .= '<input type="hidden" name="jurnal_pph[1][nm_coa]" value="' . $get_coa_pph->nama . '">';
+            $hasil .= '</td>';
+
+            $hasil .= '<td>';
+            $hasil .= 'PPh 21';
+            $hasil .= '<input type="hidden" name="jurnal_pph[1][keterangan]" value="PPh 21">';
+            $hasil .= '</td>';
+
+            $hasil .= '<td class="text-right">';
+            $hasil .= number_format(0);
+            $hasil .= '<input type="hidden" name="jurnal_pph[1][debit]" value="0">';
+            $hasil .= '</td>';
+
+            $hasil .= '<td class="text-right">';
+            $hasil .= number_format($nominal_pph);
+            $hasil .= '<input type="hidden" name="jurnal_pph[1][kredit]" value="' . $nominal_pph . '">';
+            $hasil .= '</td>';
+
+            $hasil .= '</tr>';
+        }
+
+
+        $response = [
+            'hasil' => $hasil,
+            'nominal_pph' => $nominal_pph
+        ];
+
+        return $response;
+    }
+
     public function set_jurnal_expense()
     {
         $post = $this->input->post();
+
+        $id_header = $post['id_header'];
 
         $id_penawaran = $post['id_penawaran'];
 
@@ -52,6 +136,9 @@ class Expense_report_project_model extends BF_Model
         $total_expense = $post['total_expense'];
 
         $id_bank = $post['id_bank'];
+
+        // print_r($post['arr_total_expense']);
+        // exit;
 
         $this->db->select('a.id, a.nm_company');
         $this->db->from('kons_tr_company a');
@@ -85,49 +172,369 @@ class Expense_report_project_model extends BF_Model
                 $kredit = 0;
 
                 if ($item_coa->no_perkiraan == '5010-12-5') {
-                    $debit = $total_expense;
+                    $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_header))->row();
+                    if (isset($get_kasbon)) {
+                        if ($get_kasbon->tipe == 1) {
+                        }
+                        if ($get_kasbon->tipe == 2) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_akomodasi a');
+                            $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_akomodasi = $this->db->get()->result();
+
+                            $no_akomodasi = 0;
+                            foreach ($get_akomodasi as $item) {
+                                $id_akomodasi = $item->id_akomodasi;
+                                if ($item->custom_akomodasi == 0) {
+                                    $get_id_akomodasi = $this->db->select('id')->get_where('kons_tr_spk_budgeting_akomodasi', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_akomodasi' => $item->id_akomodasi])->row();
+
+                                    $id_akomodasi = $get_id_akomodasi->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_akomodasi])) ? $post['arr_total_expense'][$id_akomodasi] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 3) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_others a');
+                            $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_others = $this->db->get()->result();
+
+                            $no_others = 0;
+                            foreach ($get_others as $item) {
+                                // print_r($item->id_others . "<br>");
+                                // exit;
+                                $id_others = $item->id_others;
+                                if ($item->custom_others == 0) {
+                                    $get_id_others = $this->db->select('id')->get_where('kons_tr_spk_budgeting_others', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_others' => $item->id_others])->row();
+
+                                    $id_others = $get_id_others->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_others])) ? $post['arr_total_expense'][$id_others] : 0;
+
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+
+                                $no_others++;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 4) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_lab a');
+                            $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_lab = $this->db->get()->result();
+
+                            $no_lab = 0;
+                            foreach ($get_lab as $item) {
+                                $no_lab++;
+
+                                $id_lab = $item->id_lab;
+                                if ($item->custom_lab == 0) {
+                                    $get_id_lab = $this->db->select('id')->get_where('kons_tr_spk_budgeting_lab', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_lab' => $item->id_lab])->row();
+
+                                    $id_lab = $get_id_lab->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_lab])) ? $post['arr_total_expense'][$id_lab] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 5) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+                            $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_subcont_tenaga_ahli = $this->db->get()->result();
+
+                            $no_subcont_tenaga_ahli = 0;
+                            foreach ($get_subcont_tenaga_ahli as $item) {
+                                $no_subcont_tenaga_ahli++;
+
+                                $id_subcont = $item->id_subcont;
+                                if ($item->custom_akomodasi == 0) {
+                                    $get_id_subcont = $this->db->select('id')->get_where('kons_tr_spk_budgeting_subcont_tenaga_ahli', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_subcont' => $item->id_subcont])->row();
+
+                                    $id_subcont = $get_id_subcont->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_subcont])) ? $post['arr_total_expense'][$id_subcont] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 6) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
+                            $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_subcont_perusahaan = $this->db->get()->result();
+
+                            $no_subcont_perusahaan = 0;
+                            foreach ($get_subcont_perusahaan as $item) {
+                                $no_subcont_perusahaan++;
+
+                                $id_subcont = $item->id_subcont;
+                                if ($item->custom_akomodasi == 0) {
+                                    $get_id_subcont = $this->db->select('id')->get_where('kons_tr_spk_budgeting_subcont_perusahaan', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_subcont' => $item->id_subcont])->row();
+
+                                    $id_subcont = $get_id_subcont->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$item->id_subcont])) ? $post['arr_total_expense'][$item->id_subcont] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                    }
+                } else {
+
+                    if ($item_coa->no_perkiraan == '5010-12-5') {
+                        $debit = $total_expense;
+                    }
+                    if ($item_coa->no_perkiraan == '1030-20-4') {
+                        $kredit = $total_kasbon;
+                    }
+
+                    $hasil_jurnal .= '<tr>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= date('d F Y');
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][tgl_jurnal]" value="' . date('Y-m-d') . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->no_perkiraan;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][coa]" value="' . $item_coa->no_perkiraan . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $nm_company;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][id_company]" value="' . $id_company . '">';
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_company]" value="' . $nm_company . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->nm_coa;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_coa]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->nm_coa;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][deskripsi]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-right">';
+                    $hasil_jurnal .= number_format($debit);
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][debit]" value="' . $debit . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-right">';
+                    $hasil_jurnal .= number_format($kredit);
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][kredit]" value="' . $kredit . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '</tr>';
+
+                    $ttl_debit += $debit;
+                    $ttl_kredit += $kredit;
                 }
-                if ($item_coa->no_perkiraan == '1030-20-4') {
-                    $kredit = $total_kasbon;
-                }
-
-                $hasil_jurnal .= '<tr>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= date('d F Y');
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][tgl_jurnal]" value="' . date('Y-m-d') . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= $item_coa->no_perkiraan;
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][coa]" value="' . $item_coa->no_perkiraan . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= $nm_company;
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][id_company]" value="' . $id_company . '">';
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_company]" value="' . $nm_company . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= $item_coa->nm_coa;
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_coa]" value="' . $item_coa->nm_coa . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-right">';
-                $hasil_jurnal .= number_format($debit);
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][debit]" value="' . $debit . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-right">';
-                $hasil_jurnal .= number_format($kredit);
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][kredit]" value="' . $kredit . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '</tr>';
-
-                $ttl_debit += $debit;
-                $ttl_kredit += $kredit;
             }
         }
 
@@ -159,53 +566,373 @@ class Expense_report_project_model extends BF_Model
                 $kredit = 0;
 
                 if ($item_coa->no_perkiraan == '5010-12-5') {
-                    $debit = $total_expense;
+                    $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_header))->row();
+                    if (isset($get_kasbon)) {
+                        if ($get_kasbon->tipe == 1) {
+                        }
+                        if ($get_kasbon->tipe == 2) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_akomodasi a');
+                            $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_akomodasi = $this->db->get()->result();
+
+                            $no_akomodasi = 0;
+                            foreach ($get_akomodasi as $item) {
+                                $id_akomodasi = $item->id_akomodasi;
+                                if ($item->custom_akomodasi == 0) {
+                                    $get_id_akomodasi = $this->db->select('id')->get_where('kons_tr_spk_budgeting_akomodasi', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_akomodasi' => $item->id_akomodasi])->row();
+
+                                    $id_akomodasi = $get_id_akomodasi->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_akomodasi])) ? $post['arr_total_expense'][$id_akomodasi] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 3) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_others a');
+                            $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_others = $this->db->get()->result();
+
+                            $no_others = 0;
+                            foreach ($get_others as $item) {
+                                // print_r($item->id_others . "<br>");
+                                // exit;
+                                $id_others = $item->id_others;
+                                if ($item->custom_others == 0) {
+                                    $get_id_others = $this->db->select('id')->get_where('kons_tr_spk_budgeting_others', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_others' => $item->id_others])->row();
+
+                                    $id_others = $get_id_others->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_others])) ? $post['arr_total_expense'][$id_others] : 0;
+
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+
+                                $no_others++;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 4) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_lab a');
+                            $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_lab = $this->db->get()->result();
+
+                            $no_lab = 0;
+                            foreach ($get_lab as $item) {
+                                $no_lab++;
+
+                                $id_lab = $item->id_lab;
+                                if ($item->custom_lab == 0) {
+                                    $get_id_lab = $this->db->select('id')->get_where('kons_tr_spk_budgeting_lab', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_lab' => $item->id_lab])->row();
+
+                                    $id_lab = $get_id_lab->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_lab])) ? $post['arr_total_expense'][$id_lab] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 5) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+                            $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_subcont_tenaga_ahli = $this->db->get()->result();
+
+                            $no_subcont_tenaga_ahli = 0;
+                            foreach ($get_subcont_tenaga_ahli as $item) {
+                                $no_subcont_tenaga_ahli++;
+
+                                $id_subcont = $item->id_subcont;
+                                if ($item->custom_akomodasi == 0) {
+                                    $get_id_subcont = $this->db->select('id')->get_where('kons_tr_spk_budgeting_subcont_tenaga_ahli', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_subcont' => $item->id_subcont])->row();
+
+                                    $id_subcont = $get_id_subcont->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_subcont])) ? $post['arr_total_expense'][$id_subcont] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 6) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
+                            $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_subcont_perusahaan = $this->db->get()->result();
+
+                            $no_subcont_perusahaan = 0;
+                            foreach ($get_subcont_perusahaan as $item) {
+                                $no_subcont_perusahaan++;
+
+                                $id_subcont = $item->id_subcont;
+                                if ($item->custom_akomodasi == 0) {
+                                    $get_id_subcont = $this->db->select('id')->get_where('kons_tr_spk_budgeting_subcont_perusahaan', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_subcont' => $item->id_subcont])->row();
+
+                                    $id_subcont = $get_id_subcont->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$item->id_subcont])) ? $post['arr_total_expense'][$item->id_subcont] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                    }
+                } else {
+
+                    if ($item_coa->no_perkiraan == '5010-12-5') {
+                        $debit = $total_expense;
+                    }
+                    if ($item_coa->no_perkiraan == '1030-20-4') {
+                        $kredit = $total_kasbon;
+                    }
+                    if ($coa_bank !== '' && $item_coa->no_perkiraan == $coa_bank) {
+                        $debit = $kontrol;
+                    }
+
+
+                    $hasil_jurnal .= '<tr>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= date('d F Y');
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][tgl_jurnal]" value="' . date('Y-m-d') . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->no_perkiraan;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][coa]" value="' . $item_coa->no_perkiraan . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $nm_company;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][id_company]" value="' . $id_company . '">';
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_company]" value="' . $nm_company . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->nm_coa;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_coa]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->nm_coa;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][deskripsi]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-right">';
+                    $hasil_jurnal .= number_format($debit);
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][debit]" value="' . $debit . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-right">';
+                    $hasil_jurnal .= number_format($kredit);
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][kredit]" value="' . $kredit . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '</tr>';
+
+                    $ttl_debit += $debit;
+                    $ttl_kredit += $kredit;
                 }
-                if ($item_coa->no_perkiraan == '1030-20-4') {
-                    $kredit = $total_kasbon;
-                }
-                if ($coa_bank !== '' && $item_coa->no_perkiraan == $coa_bank) {
-                    $debit = $kontrol;
-                }
-
-
-                $hasil_jurnal .= '<tr>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= date('d F Y');
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][tgl_jurnal]" value="' . date('Y-m-d') . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= $item_coa->no_perkiraan;
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][coa]" value="' . $item_coa->no_perkiraan . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= $nm_company;
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][id_company]" value="' . $id_company . '">';
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_company]" value="' . $nm_company . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= $item_coa->nm_coa;
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_coa]" value="' . $item_coa->nm_coa . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-right">';
-                $hasil_jurnal .= number_format($debit);
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][debit]" value="' . $debit . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-right">';
-                $hasil_jurnal .= number_format($kredit);
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][kredit]" value="' . $kredit . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '</tr>';
-
-                $ttl_debit += $debit;
-                $ttl_kredit += $kredit;
             }
         }
 
@@ -229,53 +956,372 @@ class Expense_report_project_model extends BF_Model
                 $kredit = 0;
 
                 if ($item_coa->no_perkiraan == '5010-12-5') {
-                    $debit = $total_expense;
+                    $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_header))->row();
+                    if (isset($get_kasbon)) {
+                        if ($get_kasbon->tipe == 1) {
+                        }
+                        if ($get_kasbon->tipe == 2) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_akomodasi a');
+                            $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_akomodasi = $this->db->get()->result();
+
+                            $no_akomodasi = 0;
+                            foreach ($get_akomodasi as $item) {
+                                $id_akomodasi = $item->id_akomodasi;
+                                if ($item->custom_akomodasi == 0) {
+                                    $get_id_akomodasi = $this->db->select('id')->get_where('kons_tr_spk_budgeting_akomodasi', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_akomodasi' => $item->id_akomodasi])->row();
+
+                                    $id_akomodasi = $get_id_akomodasi->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_akomodasi])) ? $post['arr_total_expense'][$id_akomodasi] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 3) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_others a');
+                            $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_others = $this->db->get()->result();
+
+                            $no_others = 0;
+                            foreach ($get_others as $item) {
+                                // print_r($item->id_others . "<br>");
+                                // exit;
+                                $id_others = $item->id_others;
+                                if ($item->custom_others == 0) {
+                                    $get_id_others = $this->db->select('id')->get_where('kons_tr_spk_budgeting_others', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_others' => $item->id_others])->row();
+
+                                    $id_others = $get_id_others->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_others])) ? $post['arr_total_expense'][$id_others] : 0;
+
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+
+                                $no_others++;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 4) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_lab a');
+                            $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_lab = $this->db->get()->result();
+
+                            $no_lab = 0;
+                            foreach ($get_lab as $item) {
+                                $no_lab++;
+
+                                $id_lab = $item->id_lab;
+                                if ($item->custom_lab == 0) {
+                                    $get_id_lab = $this->db->select('id')->get_where('kons_tr_spk_budgeting_lab', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_lab' => $item->id_lab])->row();
+
+                                    $id_lab = $get_id_lab->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_lab])) ? $post['arr_total_expense'][$id_lab] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 5) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+                            $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_subcont_tenaga_ahli = $this->db->get()->result();
+
+                            $no_subcont_tenaga_ahli = 0;
+                            foreach ($get_subcont_tenaga_ahli as $item) {
+                                $no_subcont_tenaga_ahli++;
+
+                                $id_subcont = $item->id_subcont;
+                                if ($item->custom_akomodasi == 0) {
+                                    $get_id_subcont = $this->db->select('id')->get_where('kons_tr_spk_budgeting_subcont_tenaga_ahli', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_subcont' => $item->id_subcont])->row();
+
+                                    $id_subcont = $get_id_subcont->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$id_subcont])) ? $post['arr_total_expense'][$id_subcont] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                        if ($get_kasbon->tipe == 6) {
+                            $this->db->select('a.*, b.no_coa, b.nm_coa');
+                            $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
+                            $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
+                            $this->db->where('a.id_header', $id_header);
+                            $get_subcont_perusahaan = $this->db->get()->result();
+
+                            $no_subcont_perusahaan = 0;
+                            foreach ($get_subcont_perusahaan as $item) {
+                                $no_subcont_perusahaan++;
+
+                                $id_subcont = $item->id_subcont;
+                                if ($item->custom_akomodasi == 0) {
+                                    $get_id_subcont = $this->db->select('id')->get_where('kons_tr_spk_budgeting_subcont_perusahaan', ['id_spk_penawaran' => $item->id_spk_penawaran, 'id_subcont' => $item->id_subcont])->row();
+
+                                    $id_subcont = $get_id_subcont->id;
+                                }
+
+                                $total_pengajuan = (isset($post['arr_total_expense'][$item->id_subcont])) ? $post['arr_total_expense'][$item->id_subcont] : 0;
+
+                                $debit = $total_pengajuan;
+
+                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
+
+                                $hasil_jurnal .= '<tr>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= date('d F Y');
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $no_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_company;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $nm_coa;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-center">';
+                                $hasil_jurnal .= $item->nm_item;
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($debit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '<td class="text-right">';
+                                $hasil_jurnal .= number_format($kredit);
+                                $hasil_jurnal .= '</td>';
+
+                                $hasil_jurnal .= '</tr>';
+
+                                $ttl_debit += $debit;
+                                $ttl_kredit += $kredit;
+                            }
+                        }
+                    }
+                } else {
+                    if ($item_coa->no_perkiraan == '5010-12-5') {
+                        $debit = $total_expense;
+                    }
+                    if ($item_coa->no_perkiraan == '1030-20-4') {
+                        $kredit = $total_kasbon;
+                    }
+                    if ($item_coa->no_perkiraan == '2040-20-0') {
+                        $kredit = ($kontrol * -1);
+                    }
+
+
+                    $hasil_jurnal .= '<tr>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= date('d F Y');
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][tgl_jurnal]" value="' . date('Y-m-d') . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->no_perkiraan;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][coa]" value="' . $item_coa->no_perkiraan . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $nm_company;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][id_company]" value="' . $id_company . '">';
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_company]" value="' . $nm_company . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->nm_coa;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_coa]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->nm_coa;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][deskripsi]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-right">';
+                    $hasil_jurnal .= number_format($debit);
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][debit]" value="' . $debit . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-right">';
+                    $hasil_jurnal .= number_format($kredit);
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][kredit]" value="' . $kredit . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '</tr>';
+
+                    $ttl_debit += $debit;
+                    $ttl_kredit += $kredit;
                 }
-                if ($item_coa->no_perkiraan == '1030-20-4') {
-                    $kredit = $total_kasbon;
-                }
-                if ($item_coa->no_perkiraan == '2040-20-0') {
-                    $kredit = ($kontrol * -1);
-                }
-
-
-                $hasil_jurnal .= '<tr>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= date('d F Y');
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][tgl_jurnal]" value="' . date('Y-m-d') . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= $item_coa->no_perkiraan;
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][coa]" value="' . $item_coa->no_perkiraan . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= $nm_company;
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][id_company]" value="' . $id_company . '">';
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_company]" value="' . $nm_company . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-center">';
-                $hasil_jurnal .= $item_coa->nm_coa;
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_coa]" value="' . $item_coa->nm_coa . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-right">';
-                $hasil_jurnal .= number_format($debit);
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][debit]" value="' . $debit . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '<td class="text-right">';
-                $hasil_jurnal .= number_format($kredit);
-                $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][kredit]" value="' . $kredit . '">';
-                $hasil_jurnal .= '</td>';
-
-                $hasil_jurnal .= '</tr>';
-
-                $ttl_debit += $debit;
-                $ttl_kredit += $kredit;
             }
         }
 
