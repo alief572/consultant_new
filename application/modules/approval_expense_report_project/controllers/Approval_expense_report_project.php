@@ -2884,6 +2884,9 @@ class Approval_expense_report_project extends Admin_Controller
 
 
                         $debit = ($item_expense->qty_expense * $item_expense->nominal_expense);
+                        if ($item_expense->qty_expense < 1) {
+                            $debit = $item_expense->nominal_expense;
+                        }
 
                         $hasil_jurnal .= '<tr>';
 
@@ -3140,6 +3143,9 @@ class Approval_expense_report_project extends Admin_Controller
 
 
                         $debit = ($item_expense->qty_expense * $item_expense->nominal_expense);
+                        if ($item_expense->qty_expense < 1) {
+                            $debit = $item_expense->nominal_expense;
+                        }
 
                         $hasil_jurnal .= '<tr>';
 
@@ -3391,6 +3397,9 @@ class Approval_expense_report_project extends Admin_Controller
 
 
                         $debit = ($item_expense->qty_expense * $item_expense->nominal_expense);
+                        if ($item_expense->qty_expense < 1) {
+                            $debit = $item_expense->nominal_expense;
+                        }
 
                         $hasil_jurnal .= '<tr>';
 
