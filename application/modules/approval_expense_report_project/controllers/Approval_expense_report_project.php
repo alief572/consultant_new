@@ -1168,6 +1168,18 @@ class Approval_expense_report_project extends Admin_Controller
         $this->db->where('a.sts', null);
         $this->db->where('a.sts_req', 1);
 
+        if (!empty($search['value'])) {
+            $this->db->group_start();
+            $this->db->like('b.id_spk_penawaran', $search['value'], 'both');
+            $this->db->or_like('a.id', $search['value'], 'both');
+            $this->db->or_like('c.nm_customer', $search['value'], 'both');
+            $this->db->or_like('c.nm_sales', $search['value'], 'both');
+            $this->db->or_like('c.nm_project_leader', $search['value'], 'both');
+            $this->db->or_like('d.nm_paket', $search['value'], 'both');
+            $this->db->or_like('b.deskripsi', $search['value'], 'both');
+            $this->db->group_end();
+        }
+
         $db_clone = clone $this->db;
         $count_all = $db_clone->count_all_results();
 
