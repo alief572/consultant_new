@@ -209,9 +209,9 @@ class Approval_expense_report_project extends Admin_Controller
             foreach ($get_list_akomodasi_custom as $item) {
                 $no++;
 
-                if ($item->id_biaya == '15') {
-                    $ada_pph = '1';
-                }
+                // if ($item->id_biaya == '15') {
+                //     $ada_pph = '1';
+                // }
 
                 $qty_kasbon = 0;
                 $nominal_kasbon = 0;
@@ -1167,6 +1167,18 @@ class Approval_expense_report_project extends Admin_Controller
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = c.id_project', 'left');
         $this->db->where('a.sts', null);
         $this->db->where('a.sts_req', 1);
+
+        if (!empty($search['value'])) {
+            $this->db->group_start();
+            $this->db->like('b.id_spk_penawaran', $search['value'], 'both');
+            $this->db->or_like('a.id', $search['value'], 'both');
+            $this->db->or_like('c.nm_customer', $search['value'], 'both');
+            $this->db->or_like('c.nm_sales', $search['value'], 'both');
+            $this->db->or_like('c.nm_project_leader', $search['value'], 'both');
+            $this->db->or_like('d.nm_paket', $search['value'], 'both');
+            $this->db->or_like('b.deskripsi', $search['value'], 'both');
+            $this->db->group_end();
+        }
 
         $db_clone = clone $this->db;
         $count_all = $db_clone->count_all_results();
@@ -2999,7 +3011,7 @@ class Approval_expense_report_project extends Admin_Controller
                 $debit = 0;
                 $kredit = 0;
 
-                if ($item_coa->no_perkiraan !== '1030-29-9') {
+                if ($item_coa->no_perkiraan == '5010-12-5') {
                     $get_expense_detail = $this->db->get_where('kons_tr_expense_report_project_detail', ['id_header_expense' => $post['id_expense']])->result();
 
                     foreach ($get_expense_detail as $item_expense) {
@@ -3094,6 +3106,11 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_coa]" value="' . $item_coa->nm_coa . '">';
                     $hasil_jurnal .= '</td>';
 
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->nm_coa;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= '</td>';
+
                     $hasil_jurnal .= '<td class="text-right">';
                     $hasil_jurnal .= number_format($debit);
                     $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][debit]" value="' . $debit . '">';
@@ -3130,7 +3147,7 @@ class Approval_expense_report_project extends Admin_Controller
                 $debit = 0;
                 $kredit = 0;
 
-                if ($item_coa->no_perkiraan !== '1030-29-9') {
+                if ($item_coa->no_perkiraan == '5010-12-5') {
                     $get_expense_detail = $this->db->get_where('kons_tr_expense_report_project_detail', ['id_header_expense' => $post['id_expense']])->result();
 
                     foreach ($get_expense_detail as $item_expense) {
@@ -3222,6 +3239,11 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '<td class="text-center">';
                     $hasil_jurnal .= $item_coa->nm_coa;
                     $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][nm_coa]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= '</td>';
+
+                    $hasil_jurnal .= '<td class="text-center">';
+                    $hasil_jurnal .= $item_coa->nm_coa;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-right">';
