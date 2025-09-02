@@ -37,6 +37,7 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
                     <th align="center">Package</th>
                     <th align="center">Keterangan</th>
                     <th align="center">Tipe</th>
+                    <th align="center">Tipe Pembayaran</th>
                     <th align="center">Nominal</th>
                     <th align="center">Action</th>
                 </tr>
@@ -144,6 +145,9 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
                 },
                 {
                     data: 'tipe'
+                },
+                {
+                    data: 'tipe_pembayaran'
                 },
                 {
                     data: 'nominal'

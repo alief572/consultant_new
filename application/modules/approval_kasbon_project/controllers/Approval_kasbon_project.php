@@ -95,9 +95,9 @@ class Approval_kasbon_project extends Admin_Controller
         $no = 1;
         foreach ($get_data->result() as $item) {
 
-            $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+            $status = '<div class="badge bg-blue">Waiting Approval</div>';
             if ($item->sts == 2) {
-                $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $status = '<div class="badge bg-red">Rejected</div>';
             }
 
             $option = '<a href="' . base_url('approval_kasbon_project/approval_kasbon/' . urlencode(str_replace('/', '|', $item->id_kasbon))) . '" class="btn btn-sm btn-primary" title="Approval Kasbon"><i class="fa fa-arrow-up"></i></a>';
@@ -109,21 +109,35 @@ class Approval_kasbon_project extends Admin_Controller
 
             $keterangan = (!empty($get_header_kasbon)) ? $get_header_kasbon->deskripsi : '';
             $tipe = '';
+            $tipe_pengajuan = '';
             if (!empty($get_header_kasbon)) {
                 if ($get_header_kasbon->tipe == '1') {
-                    $tipe = 'Subcont';
+                    $tipe = '<div class="badge bg-blue">Subcont</div>';
                 }
                 if ($get_header_kasbon->tipe == '2') {
-                    $tipe = 'Akomodasi';
+                    $tipe = '<div class="badge bg-yellow">Akomodasi</div>';
                 }
                 if ($get_header_kasbon->tipe == '3') {
-                    $tipe = 'Others';
+                    $tipe = '<div class="badge bg-gray">Others</div>';
                 }
                 if ($get_header_kasbon->tipe == '4') {
-                    $tipe = 'Lab';
+                    $tipe = '<div class="badge bg-green">Lab</div>';
                 }
                 if ($get_header_kasbon->tipe == '5') {
-                    $tipe = 'Subcont Tenaga Ahli';
+                    $tipe = '<div class="badge bg-red">Subcont Tenaga Ahli</div>';
+                }
+                if ($get_header_kasbon->tipe == '6') {
+                    $tipe = '<div class="badge bg-purple">Subcont Perusahaan</div>';
+                }
+
+                if ($get_header_kasbon->metode_pembayaran == '1') {
+                    $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
+                }
+                if ($get_header_kasbon->metode_pembayaran == '2') {
+                    $tipe_pengajuan = '<div class="badge bg-yellow">Direct Payment</div>';
+                }
+                if ($get_header_kasbon->metode_pembayaran == '3') {
+                    $tipe_pengajuan = '<div class="badge bg-red">PO</div>';
                 }
             }
             $nominal = (!empty($get_header_kasbon)) ? $get_header_kasbon->grand_total : 0;
@@ -139,6 +153,7 @@ class Approval_kasbon_project extends Admin_Controller
                 'nm_project' => $item->nm_paket,
                 'keterangan' => $keterangan,
                 'tipe' => $tipe,
+                'tipe_pembayaran' => $tipe_pengajuan,
                 'nominal' => number_format($nominal),
                 'option' => $option
             ];

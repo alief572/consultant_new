@@ -65,6 +65,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         right: 0;
         /* Align with left edge */
     }
+
+    .button {
+        font-weight: bold;
+    }
 </style>
 
 <div class="box">
@@ -174,7 +178,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body" style="overflow: visible !important;">
-        <table id="example1" class="table custom-table mt-5" style="overflow: visible !important;">
+        <table id="example1" class="table table-striped mt-5" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -182,6 +186,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                 </tr>
@@ -194,7 +199,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <br><br>
 
         <h4 style="font-weight: 800;">Overbudget Subcont</h4>
-        <table class="table custom-table mt-5" id="table_ovb_subcont" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_subcont" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -269,7 +274,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body" style="overflow: visible !important;">
-        <table class="table custom-table mt-5" id="table_kasbon_akomodasi" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_kasbon_akomodasi" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -277,6 +282,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                 </tr>
@@ -289,7 +295,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <br><br>
 
         <h4 style="font-weight: 800;">Overbudget Akomodasi</h4>
-        <table class="table custom-table mt-5" id="table_ovb_akomodasi" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_akomodasi" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -364,7 +370,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <table class="table custom-table mt-5" id="table_kasbon_others" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_kasbon_others" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -372,6 +378,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                 </tr>
@@ -384,7 +391,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <br><br>
 
         <h4 style="font-weight: 800;">Overbudget Others</h4>
-        <table class="table custom-table mt-5" id="table_ovb_others" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_others" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -459,7 +466,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <table class="table custom-table mt-5" id="table_kasbon_lab" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_kasbon_lab" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -467,6 +474,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                 </tr>
@@ -479,7 +487,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <br><br>
 
         <h4 style="font-weight: 800;">Overbudget Others</h4>
-        <table class="table custom-table mt-5" id="table_ovb_lab" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_lab" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -554,7 +562,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <table class="table custom-table mt-5" id="table_kasbon_subcont_tenaga_ahli" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_kasbon_subcont_tenaga_ahli" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -562,6 +570,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                 </tr>
@@ -574,7 +583,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <br><br>
 
         <h4 style="font-weight: 800;">Overbudget Subcont Tenaga Ahli</h4>
-        <table class="table custom-table mt-5" id="table_ovb_subcont_tenaga_ahli" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_subcont_tenaga_ahli" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -649,7 +658,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <table class="table custom-table mt-5" id="table_kasbon_subcont_perusahaan" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_kasbon_subcont_perusahaan" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -657,6 +666,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                 </tr>
@@ -669,7 +679,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <br><br>
 
         <h4 style="font-weight: 800;">Overbudget Subcont Perusahaan</h4>
-        <table class="table custom-table mt-5" id="table_ovb_subcont_perusahaan" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_subcont_perusahaan" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -744,6 +754,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'total'
                 },
                 {
+                    data: 'tipe'
+                },
+                {
                     data: 'status'
                 },
                 {
@@ -784,6 +797,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'total'
+                },
+                {
+                    data: 'tipe'
                 },
                 {
                     data: 'status'
@@ -828,6 +844,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'total'
                 },
                 {
+                    data: 'tipe'
+                },
+                {
                     data: 'status'
                 },
                 {
@@ -868,6 +887,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'total'
+                },
+                {
+                    data: 'tipe'
                 },
                 {
                     data: 'status'
@@ -912,6 +934,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'total'
                 },
                 {
+                    data: 'tipe'
+                },
+                {
                     data: 'status'
                 },
                 {
@@ -952,6 +977,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'total'
+                },
+                {
+                    data: 'tipe'
                 },
                 {
                     data: 'status'

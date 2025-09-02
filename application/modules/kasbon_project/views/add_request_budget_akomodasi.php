@@ -351,7 +351,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                                 title: 'Success !',
                                 text: result.pesan
                             }, function(lanjut) {
-                                window.location.href = siteurl + active_controller + "add_kasbon_akomodasi/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>";
+                                window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>";
                             });
                         } else {
                             swal({
