@@ -65,6 +65,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         right: 0;
         /* Align with left edge */
     }
+
+    .btn {
+        font-weight: bold;
+    }
 </style>
 
 <div class="box">
@@ -174,10 +178,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body" style="overflow: visible !important;">
-        <a href="<?= base_url('kasbon_project/add_kasbon_subcont/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Kasbon
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
         </a>
-        <table id="example1" class="table custom-table mt-5" style="overflow: visible !important;">
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
+            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
+        </a>
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
+            <i class="fa fa-plus"></i> Add Pengajuan PO
+        </a>
+        <table id="example1" class="table table-striped mt-5" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -185,6 +195,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Option</th>
@@ -203,7 +214,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <a href="<?= base_url('kasbon_project/add_request_budget_subcont/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
             <i class="fa fa-plus"></i> Add Overbudget
         </a>
-        <table class="table custom-table mt-5" id="table_ovb_subcont" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_subcont" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -280,10 +291,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body" style="overflow: visible !important;">
-        <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Kasbon
+        <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
         </a>
-        <table class="table custom-table mt-5" id="table_kasbon_akomodasi" style="overflow: visible !important;">
+        <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
+            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
+        </a>
+        <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
+            <i class="fa fa-plus"></i> Add Pengajuan PO
+        </a>
+        <table class="table table-striped mt-5" id="table_kasbon_akomodasi" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -291,6 +308,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Option</th>
@@ -309,7 +327,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <a href="<?= base_url('kasbon_project/add_request_budget_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
             <i class="fa fa-plus"></i> Add Overbudget
         </a>
-        <table class="table custom-table mt-5" id="table_ovb_akomodasi" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_akomodasi" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -386,10 +404,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <a href="<?= base_url('kasbon_project/add_kasbon_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Kasbon
+        <a href="<?= base_url('kasbon_project/add_kasbon_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
         </a>
-        <table class="table custom-table mt-5" id="table_kasbon_others" style="overflow: visible !important;">
+        <a href="<?= base_url('kasbon_project/add_kasbon_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
+            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
+        </a>
+        <a href="<?= base_url('kasbon_project/add_kasbon_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
+            <i class="fa fa-plus"></i> Add Pengajuan PO
+        </a>
+        <table class="table table-striped mt-5" id="table_kasbon_others" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -397,6 +421,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Option</th>
@@ -414,7 +439,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <a href="<?= base_url('kasbon_project/add_request_budget_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
             <i class="fa fa-plus"></i> Add Overbudget
         </a>
-        <table class="table custom-table mt-5" id="table_ovb_others" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_others" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -491,10 +516,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <a href="<?= base_url('kasbon_project/add_kasbon_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Kasbon
+        <a href="<?= base_url('kasbon_project/add_kasbon_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
         </a>
-        <table class="table custom-table mt-5" id="table_kasbon_lab" style="overflow: visible !important;">
+        <a href="<?= base_url('kasbon_project/add_kasbon_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
+            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
+        </a>
+        <a href="<?= base_url('kasbon_project/add_kasbon_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
+            <i class="fa fa-plus"></i> Add Pengajuan PO
+        </a>
+        <table class="table table-striped mt-5" id="table_kasbon_lab" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -502,6 +533,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Option</th>
@@ -519,7 +551,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <a href="<?= base_url('kasbon_project/add_request_budget_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
             <i class="fa fa-plus"></i> Add Overbudget
         </a>
-        <table class="table custom-table mt-5" id="table_ovb_lab" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_lab" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -596,10 +628,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Kasbon
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
         </a>
-        <table class="table custom-table mt-5" id="table_kasbon_subcont_tenaga_ahli" style="overflow: visible !important;">
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
+            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
+        </a>
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
+            <i class="fa fa-plus"></i> Add Pengajuan PO
+        </a>
+        <table class="table table-striped mt-5" id="table_kasbon_subcont_tenaga_ahli" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -607,6 +645,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Option</th>
@@ -624,7 +663,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <a href="<?= base_url('kasbon_project/add_request_budget_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
             <i class="fa fa-plus"></i> Add Overbudget
         </a>
-        <table class="table custom-table mt-5" id="table_ovb_subcont_tenaga_ahli" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_subcont_tenaga_ahli" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -701,10 +740,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Kasbon
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
+            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
         </a>
-        <table class="table custom-table mt-5" id="table_kasbon_subcont_perusahaan" style="overflow: visible !important;">
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
+            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
+        </a>
+        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
+            <i class="fa fa-plus"></i> Add Pengajuan PO
+        </a>
+        <table class="table table-striped mt-5" id="table_kasbon_subcont_perusahaan" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -712,6 +757,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">Description</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Option</th>
@@ -729,7 +775,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <a href="<?= base_url('kasbon_project/add_request_budget_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
             <i class="fa fa-plus"></i> Add Overbudget
         </a>
-        <table class="table custom-table mt-5" id="table_ovb_subcont_perusahaan" style="overflow: visible !important;">
+        <table class="table table-striped mt-5" id="table_ovb_subcont_perusahaan" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
@@ -806,6 +852,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'total'
                 },
                 {
+                    data: 'tipe'
+                },
+                {
                     data: 'status'
                 },
                 {
@@ -849,6 +898,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'total'
+                },
+                {
+                    data: 'tipe'
                 },
                 {
                     data: 'status'
@@ -896,6 +948,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'total'
                 },
                 {
+                    data: 'tipe'
+                },
+                {
                     data: 'status'
                 },
                 {
@@ -939,6 +994,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'total'
+                },
+                {
+                    data: 'tipe'
                 },
                 {
                     data: 'status'
@@ -986,6 +1044,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'total'
                 },
                 {
+                    data: 'tipe'
+                },
+                {
                     data: 'status'
                 },
                 {
@@ -1029,6 +1090,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'total'
+                },
+                {
+                    data: 'tipe'
                 },
                 {
                     data: 'status'

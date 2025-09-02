@@ -922,7 +922,7 @@ class Kasbon_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont->result() as $item) {
-            $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
+            $sts = '<div class="badge bg-yellow">Draft</div>';
 
             $this->db->select('a.id');
             $this->db->from('kons_tr_req_kasbon_project a');
@@ -931,19 +931,30 @@ class Kasbon_project extends Admin_Controller
             $get_check_req_approval = $this->db->get()->result();
 
             if (count($get_check_req_approval) > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+                $sts = '<div class="badge bg-blue">Waiting Approval</div>';
             }
 
             if ($item->sts == '1') {
-                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+                $sts = '<div class="badge bg-green">Approved</div>';
             }
             if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
                 if ($item->sts_reject !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 }
                 if ($item->sts_reject_manage !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
+            }
+
+            $tipe_pengajuan = '';
+            if ($item->metode_pembayaran == '1') {
+                $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
+            }
+            if ($item->metode_pembayaran == '2') {
+                $tipe_pengajuan = '<div class="badge bg-green">Direct Payment</div>';
+            }
+            if ($item->metode_pembayaran == '3') {
+                $tipe_pengajuan = '<div class="badge bg-red">PO</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
@@ -1048,6 +1059,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_aktifitas' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'total' => number_format($item->grand_total, 2),
+                'tipe' => $tipe_pengajuan,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -1115,7 +1127,7 @@ class Kasbon_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_akomodasi->result() as $item) {
-            $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
+            $sts = '<div class="badge bg-yellow">Draft</div>';
 
             $this->db->select('a.id');
             $this->db->from('kons_tr_req_kasbon_project a');
@@ -1124,24 +1136,35 @@ class Kasbon_project extends Admin_Controller
             $get_check_req_approval = $this->db->get()->result();
 
             if (count($get_check_req_approval) > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+                $sts = '<div class="badge bg-blue">Waiting Approval</button>';
             }
             if ($item->sts == '1') {
-                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+                $sts = '<div class="badge bg-green">Approved</button>';
             }
 
             if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
                 if ($item->sts_reject !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Finance</button>';
                 }
                 if ($item->sts_reject_manage !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</button>';
                 }
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
+            }
+
+            $tipe_pengajuan = '';
+            if ($item->metode_pembayaran == '1') {
+                $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
+            }
+            if ($item->metode_pembayaran == '2') {
+                $tipe_pengajuan = '<div class="badge bg-green">Direct Payment</div>';
+            }
+            if ($item->metode_pembayaran == '3') {
+                $tipe_pengajuan = '<div class="badge bg-red">PO</div>';
             }
 
             $option = '
@@ -1226,6 +1249,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'total' => number_format($item->grand_total, 2),
+                'tipe' => $tipe_pengajuan,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -1293,7 +1317,7 @@ class Kasbon_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_others->result() as $item) {
-            $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
+            $sts = '<div class="badge bg-yellow">Draft</div>';
 
             $this->db->select('a.id');
             $this->db->from('kons_tr_req_kasbon_project a');
@@ -1302,24 +1326,35 @@ class Kasbon_project extends Admin_Controller
             $get_check_req_approval = $this->db->get()->result();
 
             if (count($get_check_req_approval) > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+                $sts = '<div class="badge bg-blue">Waiting Approval</div>';
             }
 
             if ($item->sts == '1') {
-                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+                $sts = '<div class="badge bg-green">Approved</div>';
             }
             if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
                 if ($item->sts_reject !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 }
                 if ($item->sts_reject_manage !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
-                $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
+                $sts = '<div class="badge bg-green">Paid</div>';
+            }
+
+            $tipe_pengajuan = '';
+            if ($item->metode_pembayaran == '1') {
+                $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
+            }
+            if ($item->metode_pembayaran == '2') {
+                $tipe_pengajuan = '<div class="badge bg-yellow">Direct Payment</div>';
+            }
+            if ($item->metode_pembayaran == '3') {
+                $tipe_pengajuan = '<div class="badge bg-green">PO</div>';
             }
 
             $option = '
@@ -1404,6 +1439,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
+                'tipe' => $tipe_pengajuan,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -1471,7 +1507,7 @@ class Kasbon_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_lab->result() as $item) {
-            $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
+            $sts = '<div class="badge bg-yellow">Draft</div>';
 
             $this->db->select('a.id');
             $this->db->from('kons_tr_req_kasbon_project a');
@@ -1480,24 +1516,35 @@ class Kasbon_project extends Admin_Controller
             $get_check_req_approval = $this->db->get()->result();
 
             if (count($get_check_req_approval) > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+                $sts = '<div class="badge bg-blue">Waiting Approval<div>';
             }
 
             if ($item->sts == '1') {
-                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+                $sts = '<div class="badge bg-green">Approved<div>';
             }
             if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
                 if ($item->sts_reject !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Finance<div>';
                 }
                 if ($item->sts_reject_manage !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur<div>';
                 }
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
-                $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
+                $sts = '<div class="btn btn-sm btn-success">Paid<div>';
+            }
+
+            $tipe_pengajuan = '';
+            if ($item->metode_pembayaran == '1') {
+                $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
+            }
+            if ($item->metode_pembayaran == '2') {
+                $tipe_pengajuan = '<div class="badge bg-yellow">Direct Payment</div>';
+            }
+            if ($item->metode_pembayaran == '3') {
+                $tipe_pengajuan = '<div class="badge bg-green">PO</div>';
             }
 
             $option = '
@@ -1582,6 +1629,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
+                'tipe' => $tipe_pengajuan,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -1649,7 +1697,7 @@ class Kasbon_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont_tenaga_ahli->result() as $item) {
-            $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
+            $sts = '<div class="badge bg-yellow">Draft</div>';
 
             $this->db->select('a.id');
             $this->db->from('kons_tr_req_kasbon_project a');
@@ -1658,24 +1706,35 @@ class Kasbon_project extends Admin_Controller
             $get_check_req_approval = $this->db->get()->result();
 
             if (count($get_check_req_approval) > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+                $sts = '<div class="badge bg-blue">Waiting Approval</div>';
             }
 
             if ($item->sts == '1') {
-                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+                $sts = '<div class="badge bg-green">Approved</div>';
             }
             if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
                 if ($item->sts_reject !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 }
                 if ($item->sts_reject_manage !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
-                $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
+                $sts = '<div class="badge bg-green">Paid</div>';
+            }
+
+            $tipe_pengajuan = '';
+            if ($item->metode_pembayaran == '1') {
+                $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
+            }
+            if ($item->metode_pembayaran == '2') {
+                $tipe_pengajuan = '<div class="badge bg-yellow">Direct Payment</div>';
+            }
+            if ($item->metode_pembayaran == '3') {
+                $tipe_pengajuan = '<div class="badge bg-green">PO</div>';
             }
 
             $option = '
@@ -1760,6 +1819,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
+                'tipe' => $tipe_pengajuan,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -1827,7 +1887,7 @@ class Kasbon_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont_perusahaan->result() as $item) {
-            $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
+            $sts = '<div class="badge bg-yellow">Draft</button>';
 
             $this->db->select('a.id');
             $this->db->from('kons_tr_req_kasbon_project a');
@@ -1836,24 +1896,35 @@ class Kasbon_project extends Admin_Controller
             $get_check_req_approval = $this->db->get()->result();
 
             if (count($get_check_req_approval) > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+                $sts = '<div class="badge bg-blue">Waiting Approval</div>';
             }
 
             if ($item->sts == '1') {
-                $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+                $sts = '<div class="badge bg-green">Approved</div>';
             }
             if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
                 if ($item->sts_reject !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Finance</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 }
                 if ($item->sts_reject_manage !== null) {
-                    $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
-                $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
+                $sts = '<div class="badge bg-green">Paid</div>';
+            }
+
+            $tipe_pengajuan = '';
+            if ($item->metode_pembayaran == '1') {
+                $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
+            }
+            if ($item->metode_pembayaran == '2') {
+                $tipe_pengajuan = '<div class="badge bg-yellow">Direct Payment</div>';
+            }
+            if ($item->metode_pembayaran == '3') {
+                $tipe_pengajuan = '<div class="badge bg-green">PO</div>';
             }
 
             $option = '
@@ -1938,6 +2009,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
+                'tipe' => $tipe_pengajuan,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -3331,7 +3403,7 @@ class Kasbon_project extends Admin_Controller
         $this->template->render('view_request_budget_subcont_perusahaan');
     }
 
-    public function add_kasbon_subcont($id_spk_budgeting)
+    public function add_kasbon_subcont($id_spk_budgeting, $metode_pembayaran = 1)
     {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
@@ -3409,7 +3481,8 @@ class Kasbon_project extends Admin_Controller
             'data_kasbon_subcont' => $data_kasbon_subcont,
             'data_overbudget_subcont' => $data_overbudget_subcont,
             'data_ovb_subcont_custom' => $get_ovb_subcont_custom,
-            'data_kasbon_custom' => $data_kasbon_custom
+            'data_kasbon_custom' => $data_kasbon_custom,
+            'metode_pembayaran' => $metode_pembayaran
         ];
 
         $this->template->set($data);
@@ -3559,7 +3632,7 @@ class Kasbon_project extends Admin_Controller
         $this->template->render('view_kasbon_subcont');
     }
 
-    public function add_kasbon_akomodasi($id_spk_budgeting)
+    public function add_kasbon_akomodasi($id_spk_budgeting, $metode_pembayaran = 1)
     {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
@@ -3613,6 +3686,7 @@ class Kasbon_project extends Admin_Controller
         }
 
         $data = [
+            'metode_pembayaran' => $metode_pembayaran,
             'id_spk_budgeting' => $id_spk_budgeting,
             'list_budgeting' => $get_budgeting,
             'list_akomodasi' => $get_data_akomodasi,
@@ -3811,7 +3885,7 @@ class Kasbon_project extends Admin_Controller
         $this->template->render('edit_kasbon_akomodasi');
     }
 
-    public function add_kasbon_others($id_spk_budgeting)
+    public function add_kasbon_others($id_spk_budgeting, $metode_pembayaran = 1)
     {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
@@ -3866,6 +3940,7 @@ class Kasbon_project extends Admin_Controller
 
 
         $data = [
+            'metode_pembayaran' => $metode_pembayaran,
             'id_spk_budgeting' => $id_spk_budgeting,
             'list_budgeting' => $get_budgeting,
             'list_others' => $get_data_others,
@@ -3879,7 +3954,7 @@ class Kasbon_project extends Admin_Controller
         $this->template->render('add_kasbon_others');
     }
 
-    public function add_kasbon_lab($id_spk_budgeting)
+    public function add_kasbon_lab($id_spk_budgeting, $metode_pembayaran = 1)
     {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
@@ -3934,6 +4009,7 @@ class Kasbon_project extends Admin_Controller
 
 
         $data = [
+            'metode_pembayaran' => $metode_pembayaran,
             'id_spk_budgeting' => $id_spk_budgeting,
             'list_budgeting' => $get_budgeting,
             'list_lab' => $get_data_lab,
@@ -3947,7 +4023,7 @@ class Kasbon_project extends Admin_Controller
         $this->template->render('add_kasbon_lab');
     }
 
-    public function add_kasbon_subcont_tenaga_ahli($id_spk_budgeting)
+    public function add_kasbon_subcont_tenaga_ahli($id_spk_budgeting, $metode_pembayaran = 1)
     {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
@@ -4004,6 +4080,7 @@ class Kasbon_project extends Admin_Controller
 
 
         $data = [
+            'metode_pembayaran' => $metode_pembayaran,
             'id_spk_budgeting' => $id_spk_budgeting,
             'list_budgeting' => $get_budgeting,
             'list_subcont_tenaga_ahli' => $get_data_subcont_tenaga_ahli,
@@ -4017,7 +4094,7 @@ class Kasbon_project extends Admin_Controller
         $this->template->render('add_kasbon_subcont_tenaga_ahli');
     }
 
-    public function add_kasbon_subcont_perusahaan($id_spk_budgeting)
+    public function add_kasbon_subcont_perusahaan($id_spk_budgeting, $metode_pembayaran = 1)
     {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
@@ -4074,6 +4151,7 @@ class Kasbon_project extends Admin_Controller
 
 
         $data = [
+            'metode_pembayaran' => $metode_pembayaran,
             'id_spk_budgeting' => $id_spk_budgeting,
             'list_budgeting' => $get_budgeting,
             'list_subcont_perusahaan' => $get_data_subcont_perusahaan,
@@ -5168,7 +5246,6 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
-            'metode_pembayaran' => $post['metode_pembayaran'],
             'updated_by' => $this->auth->user_id(),
             'updated_date' => date('Y-m-d H:i:s')
         ], [
@@ -5834,7 +5911,6 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
-            'metode_pembayaran' => $post['metode_pembayaran'],
             'updated_by' => $this->auth->user_id(),
             'updated_date' => date('Y-m-d H:i:s')
         ];
@@ -5964,7 +6040,6 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
-            'metode_pembayaran' => $post['metode_pembayaran'],
             'updated_by' => $this->auth->user_id(),
             'updated_date' => date('Y-m-d H:i:s')
         ];
@@ -6094,7 +6169,6 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
-            'metode_pembayaran' => $post['metode_pembayaran'],
             'updated_by' => $this->auth->user_id(),
             'updated_date' => date('Y-m-d H:i:s')
         ];
@@ -6224,7 +6298,6 @@ class Kasbon_project extends Admin_Controller
             'bank' => $post['kasbon_bank'],
             'bank_number' => $post['kasbon_bank_number'],
             'bank_account' => $post['kasbon_bank_account'],
-            'metode_pembayaran' => $post['metode_pembayaran'],
             'updated_by' => $this->auth->user_id(),
             'updated_date' => date('Y-m-d H:i:s')
         ];
