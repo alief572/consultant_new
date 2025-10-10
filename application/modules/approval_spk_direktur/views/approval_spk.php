@@ -787,7 +787,9 @@ if ($data_user->employee_id == '168') {
                                 swal({
                                     type: 'success',
                                     title: 'Success !',
-                                    text: result.pesan
+                                    text: result.pesan,
+                                    allowOutsideClick: false,
+                                    timer: 3000
                                 }, function(aftter) {
                                     window.location.href = siteurl + active_controller;
                                 });
@@ -795,7 +797,9 @@ if ($data_user->employee_id == '168') {
                                 swal({
                                     type: 'warning',
                                     title: 'Failed !',
-                                    text: result.pesan
+                                    text: result.pesan,
+                                    allowOutsideClick: false,
+                                    timer: 3000
                                 });
                             }
                         },
@@ -803,7 +807,9 @@ if ($data_user->employee_id == '168') {
                             swal({
                                 type: 'error',
                                 title: 'Error !',
-                                text: 'Please try again later !'
+                                text: 'Please try again later !',
+                                allowOutsideClick: false,
+                                timer: 3000
                             });
                         }
                     });
@@ -837,7 +843,9 @@ if ($data_user->employee_id == '168') {
                             swal({
                                 type: 'success',
                                 title: 'Success !',
-                                text: result.pesan
+                                text: result.pesan,
+                                allowOutsideClick: false,
+                                timer: 3000
                             }, function(lanjut) {
                                 window.location.href = siteurl + active_controller;
                             });
@@ -845,7 +853,9 @@ if ($data_user->employee_id == '168') {
                             swal({
                                 type: 'warning',
                                 title: 'Failed !',
-                                text: result.pesan
+                                text: result.pesan,
+                                allowOutsideClick: false,
+                                timer: 3000
                             });
                         }
                     },
@@ -853,7 +863,9 @@ if ($data_user->employee_id == '168') {
                         swal({
                             type: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: 'Please try again later !',
+                            allowOutsideClick: false,
+                            timer: 3000
                         });
                     }
                 });
