@@ -21,6 +21,8 @@ class Approval_request_payment extends Admin_Controller
 	protected $managePermission = "Request_Payment.Manage";
 	protected $deletePermission = "Request_Payment.Delete";
 
+	protected $status;
+
 	public function __construct()
 	{
 		parent::__construct();
