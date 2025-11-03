@@ -732,6 +732,7 @@ if ($data_user->employee_id == '168') {
 
 <input type="hidden" name="no_payment" value="1">
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     var no_payment = parseFloat($('input[name="no_payment"]').val());
     $(document).ready(function() {
@@ -760,19 +761,24 @@ if ($data_user->employee_id == '168') {
         var reject_reason = $('.reject_reason').val();
 
         if (reject_reason == '') {
-            swal({
+            Swal.fire({
                 type: 'warning',
                 title: 'Warning !',
-                text: 'Please input the reject reason first !'
+                text: 'Please input the reject reason first !',
+                timer: 2000,
+                showConfirmButton: false,
+                showCancelButton: false,
+                allowOutsideClick: false
             });
         } else {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Are you sure ?',
                 text: 'You will reject this SPK !',
-                showCancelButton: true
-            }, function(next) {
-                if (next) {
+                showCancelButton: true,
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
                     $.ajax({
                         type: "POST",
                         url: siteurl + active_controller + 'reject_spk',
@@ -784,26 +790,38 @@ if ($data_user->employee_id == '168') {
                         dataType: "JSON",
                         success: function(result) {
                             if (result.status == 1) {
-                                swal({
-                                    type: 'success',
+                                Swal.fire({
+                                    icon: 'success',
                                     title: 'Success !',
-                                    text: result.pesan
+                                    text: result.pesan,
+                                    timer: 2000,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    allowOutsideClick: false
                                 }, function(aftter) {
                                     window.location.href = siteurl + active_controller;
                                 });
                             } else {
-                                swal({
+                                Swal.fire({
                                     type: 'warning',
                                     title: 'Failed !',
-                                    text: result.pesan
+                                    text: result.pesan,
+                                    timer: 2000,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    allowOutsideClick: false
                                 });
                             }
                         },
                         error: function(result) {
-                            swal({
+                            Swal.fire({
                                 type: 'error',
                                 title: 'Error !',
-                                text: 'Please try again later !'
+                                text: 'Please try again later !',
+                                timer: 2000,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false
                             });
                         }
                     });
@@ -816,13 +834,14 @@ if ($data_user->employee_id == '168') {
         var id_spk_penawaran = $('input[name="id_spk_penawaran"]').val();
         var isu_khusus = $('.isu_khusus').val();
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'You will Approve this SPK !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
                     url: siteurl + active_controller + 'approve_spk',
@@ -834,26 +853,38 @@ if ($data_user->employee_id == '168') {
                     dataType: "JSON",
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
-                                text: result.pesan
-                            }, function(lanjut) {
+                                text: result.pesan,
+                                timer: 2000,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false
+                            }).then((result) => {
                                 window.location.href = siteurl + active_controller;
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
-                                text: result.pesan
+                                text: result.pesan,
+                                timer: 2000,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: 'Please try again later !',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowOutsideClick: false
                         });
                     }
                 });
@@ -895,10 +926,14 @@ if ($data_user->employee_id == '168') {
                 $('#dialog-rekap').modal('show');
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
-                    text: 'Please try again later !'
+                    text: 'Please try again later !',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    showCancelButton: false,
+                    allowOutsideClick: false
                 });
             }
         });
