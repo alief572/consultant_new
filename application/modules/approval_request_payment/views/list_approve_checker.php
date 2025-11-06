@@ -91,6 +91,15 @@ endforeach;
                                     if ($get_kasbon_header->tipe == '3') {
                                         $tipe = 'Kasbon Others';
                                     }
+                                    if ($get_kasbon_header->tipe == '4') {
+                                        $tipe = 'Kasbon Lab';
+                                    }
+                                    if ($get_kasbon_header->tipe == '5') {
+                                        $tipe = 'Kasbon Subcont Tenaga Ahli';
+                                    }
+                                    if ($get_kasbon_header->tipe == '6') {
+                                        $tipe = 'Kasbon Subcont Perusahaan';
+                                    }
 
 
 
@@ -105,6 +114,12 @@ endforeach;
                                     }
                                     if ($get_kasbon_header->tipe == '4') {
                                         $link_view = base_url('kasbon_project/view_kasbon_lab/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
+                                    if ($get_kasbon_header->tipe == '5') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
+                                    if ($get_kasbon_header->tipe == '6') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_subcont_perusahaan/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
                                     }
                                 }
 
