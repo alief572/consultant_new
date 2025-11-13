@@ -629,7 +629,7 @@ class Approval_spk_manager_sales extends Admin_Controller
         $data_arr = [];
 
         $data_arr = [
-            'approval_manager_sales_sts' => null,
+            'approval_manager_sales' => null,
             'approval_manager_sales_date' => null,
             'approval_sales_sts' => null,
             'approval_sales_date' => null,
@@ -645,6 +645,12 @@ class Approval_spk_manager_sales extends Admin_Controller
         ];
 
         $update_reject_spk = $this->db->update('kons_tr_spk_penawaran', $data_arr, ['id_spk_penawaran' => $id_spk_penawaran]);
+        if (!$update_reject_spk) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
 
         if ($this->db->trans_status() === false || empty($data_arr)) {
             $this->db->trans_rollback();
