@@ -964,6 +964,7 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
 
 <input type="hidden" name="no_payment" value="1">
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function() {
         $('.chosen_select').chosen({
@@ -990,13 +991,15 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
         var id_spk_budgeting = '<?= $id_spk_budgeting ?>';
         var reject_reason = $('input[name="reject_reason"]').val();
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be rejected !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            showConfirmButton: true,
+            allowOutsideClick: false
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'reject_budget',
@@ -1008,26 +1011,38 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
-                                text: result.pesan
-                            }, function(lanjut) {
+                                text: result.pesan,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                timer: 3000
+                            }).then(() => {
                                 window.location.href = siteurl + active_controller;
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
-                                text: result.pesan
+                                text: result.pesan,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                timer: 3000
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: 'Please try again later !',
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowOutsideClick: false,
+                            timer: 3000
                         });
                     }
                 })
@@ -1038,13 +1053,15 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
     $(document).on('click', '.approve_budget', function() {
         var id_spk_budgeting = '<?= $id_spk_budgeting ?>';
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be approved !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            showConfirmButton: true,
+            allowOutsideClick: false
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'approve_budget',
@@ -1055,26 +1072,38 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
-                                text: result.pesan
-                            }, function(lanjut) {
+                                text: result.pesan,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                timer: 3000
+                            }).then(() => {
                                 window.location.href = siteurl + active_controller;
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
-                                text: result.pesan
+                                text: result.pesan,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                timer: 3000
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: 'Please try again later !',
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowOutsideClick: false,
+                            timer: 3000
                         });
                     }
                 })
