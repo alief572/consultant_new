@@ -86,17 +86,17 @@ $ENABLE_DELETE  = has_permission('Master_Customer.Delete');
 		e.preventDefault()
 		var id = $(this).data('id');
 		// alert(id);
-		swal({
-				title: "Anda Yakin?",
-				text: "Data akan di hapus!",
-				type: "warning",
-				showCancelButton: true,
-				confirmButtonClass: "btn-info",
-				confirmButtonText: "Yes",
-				cancelButtonText: "No",
-				closeOnConfirm: false
-			},
-			function() {
+		Swal.fire({
+			title: "Anda Yakin?",
+			text: "Data akan di hapus!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonClass: "btn-info",
+			confirmButtonText: "Yes",
+			cancelButtonText: "No",
+			closeOnConfirm: false
+		}).then((next) => {
+			if (next.isConfirmed) {
 				$.ajax({
 					type: 'POST',
 					url: siteurl + active_controller + '/delete',
@@ -106,32 +106,44 @@ $ENABLE_DELETE  = has_permission('Master_Customer.Delete');
 					},
 					success: function(data) {
 						if (data.status == '1') {
-							swal({
-									title: "Sukses",
-									text: data.pesan,
-									type: "success"
-								},
-								function() {
-									window.location.reload(true);
-								})
+							Swal.fire({
+								title: "Sukses",
+								text: data.pesan,
+								icon: "success",
+								showCancelButton: false,
+								showConfirmButton: false,
+								allowOutsideClick: false,
+								timer: 3000
+							}).then(() => {
+								window.location.reload(true);
+							})
 						} else {
-							swal({
+							Swal.fire({
 								title: "Error",
 								text: data.pesan,
-								type: "error"
+								icon: "error",
+								showCancelButton: false,
+								showConfirmButton: false,
+								allowOutsideClick: false,
+								timer: 3000
 							})
 
 						}
 					},
 					error: function() {
-						swal({
+						Swal.fire({
 							title: "Error",
 							text: "Error proccess !",
-							type: "error"
+							icon: "error",
+							showCancelButton: false,
+							showConfirmButton: false,
+							allowOutsideClick: false,
+							timer: 3000
 						})
 					}
 				})
-			});
+			}
+		});
 
 	})
 </script>

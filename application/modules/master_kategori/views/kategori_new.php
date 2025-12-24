@@ -69,13 +69,15 @@
     $(document).on('submit', '#FormTambah', function(e) {
         e.preventDefault()
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be saved',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            showConfirmButton: true,
+            allowOutsideClick: false
+        }).then((next) => {
+            if (next.isConfirmed) {
                 var formData = $('#FormTambah').serialize();
 
                 $.ajax({
@@ -86,26 +88,38 @@
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
-                                text: result.msg
-                            }, function(after) {
+                                text: result.msg,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                timer: 3000
+                            }).then(() => {
                                 window.location = siteurl + active_controller
                             })
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
-                                text: result.msg
+                                text: result.msg,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                timer: 3000
                             })
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: 'Please try again later !',
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowOutsideClick: false,
+                            timer: 3000
                         })
                     }
                 });

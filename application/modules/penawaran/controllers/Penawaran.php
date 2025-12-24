@@ -305,6 +305,9 @@ class Penawaran extends Admin_Controller
 
         $get_data = $this->db->get();
 
+        // print_r($this->db->last_query());
+        // exit;
+
         $hasil = [];
 
         $no = ($start + 1);

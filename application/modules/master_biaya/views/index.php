@@ -143,13 +143,15 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 		$(document).on('submit', '#frm-data', function(e) {
 			e.preventDefault();
 
-			swal({
-				type: 'warning',
+			Swal.fire({
+				icon: 'warning',
 				title: 'Are you sure ?',
 				text: 'This data will be saved !',
-				showCancelButton: true
-			}, function(next) {
-				if (next) {
+				showCancelButton: true,
+				showConfirmButton: true,
+				allowOutsideClick: false,
+			}).then((next) => {
+				if (next.isConfirmed) {
 					var formData = $('#frm-data').serialize();
 
 					$.ajax({
@@ -160,26 +162,38 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 						dataType: 'json',
 						success: function(result) {
 							if (result.status == 1) {
-								swal({
-									type: 'success',
+								Swal.fire({
+									icon: 'success',
 									title: 'Success !',
-									text: result.pesan
-								}, function(after) {
+									text: result.pesan,
+									showCancelButton: false,
+									showConfirmButton: false,
+									allowOutsideClick: false,
+									timer: 3000
+								}).then(() => {
 									location.reload();
 								});
 							} else {
-								swal({
-									type: 'warning',
+								Swal.fire({
+									icon: 'warning',
 									title: 'Failed !',
-									text: result.pesan
+									text: result.pesan,
+									showCancelButton: false,
+									showConfirmButton: false,
+									allowOutsideClick: false,
+									timer: 3000
 								});
 							}
 						},
 						error: function(result) {
-							swal({
-								type: 'error',
+							Swal.fire({
+								icon: 'error',
 								title: 'Error !',
-								text: 'Please try again later !'
+								text: 'Please try again later !',
+								showCancelButton: false,
+								showConfirmButton: false,
+								allowOutsideClick: false,
+								timer: 3000
 							});
 						}
 					});
@@ -190,13 +204,15 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 		$(document).on('click', '.del_biaya', function() {
 			var id = $(this).data('id');
 
-			swal({
-				type: 'warning',
+			Swal.fire({
+				icon: 'warning',
 				title: 'Are you sure ?',
 				text: 'This will delete the data !',
-				showCancelButton: true
-			}, function(next) {
-				if (next) {
+				showCancelButton: true,
+				showConfirmButton: true,
+				allowOutsideClick: false
+			}).then((next) => {
+				if (next.isConfirmed) {
 					$.ajax({
 						type: 'post',
 						url: siteurl + active_controller + 'del_biaya',
@@ -207,26 +223,39 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 						dataType: 'JSON',
 						success: function(result) {
 							if (result.status == 1) {
-								swal({
-									type: 'success',
+								Swal.fire({
+									icon: 'success',
 									title: 'Success !',
-									text: result.pesan
-								}, function(after) {
+									text: result.pesan,
+									showConfirmButton: false,
+									showCancelButton: false,
+									allowOutsideClick: false,
+									timer: 3000
+								}).then(() => {
+									Swal.close();
 									datatables();
 								});
 							} else {
-								swal({
-									type: 'warning',
+								Swal.fire({
+									icon: 'warning',
 									title: 'Failed !',
-									text: result.pesan
+									text: result.pesan,
+									showConfirmButton: false,
+									showCancelButton: false,
+									allowOutsideClick: false,
+									timer: 3000
 								});
 							}
 						},
 						error: function(result) {
-							swal({
-								type: 'error',
+							Swal.fire({
+								icon: 'error',
 								title: 'Error !',
-								text: 'Please try again later !'
+								text: 'Please try again later !',
+								showConfirmButton: false,
+								showCancelButton: false,
+								allowOutsideClick: false,
+								timer: 3000
 							});
 						}
 					});

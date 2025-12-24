@@ -9,7 +9,7 @@
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Sweet Alert -->
-  <link rel="stylesheet" href="<?= base_url('assets/dist/sweetalert.css'); ?>">
+  <!-- <link rel="stylesheet" href="<?= base_url('assets/dist/sweetalert.css'); ?>"> -->
   <!-- Bootstrap 3.3.6 -->
   <link rel="stylesheet" href="<?= base_url('assets/adminlte/bootstrap/css/bootstrap.min.css'); ?>">
   <!-- Font Awesome -->
@@ -60,6 +60,11 @@
     .form-control {
       border-radius: 1rem;
     }
+
+    .swal2-popup {
+      font-size: 15px;
+      /* Sesuaikan dengan ukuran yang lebih besar */
+    }
   </style>
 
   <!-- jQuery 2.2.3 -->
@@ -76,7 +81,8 @@
   <script src="<?= base_url('assets/plugins/datetimepicker/moment-with-locales.js'); ?>"></script>
 
   <!-- Sweet Alert -->
-  <script src="<?= base_url('assets/dist/sweetalert.min.js'); ?>"></script>
+  <!-- <script src="<?= base_url('assets/dist/sweetalert.min.js'); ?>"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- Form Jquery -->
   <script src="<?= base_url('assets/plugins/jqueryform/jquery.form.js'); ?>"></script>
   <script src="<?= base_url('assets/plugins/slimScroll/jquery.slimscroll.min.js'); ?>"></script>

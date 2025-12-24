@@ -102,10 +102,14 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
                 auto_num();
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
-                    text: 'Please try again later !'
+                    text: 'Please try again later !',
+                    showConfirmButton: false,
+                    showCancelButton: false,
+                    allowOutsideClick: false,
+                    timer: 3000
                 });
             }
         });
@@ -128,10 +132,14 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
                 $('.btn_save').hide();
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
-                    text: 'Please try again later !'
+                    text: 'Please try again later !',
+                    showConfirmButton: false,
+                    showCancelButton: false,
+                    allowOutsideClick: false,
+                    timer: 3000
                 });
             }
         });
@@ -154,10 +162,14 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
                 $('.btn_save').show();
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
-                    text: 'Please try again later !'
+                    text: 'Please try again later !',
+                    showConfirmButton: false,
+                    showCancelButton: false,
+                    allowOutsideClick: false,
+                    timer: 3000
                 });
             }
         });
@@ -166,13 +178,15 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
     $(document).on('click', '.del_lab', function() {
         var id = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be deleted !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            showConfirmButton: true,
+            allowOutsideClick: false
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_lab',
@@ -183,29 +197,39 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan,
-                                allowOutsideClick: false
-                            }, function(lanjut) {
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                timer: 3000
+                            }).then(() => {
                                 $('#dialog-rekap').modal('hide');
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Warning !',
                                 text: result.pesan,
-                                allowOutsideClick: false
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                timer: 3000
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: 'Please try again later !',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            timer: 3000
                         });
                     }
                 });
@@ -220,31 +244,41 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
         var coa = $('select[name="coa"]').val();
 
         if (isu_lingkungan == '') {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
-                text: 'Isu Lingkungan is empty !'
+                text: 'Isu Lingkungan is empty !',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                showCancelButton: false,
+                timer: 3000
             });
 
             return false;
         }
         if (harga_ssc <= 0 || harga_lab <= 0) {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
-                text: 'Harga SSC / Lab cannot zero !'
+                text: 'Harga SSC / Lab cannot zero !',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                showCancelButton: false,
+                timer: 3000
             });
 
             return false;
         }
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be saved !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            showConfirmButton: true,
+            allowOutsideClick: false
+        }).then((next) => {
+            if (next.isConfirmed) {
                 var formdata = $('#form-data').serialize();
                 $.ajax({
                     type: 'post',
@@ -254,29 +288,39 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan,
-                                allowOutsideClick: false
-                            }, function(lanjut) {
+                                allowOutsideClick: false,
+                                showCancelButton: false,
+                                showConfirmButton: false,
+                                timer: 3000
+                            }).then(() => {
                                 $('#dialog-rekap').modal('hide');
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Warning !',
                                 text: result.pesan,
-                                allowOutsideClick: false
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                timer: 3000
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: 'Please try again later !',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            timer: 3000
                         });
                     }
                 });
