@@ -65,30 +65,13 @@ class Approval_kasbon_project extends Admin_Controller
         }
         $this->db->group_by('a.id_kasbon');
         $this->db->order_by('a.created_date', 'desc');
+
+        $db_clone = clone $this->db;
+        $count_all = $db_clone->count_all_results();
+
         $this->db->limit($length, $start);
 
         $get_data = $this->db->get();
-
-        $this->db->select('b.*, a.id_kasbon, c.nm_sales, d.nm_paket');
-        $this->db->from('kons_tr_req_kasbon_project a');
-        $this->db->join('kons_tr_spk_budgeting b', 'b.id_spk_budgeting = a.id_spk_budgeting', 'left');
-        $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = b.id_spk_penawaran', 'left');
-        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = c.id_project', 'left');
-        $this->db->where('a.sts', 0);
-        if (!empty($search)) {
-            $this->db->group_start();
-            $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
-            $this->db->or_like('c.id_spk_penawaran', $search['value'], 'both');
-            $this->db->or_like('b.nm_customer', $search['value'], 'both');
-            $this->db->or_like('c.nm_sales', $search['value'], 'both');
-            $this->db->or_like('b.nm_project_leader', $search['value'], 'both');
-            $this->db->or_like('b.nm_project', $search['value'], 'both');
-            $this->db->group_end();
-        }
-        $this->db->group_by('a.id_kasbon');
-        $this->db->order_by('a.created_date', 'desc');
-
-        $get_data_all = $this->db->get();
 
         $hasil = [];
 
@@ -163,8 +146,8 @@ class Approval_kasbon_project extends Admin_Controller
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data_all->num_rows(),
-            'recordsFiltered' => $get_data_all->num_rows(),
+            'recordsTotal' => $count_all,
+            'recordsFiltered' => $count_all,
             'data' => $hasil
         ]);
     }
@@ -469,6 +452,9 @@ class Approval_kasbon_project extends Admin_Controller
         if ($get_header_kasbon->tipe == '5') :
             $project = 'Subcont Tenaga Ahli';
         endif;
+        if ($get_header_kasbon->tipe == '6') :
+            $project = 'Subcont Perusahaan';
+        endif;
 
         // $data_insert_sendigs_kasbon = [
         //     'no_doc' => $no_doc,
@@ -621,8 +607,16 @@ class Approval_kasbon_project extends Admin_Controller
             exit;
         }
 
-        $update_req_lab = $this->db->update('kons_tr_kasbon_project_subcont_tenaga_ahli', ['sts' => 1], ['id_header' => $id_kasbon]);
-        if (!$update_req_lab) {
+        $update_req_subcont_tenaga_ahli = $this->db->update('kons_tr_kasbon_project_subcont_tenaga_ahli', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_subcont_tenaga_ahli) {
+            $this->db->trans_rollback();
+
+            print_r($this->db->last_query());
+            exit;
+        }
+
+        $update_req_subcont_perusahaan = $this->db->update('kons_tr_kasbon_project_subcont_perusahaan', ['sts' => 1], ['id_header' => $id_kasbon]);
+        if (!$update_req_subcont_perusahaan) {
             $this->db->trans_rollback();
 
             print_r($this->db->last_query());

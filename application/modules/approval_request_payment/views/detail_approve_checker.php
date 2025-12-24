@@ -744,7 +744,7 @@ if ($tipe == 'Expense') {
 		var errors = "";
 		if ($("#bank_coa").val() == "0") errors = "Bank tidak boleh kosong";
 
-		swal({
+			swal({
 				title: "Anda Yakin?",
 				text: "Item Akan Di Approve!",
 				type: "info",
