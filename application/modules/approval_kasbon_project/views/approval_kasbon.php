@@ -1287,6 +1287,9 @@ if ($header->metode_pembayaran == '3') {
             },
             cache: false,
             dataType: 'json',
+            beforeSend: function(data) {
+              $('.reject_kasbon').attr('disabled', true);
+            },
             success: function(result) {
               if (result.status == '1') {
                 swal({
@@ -1305,6 +1308,8 @@ if ($header->metode_pembayaran == '3') {
               }
             },
             error: function() {
+              $('.reject_kasbon').attr('disabled', false);
+
               swal({
                 type: 'error',
                 title: 'Error !',
@@ -1337,6 +1342,9 @@ if ($header->metode_pembayaran == '3') {
           },
           cache: false,
           dataType: 'json',
+          beforeSend: function(data) {
+            $('.approve_kasbon').attr('disabled', true);
+          },
           success: function(result) {
             if (result.status == '1') {
               swal({
@@ -1355,6 +1363,7 @@ if ($header->metode_pembayaran == '3') {
             }
           },
           error: function() {
+            $('.approve_kasbon').attr('disabled', false);
             swal({
               type: 'error',
               title: 'Error !',
