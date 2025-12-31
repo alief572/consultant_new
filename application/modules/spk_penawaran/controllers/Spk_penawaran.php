@@ -584,7 +584,7 @@ class SPK_penawaran extends Admin_Controller
             }
 
             $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $item->id_penawaran])->row();
-            if ($get_penawaran->sts_cust == 0) {
+            if (!empty($get_penawaran) && $get_penawaran->sts_cust == 0) {
                 $status = '
                     <span class="btn btn-sm btn-warning" style="width: 100% !important;">
                         <b>New</b>
