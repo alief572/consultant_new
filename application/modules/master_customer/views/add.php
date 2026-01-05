@@ -375,6 +375,7 @@ $email_pic = (!empty($restPIC[0]['email_pic'])) ? $restPIC[0]['email_pic'] : '';
     }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function() {
         $('.select2').select2({
