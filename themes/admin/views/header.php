@@ -82,7 +82,7 @@
 
   <!-- Sweet Alert -->
   <script src="<?= base_url('assets/dist/sweetalert.min.js'); ?>"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+
   <!-- Form Jquery -->
   <script src="<?= base_url('assets/plugins/jqueryform/jquery.form.js'); ?>"></script>
   <script src="<?= base_url('assets/plugins/slimScroll/jquery.slimscroll.min.js'); ?>"></script>
