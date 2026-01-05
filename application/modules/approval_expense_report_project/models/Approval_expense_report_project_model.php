@@ -131,7 +131,7 @@ class Approval_expense_report_project_model extends BF_Model
 			$nominal_w_pph = (100 / (100 - 10) * $nominal);
 			$nominal_pph = ($nominal_w_pph - $nominal);
 
-			$coa_pph = '1030-20-4';
+			$coa_pph = '1106-01-01';
 			$get_coa_pph = $this->gl->get_where('coa_master', ['no_perkiraan' => $coa_pph])->row();
 
 			$hasil .= '<tr>';

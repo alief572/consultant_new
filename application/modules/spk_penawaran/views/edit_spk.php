@@ -1201,15 +1201,17 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
             });
 
             return false;
-        } else if (ttl_nominal_payment != nilai_kontrak_bersih) {
-            swal({
-                type: 'warning',
-                title: 'Warning !',
-                text: 'Persentase payment harus 100% !'
-            });
+        } 
+        // else if (ttl_nominal_payment != nilai_kontrak_bersih) {
+           // swal({
+               // type: 'warning',
+               // title: 'Warning !',
+               // text: 'Persentase payment harus 100% !'
+           // });
 
-            return false;
-        } else if (waktu_from == '' || waktu_to == '') {
+            //return false;
+       // } 
+        else if (waktu_from == '' || waktu_to == '') {
             swal({
                 type: 'warning',
                 title: 'Warning !',

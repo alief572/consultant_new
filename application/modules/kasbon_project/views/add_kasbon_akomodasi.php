@@ -702,7 +702,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                                 swal({
                                     type: 'success',
                                     title: 'Success !',
-                                    text: result.pesan
+                                    text: result.pesan,
+                                    timer: 2000
                                 }, function(lanjut) {
                                     window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>"
                                 });

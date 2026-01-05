@@ -2036,6 +2036,12 @@ class Approval_request_payment extends Admin_Controller
 			if ($get_kasbon_header->tipe == '4') {
 				$tipe = 'Kasbon Lab';
 			}
+			if ($get_kasbon_header->tipe == '5') {
+				$tipe = 'Kasbon Subcont Tenaga Ahli';
+			}
+			if ($get_kasbon_header->tipe == '6') {
+				$tipe = 'Kasbon Subcont Perusahaan';
+			}
 
 			$this->db->select('a.*');
 			$this->db->from('kons_tr_kasbon_project_subcont a');
@@ -2060,6 +2066,18 @@ class Approval_request_payment extends Admin_Controller
 			$this->db->where('a.id_header', $id);
 			$get_kasbon_lab = $this->db->get()->result();
 
+			$this->db->select('a.*, b.keterangan');
+			$this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+			$this->db->join('kons_tr_penawaran_subcont_tenaga_ahli b', 'b.id = a.id_subcont', 'left');
+			$this->db->where('a.id_header', $id);
+			$get_kasbon_subcont_tenaga_ahli = $this->db->get()->result();
+
+			$this->db->select('a.*, b.keterangan');
+			$this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
+			$this->db->join('kons_tr_penawaran_subcont_perusahaan b', 'b.id = a.id_subcont', 'left');
+			$this->db->where('a.id_header', $id);
+			$get_kasbon_subcont_perusahaan = $this->db->get()->result();
+
 			$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
 
 			$data = [
@@ -2071,6 +2089,8 @@ class Approval_request_payment extends Admin_Controller
 				'data_kasbon_akomodasi' => $get_kasbon_akomodasi,
 				'data_kasbon_others' => $get_kasbon_others,
 				'data_kasbon_lab' => $get_kasbon_lab,
+				'data_kasbon_subcont_tenaga_ahli' => $get_kasbon_subcont_tenaga_ahli,
+				'data_kasbon_subcont_perusahaan' => $get_kasbon_subcont_perusahaan,
 				'tipe' => $tipe,
 				'tgl_approve_direktur' => $get_request_payment->created_on
 			];

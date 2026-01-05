@@ -60,6 +60,11 @@
     .form-control {
       border-radius: 1rem;
     }
+
+    .swal2-popup {
+      font-size: 15px;
+      /* Sesuaikan dengan ukuran yang lebih besar */
+    }
   </style>
 
   <!-- jQuery 2.2.3 -->

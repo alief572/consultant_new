@@ -440,12 +440,17 @@ $email_pic = (!empty($restPIC[0]['email_pic'])) ? $restPIC[0]['email_pic'] : '';
         var email_pic = $('#email_pic').val();
 
         if (nm_customer == '' || nm_customer == null || nm_customer == '-' || nm_customer == '0') {
-            swal({
+            Swal.fire({
                 title: "Error Message!",
                 text: 'Customer Name in master customer tab is empty, please input first ...',
-                type: "warning"
+                icon: "warning",
+                showConfirmButton: false,
+                showCancelButton: false,
+                allowOutsideClick: false,
+                timer: 3000
+            }).then(() => {
+                return false;
             });
-            return false;
         }
         // if(bidang_usaha=='' || bidang_usaha==null || bidang_usaha=='-' || bidang_usaha=='0'){
         //     swal({
@@ -472,12 +477,17 @@ $email_pic = (!empty($restPIC[0]['email_pic'])) ? $restPIC[0]['email_pic'] : '';
         //     return false;
         // }
         if (alamat == '' || alamat == null || alamat == '-' || alamat == '0') {
-            swal({
+            Swal.fire({
                 title: "Error Message!",
                 text: 'Address in master customer tab is empty, please input first ...',
-                type: "warning"
+                icon: "warning",
+                showConfirmButton: false,
+                showCancelButton: false,
+                allowOutsideClick: false,
+                timer: 3000
+            }).then(() => {
+                return false;
             });
-            return false;
         }
         // if(npwp=='' || npwp==null || npwp=='-' || npwp=='0'){
         //     swal({
@@ -497,93 +507,112 @@ $email_pic = (!empty($restPIC[0]['email_pic'])) ? $restPIC[0]['email_pic'] : '';
         // }
 
         if (nm_pic == '' || nm_pic == null || nm_pic == '-' || nm_pic == '0') {
-            swal({
+            Swal.fire({
                 title: "Error Message!",
                 text: 'PIC name in PIC customer tab is empty, please input first ...',
-                type: "warning"
+                icon: "warning",
+                showConfirmButton: false,
+                showCancelButton: false,
+                allowOutsideClick: false,
+                timer: 3000
+            }).then(() => {
+                return false;
             });
-            return false;
         }
         if (divisi == '' || divisi == null || divisi == '-' || divisi == '0') {
-            swal({
+            Swal.fire({
                 title: "Error Message!",
                 text: 'Division in PIC customer tab is empty, please input first ...',
-                type: "warning"
+                icon: "warning",
+                showConfirmButton: false,
+                showCancelButton: false,
+                allowOutsideClick: false,
+                timer: 3000
+            }).then(() => {
+                return false;
             });
-            return false;
         }
         if (hp == '' || hp == null || hp == '-' || hp == '0') {
-            swal({
+            Swal.fire({
                 title: "Error Message!",
                 text: 'PIC phone in PIC customer tab is empty, please input first ...',
-                type: "warning"
+                icon: "warning",
+                showConfirmButton: false,
+                showCancelButton: false,
+                allowOutsideClick: false,
+                timer: 3000
+            }).then(() => {
+                return false;
             });
-            return false;
         }
         // $('#saved').prop('disabled',false);
 
-        swal({
-                title: "Are you sure?",
-                text: "You will not be able to process again this data!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonClass: "btn-danger",
-                confirmButtonText: "Yes, Process it!",
-                cancelButtonText: "No, cancel process!",
-                closeOnConfirm: false,
-                closeOnCancel: false
-            },
-            function(isConfirm) {
-                if (isConfirm) {
-                    // loading_spinner();
-                    var formData = new FormData($('#form_proses_bro')[0]);
-                    var baseurl = base_url + active_controller + '/add';
-                    $.ajax({
-                        url: baseurl,
-                        type: "POST",
-                        data: formData,
-                        cache: false,
-                        dataType: 'json',
-                        processData: false,
-                        contentType: false,
-                        beforeSend: function() {
-                            $(this).prop('disabled', true);
-                        },
-                        success: function(data) {
-                            if (data.status == 1) {
-                                swal({
-                                    title: "Save Success!",
-                                    text: data.pesan,
-                                    type: "success",
-                                    timer: 7000
-                                });
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You will not be able to process again this data!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, Process it!",
+            cancelButtonText: "No, cancel process!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        }).then((next) => {
+            if (next.isConfirmed) {
+                // loading_spinner();
+                var formData = new FormData($('#form_proses_bro')[0]);
+                var baseurl = base_url + active_controller + '/add';
+                $.ajax({
+                    url: baseurl,
+                    type: "POST",
+                    data: formData,
+                    cache: false,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function() {
+                        $(this).prop('disabled', true);
+                    },
+                    success: function(data) {
+                        if (data.status == 1) {
+                            Swal.fire({
+                                title: "Save Success!",
+                                text: data.pesan,
+                                icon: "success",
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                timer: 3000
+                            }).then(() => {
                                 window.location.href = base_url + active_controller;
-                            } else {
-                                swal({
-                                    title: "Save Failed!",
-                                    text: data.pesan,
-                                    type: "warning",
-                                    timer: 7000
-                                });
-                            }
-                            $('#saved').prop('disabled', false);
-                        },
-                        error: function() {
-
-                            swal({
-                                title: "Error Message !",
-                                text: 'An Error Occured During Process. Please try again..',
-                                type: "warning",
-                                timer: 7000
                             });
-                            $('#saved').prop('disabled', false);
+                        } else {
+                            Swal.fire({
+                                title: "Save Failed!",
+                                text: data.pesan,
+                                icon: "warning",
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                timer: 3000
+                            });
                         }
-                    });
-                } else {
-                    swal("Cancelled", "Data can be process again :)", "error");
-                    $('#saved').prop('disabled', false);
-                    return false;
-                }
-            });
+                        $('#saved').prop('disabled', false);
+                    },
+                    error: function() {
+                        Swal.fire({
+                            title: "Error Message !",
+                            text: 'An Error Occured During Process. Please try again..',
+                            icon: "warning",
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowOutsideClick: false,
+                            timer: 3000
+                        });
+                        $('#saved').prop('disabled', false);
+                    }
+                });
+            }
+        });
     });
 </script>

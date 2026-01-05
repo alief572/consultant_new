@@ -528,23 +528,27 @@ class Project_budgeting extends Admin_Controller
 
                 $get_item = $this->db->get_where('kons_master_biaya', ['id' => $get_others->id_item])->row();
 
-                $data_insert_others[] = [
-                    'id_spk_budgeting' => $id_spk_budgeting,
-                    'id_spk_penawaran' => $post['id_spk_penawaran'],
-                    'id_penawaran' => $get_spk_penawaran->id_penawaran,
-                    'id_others' => $item['id_others'],
-                    'id_item' => $get_others->id_item,
-                    'nm_item' => $get_item->nm_biaya,
-                    'qty_estimasi' => $get_others->qty,
-                    'price_unit_estimasi' => $get_others->price_unit,
-                    'total_estimasi' => $get_others->total,
-                    'qty_final' => str_replace(',', '', $item['qty']),
-                    'price_unit_final' => str_replace(',', '', $item['price_unit']),
-                    'total_final' => str_replace(',', '', $item['total']),
-                    'keterangan' => $get_others->keterangan,
-                    'create_by' => $this->auth->user_id(),
-                    'create_date' => date('Y-m-d H:i:s')
-                ];
+                $nm_biaya = (!empty($get_item->nm_biaya)) ? $get_item->nm_biaya : '';
+
+                if ($nm_biaya !== '') {
+                    $data_insert_others[] = [
+                        'id_spk_budgeting' => $id_spk_budgeting,
+                        'id_spk_penawaran' => $post['id_spk_penawaran'],
+                        'id_penawaran' => $get_spk_penawaran->id_penawaran,
+                        'id_others' => $item['id_others'],
+                        'id_item' => $get_others->id_item,
+                        'nm_item' => $get_item->nm_biaya,
+                        'qty_estimasi' => $get_others->qty,
+                        'price_unit_estimasi' => $get_others->price_unit,
+                        'total_estimasi' => $get_others->total,
+                        'qty_final' => str_replace(',', '', $item['qty']),
+                        'price_unit_final' => str_replace(',', '', $item['price_unit']),
+                        'total_final' => str_replace(',', '', $item['total']),
+                        'keterangan' => $get_others->keterangan,
+                        'create_by' => $this->auth->user_id(),
+                        'create_date' => date('Y-m-d H:i:s')
+                    ];
+                }
             }
         }
 

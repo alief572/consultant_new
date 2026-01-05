@@ -2737,7 +2737,7 @@ class Approval_expense_report_project extends Admin_Controller
         $total_kasbon = (isset($get_expense) && $get_expense->total_kasbon > 0) ? $get_expense->total_kasbon : 0;
 
         if ($get_expense->selisih == '0') {
-            $arr_coa_jurnal = ['5010-12-5', '1030-29-9'];
+            $arr_coa_jurnal = ['5101-01-03', '1103-01-04'];
 
             $this->gl->select('a.no_perkiraan, a.nama as nm_coa');
             $this->gl->from('coa_master a');
@@ -2755,7 +2755,7 @@ class Approval_expense_report_project extends Admin_Controller
                 $debit = 0;
                 $kredit = 0;
 
-                if ($item_coa->no_perkiraan == '5010-12-5') {
+                if ($item_coa->no_perkiraan == '5101-01-03') {
                     $get_expense_header = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $post['id_expense']])->row();
                     $get_expense_detail = $this->db->get_where('kons_tr_expense_report_project_detail', ['id_header_expense' => $post['id_expense']])->result();
 
@@ -2935,10 +2935,10 @@ class Approval_expense_report_project extends Admin_Controller
                 } else {
                     $no_jurnal++;
 
-                    if ($item_coa->no_perkiraan == '5010-12-5') {
+                    if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
-                    if ($item_coa->no_perkiraan == '1030-29-9') {
+                    if ($item_coa->no_perkiraan == '1103-01-04') {
                         $kredit = $total_kasbon;
                     }
 
@@ -2988,7 +2988,7 @@ class Approval_expense_report_project extends Admin_Controller
             }
         }
         if ($get_expense->selisih > 0) {
-            $arr_coa_jurnal = ['5010-12-5', '1030-20-4'];
+            $arr_coa_jurnal = ['5101-01-03', '1103-01-04'];
 
             $coa_bank = '';
             if ($post['id_bank'] !== '') {
@@ -3014,7 +3014,7 @@ class Approval_expense_report_project extends Admin_Controller
                 $debit = 0;
                 $kredit = 0;
 
-                if ($item_coa->no_perkiraan == '5010-12-5') {
+                if ($item_coa->no_perkiraan == '5101-01-03') {
                     $get_expense_header = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $post['id_expense']])->row();
                     $get_expense_detail = $this->db->get_where('kons_tr_expense_report_project_detail', ['id_header_expense' => $post['id_expense']])->result();
 
@@ -3193,7 +3193,7 @@ class Approval_expense_report_project extends Admin_Controller
                     }
                 } else {
 
-                    if ($item_coa->no_perkiraan == '5010-12-5') {
+                    if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
                     if ($item_coa->no_perkiraan == '1030-20-4') {
@@ -3250,7 +3250,7 @@ class Approval_expense_report_project extends Admin_Controller
             }
         }
         if ($get_expense->selisih < 0) {
-            $arr_coa_jurnal = ['5010-12-5', '1030-20-4', '2040-20-0'];
+            $arr_coa_jurnal = ['5101-01-03', '1030-20-4', '2040-20-0'];
 
             $this->gl->select('a.no_perkiraan, a.nama as nm_coa');
             $this->gl->from('coa_master a');
@@ -3268,7 +3268,7 @@ class Approval_expense_report_project extends Admin_Controller
                 $debit = 0;
                 $kredit = 0;
 
-                if ($item_coa->no_perkiraan == '5010-12-5') {
+                if ($item_coa->no_perkiraan == '5101-01-03') {
                     $get_expense_header = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $post['id_expense']])->row();
                     $get_expense_detail = $this->db->get_where('kons_tr_expense_report_project_detail', ['id_header_expense' => $post['id_expense']])->result();
 
@@ -3446,7 +3446,7 @@ class Approval_expense_report_project extends Admin_Controller
                         // }
                     }
                 } else {
-                    if ($item_coa->no_perkiraan == '5010-12-5') {
+                    if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
                     if ($item_coa->no_perkiraan == '1030-20-4') {

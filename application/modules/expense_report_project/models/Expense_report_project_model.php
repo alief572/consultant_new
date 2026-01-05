@@ -67,7 +67,7 @@ class Expense_report_project_model extends BF_Model
             $nominal_w_pph = (100 / (100 - 10) * $nominal);
             $nominal_pph = ($nominal_w_pph - $nominal);
 
-            $coa_pph = '1030-20-4';
+            $coa_pph = '1106-01-01';
             $get_coa_pph = $this->gl->get_where('coa_master', ['no_perkiraan' => $coa_pph])->row();
 
             $hasil .= '<tr>';
@@ -154,7 +154,7 @@ class Expense_report_project_model extends BF_Model
         $ttl_debit = 0;
         $ttl_kredit = 0;
         if ($kelebihan_expense == '0' && $kelebihan_kasbon == '0') {
-            $arr_coa_jurnal = ['5010-12-5', '1030-20-4'];
+            $arr_coa_jurnal = ['5101-01-03', '1103-01-04'];
 
             $this->gl->select('a.no_perkiraan, a.nama as nm_coa');
             $this->gl->from('coa_master a');
@@ -171,7 +171,7 @@ class Expense_report_project_model extends BF_Model
                 $debit = 0;
                 $kredit = 0;
 
-                if ($item_coa->no_perkiraan == '5010-12-5') {
+                if ($item_coa->no_perkiraan == '5101-01-03') {
                     $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_header))->row();
                     if (isset($get_kasbon)) {
                         if ($get_kasbon->tipe == 1) {
@@ -196,7 +196,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -258,7 +258,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -321,7 +321,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -382,7 +382,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -443,7 +443,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -485,10 +485,10 @@ class Expense_report_project_model extends BF_Model
                     }
                 } else {
 
-                    if ($item_coa->no_perkiraan == '5010-12-5') {
+                    if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
-                    if ($item_coa->no_perkiraan == '1030-20-4') {
+                    if ($item_coa->no_perkiraan == '1103-01-04') {
                         $kredit = $total_kasbon;
                     }
 
@@ -539,7 +539,7 @@ class Expense_report_project_model extends BF_Model
         }
 
         if ($kontrol > 0) {
-            $arr_coa_jurnal = ['5010-12-5', '1030-20-4'];
+            $arr_coa_jurnal = ['5101-01-03', '1103-01-04'];
 
             $coa_bank = '';
             if ($post['id_bank'] !== '') {
@@ -565,7 +565,7 @@ class Expense_report_project_model extends BF_Model
                 $debit = 0;
                 $kredit = 0;
 
-                if ($item_coa->no_perkiraan == '5010-12-5') {
+                if ($item_coa->no_perkiraan == '5101-01-03') {
                     $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_header))->row();
                     if (isset($get_kasbon)) {
                         if ($get_kasbon->tipe == 1) {
@@ -590,7 +590,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -652,7 +652,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -715,7 +715,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -776,7 +776,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -837,7 +837,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -879,10 +879,10 @@ class Expense_report_project_model extends BF_Model
                     }
                 } else {
 
-                    if ($item_coa->no_perkiraan == '5010-12-5') {
+                    if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
-                    if ($item_coa->no_perkiraan == '1030-20-4') {
+                    if ($item_coa->no_perkiraan == '1103-01-04') {
                         $kredit = $total_kasbon;
                     }
                     if ($coa_bank !== '' && $item_coa->no_perkiraan == $coa_bank) {
@@ -937,7 +937,7 @@ class Expense_report_project_model extends BF_Model
         }
 
         if ($kontrol < 0) {
-            $arr_coa_jurnal = ['5010-12-5', '1030-20-4', '2040-20-0'];
+            $arr_coa_jurnal = ['5101-01-03', '1103-01-04', '2040-20-0'];
 
             $this->gl->select('a.no_perkiraan, a.nama as nm_coa');
             $this->gl->from('coa_master a');
@@ -955,7 +955,7 @@ class Expense_report_project_model extends BF_Model
                 $debit = 0;
                 $kredit = 0;
 
-                if ($item_coa->no_perkiraan == '5010-12-5') {
+                if ($item_coa->no_perkiraan == '5101-01-03') {
                     $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_header))->row();
                     if (isset($get_kasbon)) {
                         if ($get_kasbon->tipe == 1) {
@@ -980,7 +980,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -1042,7 +1042,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -1105,7 +1105,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -1166,7 +1166,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -1227,7 +1227,7 @@ class Expense_report_project_model extends BF_Model
 
                                 $debit = $total_pengajuan;
 
-                                $no_coa = ($item->no_coa == null) ? '5010-12-5' : $item->no_coa;
+                                $no_coa = ($item->no_coa == null) ? '5101-01-03' : $item->no_coa;
                                 $nm_coa = ($item->nm_coa == null) ? 'Biaya Pengeluaran Lainnya' : $item->nm_coa;
 
                                 $hasil_jurnal .= '<tr>';
@@ -1268,10 +1268,10 @@ class Expense_report_project_model extends BF_Model
                         }
                     }
                 } else {
-                    if ($item_coa->no_perkiraan == '5010-12-5') {
+                    if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
-                    if ($item_coa->no_perkiraan == '1030-20-4') {
+                    if ($item_coa->no_perkiraan == '1103-01-04') {
                         $kredit = $total_kasbon;
                     }
                     if ($item_coa->no_perkiraan == '2040-20-0') {
