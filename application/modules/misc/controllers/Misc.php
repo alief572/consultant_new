@@ -31,6 +31,47 @@ class Misc extends Admin_Controller
         $this->template->render('index');
     }
 
+    public function check_company()
+    {
+        $this->db->trans_begin();
+        try {
+            $this->db->select('a.id_spk_penawaran, c.id as id_company, c.nm_company');
+            $this->db->from('kons_tr_spk_penawaran a');
+            $this->db->join('kons_tr_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran');
+            $this->db->join('kons_tr_company c', 'c.id = b.company', 'left');
+            $get_spk_penawaran = $this->db->get()->result();
+
+            foreach ($get_spk_penawaran as $item_spk_penawaran) {
+
+                $id_company = $item_spk_penawaran->id_company;
+                $nm_company = $item_spk_penawaran->nm_company;
+
+                if (!empty($id_company)) {
+                    $this->db->select('a.id');
+                    $this->db->from(DBSF . '.tr_invoicing a');
+                    $this->db->where('a.id_spk_penawaran', $item_spk_penawaran->id_spk_penawaran);
+                    $get_invoicing = $this->db->get()->result();
+
+                    foreach ($get_invoicing as $item_invoicing) {
+                        $arr_update_jurnal = [
+                            'id_company' => $id_company,
+                            'nm_company' => $nm_company
+                        ];
+
+                        $this->db->update(DBSF . '.tr_jurnal', $arr_update_jurnal, ['no_transaksi' => $item_invoicing->id]);
+                    }
+                }
+            }
+
+            $this->db->trans_commit();
+
+            echo 'Berhasil !';
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+            echo $e->getMessage();
+        }
+    }
+
     public function ubah_no_spk()
     {
         $post = $this->input->post();
