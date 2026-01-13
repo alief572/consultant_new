@@ -575,6 +575,27 @@ class Penawaran extends Admin_Controller
         $this->template->render('add_penawaran');
     }
 
+    public function add_penawaran_non()
+    {
+        $list_divisi = $this->Penawaran_model->list_divisi();
+        $list_customer = $this->Penawaran_model->list_customer();
+        $list_company = $this->Penawaran_model->list_company();
+        $list_sales = $this->Penawaran_model->list_employee();
+        $list_employee = $this->Penawaran_model->list_employee();
+
+        $data = [
+            'list_divisi' => $list_divisi,
+            'list_customer' => $list_customer,
+            'list_company' => $list_company,
+            'list_sales' => $list_sales,
+            'list_employee' => $list_employee,
+        ];
+
+        $this->template->title('Add Penawaran Non Konsultasi');
+        $this->template->set($data);
+        $this->template->render('add_penawaran_non');
+    }
+
     public function change_customer()
     {
         $id_customer = $this->input->post('id_customer');
@@ -603,6 +624,7 @@ class Penawaran extends Admin_Controller
             'address' => $address
         ]);
     }
+
 
     public function change_package()
     {
@@ -1723,5 +1745,459 @@ class Penawaran extends Admin_Controller
         echo json_encode([
             'company_nm' => $nm_company
         ]);
+    }
+
+    public function save_penawaran_non_konsultasi()
+    {
+        $post = $this->input->post();
+
+        $this->db->trans_begin();
+
+        try {
+
+            $id_penawaran = generateNoPenawaranNon();
+
+            $get_customer = $this->db->get_where('customer', ['id_customer' => $post['customer']])->row();
+            $nm_customer = (!empty($get_customer->nm_customer)) ? $get_customer->nm_customer : '';
+
+            $get_divisi = $this->dbhr->get_where('divisions', ['id' => $post['divisi']])->row();
+            $nm_divisi = (!empty($get_divisi->name)) ? $get_divisi->name : '';
+
+            $get_company = $this->dbhr->get_where('companies', ['id' => $post['company']])->row();
+            $nm_company = (!empty($get_company->name)) ? $get_company->name : '';
+
+            $tipe_informasi_awal = '';
+            $detail_informasi_awal = '';
+            if (isset($post['informasi_awal_sales'])) {
+                $tipe_informasi_awal = 'Sales';
+                $get_sales = $this->dbhr->get_where('employees', ['id' => $post['sales_informasi_awal']])->row();
+                $detail_informasi_awal = (!empty($get_sales->name)) ? $get_sales->name : '';
+            }
+            if (isset($post['informasi_awal_medsos'])) {
+                $tipe_informasi_awal = 'Medsos';
+                $detail_informasi_awal = $post['medsos_informasi_awal'];
+            }
+            if (isset($post['informasi_awal_others'])) {
+                $tipe_informasi_awal = 'Others';
+                $get_employees = $this->dbhr->get_where('employees', ['id' => $post['others_informasi_awal']])->row();
+                $detail_informasi_awal = (!empty($get_employees->name)) ? $get_employees->name : '';
+            }
+
+            $arr_insert = [
+                'id_penawaran' => $id_penawaran,
+                'tgl_quotation' => $post['tgl_penawaran'],
+                'id_customer' => $post['customer'],
+                'nm_customer' => $nm_customer,
+                'pic' => $post['pic'],
+                'id_divisi' => $post['divisi'],
+                'nm_divisi' => $nm_divisi,
+                'id_company' => $post['company'],
+                'nm_company' => $nm_company,
+                'address' => $post['address'],
+                'pic_penawaran' => $post['pic_penawaran'],
+                'tipe_informasi_awal' => $tipe_informasi_awal,
+                'detail_informasi_awal' => $detail_informasi_awal,
+                'keterangan_penawaran' => $post['keterangan_penawaran'],
+                'subtotal' => $post['subtotal'],
+                'ppn' => $post['ppn'],
+                'grand_total' => $post['grand_total'],
+                'sts_quot' => '0',
+                'sts_deal' => '0',
+                'input_by' => $this->auth->user_id(),
+                'input_date' => date('Y-m-d H:i:s')
+            ];
+
+            $this->db->insert('kons_tr_penawaran_non_konsultasi', $arr_insert);
+
+            if (isset($post['detail'])) {
+                $arr_detail = [];
+
+                foreach ($post['detail'] as $item_detail) {
+                    $arr_detail[] = [
+                        'id_header' => $id_penawaran,
+                        'nm_item' => $item_detail['item'],
+                        'qty' => $item_detail['qty'],
+                        'harga' => str_replace(',', '', $item_detail['harga']),
+                        'total' => str_replace(',', '', $item_detail['total']),
+                        'input_by' => $this->auth->user_id(),
+                        'input_at' => date('Y-m-d H:i:s')
+                    ];
+                }
+
+                $this->db->insert_batch('kons_tr_detail_penawaran_non_konsultasi', $arr_detail);
+            }
+
+            $this->db->trans_commit();
+
+            $this->output->set_status_header(200);
+            echo json_encode([
+                'msg' => 'Data has been saved !'
+            ]);
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+
+            $this->output->set_status_header(500);
+            echo json_encode([
+                'msg' => "There's an error occured, Please try again later !"
+            ]);
+        }
+    }
+
+    public function update_penawaran_non_konsultasi()
+    {
+        $post = $this->input->post();
+
+        $this->db->trans_begin();
+
+        try {
+            $get_customer = $this->db->get_where('customer', ['id_customer' => $post['customer']])->row();
+            $nm_customer = (!empty($get_customer->nm_customer)) ? $get_customer->nm_customer : '';
+
+            $get_divisi = $this->dbhr->get_where('divisions', ['id' => $post['divisi']])->row();
+            $nm_divisi = (!empty($get_divisi->name)) ? $get_divisi->name : '';
+
+            $get_company = $this->dbhr->get_where('companies', ['id' => $post['company']])->row();
+            $nm_company = (!empty($get_company->name)) ? $get_company->name : '';
+
+            $tipe_informasi_awal = '';
+            $detail_informasi_awal = '';
+            if (isset($post['informasi_awal_sales'])) {
+                $tipe_informasi_awal = 'Sales';
+                $get_sales = $this->dbhr->get_where('employees', ['id' => $post['sales_informasi_awal']])->row();
+                $detail_informasi_awal = (!empty($get_sales->name)) ? $get_sales->name : '';
+            }
+            if (isset($post['informasi_awal_medsos'])) {
+                $tipe_informasi_awal = 'Medsos';
+                $detail_informasi_awal = $post['medsos_informasi_awal'];
+            }
+            if (isset($post['informasi_awal_others'])) {
+                $tipe_informasi_awal = 'Others';
+                $get_employees = $this->dbhr->get_where('employees', ['id' => $post['others_informasi_awal']])->row();
+                $detail_informasi_awal = (!empty($get_employees->name)) ? $get_employees->name : '';
+            }
+
+            $get_customer = $this->db->get_where('customer', ['id_customer' => $post['customer']])->row();
+            $nm_customer = (!empty($get_customer->nm_customer)) ? $get_customer->nm_customer : '';
+
+            $get_divisi = $this->dbhr->get_where('divisions', ['id' => $post['divisi']])->row();
+            $nm_divisi = (!empty($get_divisi->name)) ? $get_divisi->name : '';
+
+            $get_company = $this->dbhr->get_where('companies', ['id' => $post['company']])->row();
+            $nm_company = (!empty($get_company->name)) ? $get_company->name : '';
+
+            $tipe_informasi_awal = '';
+            $detail_informasi_awal = '';
+            if (isset($post['informasi_awal_sales'])) {
+                $tipe_informasi_awal = 'Sales';
+                $get_sales = $this->dbhr->get_where('employees', ['id' => $post['sales_informasi_awal']])->row();
+                $detail_informasi_awal = (!empty($get_sales->name)) ? $get_sales->name : '';
+            }
+            if (isset($post['informasi_awal_medsos'])) {
+                $tipe_informasi_awal = 'Medsos';
+                $detail_informasi_awal = $post['medsos_informasi_awal'];
+            }
+            if (isset($post['informasi_awal_others'])) {
+                $tipe_informasi_awal = 'Others';
+                $get_employees = $this->dbhr->get_where('employees', ['id' => $post['others_informasi_awal']])->row();
+                $detail_informasi_awal = (!empty($get_employees->name)) ? $get_employees->name : '';
+            }
+
+            $arr_update = [
+                'tgl_quotation' => $post['tgl_penawaran'],
+                'id_customer' => $post['customer'],
+                'nm_customer' => $nm_customer,
+                'pic' => $post['pic'],
+                'id_divisi' => $post['divisi'],
+                'nm_divisi' => $nm_divisi,
+                'id_company' => $post['company'],
+                'nm_company' => $nm_company,
+                'address' => $post['address'],
+                'pic_penawaran' => $post['pic_penawaran'],
+                'tipe_informasi_awal' => $tipe_informasi_awal,
+                'detail_informasi_awal' => $detail_informasi_awal,
+                'keterangan_penawaran' => $post['keterangan_penawaran'],
+                'subtotal' => $post['subtotal'],
+                'ppn' => $post['ppn'],
+                'grand_total' => $post['grand_total'],
+                'sts_quot' => '0',
+                'sts_deal' => '0',
+                'updated_by' => $this->auth->user_id(),
+                'updated_date' => date('Y-m-d H:i:s')
+            ];
+
+            $update_penawaran_non_kons = $this->db->update('kons_tr_penawaran_non_konsultasi', $arr_update, ['id_penawaran' => $post['id_penawaran']]);
+
+            $this->db->trans_commit();
+
+            $this->output->set_status_header(200);
+            echo json_encode([
+                'msg' => 'Data has been updated !'
+            ]);
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+
+            $this->output->set_status_header(500);
+            echo json_encode([
+                'msg' => "There's an error occured, Please try again later !"
+            ]);
+        }
+    }
+
+    public function add_detail_penawaran_non_konsultasi()
+    {
+        $no_detail = $this->input->post('no_detail');
+
+        $item = '<tr class="item_detail_' . $no_detail . '">';
+        $item .= '<td class="text-center">' . $no_detail . '</td>';
+        $item .= '<td>';
+        $item .= '<textarea class="form-control form-control-sm" name="detail[' . $no_detail . '][item]"></textarea>';
+        $item .= '</td>';
+        $item .= '<td>';
+        $item .= '<input type="text" class="form-control form-control-sm text-right auto_num qty_' . $no_detail . '" name="detail[' . $no_detail . '][qty]" onchange="hitung_total_detail(' . $no_detail . ')">';
+        $item .= '</td>';
+        $item .= '<td>';
+        $item .= '<input type="text" class="form-control form-control-sm text-right auto_num harga_' . $no_detail . '" name="detail[' . $no_detail . '][harga]" onchange="hitung_total_detail(' . $no_detail . ')">';
+        $item .= '</td>';
+        $item .= '<td>';
+        $item .= '<input type="text" class="form-control form-control-sm text-right auto_num total_' . $no_detail . '" name="detail[' . $no_detail . '][total]" readonly>';
+        $item .= '</td>';
+        $item .= '<td>';
+        $item .= '<button type="button" class="btn btn-sm btn-danger" onclick="del_item(' . $no_detail . ')" title="Delete Item"><i class="fa fa-trash"></i></button>';
+        $item .= '</td>';
+        $item .= '</tr>';
+
+        echo json_encode([
+            'item' => $item
+        ]);
+    }
+
+    public function get_detail_customer()
+    {
+        $id_customer = $this->input->get('customer');
+
+        try {
+            $get_customer = $this->db->get_where('customer', ['id_customer' => $id_customer])->row();
+
+            $get_customer_pic = $this->db->get_where('customer_pic', ['id_pic' => $get_customer->id_pic])->row();
+
+            $response = [
+                'address' => (!empty($get_customer->alamat)) ? $get_customer->alamat : '',
+                'pic' => (!empty($get_customer_pic->nm_pic)) ? $get_customer_pic->nm_pic : ''
+            ];
+
+            $this->output->set_status_header(200);
+            echo json_encode($response);
+        } catch (Exception $e) {
+            $this->output->set_status_header(500);
+            echo json_encode([
+                'msg' => "There's an error occured, Please try again later !"
+            ]);
+        }
+    }
+
+    private function render_status_penawaran_non_kons($item)
+    {
+        $status = '<span class="badge bg-yellow">Draft</span>';
+        if ($item->sts_quot == '1') {
+            $status = '<span class="badge bg-green">Approved</span>';
+        }
+        if ($item->sts_quot == '2') {
+            $status = '<span class="badge bg-red">Rejected</span>';
+        }
+
+        return $status;
+    }
+
+    private function render_action_non_kons($item)
+    {
+        $view_btn = '';
+        $print_btn = '';
+        if (has_permission($this->viewPermission)) {
+            $view_btn = '<a href="' . base_url('penawaran/view_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-info" title="View Penawaran"><i class="fa fa-eye"></i></a>';
+
+            $print_btn = '<a href="javascript:void(0);" class="btn btn-sm btn-primary" title="Print Penawaran"><i class="fa fa-print"></i></a>';
+        }
+
+        $edit_btn = '';
+        $deal_btn = '';
+        if (has_permission($this->managePermission)) {
+            $edit_btn = '<a href="' . base_url('penawaran/edit_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-warning" title="Revisi Penawaran"><i class="fa fa-pencil"></i></a>';
+
+            if ($item->sts_deal !== '1' && $item->sts_quot == '1') {
+                $deal_btn = '<button type="button" class="btn btn-sm btn-success deal_penawaran_non_kons" data-id_penawaran="' . $item->id_penawaran . '" title="Deal Penawaran"><i class="fa fa-check"></i></button>';
+            }
+        }
+
+        $delete_btn = '';
+        if (has_permission($this->deletePermission)) {
+            $delete_btn = '<button type="button" class="btn btn-sm btn-danger del_penawaran_non_kons" data-id_penawaran="' . $item->id_penawaran . '" title="Delete Penawaran"><i class="fa fa-trash"></i></button>';
+        }
+
+        $action = $view_btn . ' ' . $print_btn . ' ' . $edit_btn . ' ' . $delete_btn . ' ' . $deal_btn;
+
+        return $action;
+    }
+
+    public function view_non_kons($id_penawaran)
+    {
+        $data_penawaran = $this->Penawaran_model->get_penawaran($id_penawaran);
+        $data_detail_penawaran = $this->Penawaran_model->get_penawaran_detail($id_penawaran);
+
+        $list_divisi = $this->Penawaran_model->list_divisi();
+        $list_customer = $this->Penawaran_model->list_customer();
+        $list_company = $this->Penawaran_model->list_company();
+        $list_sales = $this->Penawaran_model->list_employee();
+        $list_employee = $this->Penawaran_model->list_employee();
+
+        $data = [
+            'data_penawaran' => $data_penawaran,
+            'data_detail_penawaran' => $data_detail_penawaran,
+            'list_divisi' => $list_divisi,
+            'list_customer' => $list_customer,
+            'list_company' => $list_company,
+            'list_sales' => $list_sales,
+            'list_employee' => $list_employee,
+        ];
+
+        $this->template->title('View Penawaran Non Konsultasi');
+        $this->template->set($data);
+        $this->template->render('view_penawaran_non');
+    }
+
+    public function del_penawaran_non_kons()
+    {
+        $id_penawaran = $this->input->post('id_penawaran');
+
+        $this->db->trans_begin();
+
+        try {
+            $arr_update = [
+                'deleted_by' => $this->auth->user_id(),
+                'deleted_date' => date('Y-m-d H:i:s')
+            ];
+
+            $update_penawaran_non_kons = $this->db->update('kons_tr_penawaran_non_konsultasi', $arr_update, ['id_penawaran' => $id_penawaran]);
+
+            $this->db->trans_commit();
+
+            $this->output->set_status_header(200);
+            $response = [
+                'msg' => 'Data has been deleted !'
+            ];
+
+            echo json_encode($response);
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+
+            $this->output->set_status_header(500);
+            $response = [
+                'msg' => $e->getMessage()
+            ];
+
+            echo json_encode($response);
+        }
+    }
+
+    public function edit_non_kons($id_penawaran)
+    {
+        $data_penawaran = $this->Penawaran_model->get_penawaran($id_penawaran);
+        $data_detail_penawaran = $this->Penawaran_model->get_penawaran_detail($id_penawaran);
+
+        $list_divisi = $this->Penawaran_model->list_divisi();
+        $list_customer = $this->Penawaran_model->list_customer();
+        $list_company = $this->Penawaran_model->list_company();
+        $list_sales = $this->Penawaran_model->list_employee();
+        $list_employee = $this->Penawaran_model->list_employee();
+
+        $data = [
+            'data_penawaran' => $data_penawaran,
+            'data_detail_penawaran' => $data_detail_penawaran,
+            'list_divisi' => $list_divisi,
+            'list_customer' => $list_customer,
+            'list_company' => $list_company,
+            'list_sales' => $list_sales,
+            'list_employee' => $list_employee,
+        ];
+
+        $this->template->title('Edit Penawaran Non Konsultasi');
+        $this->template->set($data);
+        $this->template->render('edit_penawaran_non');
+    }
+
+
+    public function get_data_penawaran_non()
+    {
+        try {
+            $draw = $this->input->get('draw');
+            $length = $this->input->get('length');
+            $start = $this->input->get('start');
+            $search = $this->input->get('search')['value'];
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_penawaran_non_konsultasi a');
+            $this->db->where('a.deleted_by', null);
+
+            $db_clone = clone $this->db;
+            $count_all = $db_clone->count_all_results();
+
+            if (!empty($search)) {
+                $this->db->group_start();
+                $this->db->like('a.id_penawaran', $search, 'both');
+                $this->db->or_like('a.tgl_quotation', $search, 'both');
+                $this->db->or_like('a.pic_penawaran', $search, 'both');
+                $this->db->or_like('a.keterangan_penawaran', $search, 'both');
+                $this->db->or_like('a.grand_total', $search, 'both');
+                $this->db->group_end();
+            }
+
+            $db_clone = clone $this->db;
+            $count_filtered = $db_clone->count_all_results();
+
+            $this->db->order_by('a.input_date', 'desc');
+            $this->db->limit($length, $start);
+
+            $get_data = $this->db->get()->result();
+
+            $no = (0 + $start);
+            $hasil = [];
+            foreach ($get_data as $item) {
+                $no++;
+
+                $status = $this->render_status_penawaran_non_kons($item);
+
+                $action = $this->render_action_non_kons($item);
+
+                $hasil[] = [
+                    'no' => $no,
+                    'id_quotation' => $item->id_penawaran,
+                    'date' => $item->tgl_quotation,
+                    'pic_penawaran' => $item->pic_penawaran,
+                    'penawaran' => $item->keterangan_penawaran,
+                    'customer' => $item->nm_customer,
+                    'grand_total' => number_format($item->grand_total),
+                    'status_quot' => $status,
+                    'action' => $action
+                ];
+            }
+
+            $response = [
+                'draw' => intval($draw),
+                'recordsTotal' => $count_all,
+                'recordsFiltered' => $count_filtered,
+                'data' => $hasil
+            ];
+
+            $this->output->set_status_header(200);
+            echo json_encode($response);
+        } catch (Exception $e) {
+            $this->output->set_status_header(200);
+
+            $response = [
+                'msg' => "There's an error occured, Please try again later !"
+            ];
+
+            $this->output->set_status_header(500);
+            echo json_encode($response);
+        }
     }
 }
