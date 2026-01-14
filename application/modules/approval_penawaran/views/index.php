@@ -25,23 +25,46 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <table id="table_penawaran" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th align="center">No</th>
-                    <th align="center">ID Quotation</th>
-                    <th align="center">Date</th>
-                    <th align="center">Marketing</th>
-                    <th align="center">Package</th>
-                    <th align="center">Customer</th>
-                    <th align="center">Grand Total</th>
-                    <th align="center">Status Cust.</th>
-                    <th align="center">Status Quot.</th>
-                    <th align="center">Action</th>
-                </tr>
-            </thead>
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="konsultasi active"><a href="javascript:void();" onclick="tab_konsultasi();">Konsultasi</a></li>
+            <li role="presentation" class="non_konsultasi"><a href="javascript:void();" onclick="tab_non_konsultasi();">Non Konsultasi</a></li>
+        </ul>
+        <div id="konsultasi">
+            <table id="table_penawaran" class="table table-bordered table-striped">
+                <thead class="bg-primary">
+                    <tr>
+                        <th align="center">No</th>
+                        <th align="center">ID Quotation</th>
+                        <th align="center">Date</th>
+                        <th align="center">Marketing</th>
+                        <th align="center">Package</th>
+                        <th align="center">Customer</th>
+                        <th align="center">Grand Total</th>
+                        <th align="center">Status Cust.</th>
+                        <th align="center">Status Quot.</th>
+                        <th align="center">Action</th>
+                    </tr>
+                </thead>
 
-        </table>
+            </table>
+        </div>
+        <div id="non_konsultasi" style="display: none;">
+            <table id="table_penawaran_non_konsultasi" class="table table-bordered table-striped">
+                <thead class="bg-primary">
+                    <tr>
+                        <th align="center">No</th>
+                        <th align="center">ID Quotation</th>
+                        <th align="center">Date</th>
+                        <th align="center">PIC Penawaran</th>
+                        <th align="center">Penawaran</th>
+                        <th align="center">Customer</th>
+                        <th align="center">Grand Total</th>
+                        <th align="center">Status Quotation</th>
+                        <th align="center">Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
     <!-- /.box-body -->
 </div>
@@ -53,6 +76,26 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
 <!-- page script -->
 <script type="text/javascript">
+    function tab_konsultasi() {
+        $('#konsultasi').show();
+        $('#non_konsultasi').hide();
+
+        $('.konsultasi').addClass('active');
+        $('.non_konsultasi').removeClass('active');
+
+        DataTables();
+    }
+
+    function tab_non_konsultasi() {
+        $('#non_konsultasi').show();
+        $('#konsultasi').hide();
+
+        $('.non_konsultasi').addClass('active');
+        $('.konsultasi').removeClass('active');
+
+        DataTablesNon();
+    }
+
     $(document).ready(function() {
         DataTables();
     });
@@ -144,6 +187,56 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 },
                 {
                     data: 'option'
+                }
+            ],
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            stateSave: true,
+            destroy: true,
+            paging: true
+        });
+    }
+
+    function DataTablesNon() {
+        // var dataTables = $('#table_penawaran').dataTable();
+        // dataTables.destroy();
+
+        var dataTables = $('#table_penawaran_non_konsultasi').dataTable({
+            ajax: {
+                url: siteurl + active_controller + 'get_data_penawaran_non_konsultasi',
+                type: "GET",
+                dataType: "JSON",
+                data: function(d) {
+
+                }
+            },
+            columns: [{
+                    data: 'no'
+                },
+                {
+                    data: 'id_quotation'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'pic_penawaran'
+                },
+                {
+                    data: 'penawaran'
+                },
+                {
+                    data: 'customer'
+                },
+                {
+                    data: 'grand_total'
+                },
+                {
+                    data: 'status_quot'
+                },
+                {
+                    data: 'action'
                 }
             ],
             responsive: true,

@@ -2005,6 +2005,10 @@ class Penawaran extends Admin_Controller
             $status = '<span class="badge bg-red">Rejected</span>';
         }
 
+        if ($item->sts_quot == '1' && $item->sts_deal == '1') {
+            $status = '<span class="badge bg-green">Deal</span>';
+        }
+
         return $status;
     }
 
@@ -2015,13 +2019,17 @@ class Penawaran extends Admin_Controller
         if (has_permission($this->viewPermission)) {
             $view_btn = '<a href="' . base_url('penawaran/view_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-info" title="View Penawaran"><i class="fa fa-eye"></i></a>';
 
-            $print_btn = '<a href="javascript:void(0);" class="btn btn-sm btn-primary" title="Print Penawaran"><i class="fa fa-print"></i></a>';
+            if($item->sts_quot == '1') {
+                $print_btn = '<a href="javascript:void(0);" class="btn btn-sm btn-primary" title="Print Penawaran"><i class="fa fa-print"></i></a>';
+            }
         }
 
         $edit_btn = '';
         $deal_btn = '';
         if (has_permission($this->managePermission)) {
-            $edit_btn = '<a href="' . base_url('penawaran/edit_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-warning" title="Revisi Penawaran"><i class="fa fa-pencil"></i></a>';
+            if($item->sts_quot !== '1') {
+                $edit_btn = '<a href="' . base_url('penawaran/edit_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-warning" title="Revisi Penawaran"><i class="fa fa-pencil"></i></a>';
+            }
 
             if ($item->sts_deal !== '1' && $item->sts_quot == '1') {
                 $deal_btn = '<button type="button" class="btn btn-sm btn-success deal_penawaran_non_kons" data-id_penawaran="' . $item->id_penawaran . '" title="Deal Penawaran"><i class="fa fa-check"></i></button>';
@@ -2029,7 +2037,7 @@ class Penawaran extends Admin_Controller
         }
 
         $delete_btn = '';
-        if (has_permission($this->deletePermission)) {
+        if (has_permission($this->deletePermission) && $item->sts_quot !== '1') {
             $delete_btn = '<button type="button" class="btn btn-sm btn-danger del_penawaran_non_kons" data-id_penawaran="' . $item->id_penawaran . '" title="Delete Penawaran"><i class="fa fa-trash"></i></button>';
         }
 
@@ -2124,6 +2132,36 @@ class Penawaran extends Admin_Controller
         $this->template->render('edit_penawaran_non');
     }
 
+    public function deal_penawaran_non_kons() {
+        $post = $this->input->post();
+
+        $this->db->trans_begin();
+
+        try {
+            $arr_deal = [
+                'sts_deal' => '1'
+            ];
+
+            $this->db->update('kons_tr_penawaran_non_konsultasi', $arr_deal, ['id_penawaran' => $post['id_penawaran']]);
+
+            $this->db->trans_commit();
+
+            $this->output->set_status_header(200);
+
+            echo json_encode([
+                'msg' => 'Data has been deal !'
+            ]);
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+
+            $this->output->set_status_header(500);
+            $response = [
+                'msg' => $e->getMessage()
+            ];
+
+            echo json_encode($response);
+        }
+    }
 
     public function get_data_penawaran_non()
     {

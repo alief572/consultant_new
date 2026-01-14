@@ -265,6 +265,65 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         });
     })
 
+    $(document).on('click', '.deal_penawaran_non_kons', function() {
+        var id_penawaran = $(this).data('id_penawaran');
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: "You can't reverse it after you deal this data !",
+            showConfirmButton: true,
+            showCancelButton: true
+        }).then((next) => {
+            if(next.isConfirmed) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'deal_penawaran_non_kons',
+                    data: {
+                        'id_penawaran': id_penawaran
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success !',
+                            text: 'Data has been deleted !',
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowClickOutside: false,
+                            allowEscapeKey: false,
+                            timer: 3000
+                        }).then(() => {
+                            Swal.close();
+                            DataTablesNon();
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        // 1. Ambil response text dan parse ke JSON
+                        let response = {};
+                        try {
+                            response = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            response = {
+                                msg: 'Terjadi kesalahan sistem yang tidak terduga.'
+                            };
+                        }
+
+                        // 2. Tampilkan pesan 'msg' dari JSON
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error !',
+                            text: response.msg, // <--- Ini yang bakal nampilin isi pesan lu
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                });
+            }
+        });
+    });
+
     function DataTables() {
         // var dataTables = $('#table_penawaran').dataTable();
         // dataTables.destroy();

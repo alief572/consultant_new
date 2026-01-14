@@ -81,7 +81,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" value="<?= $id_penawaran ?>" readonly>
+                        <input type="text" class="form-control form-control-sm" name="id_penawaran" value="<?= $id_penawaran ?>" readonly>
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -340,7 +340,20 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
             </table>
 
             <br><br>
-            <a href="<?= base_url('penawaran/') ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="">Reject Reason</label>
+                    <textarea class="form-control form-control-sm" name="reject_reason"></textarea>
+                </div>
+            </div>
+            <div class="col-md-6"></div>
+
+            <div class="col-md-12">
+                <a href="<?= base_url('penawaran/') ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
+                <button type="button" class="btn btn-sm btn-danger reject" title="Reject Penawaran Non Konsultasi"><i class="fa fa-close"></i> Reject</button>
+                <button type="button" class="btn btn-sm btn-success approve" title="Approve Penawaran Non Konsultasi"><i class="fa fa-check"></i> Approve</button>
+            </div>
         </div>
     </div>
 
@@ -406,230 +419,55 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
         $('.auto_num').autoNumeric('init');
     }
 
-    function add_detail_penawaran_non_konsultasi() {
-        $.ajax({
-            type: 'post',
-            url: siteurl + active_controller + 'add_detail_penawaran_non_konsultasi',
-            data: {
-                no_detail
-            },
-            cache: false,
-            dataType: 'json',
-            success: function(result) {
-                $('.list_detail_penawaran').append(result.item);
-                auto_num();
-                no_detail++;
-            },
-            error: function(xhr, status, error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error !',
-                    text: "There's an error occured, please try again later !",
-                    showConfirmButton: false,
-                    showCancelButton: false,
-                    timer: 3000
-                });
-            }
-        });
-    }
+    $(document).on('click', '.reject', function() {
+        var reject_reason = $('textarea[name="reject_reason"]').val();
 
-    function del_item(no) {
-        $('.item_detail_' + no).remove();
-
-        hitung_grand_total();
-    }
-
-    function getNum(nilai) {
-        if (nilai !== '') {
-            nilai = nilai.split(',').join('');
-            nilai = parseFloat(nilai);
-
-            return nilai;
-        } else {
-            return 0;
-        }
-    }
-
-    function hitung_total_detail(no) {
-        var qty = $('.qty_' + no).val();
-        if (qty !== '') {
-            qty = qty.split(',').join('');
-            qty = parseFloat(qty);
-        } else {
-            qty = 0
-        }
-
-        var harga = $('.harga_' + no).val();
-        if (harga !== '') {
-            harga = harga.split(',').join('');
-            harga = parseFloat(harga);
-        } else {
-            harga = 0
-        }
-
-        var total = (qty * harga);
-
-        $('.total_' + no).autoNumeric('set', total);
-
-        hitung_grand_total();
-    }
-
-    function number_format(number, decimals, dec_point, thousands_sep) {
-        // Strip all characters but numerical ones.
-        number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
-        var n = !isFinite(+number) ? 0 : +number,
-            prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-            sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-            dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-            s = '',
-            toFixedFix = function(n, prec) {
-                var k = Math.pow(10, prec);
-                return '' + Math.round(n * k) / k;
-            };
-        // Fix for IE parseFloat(0.55).toFixed(0) = 0;
-        s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
-        if (s[0].length > 3) {
-            s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
-        }
-        if ((s[1] || '').length < prec) {
-            s[1] = s[1] || '';
-            s[1] += new Array(prec - s[1].length + 1).join('0');
-        }
-        return s.join(dec);
-    }
-
-    function hitung_grand_total() {
-        var total = 0;
-        for (i = 1; i <= no_detail; i++) {
-            if ($('.total_' + i).length > 0) {
-                var nilai_total = $('.total_' + i).val();
-                if (nilai_total !== '') {
-                    nilai_total = nilai_total.split(',').join('');
-                    nilai_total = parseFloat(nilai_total);
-                } else {
-                    nilai_total = 0;
-                }
-
-                total += nilai_total;
-            }
-        }
-
-        var ppn = (total * 11 / 100);
-
-        $('.td_subtotal').html(number_format(total, 2));
-        $('.td_ppn').html(number_format(ppn, 2));
-        $('.td_grand_total').html(number_format(total + ppn, 2));
-
-        $('input[name="subtotal"]').val(total);
-        $('input[name="ppn"]').val(ppn);
-        $('input[name="grand_total"]').val((total + ppn));
-    }
-
-    $(document).ready(function() {
-        auto_num();
-    });
-
-    $(document).on('click', 'input[name="informasi_awal_sales"]', function() {
-        if ($(this).is(':checked')) {
-            $('select[name="sales_informasi_awal"]').attr('disabled', false);
-        } else {
-            $('select[name="sales_informasi_awal"]').attr('disabled', true);
-        }
-    })
-
-    $(document).on('click', 'input[name="informasi_awal_medsos"]', function() {
-        if ($(this).is(':checked')) {
-            $('select[name="medsos_informasi_awal"]').attr('disabled', false);
-        } else {
-            $('select[name="medsos_informasi_awal"]').attr('disabled', true);
-        }
-    })
-
-    $(document).on('click', 'input[name="informasi_awal_others"]', function() {
-        if ($(this).is(':checked')) {
-            $('select[name="others_informasi_awal"]').attr('disabled', false);
-        } else {
-            $('select[name="others_informasi_awal"]').attr('disabled', true);
-        }
-    })
-
-    $(document).on('change', '.get_detail_customer', function() {
-        var customer = $(this).val();
-
-        if (customer.length > 0) {
-            $.ajax({
-                type: 'get',
-                url: siteurl + active_controller + 'get_detail_customer',
-                data: {
-                    'customer': customer
-                },
-                cache: false,
-                dataType: 'json',
-                success: function(result) {
-                    $('.address').val(result.address);
-                    $('.pic').val(result.pic);
-                },
-                error: function(xhr, status, error) {
-                    // 1. Ambil response text dan parse ke JSON
-                    let response = {};
-                    try {
-                        response = JSON.parse(xhr.responseText);
-                    } catch (e) {
-                        response = {
-                            msg: 'Terjadi kesalahan sistem yang tidak terduga.'
-                        };
-                    }
-
-                    // 2. Tampilkan pesan 'msg' dari JSON
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error !',
-                        text: response.msg, // <--- Ini yang bakal nampilin isi pesan lu
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
-                }
+        if(reject_reason.length < 1) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning !',
+                text: 'Reject reason harus diisi terlebih dahulu !',
+                showConfirmButton: false,
+                showCancelButton: true
             });
-        } else {
-            $('.address').val('');
-        }
-    })
 
-    $(document).on('submit', '#frm-data', function(e) {
-        e.preventDefault();
+            return false;
+        }
 
         Swal.fire({
             icon: 'warning',
             title: 'Are you sure ?',
-            text: 'This data will be deleted !',
+            text: 'This data will be rejected !',
             showConfirmButton: true,
             showCancelButton: true
         }).then((next) => {
-            if (next.isConfirmed) {
-                var formdata = $('#frm-data').serialize();
+            if(next.isConfirmed) {
+                var id_penawaran = $('input[name="id_penawaran"]').val();
 
                 $.ajax({
                     type: 'post',
-                    url: siteurl + active_controller + 'save_penawaran_non_konsultasi',
-                    data: formdata,
+                    url: siteurl + active_controller + 'reject_penawaran_non_kons',
+                    data: {
+                        'id_penawaran': id_penawaran,
+                        'reject_reason': reject_reason
+                    },
                     cache: false,
                     dataType: 'json',
                     success: function(result) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success !',
-                            text: 'Data has been saved !',
+                            text: result.msg,
                             showConfirmButton: false,
                             showCancelButton: false,
-                            allowOutsideClick: false,
                             allowEscapeKey: false,
+                            allowOutsideClick: false,
                             timer: 3000
                         }).then(() => {
-                            window.location.href = siteurl + active_controller + '/penawaran';
+                            window.location.href = siteurl + active_controller + 'approval_penawaran';
                         });
                     },
                     error: function(xhr, status, error) {
-                        // 1. Ambil response text dan parse ke JSON
                         let response = {};
                         try {
                             response = JSON.parse(xhr.responseText);
@@ -651,6 +489,63 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 });
             }
         });
-    });
+    })
+    $(document).on('click', '.approve', function() {
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be Approved !',
+            showConfirmButton: true,
+            showCancelButton: true
+        }).then((next) => {
+            if(next.isConfirmed) {
+                var id_penawaran = $('input[name="id_penawaran"]').val();
+
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'approve_penawaran_non_kons',
+                    data: {
+                        'id_penawaran': id_penawaran
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success !',
+                            text: result.msg,
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowEscapeKey: false,
+                            allowOutsideClick: false,
+                            timer: 3000
+                        }).then(() => {
+                            window.location.href = siteurl + active_controller + 'approval_penawaran';
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        let response = {};
+                        try {
+                            response = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            response = {
+                                msg: 'Terjadi kesalahan sistem yang tidak terduga.'
+                            };
+                        }
+
+                        // 2. Tampilkan pesan 'msg' dari JSON
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error !',
+                            text: response.msg, // <--- Ini yang bakal nampilin isi pesan lu
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
+                });
+            }
+        });
+    })
 </script>
 <script src="<?= base_url('assets/js/basic.js') ?>"></script>

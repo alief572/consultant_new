@@ -25,6 +25,7 @@ class Approval_penawaran extends Admin_Controller
         $this->template->title('Quotation');
         $this->template->page_icon('fa fa-cubes');
         $this->load->library('upload');
+        $this->load->model('Approval_penawaran/Approval_penawaran_model');
         date_default_timezone_set('Asia/Bangkok');
     }
 
@@ -445,5 +446,190 @@ class Approval_penawaran extends Admin_Controller
             'status' => $valid,
             'pesan' => $pesan
         ]);
+    }
+
+    private function render_status_penawaran_non_kons($item)
+    {
+        $status = '<span class="badge bg-blue">Waiting Approval</span>';
+        if($item->sts_quot == '2') {
+            $status = '<span class="badge bg-red">Rejected</span>';
+        }
+        return $status;
+    }
+
+    private function render_action_non_kons($item)
+    {
+        $btn_approve = '<a href="' . base_url('approval_penawaran/approval_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-success" title="Approval Penawaran Non Konsultasi"><i class="fa fa-arrow-up"></i></a>';
+
+        if (!has_permission($this->managePermission)) {
+            $btn_approve = '';
+        }
+
+        return $btn_approve;
+    }
+
+    public function approval_non_kons($id_penawaran)
+    {
+        $data_penawaran = $this->Approval_penawaran_model->get_penawaran($id_penawaran);
+        $data_detail_penawaran = $this->Approval_penawaran_model->get_penawaran_detail($id_penawaran);
+
+        $list_divisi = $this->Approval_penawaran_model->list_divisi();
+        $list_customer = $this->Approval_penawaran_model->list_customer();
+        $list_company = $this->Approval_penawaran_model->list_company();
+        $list_sales = $this->Approval_penawaran_model->list_employee();
+        $list_employee = $this->Approval_penawaran_model->list_employee();
+
+        $data = [
+            'data_penawaran' => $data_penawaran,
+            'data_detail_penawaran' => $data_detail_penawaran,
+            'list_divisi' => $list_divisi,
+            'list_customer' => $list_customer,
+            'list_company' => $list_company,
+            'list_sales' => $list_sales,
+            'list_employee' => $list_employee,
+        ];
+
+        $this->template->title('Approval Penawaran Non Konsultasi');
+        $this->template->set($data);
+        $this->template->render('approval_penawaran_non');
+    }
+
+    public function reject_penawaran_non_kons() {
+        $post = $this->input->post();
+
+        $this->db->trans_begin();
+
+        try {
+            $arr_update = [
+                'sts_quot' => '2',
+                'reject_reason' => $post['reject_reason']
+            ];
+
+            $this->db->update('kons_tr_penawaran_non_konsultasi', $arr_update, ['id_penawaran' => $post['id_penawaran']]);
+
+            $this->db->trans_commit();
+
+            $this->output->set_status_header(200);
+
+            echo json_encode([
+                'msg' => 'Data has been rejected !'
+            ]);
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+
+            $this->output->set_status_header(500);
+            echo json_encode([
+                'msg' => "There's an error occured, please try again later !"
+            ]);
+        }
+    }
+
+    public function approve_penawaran_non_kons() {
+        $post = $this->input->post();
+
+        $this->db->trans_begin();
+        try {
+            $arr_update = [
+                'sts_quot' => '1',
+                'reject_reason' => ''
+            ];
+
+            $this->db->update('kons_tr_penawaran_non_konsultasi', $arr_update, ['id_penawaran' => $post['id_penawaran']]);
+
+            $this->db->trans_commit();
+
+            $this->output->set_status_header(200);
+
+            echo json_encode([
+                'msg' => 'Data has been approved !'
+            ]);
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+
+            $this->output->set_status_header(500);
+            echo json_encode([
+                'msg' => "There's an error occured, please try again later !"
+            ]);
+        }
+    }
+
+    public function get_data_penawaran_non_konsultasi()
+    {
+        try {
+            $draw = $this->input->get('draw');
+            $length = $this->input->get('length');
+            $start = $this->input->get('start');
+            $search = $this->input->get('search')['value'];
+
+            $this->db->select('a.*');
+            $this->db->from('kons_tr_penawaran_non_konsultasi a');
+            $this->db->where('a.deleted_by', null);
+            $this->db->where('a.sts_quot <>', '1');
+            $this->db->where('a.sts_deal <>', '1');
+
+            $db_clone = clone $this->db;
+            $count_all = $db_clone->count_all_results();
+
+            if (!empty($search)) {
+                $this->db->group_start();
+                $this->db->like('a.id_penawaran', $search, 'both');
+                $this->db->or_like('a.tgl_quotation', $search, 'both');
+                $this->db->or_like('a.pic_penawaran', $search, 'both');
+                $this->db->or_like('a.keterangan_penawaran', $search, 'both');
+                $this->db->or_like('a.grand_total', $search, 'both');
+                $this->db->group_end();
+            }
+
+            $db_clone = clone $this->db;
+            $count_filtered = $db_clone->count_all_results();
+
+            $this->db->order_by('a.input_date', 'desc');
+            $this->db->limit($length, $start);
+
+            $get_data = $this->db->get()->result();
+
+            $no = (0 + $start);
+            $hasil = [];
+            foreach ($get_data as $item) {
+                $no++;
+
+                $status = $this->render_status_penawaran_non_kons($item);
+                // $status = '';
+                // $action = '';
+
+                $action = $this->render_action_non_kons($item);
+
+                $hasil[] = [
+                    'no' => $no,
+                    'id_quotation' => $item->id_penawaran,
+                    'date' => $item->tgl_quotation,
+                    'pic_penawaran' => $item->pic_penawaran,
+                    'penawaran' => $item->keterangan_penawaran,
+                    'customer' => $item->nm_customer,
+                    'grand_total' => number_format($item->grand_total),
+                    'status_quot' => $status,
+                    'action' => $action
+                ];
+            }
+
+            $response = [
+                'draw' => intval($draw),
+                'recordsTotal' => $count_all,
+                'recordsFiltered' => $count_filtered,
+                'data' => $hasil
+            ];
+
+            $this->output->set_status_header(200);
+            echo json_encode($response);
+        } catch (Exception $e) {
+            $this->output->set_status_header(200);
+
+            $response = [
+                'msg' => "There's an error occured, Please try again later !"
+            ];
+
+            $this->output->set_status_header(500);
+            echo json_encode($response);
+        }
     }
 }
