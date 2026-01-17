@@ -574,55 +574,8 @@ class SPK_penawaran extends Admin_Controller
                 $approval_position = 'Project Leader';
             }
 
-            $status = '<button type="button" class="btn btn-sm btn-success">NEW</button>';
-            $status_spk = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-            if (!empty($approval_position_arr)) {
-                $status_spk = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval : ' . implode(' & ', $approval_position_arr) . '</button>';
-            }
-            if (!empty($approval_position)) {
-                $status_spk = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval : ' . $approval_position . '</button>';
-            }
-
-            $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $item->id_penawaran])->row();
-            if (!empty($get_penawaran) && $get_penawaran->sts_cust == 0) {
-                $status = '
-                    <span class="btn btn-sm btn-warning" style="width: 100% !important;">
-                        <b>New</b>
-                    </span>
-                ';
-            } else {
-                $status = '
-                    <span class="btn btn-sm btn-info" style="width: 100% !important;">
-                        <b>Repeat</b>
-                    </span>
-                ';
-            }
-
-            if ($item->sts_spk == '1') {
-                $status_spk = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-            }
-            if ($item->sts_spk == '0') {
-                $status_spk = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-            }
-
-            if ($item->reject_sales_sts !== null) {
-                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Sales</button>';
-            }
-            if ($item->reject_konsultan_1_sts !== null) {
-                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Konsultan 1</button>';
-            }
-            if ($item->reject_konsultan_2_sts !== null) {
-                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Konsultan 2</button>';
-            }
-            if ($item->reject_project_leader_sts !== null) {
-                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Project Leader</button>';
-            }
-            if ($item->reject_manager_sales_sts !== null) {
-                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Manager Sales</button>';
-            }
-            if ($item->reject_level2_by !== null) {
-                $status_spk = '<button type="button" class="btn btn-sm btn-danger" style="font-weight: bold;"> Rejected by : Direktur</button>';
-            }
+            $status = $this->Spk_penawaran_model->render_status($item);
+            $status_spk = $this->Spk_penawaran_model->render_status_spk($item);    
 
             $option = '
             <div class="btn-group">
@@ -1851,5 +1804,92 @@ class SPK_penawaran extends Admin_Controller
                 $this->template->render('detail_subcont_perusahaan');
             }
         }
+    }
+
+
+    public function create_spk_non_konsultasi() {
+        $this->template->title('Create SPK Penawaran Non Konsultasi');
+        $this->template->render('choose_spk_non_kons');
+    }
+
+    public function table_penawaran_non_kons() {
+        $post = $this->input->post();
+
+        $draw = $post['draw'];
+        $length = $post['length'];
+        $start = $post['start'];
+        $search = $post['search']['value'];
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_non_konsultasi a');
+        $this->db->join('kons_tr_spk_non_kons b', 'b.id_penawaran = a.id_penawaran', 'left');
+        $this->db->where('a.sts_deal', '1');
+        $this->db->where('a.sts_quot', '1');
+        $this->db->where('b.id_penawaran', null);
+
+        $db_clone = clone $this->db;
+        $count_all = $db_clone->count_all_results();
+
+        if(!empty($search)) {
+            $arr_filter_col = [
+                'a.id_penawaran',
+                'a.tgl_quotation',
+                'a.pic_penawaran',
+                'a.keterangan_penawaran',
+                'a.nm_customer',
+                'a.grand_total'
+            ];
+
+            $this->db->group_start();
+
+            $no_col = 0;
+            foreach($arr_filter_col as $item_col) {
+                $no_col++;
+
+                if($no_col <= 1) {
+                    $this->db->like($item_col, $search, 'both');
+                } else {
+                    $this->db->or_like($item_col, $search, 'both');
+                }
+            }
+            $this->db->group_end();
+        }
+
+        $db_clone = clone $this->db;
+        $count_filtered = $db_clone->count_all_results();
+
+        $this->db->group_by('a.id_penawaran');
+        $this->db->order_by('a.id_penawaran', 'desc');
+        $this->db->limit($length, $start);
+
+        $get_data = $this->db->get()->result();
+
+        $no = (0 + $start);
+        $hasil = [];
+
+        foreach($get_data as $item) {
+            $no++;
+
+            $btn_create = '<a href="'.base_url('spk_penawaran/add_spk_non_kons/'.$item->id_penawaran).'" class="btn btn-sm btn-primary" title="Create SPK Penawaran"><i class="fa fa-check"></i></a>';
+
+            $hasil[] = [
+                'no' => $no,
+                'id_quotation' => $item->id_penawaran,
+                'date' => date('d F Y', strtotime($item->tgl_quotation)),
+                'pic_penawaran' => $item->pic_penawaran,
+                'penawaran' => $item->keterangan_penawaran,
+                'customer' => $item->nm_customer,
+                'grand_total' => number_format($item->grand_total),
+                'action' => $btn_create
+            ];
+        }
+
+        $response = [
+            'draw' => intval($draw),
+            'recordsTotal' => $count_all,
+            'recordsFiltered' => $count_filtered,
+            'data' => $hasil
+        ];
+        echo json_encode($response);
     }
 }
