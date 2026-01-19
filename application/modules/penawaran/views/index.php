@@ -67,13 +67,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     $(document).on('click', '.del_penawaran', function() {
         var id_penawaran = $(this).data('id_penawaran');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_penawaran',
@@ -84,24 +84,24 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.msg
-                            }, function(after) {
+                            }).then(() => {
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.msg
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
                         });
@@ -114,13 +114,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     $(document).on('click', '.deal_penawaran', function() {
         var id_penawaran = $(this).data('id_penawaran');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Warning !',
             text: 'Are you sure to deal this Quotation ?',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'deal_penawaran',
@@ -131,24 +131,24 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.msg
-                            }, function(after) {
+                            }).then(() => {
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.msg
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
                         });
