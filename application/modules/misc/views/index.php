@@ -5,7 +5,7 @@
             <tr>
                 <th>Nomor SPK</th>
                 <th>
-                    <select name="nomor_spk" class="form-control form-control-sm chosen" required>
+                    <select name="nomor_spk" class="form-control form-control-sm chosen">
                         <option value="">- Pilih No. SPK -</option>
                         <?php foreach ($list_spk as $item_spk) : ?>
                             <option value="<?= $item_spk->id_spk_penawaran ?>"><?= $item_spk->id_spk_penawaran ?></option>

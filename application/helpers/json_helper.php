@@ -2603,6 +2603,20 @@ function generateNoPenawaran($employee_code, $tipe_penawaran)
 
 	return $kode_trans;
 }
+function generateNoPenawaranNon()
+{
+	$CI = &get_instance();
+	$Ym 			= date('ym');
+	$srcMtr			= "SELECT MAX(id_penawaran) as maxP FROM kons_tr_penawaran_non_konsultasi WHERE id_penawaran LIKE '%-" . date('m') . "-" . date('y') . "%' ";
+	$resultMtr		= $CI->db->query($srcMtr)->result_array();
+	$angkaUrut2		= $resultMtr[0]['maxP'];
+	$urutan2		= (int)substr($angkaUrut2, 0, 3);
+	$urutan2++;
+	$urut2			= sprintf('%03s', $urutan2);
+	$kode_trans		= 'P-NON-KONS-' . $urut2 . '-' . date('m') . '-' . date('y');
+
+	return $kode_trans;
+}
 
 function Dekripsi_base64($sData)
 {
@@ -2623,7 +2637,8 @@ function Dekripsi($sData, $sKey = '200881173_limchaemoo')
 	return $sResult;
 }
 
-function get_initials($full_name) {
-    preg_match_all('/\b\w/', $full_name, $matches);
-    return strtoupper(implode('', $matches[0]));
+function get_initials($full_name)
+{
+	preg_match_all('/\b\w/', $full_name, $matches);
+	return strtoupper(implode('', $matches[0]));
 }
