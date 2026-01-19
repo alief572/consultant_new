@@ -575,7 +575,7 @@ class SPK_penawaran extends Admin_Controller
             }
 
             $status = $this->Spk_penawaran_model->render_status($item);
-            $status_spk = $this->Spk_penawaran_model->render_status_spk($item);    
+            $status_spk = $this->Spk_penawaran_model->render_status_spk($item);
 
             $option = '
             <div class="btn-group">
@@ -971,6 +971,23 @@ class SPK_penawaran extends Admin_Controller
         $this->template->set($data);
         $this->template->title('Add SPK');
         $this->template->render('add_spk');
+    }
+
+    public function add_spk_non_kons($id_penawaran)
+    {
+
+        $data_penawaran = $this->Spk_penawaran_model->get_penawaran_non_kons($id_penawaran);
+
+        $list_employee = $this->Spk_penawaran_model->get_list_employee();
+
+        $data = [
+            'data_penawaran' => $data_penawaran,
+            'list_employee' => $list_employee
+        ];
+
+        $this->template->title("Add SPK Penawaran");
+        $this->template->set($data);
+        $this->template->render('add_spk_non_kons');
     }
 
     public function save_spk_penawaran()
@@ -1807,12 +1824,14 @@ class SPK_penawaran extends Admin_Controller
     }
 
 
-    public function create_spk_non_konsultasi() {
+    public function create_spk_non_konsultasi()
+    {
         $this->template->title('Create SPK Penawaran Non Konsultasi');
         $this->template->render('choose_spk_non_kons');
     }
 
-    public function table_penawaran_non_kons() {
+    public function table_penawaran_non_kons()
+    {
         $post = $this->input->post();
 
         $draw = $post['draw'];
@@ -1830,7 +1849,7 @@ class SPK_penawaran extends Admin_Controller
         $db_clone = clone $this->db;
         $count_all = $db_clone->count_all_results();
 
-        if(!empty($search)) {
+        if (!empty($search)) {
             $arr_filter_col = [
                 'a.id_penawaran',
                 'a.tgl_quotation',
@@ -1843,10 +1862,10 @@ class SPK_penawaran extends Admin_Controller
             $this->db->group_start();
 
             $no_col = 0;
-            foreach($arr_filter_col as $item_col) {
+            foreach ($arr_filter_col as $item_col) {
                 $no_col++;
 
-                if($no_col <= 1) {
+                if ($no_col <= 1) {
                     $this->db->like($item_col, $search, 'both');
                 } else {
                     $this->db->or_like($item_col, $search, 'both');
@@ -1867,10 +1886,10 @@ class SPK_penawaran extends Admin_Controller
         $no = (0 + $start);
         $hasil = [];
 
-        foreach($get_data as $item) {
+        foreach ($get_data as $item) {
             $no++;
 
-            $btn_create = '<a href="'.base_url('spk_penawaran/add_spk_non_kons/'.$item->id_penawaran).'" class="btn btn-sm btn-primary" title="Create SPK Penawaran"><i class="fa fa-check"></i></a>';
+            $btn_create = '<a href="' . base_url('spk_penawaran/add_spk_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-primary" title="Create SPK Penawaran"><i class="fa fa-check"></i></a>';
 
             $hasil[] = [
                 'no' => $no,

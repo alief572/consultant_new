@@ -8,6 +8,8 @@ class Spk_penawaran_model extends BF_Model
     protected $ENABLE_VIEW;
     protected $ENABLE_DELETE;
 
+    protected $dbhr;
+
     public function __construct()
     {
         parent::__construct();
@@ -16,6 +18,8 @@ class Spk_penawaran_model extends BF_Model
         $this->ENABLE_MANAGE  = has_permission('SPK_penawaran.Manage');
         $this->ENABLE_VIEW    = has_permission('SPK_penawaran.View');
         $this->ENABLE_DELETE  = has_permission('SPK_penawaran.Delete');
+
+        $this->dbhr = $this->load->database('dbhr', true);
     }
 
     function generate_id_spk_penawaran()
@@ -119,7 +123,8 @@ class Spk_penawaran_model extends BF_Model
     }
 
 
-    public function get_new_penawaran_non_kons(){
+    public function get_new_penawaran_non_kons()
+    {
         $this->db->select('a.*');
         $this->db->from('kons_tr_penawaran_non_konsultasi a');
         $this->db->join('kons_tr_spk_non_kons b', 'b.id_penawaran = a.id_penawaran', 'left');
@@ -127,6 +132,30 @@ class Spk_penawaran_model extends BF_Model
         $this->db->where('a.sts_quot', '1');
         $this->db->where('b.id_penawaran', null);
         $get_data = $this->db->get()->result();
+
+        return $get_data;
+    }
+
+    public function get_penawaran_non_kons($id_penawaran = null)
+    {
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_penawaran_non_konsultasi a');
+        if (!empty($id_penawaran)) {
+            $this->db->where('a.id_penawaran', $id_penawaran);
+            $get_data = $this->db->get()->row();
+        } else {
+            $get_data = $this->db->get()->result();
+        }
+
+        return $get_data;
+    }
+
+    public function get_list_employee() {
+        $this->dbhr->select('a.id, a.name');
+        $this->dbhr->from('employees a');
+        $this->dbhr->where('a.flag_active', 'Y');
+
+        $get_data = $this->dbhr->get()->result();
 
         return $get_data;
     }
