@@ -977,11 +977,13 @@ class SPK_penawaran extends Admin_Controller
     {
 
         $data_penawaran = $this->Spk_penawaran_model->get_penawaran_non_kons($id_penawaran);
+        $data_detail_penawaran = $this->Spk_penawaran_model->get_penawaran_detail_non_kons($id_penawaran);
 
         $list_employee = $this->Spk_penawaran_model->get_list_employee();
 
         $data = [
             'data_penawaran' => $data_penawaran,
+            'data_detail_penawaran' => $data_detail_penawaran,
             'list_employee' => $list_employee
         ];
 
@@ -1909,6 +1911,281 @@ class SPK_penawaran extends Admin_Controller
             'recordsFiltered' => $count_filtered,
             'data' => $hasil
         ];
+        echo json_encode($response);
+    }
+
+    public function save_spk_penawaran_non_konsultasi()
+    {
+        $this->db->trans_begin();
+
+        try {
+            $id_spk_penawaran = $this->Spk_penawaran_model->generate_id_spk_penawaran_non_kons();
+
+            $get_penawaran = $this->Spk_penawaran_model->get_penawaran_non_kons($this->input->post('id_quotation', true));
+
+            $id_customer = (!empty($get_penawaran->id_customer)) ? $get_penawaran->id_customer : '';
+            $nm_customer = (!empty($get_penawaran->nm_customer)) ? $get_penawaran->nm_customer : '';
+            $address = (!empty($get_penawaran->address)) ? $get_penawaran->address : '';
+            $pic = (!empty($get_penawaran->pic)) ? $get_penawaran->pic : '';
+            $tipe_informasi_awal = (!empty($get_penawaran->tipe_informasi_awal)) ? $get_penawaran->tipe_informasi_awal : '';
+            $detail_informasi_awal = (!empty($get_penawaran->detail_informasi_awal)) ? $get_penawaran->detail_informasi_awal : '';
+            $keterangan_penawaran = (!empty($get_penawaran->keterangan_penawaran)) ? $get_penawaran->keterangan_penawaran : '';
+            $id_divisi = (!empty($get_penawaran->id_divisi)) ? $get_penawaran->id_divisi : '';
+            $nm_divisi = (!empty($get_penawaran->nm_divisi)) ? $get_penawaran->nm_divisi : '';
+
+            $informasi_awal_eksternal = (isset($_POST['informasi_awal_eksternal'])) ? $this->input->post('informasi_awal_eksternal', true) : '';
+            if (!empty($informasi_awal_eksternal)) {
+                if ($informasi_awal_eksternal == 'bs') {
+                    $detail_informasi_awal_eksternal = $this->input->post('informasi_awal_eksternal_detail_bs', true);
+                    $cp_info_awal_eks = $this->input->post('informasi_awal_eksternal_cp_bs', true);
+                } else {
+                    $detail_informasi_awal_eksternal = $this->input->post('informasi_awal_eksternal_detail_lain', true);
+                    $cp_info_awal_eks = $this->input->post('informasi_awal_eksternal_cp_lain', true);
+                }
+            } else {
+                $detail_informasi_awal_eksternal = '';
+                $cp_info_awal_eks = '';
+            }
+
+            $get_project_leader = $this->Spk_penawaran_model->get_list_employee($this->input->post('project_leader', true));
+            $nm_project_leader = (!empty($get_project_leader->name)) ? $get_project_leader->name : '';
+
+            $get_konsultan_1 = $this->Spk_penawaran_model->get_list_employee($this->input->post('konsultan_1', true));
+            $nm_konsultan_1 = (!empty($get_konsultan_1->name)) ? $get_konsultan_1->name : '';
+
+            $get_konsultan_2 = $this->Spk_penawaran_model->get_list_employee($this->input->post('konsultan_2', true));
+            $nm_konsultan_2 = (!empty($get_konsultan_2->name)) ? $get_konsultan_2->name : '';
+
+            $nilai_kontrak = (!empty($get_penawaran->grand_total)) ? $get_penawaran->grand_total : 0;
+
+            $get_sales = $this->Spk_penawaran_model->get_list_employee($this->input->post('sales', true));
+
+            $id_sales = (!empty($get_sales)) ? $get_sales->id : '';
+            $nm_sales = (!empty($get_sales)) ? $get_sales->name : '';
+
+            $arr_insert_header = [
+                'id_spk_penawaran' => $id_spk_penawaran,
+                'id_penawaran' => $this->input->post('id_quotation', true),
+                'id_customer' => $id_customer,
+                'nm_customer' => $nm_customer,
+                'address' => $address,
+                'npwp_cust' => $this->input->post('no_npwp', true),
+                'nm_pic' => $pic,
+                'tipe_informasi_awal' => $tipe_informasi_awal,
+                'detail_informasi_awal' => $detail_informasi_awal,
+                'tipe_info_awal_eks' => $informasi_awal_eksternal,
+                'detail_info_awal_eks' => $detail_informasi_awal_eksternal,
+                'cp_info_awal_eks' => $cp_info_awal_eks,
+                'waktu_from' => $this->input->post('waktu_from', true),
+                'waktu_to' => $this->input->post('waktu_to', true),
+                'nm_project' => $keterangan_penawaran,
+                'id_divisi' => $id_divisi,
+                'nm_divisi' => $nm_divisi,
+                'id_sales' => $id_sales,
+                'nm_sales' => $nm_sales,
+                'id_project_leader' => $this->input->post('project_leader', true),
+                'nm_project_leader' => $nm_project_leader,
+                'id_konsultan_1' => $this->input->post('konsultan_1', true),
+                'nm_konsultan_1' => $nm_konsultan_1,
+                'id_konsultan_2' => $this->input->post('konsultan_2', true),
+                'nm_konsultan_2' => $nm_konsultan_2,
+                'nilai_kontrak' => $nilai_kontrak,
+                'nilai_kontrak_bersih' => $nilai_kontrak,
+                'isu_khusus' => $this->input->post('isu_khusus', true),
+                'sts_spk' => '0',
+                'input_by' => $this->auth->user_id(),
+                'input_date' => date('Y-m-d H:i:s')
+            ];
+
+            $this->db->insert('kons_tr_spk_non_kons', $arr_insert_header);
+
+            $arr_insert_top = [];
+            if (isset($_POST['pt'])) {
+                $pt = $this->input->post('pt', true);
+
+                foreach ($pt as $item_pt) {
+                    $term_payment = $item_pt['term_payment'];
+                    $persen_payment = $item_pt['persen_payment'];
+                    $nominal_payment = str_replace(',', '', $item_pt['nominal_payment']);
+                    $desc_payment = $item_pt['desc_payment'];
+
+                    $arr_insert_top[] = [
+                        'id_spk_penawaran' => $id_spk_penawaran,
+                        'term_payment' => $term_payment,
+                        'persen_payment' => $persen_payment,
+                        'nominal_payment' => $nominal_payment,
+                        'desc_payment' => $desc_payment,
+                        'dibuat_oleh' => $this->auth->user_id(),
+                        'dibuat_tgl' => date('Y-m-d H:i:s')
+                    ];
+                }
+            }
+
+            if (!empty($arr_insert_top)) {
+                $this->db->insert_batch('kons_tr_spk_non_kons_payment', $arr_insert_top);
+            }
+
+            $this->db->trans_commit();
+
+            $this->output->set_status_header(200);
+
+            $response = [
+                'msg' => 'Data berhasil disimpan !'
+            ];
+
+            echo json_encode($response);
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+
+            $this->output->set_status_header(500);
+            echo json_encode([
+                'msg' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function del_spk_non_kons()
+    {
+        $id_spk_penawaran = $this->input->post('id_spk_penawaran', true);
+
+        $this->db->trans_begin();
+
+        try {
+            $arr_update = [
+                'deleted_by' => $this->auth->user_id(),
+                'deleted_date' => date('Y-m-d H:i:s')
+            ];
+
+            $this->db->update('kons_tr_spk_non_kons', $arr_update, array('id_spk_penawaran' => $id_spk_penawaran));
+
+            $this->db->trans_commit();
+
+            $this->output->set_status_header(200);
+
+            echo json_encode(array(
+                'msg' => 'Data has been deleted !'
+            ));
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+
+            $this->output->set_status_header($e->getCode());
+            echo json_encode(array(
+                'msg' => $e->getMessage()
+            ));
+        }
+    }
+
+    public function view_non_kons($id_spk_penawaran)
+    {
+        $id_spk_penawaran = urldecode($id_spk_penawaran);
+        $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
+
+        $data_spk_non_kons = $this->Spk_penawaran_model->get_spk_non_kons($id_spk_penawaran);
+
+        $data = [
+            'data_spk_non_kons' => $data_spk_non_kons
+        ];
+
+        $this->template->title('View SPK Non Konsultasi');
+        $this->template->set($data);
+        $this->template->render('view_spk_non_kons');
+    }
+
+    public function table_spk_non_konsultasi()
+    {
+        $draw = $this->input->post('draw', true);
+        $length = $this->input->post('length', true);
+        $start = $this->input->post('start', true);
+        $search = $this->input->post('search', true)['value'];
+        $order = $this->input->post('order', true);
+
+        $this->db->select('a.*');
+        $this->db->from('kons_tr_spk_non_kons a');
+        $this->db->where('a.deleted_by', null);
+
+        $db_clone = clone $this->db;
+        $count_all = $db_clone->count_all_results();
+
+        if (!empty($search)) {
+
+            $columnSearch = [
+                'a.id_spk_penawaran',
+                'a.nm_sales',
+                'a.nm_project',
+                'a.nm_customer',
+                'a.nilai_kontrak'
+            ];
+
+            $this->db->group_start();
+
+            $no_search = 1;
+            foreach ($columnSearch as $item_search) {
+                if ($no_search = 1) {
+                    $this->db->like($item_search, $search, 'both');
+                } else {
+                    $this->db->or_like($item_search, $search, 'both');
+                }
+
+                $no_search++;
+            }
+            $this->db->group_end();
+        }
+
+        $db_clone = clone $this->db;
+        $count_filtered = $db_clone->count_all_results();
+
+        if (isset($order) && !empty($order)) {
+            $columns = array(
+                0 => '',
+                1 => 'a.id_spk_penawaran',
+                2 => 'a.nm_sales',
+                3 => 'a.nm_project',
+                4 => 'a.nm_customer',
+                5 => 'a.nilai_kontrak'
+            );
+
+            $columnIndex = $this->input->post('order', true)[0]['column'];
+            $columnName = $columns[$columnIndex];
+            $columnSortOrder = $this->input->post('order')[0]['dir'];
+
+            $this->db->order_by($columnName, $columnSortOrder);
+        } else {
+            $this->db->order_by('a.input_date', 'desc');
+        }
+
+        $this->db->limit($length, $start);
+
+        $get_data = $this->db->get();
+
+        $no = (0 + $start);
+        $data = [];
+
+        foreach ($get_data->result() as $item) {
+            $no++;
+
+            $sts_spk = $this->Spk_penawaran_model->render_status_spk($item);
+
+            $action = $this->Spk_penawaran_model->render_action_non_kons($item);
+
+            $data[] = [
+                'no' => $no,
+                'id_spk_penawaran' => $item->id_spk_penawaran,
+                'nm_marketing' => $item->nm_sales,
+                'nm_paket' => $item->nm_project,
+                'nm_customer' => $item->nm_customer,
+                'grand_total' => number_format($item->nilai_kontrak),
+                'status_spk' => $sts_spk,
+                'action' => $action
+            ];
+        }
+
+        $response = [
+            'draw' => intval($draw),
+            'recordsTotal' => $count_all,
+            'recordsFiltered' => $count_filtered,
+            'data' => $data
+        ];
+
         echo json_encode($response);
     }
 }

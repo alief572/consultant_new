@@ -4,16 +4,23 @@ $ENABLE_MANAGE  = has_permission('SPK.Manage');
 $ENABLE_VIEW    = has_permission('SPK.View');
 $ENABLE_DELETE  = has_permission('SPK.Delete');
 
-$id_penawaran = (!empty($data_penawaran->id_penawaran)) ? $data_penawaran->id_penawaran : '';
-$nm_customer = (!empty($data_penawaran->nm_customer)) ? $data_penawaran->nm_customer : '';
-$address = (!empty($data_penawaran->address)) ? $data_penawaran->address : '';
-$pic = (!empty($data_penawaran->pic)) ? $data_penawaran->pic : '';
-$detail_informasi_awal = (!empty($data_penawaran->detail_informasi_awal)) ? $data_penawaran->detail_informasi_awal : '';
-$keterangan_penawaran = (!empty($data_penawaran->keterangan_penawaran)) ? $data_penawaran->keterangan_penawaran : '';
-$subtotal = (!empty($data_penawaran->subtotal)) ? $data_penawaran->subtotal : '';
-$nm_divisi = (!empty($data_penawaran->nm_divisi)) ? $data_penawaran->nm_divisi : '';
-$ppn = (!empty($data_penawaran->ppn)) ? $data_penawaran->ppn : 0;
-$grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_total : 0;
+$id_spk_penawaran = $data_spk_non_kons->id_spk_penawaran ?? '';
+$id_penawaran = $data_spk_non_kons->id_penawaran ?? '';
+$nm_customer = $data_spk_non_kons->nm_customer ?? '';
+$address = $data_spk_non_kons->address ?? '';
+$pic = $data_spk_non_kons->nm_pic ?? '';
+$npwp_cust = $data_spk_non_kons->npwp_cust ?? '';
+$nm_sales = $data_spk_non_kons->nm_sales ?? '';
+$tipe_informasi_awal = $data_spk_non_kons->tipe_informasi_awal ?? '';
+$detail_informasi_awal = $data_spk_non_kons->detail_informasi_awal ?? '';
+$nm_project = $data_spk_non_kons->nm_project ?? '';
+$nm_project_leader = $data_spk_non_kons->nm_project_leader ?? '';
+$nm_konsultan_1 = $data_spk_non_kons->nm_konsultan_1 ?? '';
+$nm_konsultan_2 = $data_spk_non_kons->nm_konsultan_2 ?? '';
+$waktu_from = $data_spk_non_kons->waktu_from ?? '';
+$waktu_to = $data_spk_non_kons->waktu_to ?? '';
+
+
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -90,7 +97,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                     <!-- <td width="100"></td> -->
                     <td class="pd-5 semi-bold" valign="top" width="110">No. SPK</td>
                     <td class="pd-5" width="500" valign="top">
-                        <input type="text" name="id_spk_penawaran" id="" class="form-control form-control-sm text-center" value="">
+                        <input type="text" name="id_spk_penawaran" id="" class="form-control form-control-sm text-center" value="<?= $id_spk_penawaran ?>" readonly>
                         <input type="hidden" name="id_quotation" id="" value="<?= $id_penawaran ?>" readonly>
                     </td>
                 </tr>
@@ -102,7 +109,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                     <!-- <td width="100"></td> -->
                     <td class="pd-5 semi-bold" valign="top">No. NPWP</td>
                     <td class="pd-5" width="500" valign="top">
-                        <input type="text" name="no_npwp" id="" class="form-control form-control-sm text-center" value=""> <br>
+                        <input type="text" name="no_npwp" id="" class="form-control form-control-sm text-center" value="<?= $npwp_cust ?>" readonly> <br>
                     </td>
                 </tr>
                 <tr>
@@ -129,74 +136,26 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
         <div class="box-body">
             <table border="0" style="width: 100%;">
                 <tr>
-                    <td colspan="2">
+                    <td colspan="4">
                         <h4>Marketing</h4>
-                    </td>
-                    <td colspan="2">
-                        <h4>Informasi Awal Eksternal</h4>
                     </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top" width="210">Sales</td>
                     <td class="pd-5" width="400" valign="top">
-                        <select class="form-control form-control-sm chosen_select" name="sales">
-                            <option value="">- Select Sales -</option>
-                            <?php
-                            foreach ($list_employee as $item_employee) :
-                            ?>
-                                <option value="<?= $item_employee->id ?>"><?= $item_employee->name ?></option>
-                            <?php
-                            endforeach;
-                            ?>
-                        </select>
+                        <input type="text" class="form-control form-control-sm" value="<?= $nm_sales ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top" style="max-width: 200px;">
-                        <input type="radio" name="informasi_awal_eksternal" class="iae_bs" id="" value="bs" onclick="iae('bs')"> Badan Sertifikasi
+                       
                     </td>
                     <td class="pd-5" width="500" valign="top">
-                        <div class="form-inline">
-                            <div class="form-group text-center">
-                                <input type="text" name="informasi_awal_eksternal_detail_bs" id="" class="form-control form-control-sm iae_bs" readonly>
-                            </div>
-                            <div class="form-group text-center" style="width: 95px;" valign="middle">
-                                CP
-                            </div>
-                            <div class="form-group text-center">
-                                <input type="text" name="informasi_awal_eksternal_cp_bs" id="" class="form-control form-control-sm iae_bs" readonly>
-                            </div>
-                        </div>
+                        
                     </td>
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top" width="210">Informasi Awal</td>
                     <td class="pd-5" valign="top" style="max-width: 400px;">
-                        <div class="form-inline">
-                            <div class="form-group text-center">
-                                <input type="text" name="pic" id="" class="form-control form-control-sm" value="<?= ucfirst($detail_informasi_awal) ?>" readonly>
-                            </div>
-                            <div class="form-group text-center" style="width: 95px;">
-                                <input type="radio" name="tipe_informasi_awal" value="1" id=""> RO
-                            </div>
-                            <div class="form-group text-center" style="width: 95px;">
-                                <input type="radio" name="tipe_informasi_awal" value="0" id=""> NC
-                            </div>
-                        </div>
-                    </td>
-                    <td class="pd-5 semi-bold" valign="top" style="max-width: 200px;">
-                        <input type="radio" name="informasi_awal_eksternal" class="iae_lain" id="" onclick="iae('lain')"> Lain - lain
-                    </td>
-                    <td class="pd-5" valign="top" style="max-width: 400px;">
-                        <div class="form-inline">
-                            <div class="form-group text-center">
-                                <input type="text" name="informasi_awal_eksternal_detail_lain" id="" class="form-control form-control-sm iae_lain" readonly>
-                            </div>
-                            <div class="form-group text-center" style="width: 95px;" valign="middle">
-                                CP
-                            </div>
-                            <div class="form-group text-center">
-                                <input type="text" name="informasi_awal_eksternal_cp_lain" id="" class="form-control form-control-sm iae_lain" readonly>
-                            </div>
-                        </div>
+                        <input type="text" name="pic" id="" class="form-control form-control-sm" value="<?= ucfirst($detail_informasi_awal) ?>" readonly>
                     </td>
                 </tr>
             </table>
@@ -211,7 +170,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                         Project
                     </td>
                     <td class="pd-5" width="390" valign="top">
-                        <textarea name="nm_paket" id="" class="form-control form-control-sm" readonly><?= $keterangan_penawaran ?></textarea>
+                        <textarea name="nm_paket" id="" class="form-control form-control-sm" readonly><?= $nm_project ?></textarea>
                     </td>
                     <td></td>
                     <td></td>
@@ -223,14 +182,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                     </td> -->
                     <td class="pd-5 semi-bold" valign="top" width="135">Project Leader <span class="text-red">*</span></td>
                     <td class="pd-5" width="390" valign="top">
-                        <select name="project_leader" id="" class="form-control form-control-sm select_project_leader" required>
-                            <option value="">- Select Project Leader -</option>
-                            <?php
-                            foreach ($list_employee as $item) {
-                                echo '<option value="' . $item->id . '">' . ucfirst($item->name) . '</option>';
-                            }
-                            ?>
-                        </select>
+                        <input type="text" class="form-control form-control-sm" value="<?= $nm_project_leader ?>" readonly>
                     </td>
                     <td></td>
                     <td></td>
@@ -238,14 +190,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 <tr>
                     <td class="pd-5 semi-bold" valign="top" width="135">Konsultan 1</td>
                     <td class="pd-5" width="390" valign="top">
-                        <select name="konsultan_1" id="" class="form-control form-control-sm select_konsultan_1">
-                            <option value="">- Select Konsultan 1 -</option>
-                            <?php
-                            foreach ($list_employee as $item) {
-                                echo '<option value="' . $item->id . '">' . ucfirst($item->name) . '</option>';
-                            }
-                            ?>
-                        </select>
+                        <input type="text" class="form-control form-control-sm" value="<?= $nm_konsultan_1 ?>" readonly>
                     </td>
                     <td></td>
                     <td></td>
@@ -253,14 +198,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 <tr>
                     <td class="pd-5 semi-bold" valign="top" width="135">Konsultan 2</td>
                     <td class="pd-5" width="390" valign="top">
-                        <select name="konsultan_2" id="" class="form-control form-control-sm select_konsultan_2">
-                            <option value="">- Select Konsultan 2 -</option>
-                            <?php
-                            foreach ($list_employee as $item) {
-                                echo '<option value="' . $item->id . '">' . ucfirst($item->name) . '</option>';
-                            }
-                            ?>
-                        </select>
+                        <input type="text" class="form-control form-control-sm" value="<?= $nm_konsultan_2 ?>" readonly>
                     </td>
                     <td></td>
                     <td></td>
@@ -281,13 +219,13 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                     <td class="pd-5" width="400" valign="top">
                         <div class="form-inline">
                             <div class="form-group text-center">
-                                <input type="date" name="waktu_from" id="" class="form-control form-control-sm">
+                                <input type="date" name="waktu_from" id="" class="form-control form-control-sm" value="<?= $waktu_from ?>" readonly>
                             </div>
                             <div class="form-group text-center" style="width: 30px;" valign="middle">
                                 -
                             </div>
                             <div class="form-group text-center">
-                                <input type="date" name="waktu_to" id="" class="form-control form-control-sm">
+                                <input type="date" name="waktu_to" id="" class="form-control form-control-sm" value="<?= $waktu_to ?>" readonly>
                             </div>
                         </div>
                     </td>

@@ -71,7 +71,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th align="center">Package</th>
                         <th align="center">Customer</th>
                         <th align="center">Grand Total</th>
-                        <th align="center">Status</th>
                         <th align="center">Status SPK</th>
                         <th align="center">Action</th>
                     </tr>
@@ -88,6 +87,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
 
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <!-- page script -->
 <script type="text/javascript">
     function tab_konsultasi() {
@@ -107,7 +108,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         $('.non_konsultasi').addClass('active');
         $('.konsultasi').removeClass('active');
 
-        // DataTablesNon();
+        DataTablesNonKons();
     }
 
     $(document).ready(function() {
@@ -117,13 +118,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     $(document).on('click', '.del_spk', function() {
         var id_spk_penawaran = $(this).data('id_spk_penawaran');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure?',
             text: 'This data will be deleted !',
             cancelShowButton: true
-        }, function(next) {
-            if (next) {
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_spk',
@@ -134,23 +135,23 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.msg
-                            }, function(after) {
+                            }).then(() => {
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.msg
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
+                        Swal.fire({
                             type: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
@@ -162,13 +163,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     });
 
     $(document).on('click', '#one_time', function() {
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Warning !',
             text: 'Are you sure ?',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'one_time',
@@ -176,26 +177,80 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.msg
                             }, function(after) {
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.msg
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.del_spk_non_kons', function() {
+        var id_spk_penawaran = $(this).data('id_spk_penawaran');
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be deleted !',
+            showConfirmButton: true,
+            showCancelButton: true,
+            allowOutsideClick: false
+        }).then((next) => {
+            if (next.isConfirmed) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_spk_non_kons',
+                    data: {
+                        'id_spk_penawaran': id_spk_penawaran
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    success: function(result) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success !',
+                            text: 'Data has been deleted !',
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            timer: 3000
+                        }).then(() => {
+                            Swal.close();
+                            DataTablesNonKons();
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error !',
+                            text: "There's an error occured, Please try again later !",
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowEscapeKey: false,
+                            allowOutsideClick: false,
+                            timer: 3000
+                        }).then(() => {
+                            Swal.close();
                         });
                     }
                 });
@@ -241,6 +296,62 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 },
                 {
                     data: 'option'
+                }
+            ],
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            stateSave: true,
+            destroy: true,
+            paging: true
+        });
+    }
+
+    function DataTablesNonKons() {
+        // var dataTables = $('#table_penawaran').dataTable();
+        // dataTables.destroy();
+
+        var dataTables = $('#table_spk_non_konsultasi').dataTable({
+            ajax: {
+                url: siteurl + active_controller + 'table_spk_non_konsultasi',
+                type: "POST",
+                dataType: "JSON",
+                data: function(d) {
+
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error !',
+                        text: "There's an error occured, Please try again later !",
+                        showConfirmButton: true,
+                        showCancelButton: false,
+                        allowOutsideClick: false
+                    });
+                }
+            },
+            columns: [{
+                    data: 'no',
+                }, {
+                    data: 'id_spk_penawaran'
+                },
+                {
+                    data: 'nm_marketing'
+                },
+                {
+                    data: 'nm_paket'
+                },
+                {
+                    data: 'nm_customer'
+                },
+                {
+                    data: 'grand_total'
+                },
+                {
+                    data: 'status_spk'
+                },
+                {
+                    data: 'action'
                 }
             ],
             responsive: true,
