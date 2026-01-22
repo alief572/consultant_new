@@ -172,4 +172,42 @@ class Misc extends Admin_Controller
             echo json_encode($response);
         }
     }
+
+    public function update_spk_company() {
+        $arr_update = [];
+
+        $this->db->select('a.id_spk_penawaran, a.company, a.nm_company');
+        $this->db->from('kons_tr_penawaran a');
+        // $this->db->group_start();
+        $this->db->where('a.id_spk_penawaran <>', null);
+        $this->db->where('a.id_spk_penawaran <>', '');
+        // $this->db->group_end();
+        $get_penawaran = $this->db->get()->result();
+
+        foreach($get_penawaran as $item_penawaran) {
+            $arr_update[] = [
+                'id_spk_penawaran' => $item_penawaran->id_spk_penawaran,
+                'id_company' => $item_penawaran->company,
+                'nm_company' => $item_penawaran->nm_company
+            ];
+        }
+
+        if(!empty($arr_update)) {
+            $this->db->trans_begin();
+
+            try {
+                $this->db->update_batch('kons_tr_spk_penawaran', $arr_update, 'id_spk_penawaran');
+                
+                $this->db->trans_commit();
+
+                echo 'Berhasil !';
+            } catch (Exception $e) {
+                $this->db->trans_rollback();
+
+                echo 'Gagal - '.$e->getMessage();
+            }
+        } else {
+            echo 'Tidak ada data yang diedit !';
+        }
+    }
 }
