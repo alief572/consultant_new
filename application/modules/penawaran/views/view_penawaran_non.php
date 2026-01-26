@@ -13,6 +13,7 @@ $tgl_quotation = (!empty($data_penawaran->tgl_quotation)) ? $data_penawaran->tgl
 $tipe_informasi_awal = (!empty($data_penawaran->tipe_informasi_awal)) ? $data_penawaran->tipe_informasi_awal : '';
 $detail_informasi_awal = (!empty($data_penawaran->detail_informasi_awal)) ? $data_penawaran->detail_informasi_awal : '';
 $pic_penawaran = (!empty($data_penawaran->pic_penawaran)) ? $data_penawaran->pic_penawaran : '';
+$nm_pic_penawaran = (!empty($data_penawaran->nm_pic_penawaran)) ? $data_penawaran->nm_pic_penawaran : '';
 $address = (!empty($data_penawaran->address)) ? $data_penawaran->address : '';
 $keterangan_penawaran = (!empty($data_penawaran->keterangan_penawaran)) ? $data_penawaran->keterangan_penawaran : '';
 
@@ -218,7 +219,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="pic_penawaran" value="<?= $pic_penawaran ?>" disabled>
+                        <input type="text" class="form-control form-control-sm" name="pic_penawaran" value="<?= $nm_pic_penawaran ?>" disabled>
                     </div>
                 </div>
             </div>

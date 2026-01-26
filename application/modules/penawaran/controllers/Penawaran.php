@@ -1766,6 +1766,9 @@ class Penawaran extends Admin_Controller
             $get_company = $this->dbhr->get_where('companies', ['id' => $post['company']])->row();
             $nm_company = (!empty($get_company->name)) ? $get_company->name : '';
 
+            $get_pic_penawaran = $this->dbhr->get_where('employees', ['id' => $post['pic_penawaran']])->row();
+            $nm_pic_penawaran = (!empty($get_pic_penawaran->name)) ? $get_pic_penawaran->name : '';
+
             $tipe_informasi_awal = '';
             $detail_informasi_awal = '';
             if (isset($post['informasi_awal_sales'])) {
@@ -1795,6 +1798,7 @@ class Penawaran extends Admin_Controller
                 'nm_company' => $nm_company,
                 'address' => $post['address'],
                 'pic_penawaran' => $post['pic_penawaran'],
+                'nm_pic_penawaran' => $nm_pic_penawaran,
                 'tipe_informasi_awal' => $tipe_informasi_awal,
                 'detail_informasi_awal' => $detail_informasi_awal,
                 'keterangan_penawaran' => $post['keterangan_penawaran'],
@@ -1859,6 +1863,9 @@ class Penawaran extends Admin_Controller
             $get_company = $this->dbhr->get_where('companies', ['id' => $post['company']])->row();
             $nm_company = (!empty($get_company->name)) ? $get_company->name : '';
 
+            $get_pic_penawaran = $this->dbhr->get_where('employees', ['id' => $post['pic_penawaran']])->row();
+            $nm_pic_penawaran = (!empty($get_pic_penawaran->name)) ? $get_pic_penawaran->name : '';
+
             $tipe_informasi_awal = '';
             $detail_informasi_awal = '';
             if (isset($post['informasi_awal_sales'])) {
@@ -1913,6 +1920,7 @@ class Penawaran extends Admin_Controller
                 'nm_company' => $nm_company,
                 'address' => $post['address'],
                 'pic_penawaran' => $post['pic_penawaran'],
+                'nm_pic_penawaran' => $nm_pic_penawaran,
                 'tipe_informasi_awal' => $tipe_informasi_awal,
                 'detail_informasi_awal' => $detail_informasi_awal,
                 'keterangan_penawaran' => $post['keterangan_penawaran'],
@@ -2019,7 +2027,7 @@ class Penawaran extends Admin_Controller
         if (has_permission($this->viewPermission)) {
             $view_btn = '<a href="' . base_url('penawaran/view_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-info" title="View Penawaran"><i class="fa fa-eye"></i></a>';
 
-            if($item->sts_quot == '1') {
+            if ($item->sts_quot == '1') {
                 $print_btn = '<a href="javascript:void(0);" class="btn btn-sm btn-primary" title="Print Penawaran"><i class="fa fa-print"></i></a>';
             }
         }
@@ -2027,12 +2035,12 @@ class Penawaran extends Admin_Controller
         $edit_btn = '';
         $deal_btn = '';
         if (has_permission($this->managePermission)) {
-            if($item->sts_quot !== '1') {
+            if ($item->sts_quot !== '1') {
                 $edit_btn = '<a href="' . base_url('penawaran/edit_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-warning" title="Revisi Penawaran"><i class="fa fa-pencil"></i></a>';
             }
 
             if ($item->sts_deal !== '1' && $item->sts_quot == '1') {
-                $deal_btn = '<button type="button" class="btn btn-sm btn-success deal_penawaran_non_kons" data-id_penawaran="' . $item->id_penawaran . '" title="Deal Penawaran"><i class="fa fa-check"></i></button>';
+                $deal_btn = '<button type="button" class="btn btn-sm btn-success btn_deal_penawaran" data-toggle="modal" data-target="#modal_deal_penawaran" data-id_penawaran="' . $item->id_penawaran . '" title="Deal Penawaran"><i class="fa fa-check"></i></button>';
             }
         }
 
@@ -2041,7 +2049,12 @@ class Penawaran extends Admin_Controller
             $delete_btn = '<button type="button" class="btn btn-sm btn-danger del_penawaran_non_kons" data-id_penawaran="' . $item->id_penawaran . '" title="Delete Penawaran"><i class="fa fa-trash"></i></button>';
         }
 
-        $action = $view_btn . ' ' . $print_btn . ' ' . $edit_btn . ' ' . $delete_btn . ' ' . $deal_btn;
+        $btn_download = '';
+        if (!empty($item->dokumen_pendukung)) {
+            $btn_download = '<a href="' . base_url('uploads/penawaran_non_konsultasi/' . $item->dokumen_pendukung) . '" class="btn btn-sm btn-info" title="Download Dokumen Pendukung" target="_blank"><i class="fa fa-download"></i></a>';
+        }
+
+        $action = $view_btn . ' ' . $print_btn . ' ' . $edit_btn . ' ' . $delete_btn . ' ' . $deal_btn . ' ' . $btn_download;
 
         return $action;
     }
@@ -2132,7 +2145,8 @@ class Penawaran extends Admin_Controller
         $this->template->render('edit_penawaran_non');
     }
 
-    public function deal_penawaran_non_kons() {
+    public function deal_penawaran_non_kons()
+    {
         $post = $this->input->post();
 
         $this->db->trans_begin();
@@ -2142,24 +2156,41 @@ class Penawaran extends Admin_Controller
                 'sts_deal' => '1'
             ];
 
+            // --- PROSES UPLOAD MULAI DISINI ---
+            if (!empty($_FILES['dokumen_pendukung']['name'])) {
+                $config['upload_path'] = './uploads/penawaran_non_konsultasi';
+                $config['allowed_types'] = '*';
+                $config['remove_spaces'] = TRUE;
+                $config['encrypt_name'] = TRUE;
+
+                $this->load->library('upload'); // Load dulu
+                $this->upload->initialize($config); // BARU di-initialize pakai config lu
+
+                if (!$this->upload->do_upload('dokumen_pendukung')) {
+                    // Jika upload gagal, lempar exception agar masuk ke catch
+                    throw new Exception($this->upload->display_errors('', ''));
+                } else {
+                    // Ambil nama file yang baru diupload
+                    $upload_data = $this->upload->data();
+                    $arr_deal['dokumen_pendukung'] = $upload_data['file_name'];
+                }
+            }
+            // --- PROSES UPLOAD SELESAI ---
+
             $this->db->update('kons_tr_penawaran_non_konsultasi', $arr_deal, ['id_penawaran' => $post['id_penawaran']]);
 
-            $this->db->trans_commit();
-
-            $this->output->set_status_header(200);
-
-            echo json_encode([
-                'msg' => 'Data has been deal !'
-            ]);
+            if ($this->db->trans_status() === FALSE) {
+                $this->db->trans_rollback();
+                throw new Exception("Gagal mengupdate database");
+            } else {
+                $this->db->trans_commit();
+                $this->output->set_status_header(200);
+                echo json_encode(['msg' => 'Data has been deal & file uploaded!']);
+            }
         } catch (Exception $e) {
             $this->db->trans_rollback();
-
             $this->output->set_status_header(500);
-            $response = [
-                'msg' => $e->getMessage()
-            ];
-
-            echo json_encode($response);
+            echo json_encode(['msg' => $e->getMessage()]);
         }
     }
 

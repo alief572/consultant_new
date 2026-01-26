@@ -26,9 +26,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <a class="btn btn-sm btn-success" style="font-weight: bold;" href="<?= base_url('penawaran/add_penawaran') ?>">
                     <i class="fa fa-plus"></i> Penawaran Konsultasi
                 </a>
-                <!-- <a class="btn btn-sm btn-primary" style="font-weight: bold;" href="<?= base_url('penawaran/add_penawaran_non') ?>">
+                <a class="btn btn-sm btn-primary" style="font-weight: bold;" href="<?= base_url('penawaran/add_penawaran_non') ?>">
                     <i class="fa fa-plus"></i> Penawaran Non Konsultasi
-                </a> -->
+                </a>
             </div>
         <?php endif; ?>
     </div>
@@ -79,9 +79,31 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     <!-- /.box-body -->
 </div>
 <div id="form-data"></div>
-<!-- DataTables -->
-<!-- <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
-<script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
+
+
+<div class="modal modal-default fade" id="modal_deal_penawaran" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <form id="frm-deal" enctype="multipart/form-data">
+                <input type="hidden" name="id_penawaran" id="id_penawaran_deal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel"><span class="fa fa-users"></span>&nbsp;Upload Dokumen Pendukung</h4>
+                </div>
+                <div class="modal-body" id="ModalView">
+                    <div class="form-group">
+                        <label for="">Dokumen Pendukung</label>
+                        <input type="file" name="dokumen_pendukung" id="" class="form-control form-control-sm" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-arrow-left"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -111,6 +133,11 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         DataTablesNon();
     }
+
+    $(document).on('click', '.btn_deal_penawaran', function() {
+        var id_penawaran = $(this).data('id_penawaran');
+        $('#id_penawaran_deal').val(id_penawaran);
+    });
 
     $(document).on('click', '.del_penawaran', function() {
         var id_penawaran = $(this).data('id_penawaran');
@@ -159,46 +186,59 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         });
     });
 
-    $(document).on('click', '.deal_penawaran', function() {
-        var id_penawaran = $(this).data('id_penawaran');
+    $(document).on('submit', '#frm-deal', function(e) {
+        e.preventDefault();
 
         Swal.fire({
             icon: 'warning',
-            title: 'Warning !',
-            text: 'Are you sure to deal this Quotation ?',
+            title: 'Are you sure ?',
+            text: "You can't reverse it after you deal this data !",
+            showConfirmButton: true,
             showCancelButton: true
         }).then((next) => {
             if (next.isConfirmed) {
+                var formData = new FormData($('#frm-deal')[0]);
                 $.ajax({
                     type: 'post',
-                    url: siteurl + active_controller + 'deal_penawaran',
-                    data: {
-                        'id_penawaran': id_penawaran
-                    },
+                    url: siteurl + active_controller + 'deal_penawaran_non_kons',
+                    data: formData,
                     cache: false,
-                    dataType: 'JSON',
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
                     success: function(result) {
-                        if (result.status == 1) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success !',
-                                text: result.msg
-                            }).then(() => {
-                                DataTables();
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Failed !',
-                                text: result.msg
-                            });
-                        }
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success !',
+                            text: 'Penawaran has been deal !',
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowClickOutside: false,
+                            allowEscapeKey: false,
+                            timer: 3000
+                        }).then(() => {
+                            $('#modal_deal_penawaran').modal('hide');
+                            DataTablesNon();
+                        });
                     },
-                    error: function(result) {
+                    error: function(xhr, status, error) {
+                        // 1. Ambil response text dan parse ke JSON
+                        let response = {};
+                        try {
+                            response = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            response = {
+                                msg: 'Terjadi kesalahan sistem yang tidak terduga.'
+                            };
+                        }
+
+                        // 2. Tampilkan pesan 'msg' dari JSON
                         Swal.fire({
                             icon: 'error',
                             title: 'Error !',
-                            text: 'Please try again later !'
+                            text: response.msg, // <--- Ini yang bakal nampilin isi pesan lu
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                     }
                 });
@@ -275,7 +315,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             showConfirmButton: true,
             showCancelButton: true
         }).then((next) => {
-            if(next.isConfirmed) {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'deal_penawaran_non_kons',

@@ -206,7 +206,15 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="pic_penawaran" value="<?= $pic_penawaran ?>">
+                        <select class="form-control form-control-sm select2" name="pic_penawaran" required>
+                            <option value="">- Select Employee -</option>
+                            <?php
+                            foreach ($list_employee as $item_employee) {
+                                $selected = ($item_employee->id == $pic_penawaran) ? 'selected' : '';
+                                echo '<option value="' . $item_employee->id . '" ' . $selected . '>' . $item_employee->nm_karyawan . '</option>';
+                            }
+                            ?>
+                        </select>
                     </div>
                 </div>
             </div>

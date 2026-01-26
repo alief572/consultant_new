@@ -178,7 +178,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-sm" name="pic_penawaran" required>
+                        <select class="form-control form-control-sm select2" name="pic_penawaran" required>
+                            <option value="">- Select Employee -</option>
+                            <?php
+                            foreach ($list_employee as $item_employee) {
+                                echo '<option value="' . $item_employee->id . '">' . $item_employee->nm_karyawan . '</option>';
+                            }
+                            ?>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -536,7 +543,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         Swal.fire({
             icon: 'warning',
             title: 'Are you sure ?',
-            text: 'This data will be deleted !',
+            text: 'This data will be saved !',
             showConfirmButton: true,
             showCancelButton: true
         }).then((next) => {
