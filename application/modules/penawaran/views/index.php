@@ -191,11 +191,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         Swal.fire({
             icon: 'warning',
-            title: 'Warning !',
-            text: 'Are you sure to deal this Quotation ?',
+            title: 'Are you sure ?',
+            text: "You can't reverse it after you deal this data !",
+            showConfirmButton: true,
             showCancelButton: true
         }).then((next) => {
             if (next.isConfirmed) {
+                var formData = new FormData($('#frm-deal')[0]);
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'deal_penawaran_non_kons',
@@ -205,23 +207,32 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     processData: false,
                     dataType: 'json',
                     success: function(result) {
-                        if (result.status == 1) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success !',
-                                text: result.msg
-                            }).then(() => {
-                                DataTables();
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Failed !',
-                                text: result.msg
-                            });
-                        }
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success !',
+                            text: 'Penawaran has been deal !',
+                            showConfirmButton: false,
+                            showCancelButton: false,
+                            allowClickOutside: false,
+                            allowEscapeKey: false,
+                            timer: 3000
+                        }).then(() => {
+                            $('#modal_deal_penawaran').modal('hide');
+                            DataTablesNon();
+                        });
                     },
-                    error: function(result) {
+                    error: function(xhr, status, error) {
+                        // 1. Ambil response text dan parse ke JSON
+                        let response = {};
+                        try {
+                            response = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            response = {
+                                msg: 'Terjadi kesalahan sistem yang tidak terduga.'
+                            };
+                        }
+
+                        // 2. Tampilkan pesan 'msg' dari JSON
                         Swal.fire({
                             icon: 'error',
                             title: 'Error !',
