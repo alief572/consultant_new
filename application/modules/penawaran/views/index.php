@@ -328,7 +328,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         Swal.fire({
                             icon: 'success',
                             title: 'Success !',
-                            text: 'Data has been deleted !',
+                            text: 'Data has been deal !',
                             showConfirmButton: false,
                             showCancelButton: false,
                             allowClickOutside: false,

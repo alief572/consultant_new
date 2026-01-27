@@ -16,6 +16,7 @@ $pic_penawaran = (!empty($data_penawaran->pic_penawaran)) ? $data_penawaran->pic
 $nm_pic_penawaran = (!empty($data_penawaran->nm_pic_penawaran)) ? $data_penawaran->nm_pic_penawaran : '';
 $address = (!empty($data_penawaran->address)) ? $data_penawaran->address : '';
 $keterangan_penawaran = (!empty($data_penawaran->keterangan_penawaran)) ? $data_penawaran->keterangan_penawaran : '';
+$biaya_kirim = $data_penawaran->biaya_kirim ?? 0;
 
 $subtotal = (!empty($data_penawaran->subtotal)) ? $data_penawaran->subtotal : '';
 $ppn = (!empty($data_penawaran->ppn)) ? $data_penawaran->ppn : '';
@@ -301,6 +302,10 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                     ?>
                 </tbody>
                 <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-right">Biaya Kirim</th>
+                        <th class="text-right"><?= number_format($data_penawaran->biaya_kirim, 2) ?></th>
+                    </tr>
                     <tr>
                         <th colspan="4" class="text-right">Grand Total</th>
                         <th class="text-right"><?= number_format($grand_total_detail, 2) ?></th>
