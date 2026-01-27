@@ -173,7 +173,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <b>PIC Penawaran <span class="text-danger">*</span></b>
+                        <b>Admin Sales <span class="text-danger">*</span></b>
                     </div>
                 </div>
                 <div class="col-md-4">

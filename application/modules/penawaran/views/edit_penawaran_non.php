@@ -201,7 +201,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <b>PIC Penawaran <span class="text-danger">*</span></b>
+                        <b>Admin Sales <span class="text-danger">*</span></b>
                     </div>
                 </div>
                 <div class="col-md-4">
