@@ -16,6 +16,8 @@ $pic_penawaran = (!empty($data_penawaran->pic_penawaran)) ? $data_penawaran->pic
 $nm_pic_penawaran = $data_penawaran->nm_pic_penawaran ?? '';
 $address = (!empty($data_penawaran->address)) ? $data_penawaran->address : '';
 $keterangan_penawaran = (!empty($data_penawaran->keterangan_penawaran)) ? $data_penawaran->keterangan_penawaran : '';
+$biaya_kirim = (!empty($data_penawaran->biaya_kirim)) ? $data_penawaran->biaya_kirim : 0;
+$persen_ppn = (!empty($data_penawaran->persen_ppn)) ? $data_penawaran->persen_ppn : 0;
 
 $subtotal = (!empty($data_penawaran->subtotal)) ? $data_penawaran->subtotal : '';
 $ppn = (!empty($data_penawaran->ppn)) ? $data_penawaran->ppn : '';
@@ -302,8 +304,12 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th colspan="4" class="text-right">Biaya Kirim</th>
+                        <th class="text-right"><?= number_format($biaya_kirim, 2) ?></th>
+                    </tr>
+                    <tr>
                         <th colspan="4" class="text-right">Grand Total</th>
-                        <th class="text-right"><?= number_format($grand_total_detail, 2) ?></th>
+                        <th class="text-right"><?= number_format($grand_total_detail + $biaya_kirim, 2) ?></th>
                     </tr>
                 </tfoot>
             </table>
@@ -329,7 +335,12 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                     </tr>
                     <tr>
                         <td>PPn</td>
-                        <td class="text-right td_ppn"><?= number_format($ppn, 2) ?></td>
+                        <td class="text-right">
+                            <div class="form-inline">
+                                <input type="number" class="form-control form-control-sm text-right input_ppn_persen" name="ppn_persen" value="<?= $persen_ppn ?>" disabled>
+                                <input type="text" class="form-control form-control-sm auto_num text-right" name="ppn" value="<?= number_format($ppn, 2) ?>" disabled>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
                 <tfoot>
