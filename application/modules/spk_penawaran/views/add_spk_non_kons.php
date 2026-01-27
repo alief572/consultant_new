@@ -12,6 +12,7 @@ $detail_informasi_awal = (!empty($data_penawaran->detail_informasi_awal)) ? $dat
 $keterangan_penawaran = (!empty($data_penawaran->keterangan_penawaran)) ? $data_penawaran->keterangan_penawaran : '';
 $subtotal = (!empty($data_penawaran->subtotal)) ? $data_penawaran->subtotal : '';
 $nm_divisi = (!empty($data_penawaran->nm_divisi)) ? $data_penawaran->nm_divisi : '';
+$biaya_kirim = $data_penawaran->biaya_kirim ?? 0;
 $ppn = (!empty($data_penawaran->ppn)) ? $data_penawaran->ppn : 0;
 $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_total : 0;
 ?>
@@ -341,7 +342,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
 
     <div class="box">
         <div class="box-header">
-            <h4>Detail Penawaran</h4>
+            <h4 class="text-bold">Detail Penawaran</h4>
         </div>
 
         <div class="box-body">
@@ -378,8 +379,12 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th colspan="4" class="text-right">Biaya Kirim</th>
+                        <th class="text-right"><?= number_format($biaya_kirim) ?></th>
+                    </tr>
+                    <tr>
                         <th colspan="4" class="text-right">Grand Total</th>
-                        <th class="text-right"><?= number_format($ttl_detail_penawaran) ?></th>
+                        <th class="text-right"><?= number_format($ttl_detail_penawaran + $biaya_kirim) ?></th>
                     </tr>
                 </tfoot>
             </table>
