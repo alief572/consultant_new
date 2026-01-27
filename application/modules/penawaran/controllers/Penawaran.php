@@ -1925,6 +1925,7 @@ class Penawaran extends Admin_Controller
                 'tipe_informasi_awal' => $tipe_informasi_awal,
                 'detail_informasi_awal' => $detail_informasi_awal,
                 'keterangan_penawaran' => $post['keterangan_penawaran'],
+                'biaya_kirim' => str_replace(',', '', $post['biaya_kirim']),
                 'subtotal' => $post['subtotal'],
                 'ppn' => $post['ppn'],
                 'grand_total' => $post['grand_total'],

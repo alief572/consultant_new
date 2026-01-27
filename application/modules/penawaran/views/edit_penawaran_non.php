@@ -308,6 +308,13 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th colspan="4" class="text-right">Biaya Kirim</th>
+                        <th class="text-right">
+                            <input type="text" class="form-control form-control-sm text-right auto_num biaya_kirim" name="biaya_kirim" value="<?= !empty($data_penawaran->biaya_kirim) ? number_format($data_penawaran->biaya_kirim, 2) : '0.00' ?>">
+                        </th>
+                        <th></th>
+                    </tr>
+                    <tr>
                         <th colspan="4" class="text-right">Grand Total</th>
                         <th class="text-right grand_total_detail"><?= number_format($grand_total_detail, 2) ?></th>
                         <th></th>
@@ -485,7 +492,35 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
         $('.total_' + no).autoNumeric('set', total);
         // $('.grand_total_detail').html(number_format(total, 2));
 
+        hitung_grand_total_detail();
         hitung_grand_total();
+    }
+
+    function hitung_grand_total_detail() {
+        var total_penawaran_non_konsultasi = 0;
+        for (i = 1; i <= no_detail; i++) {
+            if ($('.total_' + i).length > 0) {
+                var nilai_total = $('.total_' + i).val();
+                if (nilai_total !== '') {
+                    nilai_total = nilai_total.split(',').join('');
+                    nilai_total = parseFloat(nilai_total);
+                } else {
+                    nilai_total = 0;
+                }
+
+                total_penawaran_non_konsultasi += nilai_total;
+            }
+        }
+
+        var biaya_kirim = $('.biaya_kirim').val();
+        if (biaya_kirim !== '') {
+            biaya_kirim = biaya_kirim.split(',').join('');
+            biaya_kirim = parseFloat(biaya_kirim);
+        } else {
+            biaya_kirim = 0;
+        }
+
+        $('.total_penawaran_non_konsultasi').autoNumeric('set', (total_penawaran_non_konsultasi + biaya_kirim));
     }
 
     function number_format(number, decimals, dec_point, thousands_sep) {
@@ -513,6 +548,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
     }
 
     function hitung_grand_total() {
+
         var total = 0;
         for (i = 1; i <= no_detail; i++) {
             if ($('.total_' + i).length > 0) {
@@ -527,6 +563,16 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 total += nilai_total;
             }
         }
+
+        var biaya_kirim = $('.biaya_kirim').val();
+        if (biaya_kirim !== '') {
+            biaya_kirim = biaya_kirim.split(',').join('');
+            biaya_kirim = parseFloat(biaya_kirim);
+        } else {
+            biaya_kirim = 0;
+        }
+
+        total += biaya_kirim;   
 
         $('.grand_total_detail').html(number_format(total, 2));
 
@@ -667,6 +713,11 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 });
             }
         });
+    });
+
+    $(document).on('keyup', '.biaya_kirim', function() {
+        hitung_grand_total_detail();
+        hitung_grand_total();
     });
 </script>
 <script src="<?= base_url('assets/js/basic.js') ?>"></script>
