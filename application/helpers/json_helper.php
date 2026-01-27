@@ -2604,7 +2604,7 @@ function generateNoPenawaran($employee_code, $tipe_penawaran)
 	return $kode_trans;
 }
 function generateNoPenawaranNon()
-{
+{ 
 	$CI = &get_instance();
 	$Ym 			= date('ym');
 	$srcMtr			= "SELECT MAX(id_penawaran) as maxP FROM kons_tr_penawaran_non_konsultasi WHERE id_penawaran LIKE '%-" . date('m') . "-" . date('y') . "%' ";
