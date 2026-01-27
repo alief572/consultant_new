@@ -285,7 +285,12 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     </tr>
                     <tr>
                         <td>PPn</td>
-                        <td class="text-right td_ppn">0.00</td>
+                        <td class="text-right td_ppn">
+                            <div class="form-inline">
+                                <input type="number" name="persen_ppn" id="" class="form-control form-control-sm text-right">
+                                <input type="text" name="nominal_ppn" id="" class="form-control form-control-sm auto_num text-right" value="0" readonly>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
                 <tfoot>
@@ -513,10 +518,15 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             }
         }
 
-        var ppn = (total * 11 / 100);
+        var persen_ppn = $('input[name="persen_ppn"]').val();
+        if (persen_ppn === '' || isNaN(persen_ppn)) {
+            persen_ppn = 0;
+        }
+
+        var ppn = (total * persen_ppn / 100);
 
         $('.td_subtotal').html(number_format(total, 2));
-        $('.td_ppn').html(number_format(ppn, 2));
+        $('input[name="nominal_ppn"]').autoNumeric('set', ppn);
         $('.td_grand_total').html(number_format(total + ppn, 2));
 
         $('input[name="subtotal"]').val(total);
@@ -654,6 +664,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
     $(document).on('keyup', '.biaya_kirim', function() {
         hitung_grand_total_detail();
+        hitung_grand_total();
+    });
+
+    $(document).on('keyup', 'input[name="persen_ppn"]', function() {
         hitung_grand_total();
     });
 </script>

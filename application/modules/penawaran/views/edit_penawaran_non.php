@@ -343,7 +343,12 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                     </tr>
                     <tr>
                         <td>PPn</td>
-                        <td class="text-right td_ppn"><?= number_format($ppn, 2) ?></td>
+                        <td class="text-right">
+                            <div class="form-inline">
+                                <input type="number" name="persen_ppn" id="" class="form-control form-control-sm text-right" value="<?= !empty($data_penawaran->persen_ppn) ? $data_penawaran->persen_ppn : '0' ?>">
+                                <input type="text" name="nominal_ppn" id="" class="form-control form-control-sm auto_num text-right nominal_ppn" value="<?= number_format($ppn, 2) ?>" readonly>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
                 <tfoot>
@@ -549,7 +554,15 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
 
     function hitung_grand_total() {
 
-        var total = 0;
+        var biaya_kirim = $('.biaya_kirim').val();
+        if (biaya_kirim !== '') {
+            biaya_kirim = biaya_kirim.split(',').join('');
+            biaya_kirim = parseFloat(biaya_kirim);
+        } else {
+            biaya_kirim = 0;
+        }
+
+        var total = biaya_kirim;
         for (i = 1; i <= no_detail; i++) {
             if ($('.total_' + i).length > 0) {
                 var nilai_total = $('.total_' + i).val();
@@ -564,22 +577,15 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
             }
         }
 
-        var biaya_kirim = $('.biaya_kirim').val();
-        if (biaya_kirim !== '') {
-            biaya_kirim = biaya_kirim.split(',').join('');
-            biaya_kirim = parseFloat(biaya_kirim);
-        } else {
-            biaya_kirim = 0;
+        var persen_ppn = $('input[name="persen_ppn"]').val();
+        if (persen_ppn === '' || isNaN(persen_ppn)) {
+            persen_ppn = 0;
         }
 
-        total += biaya_kirim;   
-
-        $('.grand_total_detail').html(number_format(total, 2));
-
-        var ppn = (total * 11 / 100);
+        var ppn = (total * persen_ppn / 100);
 
         $('.td_subtotal').html(number_format(total, 2));
-        $('.td_ppn').html(number_format(ppn, 2));
+        $('input[name="nominal_ppn"]').autoNumeric('set', ppn);
         $('.td_grand_total').html(number_format(total + ppn, 2));
 
         $('input[name="subtotal"]').val(total);
@@ -717,6 +723,10 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
 
     $(document).on('keyup', '.biaya_kirim', function() {
         hitung_grand_total_detail();
+        hitung_grand_total();
+    });
+
+    $(document).on('keyup', 'input[name="persen_ppn"]', function() {
         hitung_grand_total();
     });
 </script>

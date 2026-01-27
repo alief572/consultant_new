@@ -334,7 +334,12 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                     </tr>
                     <tr>
                         <td>PPn</td>
-                        <td class="text-right td_ppn"><?= number_format($ppn, 2) ?></td>
+                        <td class="text-right">
+                            <div class="form-inline">
+                                <input type="number" name="persen_ppn" id="" class="form-control form-control-sm text-right" value="<?= !empty($data_penawaran->persen_ppn) ? $data_penawaran->persen_ppn : '0' ?>" disabled>
+                                <input type="text" name="nominal_ppn" id="" class="form-control form-control-sm auto_num text-right" value="<?= number_format($ppn, 2) ?>" readonly>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
                 <tfoot>
