@@ -134,6 +134,54 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         DataTablesNon();
     }
 
+    $(document).on('click', '.deal_penawaran', function() {
+        var id_penawaran = $(this).data('id_penawaran');
+        
+        Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: "You can't reverse it after you deal this data !",
+            showConfirmButton: true,
+            showCancelButton: true
+        }).then((next) => {
+            if (next.isConfirmed) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'deal_penawaran',
+                    data: {
+                        'id_penawaran': id_penawaran
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(result) {
+                        if (result.status == 1) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success !',
+                                text: result.msg
+                            }).then(() => {
+                                DataTables();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Failed !',
+                                text: result.msg
+                            });
+                        }
+                    },
+                    error: function(result) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error !',
+                            text: 'Please try again later !'
+                        });
+                    }
+                })
+            }
+        });
+    });
+
     $(document).on('click', '.btn_deal_penawaran', function() {
         var id_penawaran = $(this).data('id_penawaran');
         $('#id_penawaran_deal').val(id_penawaran);
