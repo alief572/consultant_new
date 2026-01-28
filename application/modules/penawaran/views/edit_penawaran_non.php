@@ -201,7 +201,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <b>PIC Penawaran <span class="text-danger">*</span></b>
+                        <b>Admin Sales <span class="text-danger">*</span></b>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -308,6 +308,13 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th colspan="4" class="text-right">Biaya Kirim</th>
+                        <th class="text-right">
+                            <input type="text" class="form-control form-control-sm text-right auto_num biaya_kirim" name="biaya_kirim" value="<?= !empty($data_penawaran->biaya_kirim) ? number_format($data_penawaran->biaya_kirim, 2) : '0.00' ?>">
+                        </th>
+                        <th></th>
+                    </tr>
+                    <tr>
                         <th colspan="4" class="text-right">Grand Total</th>
                         <th class="text-right grand_total_detail"><?= number_format($grand_total_detail, 2) ?></th>
                         <th></th>
@@ -336,7 +343,12 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                     </tr>
                     <tr>
                         <td>PPn</td>
-                        <td class="text-right td_ppn"><?= number_format($ppn, 2) ?></td>
+                        <td class="text-right">
+                            <div class="form-inline">
+                                <input type="number" name="persen_ppn" id="" class="form-control form-control-sm text-right" value="<?= !empty($data_penawaran->persen_ppn) ? $data_penawaran->persen_ppn : '0' ?>">
+                                <input type="text" name="nominal_ppn" id="" class="form-control form-control-sm auto_num text-right nominal_ppn" value="<?= number_format($ppn, 2) ?>" readonly>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
                 <tfoot>
@@ -485,7 +497,35 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
         $('.total_' + no).autoNumeric('set', total);
         // $('.grand_total_detail').html(number_format(total, 2));
 
+        hitung_grand_total_detail();
         hitung_grand_total();
+    }
+
+    function hitung_grand_total_detail() {
+        var total_penawaran_non_konsultasi = 0;
+        for (i = 1; i <= no_detail; i++) {
+            if ($('.total_' + i).length > 0) {
+                var nilai_total = $('.total_' + i).val();
+                if (nilai_total !== '') {
+                    nilai_total = nilai_total.split(',').join('');
+                    nilai_total = parseFloat(nilai_total);
+                } else {
+                    nilai_total = 0;
+                }
+
+                total_penawaran_non_konsultasi += nilai_total;
+            }
+        }
+
+        var biaya_kirim = $('.biaya_kirim').val();
+        if (biaya_kirim !== '') {
+            biaya_kirim = biaya_kirim.split(',').join('');
+            biaya_kirim = parseFloat(biaya_kirim);
+        } else {
+            biaya_kirim = 0;
+        }
+
+        $('.total_penawaran_non_konsultasi').autoNumeric('set', (total_penawaran_non_konsultasi + biaya_kirim));
     }
 
     function number_format(number, decimals, dec_point, thousands_sep) {
@@ -513,7 +553,16 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
     }
 
     function hitung_grand_total() {
-        var total = 0;
+
+        var biaya_kirim = $('.biaya_kirim').val();
+        if (biaya_kirim !== '') {
+            biaya_kirim = biaya_kirim.split(',').join('');
+            biaya_kirim = parseFloat(biaya_kirim);
+        } else {
+            biaya_kirim = 0;
+        }
+
+        var total = biaya_kirim;
         for (i = 1; i <= no_detail; i++) {
             if ($('.total_' + i).length > 0) {
                 var nilai_total = $('.total_' + i).val();
@@ -528,12 +577,15 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
             }
         }
 
-        $('.grand_total_detail').html(number_format(total, 2));
+        var persen_ppn = $('input[name="persen_ppn"]').val();
+        if (persen_ppn === '' || isNaN(persen_ppn)) {
+            persen_ppn = 0;
+        }
 
-        var ppn = (total * 11 / 100);
+        var ppn = (total * persen_ppn / 100);
 
         $('.td_subtotal').html(number_format(total, 2));
-        $('.td_ppn').html(number_format(ppn, 2));
+        $('input[name="nominal_ppn"]').autoNumeric('set', ppn);
         $('.td_grand_total').html(number_format(total + ppn, 2));
 
         $('input[name="subtotal"]').val(total);
@@ -667,6 +719,15 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 });
             }
         });
+    });
+
+    $(document).on('keyup', '.biaya_kirim', function() {
+        hitung_grand_total_detail();
+        hitung_grand_total();
+    });
+
+    $(document).on('keyup', 'input[name="persen_ppn"]', function() {
+        hitung_grand_total();
     });
 </script>
 <script src="<?= base_url('assets/js/basic.js') ?>"></script>
