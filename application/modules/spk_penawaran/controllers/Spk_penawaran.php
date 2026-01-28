@@ -664,6 +664,8 @@ class SPK_penawaran extends Admin_Controller
 
             $nm_customer = $item->nm_customer;
 
+            $grand_total = (!empty($item->grand_total)) ? number_format($item->grand_total) : number_format($item->nilai_kontrak);
+
             $hasil[] = [
                 'no' => $no,
                 'id_spk_penawaran' => $item->id_spk_penawaran,
