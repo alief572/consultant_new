@@ -672,7 +672,7 @@ class SPK_penawaran extends Admin_Controller
                 'nm_marketing' => ucfirst($nm_marketing),
                 'nm_paket' => $nm_paket,
                 'nm_customer' => $nm_customer,
-                'grand_total' => number_format($item->grand_total),
+                'grand_total' => $grand_total,
                 'status' => $status,
                 'status_spk' => $status_spk,
                 'option' => $option
