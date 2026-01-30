@@ -299,7 +299,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             echo '<input type="number" class="form-control form-control-sm text-right" onchange="hitung_all_pengajuan();" name="dt[' . $no . '][qty_pengajuan]" value="' . $qty_pengajuan . '" step="0.01">';
                             echo '</td>';
                             echo '<td class="text-right">';
-                            echo '<input type="text" class="form-control form-control-sm text-right auto_num hitung_per_price" name="dt[' . $no . '][nominal_pengajuan]" value="' . $nominal_pengajuan . '" data-no="' . $no . '" data-budget="' . ($item->total_budget_estimasi) . '">';
+                            echo '<input type="text" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" name="dt[' . $no . '][nominal_pengajuan]" value="' . $nominal_pengajuan . '" data-no="' . $no . '" data-budget="' . ($item->total_budget_estimasi) . '">';
                             echo '</td>';
                             echo '<td class="text-right">';
                             echo '<input type="text" class="form-control form-control-sm text-right auto_num" name="dt[' . $no . '][total_pengajuan]" value="' . $total_pengajuan . '" readonly>';

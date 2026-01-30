@@ -403,7 +403,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             echo '</td>';
 
                             echo '<td>';
-                            echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price_custom" value="' . $nominal_pengajuan . '" data-no="' . $no . '" data-budget="' . ($item->mandays_rate_subcont_final) . '" ' . $readonly . '>';
+                            echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" value="' . $nominal_pengajuan . '" data-no="' . $no . '" data-budget="' . ($item->mandays_rate_subcont_final) . '" ' . $readonly . '>';
                             echo '</td>';
 
                             echo '<td>';
@@ -451,7 +451,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             echo '</td>';
 
                             echo '<td>';
-                            echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price_custom" value="' . $nominal_pengajuan . '" data-no="' . $no . '" data-budget="' . ($item->price_unit_estimasi) . '" ' . $readonly . '>';
+                            echo '<input type="text" name="detail_subcont[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" value="' . $nominal_pengajuan . '" data-no="' . $no . '" data-budget="' . ($item->price_unit_estimasi) . '" ' . $readonly . '>';
                             echo '</td>';
 
                             echo '<td>';
