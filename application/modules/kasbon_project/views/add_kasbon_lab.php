@@ -382,7 +382,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_lab[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" data-no="' . $no . '" data-budget="' . $item->price_unit_final . '" value="' . $item->price_unit_final . '" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_lab[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" data-no="' . $no . '" data-budget="' . $item->price_unit_final . '" value="' . $item->price_unit_final . '" ' . $readonly . '>';
                         echo '</td>';
 
                         echo '<td>';
@@ -425,7 +425,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '</td>';
 
                         echo '<td>';
-                        echo '<input type="text" name="detail_lab[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num hitung_per_price" data-no="' . $no . '" data-budget="' . $item->estimasi_harga . '" value="' . $item->estimasi_harga . '" ' . $readonly . '>';
+                        echo '<input type="text" name="detail_lab[' . $no . '][nominal_pengajuan]" class="form-control form-control-sm text-right auto_num" onchange="hitung_all_pengajuan()" data-no="' . $no . '" data-budget="' . $item->estimasi_harga . '" value="' . $item->estimasi_harga . '" ' . $readonly . '>';
                         echo '</td>';
 
                         echo '<td>';
