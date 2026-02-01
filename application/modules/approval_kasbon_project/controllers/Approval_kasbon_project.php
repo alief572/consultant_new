@@ -47,12 +47,15 @@ class Approval_kasbon_project extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('b.*, a.id_kasbon, c.nm_sales, d.nm_paket');
-        $this->db->from('kons_tr_req_kasbon_project a');
+        $this->db->select('b.*, a.id, c.nm_sales, d.nm_paket');
+        $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('kons_tr_spk_budgeting b', 'b.id_spk_budgeting = a.id_spk_budgeting', 'left');
         $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = b.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = c.id_project', 'left');
-        $this->db->where('a.sts', 0);
+        $this->db->group_start();
+        $this->db->where('a.sts', '');
+        $this->db->or_where('a.sts', null);
+        $this->db->group_end();
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
@@ -63,7 +66,7 @@ class Approval_kasbon_project extends Admin_Controller
             $this->db->or_like('b.nm_project', $search['value'], 'both');
             $this->db->group_end();
         }
-        $this->db->group_by('a.id_kasbon');
+        $this->db->group_by('a.id');
         $this->db->order_by('a.created_date', 'desc');
 
         $db_clone = clone $this->db;
@@ -83,11 +86,11 @@ class Approval_kasbon_project extends Admin_Controller
                 $status = '<div class="badge bg-red">Rejected</div>';
             }
 
-            $option = '<a href="' . base_url('approval_kasbon_project/approval_kasbon/' . urlencode(str_replace('/', '|', $item->id_kasbon))) . '" class="btn btn-sm btn-primary" title="Approval Kasbon"><i class="fa fa-arrow-up"></i></a>';
+            $option = '<a href="' . base_url('approval_kasbon_project/approval_kasbon/' . urlencode(str_replace('/', '|', $item->id))) . '" class="btn btn-sm btn-primary" title="Approval Kasbon"><i class="fa fa-arrow-up"></i></a>';
 
             $this->db->select('a.*');
             $this->db->from('kons_tr_kasbon_project_header a');
-            $this->db->where('a.id', $item->id_kasbon);
+            $this->db->where('a.id', $item->id);
             $get_header_kasbon = $this->db->get()->row();
 
             $keterangan = (!empty($get_header_kasbon)) ? $get_header_kasbon->deskripsi : '';
@@ -129,7 +132,7 @@ class Approval_kasbon_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'id_spk_penawaran' => $item->id_spk_penawaran,
-                'id_kasbon' => $item->id_kasbon,
+                'id_kasbon' => $item->id,
                 'nm_customer' => $item->nm_customer,
                 'nm_sales' => ucfirst($item->nm_sales),
                 'nm_project_leader' => ucfirst($item->nm_project_leader),
