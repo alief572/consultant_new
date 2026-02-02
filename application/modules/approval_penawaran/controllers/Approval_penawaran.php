@@ -85,12 +85,10 @@ class Approval_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257', 'EMP0173']);
         $get_marketing = $this->db->get()->result();
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $this->db->where('a.flag_active', 'Y');
         $get_employees = $this->db->get()->result();
 
@@ -104,7 +102,6 @@ class Approval_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -191,12 +188,10 @@ class Approval_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257', 'EMP0173']);
         $get_marketing = $this->db->get()->result();
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $this->db->where('a.flag_active', 'Y');
         $get_employees = $this->db->get()->result();
 
@@ -210,7 +205,6 @@ class Approval_penawaran extends Admin_Controller
 
         $this->db->select('a.id, a.name as nama');
         $this->db->from(DBHR . '.divisions a');
-        $this->db->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $get_divisi = $this->db->get()->result();
 
         $this->db->select('a.*');
@@ -451,7 +445,7 @@ class Approval_penawaran extends Admin_Controller
     private function render_status_penawaran_non_kons($item)
     {
         $status = '<span class="badge bg-blue">Waiting Approval</span>';
-        if($item->sts_quot == '2') {
+        if ($item->sts_quot == '2') {
             $status = '<span class="badge bg-red">Rejected</span>';
         }
         return $status;
@@ -494,7 +488,8 @@ class Approval_penawaran extends Admin_Controller
         $this->template->render('approval_penawaran_non');
     }
 
-    public function reject_penawaran_non_kons() {
+    public function reject_penawaran_non_kons()
+    {
         $post = $this->input->post();
 
         $this->db->trans_begin();
@@ -524,7 +519,8 @@ class Approval_penawaran extends Admin_Controller
         }
     }
 
-    public function approve_penawaran_non_kons() {
+    public function approve_penawaran_non_kons()
+    {
         $post = $this->input->post();
 
         $this->db->trans_begin();
