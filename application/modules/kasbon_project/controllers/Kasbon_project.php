@@ -473,7 +473,17 @@ class Kasbon_project extends Admin_Controller
             // if ($valid_show == 1) {
             $no++;
 
-            $status = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
+            $status = '<span class="badge bg-yellow">Draft</span>';
+
+            $this->db->select('a.id');
+            $this->db->from('kons_tr_kasbon_project_header a');
+            $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
+            $this->db->where('a.sts', null);
+            $count_waiting_detail = $this->db->get()->num_rows();
+
+            if ($count_waiting_detail > 0) {
+                $status = '<span class="badge bg-blue">Waiting Approval</span>';
+            }
 
             $this->db->select('a.*');
             $this->db->from('kons_tr_req_kasbon_project a');
@@ -485,10 +495,10 @@ class Kasbon_project extends Admin_Controller
             $reject_reason = '';
             if (!empty($get_req_kasbon)) {
                 if ($get_req_kasbon->sts == '1' && $total_kasbon >= $total_budgeting) {
-                    $status = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+                    $status = '<span class="badge bg-green">Approved</span>';
                 }
                 if ($get_req_kasbon->sts == '2') {
-                    $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                    $status = '<span class="badge bg-red">Rejected</span>';
                 }
             }
 
