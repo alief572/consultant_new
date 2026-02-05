@@ -140,7 +140,7 @@ class Misc extends Admin_Controller
                 endforeach;
 
                 foreach ($arr_table2 as $table2) :
-                    $this->db->update($table2, $arr_update, $arr_where);
+                    $this->sendigs_finance->update($table2, $arr_update, $arr_where);
                 endforeach;
 
                 $this->db->trans_commit();
@@ -173,7 +173,8 @@ class Misc extends Admin_Controller
         }
     }
 
-    public function update_spk_company() {
+    public function update_spk_company()
+    {
         $arr_update = [];
 
         $this->db->select('a.id_spk_penawaran, a.company, a.nm_company');
@@ -184,7 +185,7 @@ class Misc extends Admin_Controller
         // $this->db->group_end();
         $get_penawaran = $this->db->get()->result();
 
-        foreach($get_penawaran as $item_penawaran) {
+        foreach ($get_penawaran as $item_penawaran) {
             $arr_update[] = [
                 'id_spk_penawaran' => $item_penawaran->id_spk_penawaran,
                 'id_company' => $item_penawaran->company,
@@ -192,19 +193,19 @@ class Misc extends Admin_Controller
             ];
         }
 
-        if(!empty($arr_update)) {
+        if (!empty($arr_update)) {
             $this->db->trans_begin();
 
             try {
                 $this->db->update_batch('kons_tr_spk_penawaran', $arr_update, 'id_spk_penawaran');
-                
+
                 $this->db->trans_commit();
 
                 echo 'Berhasil !';
             } catch (Exception $e) {
                 $this->db->trans_rollback();
 
-                echo 'Gagal - '.$e->getMessage();
+                echo 'Gagal - ' . $e->getMessage();
             }
         } else {
             echo 'Tidak ada data yang diedit !';
