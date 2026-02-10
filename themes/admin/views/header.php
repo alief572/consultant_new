@@ -142,14 +142,6 @@
                 Helpdesk
               </a>
             </li>
-            <li>
-              <a href="<?= base_url('assets/pdf/manual-book.pdf') ?>"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn btn-secondary">
-                Manual Book
-              </a>
-            </li>
 
             <!-- User Account Menu -->
             <li class="dropdown user user-menu">
