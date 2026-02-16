@@ -554,7 +554,11 @@ class Approval_kasbon_project extends Admin_Controller
             exit;
         }
 
-        $update_req = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id' => $id_kasbon]);
+        $update_req = $this->db->update('kons_tr_kasbon_project_header', [
+            'sts' => 1,
+            'approved_by' => $this->auth->user_id(),
+            'approved_date' => date('Y-m-d H:i:s')
+        ], ['id' => $id_kasbon]);
         if (!$update_req) {
             $this->db->trans_rollback();
 
@@ -570,7 +574,11 @@ class Approval_kasbon_project extends Admin_Controller
             exit;
         }
 
-        $update_req_header = $this->db->update('kons_tr_kasbon_project_header', ['sts' => 1], ['id' => $id_kasbon]);
+        $update_req_header = $this->db->update('kons_tr_kasbon_project_header', [
+            'sts' => 1,
+            'approved_by' => $this->auth->user_id(),
+            'approved_date' => date('Y-m-d H:i:s')
+        ], ['id' => $id_kasbon]);
         if (!$update_req_header) {
             $this->db->trans_rollback();
 
