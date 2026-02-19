@@ -68,7 +68,7 @@ $ENABLE_DELETE  = has_permission('Master_Tenaga_Ahli.Delete');
 	<!-- DataTables -->
 	<script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 	<script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script>
-
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<!-- page script -->
 	<script type="text/javascript">
 		$(document).ready(function() {
