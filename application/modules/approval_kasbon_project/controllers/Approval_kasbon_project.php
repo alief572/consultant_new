@@ -52,6 +52,7 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->join('kons_tr_spk_budgeting b', 'b.id_spk_budgeting = a.id_spk_budgeting', 'left');
         $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = b.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = c.id_project', 'left');
+        $this->db->where('a.sts_reject IS NULL');
         $this->db->group_start();
         $this->db->where('a.sts', '');
         $this->db->or_where('a.sts', null);
@@ -352,35 +353,74 @@ class Approval_kasbon_project extends Admin_Controller
 
     public function reject_kasbon()
     {
-        $id_kasbon = $this->input->post('id_kasbon');
+        // 1. Ambil input
+        $id_kasbon     = $this->input->post('id_kasbon');
         $reject_reason = $this->input->post('reject_reason');
 
+        // Validasi dasar: pastikan ID ada
+        if (!$id_kasbon) {
+            echo json_encode(['status' => 0, 'pesan' => 'ID Kasbon tidak ditemukan!']);
+            return;
+        }
+
+        // 2. Mulai Transaksi
         $this->db->trans_begin();
 
-        $update_req = $this->db->update('kons_tr_req_kasbon_project', ['sts' => 2, 'reject_reason' => $reject_reason], ['id_kasbon' => $id_kasbon, 'sts' => 0]);
-        if (!$update_req) {
-            $this->db->trans_rollback();
+        try {
+            $data_update = [
+                'sts'           => 2,
+                'reject_reason' => $reject_reason,
+                'updated_at'    => date('Y-m-d H:i:s') // Opsional: tambah jejak waktu
+            ];
 
-            print_r($this->db->error($update_req));
-            exit;
-        }
+            // Jalankan update
+            $this->db->update('kons_tr_req_kasbon_project', $data_update, [
+                'id_kasbon' => $id_kasbon,
+                'sts'       => 0 // Memastikan hanya data 'pending' yang bisa direject
+            ]);
 
-        if ($this->db->trans_status() === false) {
-            $this->db->trans_rollback();
+            $data_update_pengajuan = [
+                'sts_reject' => 1,
+                'reject_reason' => $reject_reason
+            ];
 
-            $valid = 0;
-            $pesan = 'Please try again later !';
-        } else {
+            $this->db->update('kons_tr_kasbon_project_header', $data_update_pengajuan, [
+                'id' => $id_kasbon
+            ]);
+
+            // // Cek apakah ada baris yang beneran ter-update
+            // if ($this->db->affected_rows() == 0) {
+            //     throw new Exception("Data tidak ditemukan atau sudah diproses sebelumnya.");
+            // }
+
             $this->db->trans_commit();
-
             $valid = 1;
-            $pesan = 'Data has been rejected !';
+            $pesan = 'Kasbon berhasil direject!';
+
+            echo json_encode([
+                'status' => $valid,
+                'pesan'  => $pesan
+            ]);
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+            echo json_encode(['status' => 0, 'pesan' => $e->getMessage()]);
         }
 
-        echo json_encode([
-            'status' => $valid,
-            'pesan' => $pesan
-        ]);
+        // // 3. Final Check Transaksi
+        // if ($this->db->trans_status() === FALSE) {
+        //     $this->db->trans_rollback();
+        //     $valid = 0;
+        //     $pesan = 'Gagal menolak kasbon, silakan coba lagi nanti.';
+        // } else {
+        //     $this->db->trans_commit();
+        //     $valid = 1;
+        //     $pesan = 'Kasbon berhasil direject!';
+        // }
+
+        // echo json_encode([
+        //     'status' => $valid,
+        //     'pesan'  => $pesan
+        // ]);
     }
 
     public function approve_kasbon()

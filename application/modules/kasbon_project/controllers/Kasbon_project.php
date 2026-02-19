@@ -4926,6 +4926,8 @@ class Kasbon_project extends Admin_Controller
         $reset_kasbon_subcont = $this->db->delete('kons_tr_kasbon_project_subcont', ['id_header' => $post['id']]);
 
         $update_header = $this->db->update('kons_tr_kasbon_project_header', [
+            'sts_reject' => null,
+            'reject_reason' => null,
             'deskripsi' => $post['deskripsi'],
             'tgl' => $post['tgl'],
             'bank' => $post['kasbon_bank'],
@@ -5249,6 +5251,8 @@ class Kasbon_project extends Admin_Controller
         $reset_kasbon_subcont = $this->db->delete('kons_tr_kasbon_project_akomodasi', ['id_header' => $post['id_header']]);
 
         $update_header = $this->db->update('kons_tr_kasbon_project_header', [
+            'sts_reject' => null,
+            'reject_reason' => null,
             'grand_total' => $grand_total,
             'deskripsi' => $post['deskripsi'],
             'tgl' => $post['tgl'],
@@ -5914,6 +5918,8 @@ class Kasbon_project extends Admin_Controller
         $this->db->delete('kons_tr_kasbon_project_others', ['id_header' => $id]);
 
         $data_update_header = [
+            'sts_reject' => null,
+            'reject_reason' => null,
             'grand_total' => $grand_total,
             'deskripsi' => $post['deskripsi'],
             'tgl' => $post['tgl'],
@@ -6043,6 +6049,8 @@ class Kasbon_project extends Admin_Controller
         $this->db->delete('kons_tr_kasbon_project_lab', ['id_header' => $id]);
 
         $data_update_header = [
+            'sts_reject' => null,
+            'reject_reason' => null,
             'grand_total' => $grand_total,
             'deskripsi' => $post['deskripsi'],
             'tgl' => $post['tgl'],
@@ -6172,6 +6180,8 @@ class Kasbon_project extends Admin_Controller
         $this->db->delete('kons_tr_kasbon_project_subcont_tenaga_ahli', ['id_header' => $id]);
 
         $data_update_header = [
+            'sts_reject' => null,
+            'reject_reason' => null,
             'grand_total' => $grand_total,
             'deskripsi' => $post['deskripsi'],
             'tgl' => $post['tgl'],
@@ -6301,6 +6311,8 @@ class Kasbon_project extends Admin_Controller
         $this->db->delete('kons_tr_kasbon_project_subcont_perusahaan', ['id_header' => $id]);
 
         $data_update_header = [
+            'sts_reject' => null,
+            'reject_reason' => null,
             'grand_total' => $grand_total,
             'deskripsi' => $post['deskripsi'],
             'tgl' => $post['tgl'],
