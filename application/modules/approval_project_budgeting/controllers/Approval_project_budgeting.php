@@ -579,7 +579,12 @@ class Approval_project_budgeting extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $this->db->update('kons_tr_spk_budgeting', ['sts' => 1, 'reject_reason' => ''], ['id_spk_budgeting' => $id_spk_budgeting]);
+        $this->db->update('kons_tr_spk_budgeting', [
+            'sts' => 1,
+            'reject_reason' => '',
+            'approved_by' => $this->auth->user_id(),
+            'approved_date' => date('Y-m-d H:i:s')
+        ], ['id_spk_budgeting' => $id_spk_budgeting]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

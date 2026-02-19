@@ -2553,7 +2553,16 @@ class Approval_expense_report_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $this->db->update('kons_tr_expense_report_project_header', ['sts' => 1, 'sts_req' => null, 'reject_reason' => null, 'id_bank' => $post['bank']], ['id_header' => $id_header]);
+     
+
+        $this->db->update('kons_tr_expense_report_project_header', [
+            'sts' => 1,
+            'sts_req' => null,
+            'reject_reason' => '',
+            'id_bank' => $post['bank'],
+            'approved_by' => $this->auth->user_id(),
+            'approved_date' => date('Y-m-d H:i:s')
+        ], ['id_header' => $id_header]);
 
         $arr_jurnal = [];
 
