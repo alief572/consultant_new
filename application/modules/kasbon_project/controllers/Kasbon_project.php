@@ -940,9 +940,9 @@ class Kasbon_project extends Admin_Controller
             $this->db->where('a.sts', 0);
             $get_check_req_approval = $this->db->get()->result();
 
-            if (count($get_check_req_approval) > 0) {
-                $sts = '<div class="badge bg-blue">Waiting Approval</div>';
-            }
+            // if (count($get_check_req_approval) > 0) {
+            $sts = '<div class="badge bg-blue">Waiting Approval</div>';
+            // }
 
             if ($item->sts == '1') {
                 $sts = '<div class="badge bg-green">Approved</div>';
@@ -1145,9 +1145,9 @@ class Kasbon_project extends Admin_Controller
             $this->db->where('a.sts', 0);
             $get_check_req_approval = $this->db->get()->result();
 
-            if (count($get_check_req_approval) > 0) {
-                $sts = '<div class="badge bg-blue">Waiting Approval</button>';
-            }
+            // if (count($get_check_req_approval) > 0) {
+            $sts = '<div class="badge bg-blue">Waiting Approval</button>';
+            // }
             if ($item->sts == '1') {
                 $sts = '<div class="badge bg-green">Approved</button>';
             }
@@ -1276,6 +1276,7 @@ class Kasbon_project extends Admin_Controller
         ]);
     }
 
+
     public function get_data_kasbon_others()
     {
         $draw = $this->input->post('draw');
@@ -1335,9 +1336,9 @@ class Kasbon_project extends Admin_Controller
             $this->db->where('a.sts', 0);
             $get_check_req_approval = $this->db->get()->result();
 
-            if (count($get_check_req_approval) > 0) {
-                $sts = '<div class="badge bg-blue">Waiting Approval</div>';
-            }
+            // if (count($get_check_req_approval) > 0) {
+            $sts = '<div class="badge bg-blue">Waiting Approval</div>';
+            // }
 
             if ($item->sts == '1') {
                 $sts = '<div class="badge bg-green">Approved</div>';
@@ -1525,9 +1526,9 @@ class Kasbon_project extends Admin_Controller
             $this->db->where('a.sts', 0);
             $get_check_req_approval = $this->db->get()->result();
 
-            if (count($get_check_req_approval) > 0) {
-                $sts = '<div class="badge bg-blue">Waiting Approval<div>';
-            }
+            // if (count($get_check_req_approval) > 0) {
+            $sts = '<div class="badge bg-blue">Waiting Approval<div>';
+            // }
 
             if ($item->sts == '1') {
                 $sts = '<div class="badge bg-green">Approved<div>';
@@ -1715,9 +1716,9 @@ class Kasbon_project extends Admin_Controller
             $this->db->where('a.sts', 0);
             $get_check_req_approval = $this->db->get()->result();
 
-            if (count($get_check_req_approval) > 0) {
-                $sts = '<div class="badge bg-blue">Waiting Approval</div>';
-            }
+            // if (count($get_check_req_approval) > 0) {
+            $sts = '<div class="badge bg-blue">Waiting Approval</div>';
+            // }
 
             if ($item->sts == '1') {
                 $sts = '<div class="badge bg-green">Approved</div>';
@@ -1905,9 +1906,9 @@ class Kasbon_project extends Admin_Controller
             $this->db->where('a.sts', 0);
             $get_check_req_approval = $this->db->get()->result();
 
-            if (count($get_check_req_approval) > 0) {
-                $sts = '<div class="badge bg-blue">Waiting Approval</div>';
-            }
+            // if (count($get_check_req_approval) > 0) {
+            $sts = '<div class="badge bg-blue">Waiting Approval</div>';
+            // }
 
             if ($item->sts == '1') {
                 $sts = '<div class="badge bg-green">Approved</div>';
