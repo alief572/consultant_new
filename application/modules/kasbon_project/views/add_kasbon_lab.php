@@ -113,7 +113,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 <tr>
                     <th class="pd-5 valign-top" width="150">Tgl</th>
                     <td class="pd-5 valign-top" width="400">
-                        <input type="date" class="form-control form-control-sm" name="tgl" value="<?= date('Y-m-d') ?>" required>
+                        <input type="date" class="form-control form-control-sm" name="tgl" value="<?= date('Y-m-d') ?>" readonly>
                     </td>
                     <th class="pd-5 valign-top" width="150">Deskripsi</th>
                     <td class="pd-5 valign-top" width="400">
