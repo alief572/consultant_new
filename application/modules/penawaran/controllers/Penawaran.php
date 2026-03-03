@@ -899,108 +899,120 @@ class Penawaran extends Admin_Controller
 
         if (isset($post['dt_act'])) {
             foreach ($post['dt_act'] as $item_act) {
-                $arr_insert_act[] = [
-                    'id_penawaran' => $id_penawaran,
-                    'id_aktifitas' => $item_act['nm_aktifitas'],
-                    'mandays' => str_replace(',', '',  $item_act['mandays']),
-                    'mandays_rate' => str_replace(',', '',  $item_act['mandays_rate']),
-                    'mandays_subcont' => str_replace(',', '',  $item_act['mandays_subcont']),
-                    'mandays_rate_subcont' => str_replace(',', '',  $item_act['mandays_rate_subcont']),
-                    'mandays_tandem' => str_replace(',', '',  $item_act['mandays_tandem']),
-                    'mandays_rate_tandem' => str_replace(',', '',  $item_act['mandays_rate_tandem']),
-                    'harga_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
-                    'total_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
-                    'input_by' => $this->auth->user_id(),
-                    'input_date' => date('Y-m-d H:i:s')
-                ];
+                if ($item_act['nm_aktifitas'] !== '') {
+                    $arr_insert_act[] = [
+                        'id_penawaran' => $id_penawaran,
+                        'id_aktifitas' => $item_act['nm_aktifitas'],
+                        'mandays' => str_replace(',', '',  $item_act['mandays']),
+                        'mandays_rate' => str_replace(',', '',  $item_act['mandays_rate']),
+                        'mandays_subcont' => str_replace(',', '',  $item_act['mandays_subcont']),
+                        'mandays_rate_subcont' => str_replace(',', '',  $item_act['mandays_rate_subcont']),
+                        'mandays_tandem' => str_replace(',', '',  $item_act['mandays_tandem']),
+                        'mandays_rate_tandem' => str_replace(',', '',  $item_act['mandays_rate_tandem']),
+                        'harga_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
+                        'total_aktifitas' => str_replace(',', '',  $item_act['harga_aktifitas']),
+                        'input_by' => $this->auth->user_id(),
+                        'input_date' => date('Y-m-d H:i:s')
+                    ];
+                }
             }
         }
 
         $arr_insert_ako = [];
         if (isset($post['dt_ako'])) {
             foreach ($post['dt_ako'] as $item_ako) {
-                $arr_insert_ako[] = [
-                    'id_penawaran' => $id_penawaran,
-                    'id_item' => $item_ako['id_akomodasi'],
-                    'qty' => str_replace(',', '', $item_ako['qty_akomodasi']),
-                    'price_unit' => str_replace(',', '', $item_ako['harga_akomodasi']),
-                    'total' => str_replace(',', '', $item_ako['total_akomodasi']),
-                    'keterangan' => $item_ako['keterangan_akomodasi'],
-                    'input_by' => $this->auth->user_id(),
-                    'input_date' => date('Y-m-d H:i:s')
-                ];
+                if ($item_ako['id_akomodasi'] !== '') {
+                    $arr_insert_ako[] = [
+                        'id_penawaran' => $id_penawaran,
+                        'id_item' => $item_ako['id_akomodasi'],
+                        'qty' => str_replace(',', '', $item_ako['qty_akomodasi']),
+                        'price_unit' => str_replace(',', '', $item_ako['harga_akomodasi']),
+                        'total' => str_replace(',', '', $item_ako['total_akomodasi']),
+                        'keterangan' => $item_ako['keterangan_akomodasi'],
+                        'input_by' => $this->auth->user_id(),
+                        'input_date' => date('Y-m-d H:i:s')
+                    ];
+                }
             }
         }
 
         $arr_insert_oth = [];
         if (isset($post['dt_oth'])) {
             foreach ($post['dt_oth'] as $item_oth) {
-                $arr_insert_oth[] = [
-                    'id_penawaran' => $id_penawaran,
-                    'id_item' => $item_oth['id_others'],
-                    'qty' => str_replace(',', '', $item_oth['qty_others']),
-                    'price_unit' => str_replace(',', '', $item_oth['harga_others']),
-                    'total' => str_replace(',', '', $item_oth['total_others']),
-                    'price_unit_budget' => str_replace(',', '', $item_oth['harga_others_budget']),
-                    'total_budget' => (str_replace(',', '', $item_oth['total_budget_others'])),
-                    'keterangan' => $item_oth['keterangan_others'],
-                    'input_by' => $this->auth->user_id(),
-                    'input_date' => date('Y-m-d H:i:s')
-                ];
+                if ($item_oth['id_others'] !== '') {
+                    $arr_insert_oth[] = [
+                        'id_penawaran' => $id_penawaran,
+                        'id_item' => $item_oth['id_others'],
+                        'qty' => str_replace(',', '', $item_oth['qty_others']),
+                        'price_unit' => str_replace(',', '', $item_oth['harga_others']),
+                        'total' => str_replace(',', '', $item_oth['total_others']),
+                        'price_unit_budget' => str_replace(',', '', $item_oth['harga_others_budget']),
+                        'total_budget' => (str_replace(',', '', $item_oth['total_budget_others'])),
+                        'keterangan' => $item_oth['keterangan_others'],
+                        'input_by' => $this->auth->user_id(),
+                        'input_date' => date('Y-m-d H:i:s')
+                    ];
+                }
             }
         }
 
         $arr_insert_lab = [];
         if (isset($post['dt_lab'])) {
             foreach ($post['dt_lab'] as $item_lab) {
-                $arr_insert_lab[] = [
-                    'id_penawaran' => $id_penawaran,
-                    'id_item' => $item_lab['id_lab'],
-                    'qty' => str_replace(',', '', $item_lab['qty_lab']),
-                    'price_unit' => str_replace(',', '', $item_lab['harga_lab']),
-                    'total' => str_replace(',', '', $item_lab['total_lab']),
-                    'price_unit_budget' => str_replace(',', '', $item_lab['harga_lab_budget']),
-                    'total_budget' => (str_replace(',', '', $item_lab['total_lab_budget'])),
-                    'keterangan' => $item_lab['keterangan_lab'],
-                    'input_by' => $this->auth->user_id(),
-                    'input_date' => date('Y-m-d H:i:s')
-                ];
+                if ($item_lab['id_lab'] !== '') {
+                    $arr_insert_lab[] = [
+                        'id_penawaran' => $id_penawaran,
+                        'id_item' => $item_lab['id_lab'],
+                        'qty' => str_replace(',', '', $item_lab['qty_lab']),
+                        'price_unit' => str_replace(',', '', $item_lab['harga_lab']),
+                        'total' => str_replace(',', '', $item_lab['total_lab']),
+                        'price_unit_budget' => str_replace(',', '', $item_lab['harga_lab_budget']),
+                        'total_budget' => (str_replace(',', '', $item_lab['total_lab_budget'])),
+                        'keterangan' => $item_lab['keterangan_lab'],
+                        'input_by' => $this->auth->user_id(),
+                        'input_date' => date('Y-m-d H:i:s')
+                    ];
+                }
             }
         }
 
         $arr_insert_subcont_tenaga_ahli = [];
         if (isset($post['dt_subcont_tenaga_ahli'])) {
             foreach ($post['dt_subcont_tenaga_ahli'] as $item_subcont_tenaga_ahli) {
-                $arr_insert_subcont_tenaga_ahli[] = [
-                    'id_penawaran' => $id_penawaran,
-                    'id_item' => $item_subcont_tenaga_ahli['id_subcont_tenaga_ahli'],
-                    'qty' => str_replace(',', '', $item_subcont_tenaga_ahli['qty_subcont_tenaga_ahli']),
-                    'price_unit' => str_replace(',', '', $item_subcont_tenaga_ahli['harga_subcont_tenaga_ahli']),
-                    'total' => str_replace(',', '', $item_subcont_tenaga_ahli['total_subcont_tenaga_ahli']),
-                    'price_unit_budget' => str_replace(',', '', $item_subcont_tenaga_ahli['harga_subcont_tenaga_ahli_budget']),
-                    'total_budget' => (str_replace(',', '', $item_subcont_tenaga_ahli['total_subcont_tenaga_ahli_budget'])),
-                    'keterangan' => $item_subcont_tenaga_ahli['keterangan_subcont_tenaga_ahli'],
-                    'input_by' => $this->auth->user_id(),
-                    'input_date' => date('Y-m-d H:i:s')
-                ];
+                if ($item_subcont_tenaga_ahli['id_subcont_tenaga_ahli'] !== '') {
+                    $arr_insert_subcont_tenaga_ahli[] = [
+                        'id_penawaran' => $id_penawaran,
+                        'id_item' => $item_subcont_tenaga_ahli['id_subcont_tenaga_ahli'],
+                        'qty' => str_replace(',', '', $item_subcont_tenaga_ahli['qty_subcont_tenaga_ahli']),
+                        'price_unit' => str_replace(',', '', $item_subcont_tenaga_ahli['harga_subcont_tenaga_ahli']),
+                        'total' => str_replace(',', '', $item_subcont_tenaga_ahli['total_subcont_tenaga_ahli']),
+                        'price_unit_budget' => str_replace(',', '', $item_subcont_tenaga_ahli['harga_subcont_tenaga_ahli_budget']),
+                        'total_budget' => (str_replace(',', '', $item_subcont_tenaga_ahli['total_subcont_tenaga_ahli_budget'])),
+                        'keterangan' => $item_subcont_tenaga_ahli['keterangan_subcont_tenaga_ahli'],
+                        'input_by' => $this->auth->user_id(),
+                        'input_date' => date('Y-m-d H:i:s')
+                    ];
+                }
             }
         }
 
         $arr_insert_subcont_perusahaan = [];
         if (isset($post['dt_subcont_perusahaan'])) {
             foreach ($post['dt_subcont_perusahaan'] as $item_subcont_perusahaan) {
-                $arr_insert_subcont_perusahaan[] = [
-                    'id_penawaran' => $id_penawaran,
-                    'id_item' => $item_subcont_perusahaan['id_subcont_perusahaan'],
-                    'qty' => str_replace(',', '', $item_subcont_perusahaan['qty_subcont_perusahaan']),
-                    'price_unit' => str_replace(',', '', $item_subcont_perusahaan['harga_subcont_perusahaan']),
-                    'total' => str_replace(',', '', $item_subcont_perusahaan['total_subcont_perusahaan']),
-                    'price_unit_budget' => str_replace(',', '', $item_subcont_perusahaan['harga_subcont_perusahaan_budget']),
-                    'total_budget' => (str_replace(',', '', $item_subcont_perusahaan['total_subcont_perusahaan_budget'])),
-                    'keterangan' => $item_subcont_perusahaan['keterangan_subcont_perusahaan'],
-                    'input_by' => $this->auth->user_id(),
-                    'input_date' => date('Y-m-d H:i:s')
-                ];
+                if ($item_subcont_perusahaan['id_subcont_perusahaan'] !== '') {
+                    $arr_insert_subcont_perusahaan[] = [
+                        'id_penawaran' => $id_penawaran,
+                        'id_item' => $item_subcont_perusahaan['id_subcont_perusahaan'],
+                        'qty' => str_replace(',', '', $item_subcont_perusahaan['qty_subcont_perusahaan']),
+                        'price_unit' => str_replace(',', '', $item_subcont_perusahaan['harga_subcont_perusahaan']),
+                        'total' => str_replace(',', '', $item_subcont_perusahaan['total_subcont_perusahaan']),
+                        'price_unit_budget' => str_replace(',', '', $item_subcont_perusahaan['harga_subcont_perusahaan_budget']),
+                        'total_budget' => (str_replace(',', '', $item_subcont_perusahaan['total_subcont_perusahaan_budget'])),
+                        'keterangan' => $item_subcont_perusahaan['keterangan_subcont_perusahaan'],
+                        'input_by' => $this->auth->user_id(),
+                        'input_date' => date('Y-m-d H:i:s')
+                    ];
+                }
             }
         }
 
