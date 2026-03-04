@@ -58,13 +58,14 @@ class Penawaran_model extends BF_Model
 
     public function list_company()
     {
-        $this->dbhr->select('a.id as id_company, a.name as nm_company');
-        $this->dbhr->from('companies a');
-        $this->dbhr->order_by('a.name', 'asc');
-        $get_data = $this->dbhr->get()->result();
+        $this->db->select('a.id as id_company, a.nm_company');
+        $this->db->from('kons_tr_company a');
+        $this->db->order_by('a.nm_company', 'asc');
+        $get_data = $this->db->get()->result();
 
         return $get_data;
     }
+
 
     public function list_employee()
     {

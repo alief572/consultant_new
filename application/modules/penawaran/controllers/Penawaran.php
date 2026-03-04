@@ -1825,7 +1825,11 @@ class Penawaran extends Admin_Controller
                 'input_date' => date('Y-m-d H:i:s')
             ];
 
-            $this->db->insert('kons_tr_penawaran_non_konsultasi', $arr_insert);
+            $insert_header = $this->db->insert('kons_tr_penawaran_non_konsultasi', $arr_insert);
+            if(!$insert_header) {
+                throw new Exception($this->db->error()['message']);
+            }
+            
 
             if (isset($post['detail'])) {
                 $arr_detail = [];
@@ -1856,7 +1860,7 @@ class Penawaran extends Admin_Controller
 
             $this->output->set_status_header(500);
             echo json_encode([
-                'msg' => "There's an error occured, Please try again later !"
+                'msg' => $e->getMessage()
             ]);
         }
     }
