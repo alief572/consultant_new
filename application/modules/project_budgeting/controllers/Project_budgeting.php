@@ -58,7 +58,7 @@ class Project_budgeting extends Admin_Controller
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->join('kons_tr_spk_budgeting c', 'c.id_spk_penawaran = a.id_spk_penawaran', 'left');
-        $this->db->where(1, 1);
+        $this->db->where('a.id_penawaran IS NOT NULL');
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', 1);
         if ($status_s == '1') {
