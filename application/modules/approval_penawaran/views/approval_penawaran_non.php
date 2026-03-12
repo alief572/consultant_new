@@ -334,10 +334,23 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                         <td class="text-right td_subtotal"><?= number_format($subtotal, 2) ?></td>
                     </tr>
                     <tr>
+                        <td>Discount</td>
+                        <td class="text-right">
+                            <div class="form-inline">
+                                <span>(%)</span>
+                                <input type="number" name="persen_disc" id="" class="form-control form-control-sm text-right" value="<?= !empty($data_penawaran->persen_disc) ? $data_penawaran->persen_disc : '0' ?>" step="0.01" disabled>
+                                <span>(Rp.)</span>
+                                <input type="text" name="nominal_disc" id="" class="form-control form-control-sm auto_num text-right" value="<?= number_format($data_penawaran->nominal_disc, 2) ?>" readonly>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>PPn</td>
                         <td class="text-right">
                             <div class="form-inline">
+                                <span>(%)</span>
                                 <input type="number" class="form-control form-control-sm text-right input_ppn_persen" name="ppn_persen" value="<?= $persen_ppn ?>" disabled>
+                                <span>(Rp.)</span>
                                 <input type="text" class="form-control form-control-sm auto_num text-right" name="ppn" value="<?= number_format($ppn, 2) ?>" disabled>
                             </div>
                         </td>
