@@ -65,7 +65,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             <?php
                             if (isset($list_divisi)) {
                                 foreach ($list_divisi as $item_divisi) :
-                                    echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . '</option>';
+                                    echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . ' - '.$item_divisi->nm_company.'</option>';
                                 endforeach;
                             }
                             ?>

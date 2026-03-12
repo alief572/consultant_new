@@ -36,8 +36,9 @@ class Penawaran_model extends BF_Model
     }
     public function list_divisi()
     {
-        $this->dbhr->select('a.id as id_divisi, a.name as nm_divisi');
-        $this->dbhr->from('divisions a');
+        $this->dbhr->select('a.id as id_divisi, a.name as nm_divisi, b.name as nm_company');
+        $this->dbhr->from('departments a');
+        $this->dbhr->join('companies b', 'b.id = a.company_id', 'left');
         $this->dbhr->where_in('a.company_id', ['COM003', 'COM006', 'COM012']);
         $this->dbhr->order_by('a.name', 'asc');
         $get_data = $this->dbhr->get()->result();

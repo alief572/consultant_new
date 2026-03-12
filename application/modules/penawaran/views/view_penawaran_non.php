@@ -96,7 +96,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                             if (isset($list_divisi)) {
                                 foreach ($list_divisi as $item_divisi) :
                                     if ($item_divisi->id_divisi == $id_divisi) {
-                                        echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . '</option>';
+                                        echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . ' - '.$item_divisi->nm_company.'</option>';
                                     }
                                 endforeach;
                             }

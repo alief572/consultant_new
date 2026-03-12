@@ -2021,7 +2021,7 @@ class Penawaran extends Admin_Controller
 
     private function render_status_penawaran_non_kons($item)
     {
-        $status = '<span class="badge bg-yellow">Draft</span>';
+        $status = '<span class="badge bg-blue">Waiting Approval</span>';
         if ($item->sts_quot == '1') {
             $status = '<span class="badge bg-green">Approved</span>';
         }
