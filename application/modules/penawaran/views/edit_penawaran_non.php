@@ -342,6 +342,15 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                         <td class="text-right td_subtotal"><?= number_format($subtotal, 2) ?></td>
                     </tr>
                     <tr>
+                        <td>Discount</td>
+                        <td class="text-right">
+                            <div class="form-inline">
+                                <input type="number" name="disc_persen" id="" class="form-control form-control-sm text-right" value="<?= !empty($data_penawaran->persen_disc) ? $data_penawaran->persen_disc : '0' ?>" onchange="hitung_disc_by_persen();" step="0.01">
+                                <input type="text" name="disc_nominal" id="" class="form-control form-control-sm auto_num text-right nominal_disc" value="<?= number_format($data_penawaran->nominal_disc, 2) ?>" onchange="hitung_disc_by_nominal();">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>PPn</td>
                         <td class="text-right">
                             <div class="form-inline">
@@ -475,6 +484,55 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
         }
     }
 
+    function hitung_disc_by_persen() {
+        var disc_persen = $('input[name="disc_persen"]').val();
+        if(disc_persen !== '') {
+            disc_persen = disc_persen.split(',').join('');
+            disc_persen = parseFloat(disc_persen);
+        } else {
+            disc_persen = 0;
+        }
+
+        var subtotal = $('.td_subtotal').html();
+        if(subtotal !== '') {
+            subtotal = subtotal.split(',').join('');
+            subtotal = parseFloat(subtotal);
+        } else {
+            subtotal = 0;
+        }
+
+        var disc_nominal = (subtotal * disc_persen / 100);
+        // $('.td_disc_nominal').html(number_format(disc_nominal, 2));
+        $('input[name="disc_nominal"]').autoNumeric('set', disc_nominal);
+
+        hitung_grand_total();
+    }
+
+    function hitung_disc_by_nominal() {
+        var disc_nominal = $('input[name="disc_nominal"]').val();
+        if(disc_nominal !== '') {
+            disc_nominal = disc_nominal.split(',').join('');
+            disc_nominal = parseFloat(disc_nominal);
+        } else {
+            disc_nominal = 0;
+        }
+
+        var subtotal = $('.td_subtotal').html();
+        if(subtotal !== '') {
+            subtotal = subtotal.split(',').join('');
+            subtotal = parseFloat(subtotal);
+        } else {
+            subtotal = 0;
+        }
+
+        var disc_persen = ((disc_nominal / subtotal) * 100);
+        disc_persen = disc_persen.toFixed(2);
+
+        $('input[name="disc_persen"]').val(disc_persen);
+
+        hitung_grand_total();
+    }
+
     function hitung_total_detail(no) {
         var qty = $('.qty_' + no).val();
         if (qty !== '') {
@@ -577,20 +635,28 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
             }
         }
 
+        var disc_nominal = $('input[name="disc_nominal"]').val();
+        if(disc_nominal !== '') {
+            disc_nominal = disc_nominal.split(',').join('');
+            disc_nominal = parseFloat(disc_nominal);
+        } else {
+            disc_nominal = 0;
+        }
+
         var persen_ppn = $('input[name="persen_ppn"]').val();
         if (persen_ppn === '' || isNaN(persen_ppn)) {
             persen_ppn = 0;
         }
 
-        var ppn = (total * persen_ppn / 100);
+        var ppn = ((total - disc_nominal) * persen_ppn / 100);
 
         $('.td_subtotal').html(number_format(total, 2));
         $('input[name="nominal_ppn"]').autoNumeric('set', ppn);
-        $('.td_grand_total').html(number_format(total + ppn, 2));
+        $('.td_grand_total').html(number_format(total - disc_nominal + ppn, 2));
 
         $('input[name="subtotal"]').val(total);
         $('input[name="ppn"]').val(ppn);
-        $('input[name="grand_total"]').val((total + ppn));
+        $('input[name="grand_total"]').val((total - disc_nominal + ppn));
     }
 
     $(document).ready(function() {
