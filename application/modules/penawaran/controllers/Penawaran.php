@@ -277,12 +277,13 @@ class Penawaran extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*, c.nama');
+        $this->db->select('a.*, c.nama, f.nm_lengkap');
         $this->db->from('kons_tr_penawaran a');
         $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
         $this->db->join('members c', 'c.id = a.id_marketing', 'left');
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
         $this->db->join('kons_master_paket e', 'e.id_paket = d.id_paket', 'left');
+        $this->db->join('users f', 'f.id_user = a.input_by', 'left');
         $this->db->where(1, 1);
         $this->db->where('a.deleted_by', null);
         if (!empty($search)) {
@@ -293,6 +294,7 @@ class Penawaran extends Admin_Controller
             $this->db->or_like('e.nm_paket', $search['value'], 'both');
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
             $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
+            $this->db->or_like('f.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_quotation');
@@ -463,6 +465,8 @@ class Penawaran extends Admin_Controller
                 'nm_customer' => $nm_customer,
                 'grand_total' => number_format($item->grand_total),
                 'revisi' => $item->revisi,
+                'created_by' => $item->nm_lengkap,
+                'created_date' => date('d F Y H:i:s', strtotime($item->input_date)),
                 'status_cust' => $status_cust,
                 'status_quot' => $status_quot,
                 'option' => $option
@@ -2226,8 +2230,9 @@ class Penawaran extends Admin_Controller
             $start = $this->input->get('start');
             $search = $this->input->get('search')['value'];
 
-            $this->db->select('a.*');
+            $this->db->select('a.*, b.nm_lengkap');
             $this->db->from('kons_tr_penawaran_non_konsultasi a');
+            $this->db->join('users b', 'b.id_user = a.input_by', 'left');
             $this->db->where('a.deleted_by', null);
 
             $db_clone = clone $this->db;
@@ -2240,6 +2245,7 @@ class Penawaran extends Admin_Controller
                 $this->db->or_like('a.pic_penawaran', $search, 'both');
                 $this->db->or_like('a.keterangan_penawaran', $search, 'both');
                 $this->db->or_like('a.grand_total', $search, 'both');
+                $this->db->or_like('b.nm_lengkap', $search, 'both');
                 $this->db->group_end();
             }
 
@@ -2268,6 +2274,8 @@ class Penawaran extends Admin_Controller
                     'penawaran' => $item->keterangan_penawaran,
                     'customer' => $item->nm_customer,
                     'grand_total' => number_format($item->grand_total),
+                    'created_by' => $item->nm_lengkap,
+                    'created_date' => date('d F Y H:i:s', strtotime($item->input_date)),
                     'status_quot' => $status,
                     'action' => $action
                 ];
