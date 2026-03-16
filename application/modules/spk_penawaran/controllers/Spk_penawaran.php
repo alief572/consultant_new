@@ -510,11 +510,14 @@ class SPK_penawaran extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*, b.grand_total');
+        $this->db->select('a.*, b.grand_total, c.nm_lengkap');
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
-        $this->db->where(1, 1);
+        $this->db->join('users c', 'c.id_user = a.input_by', 'left');
         $this->db->where('a.deleted_by', null);
+
+        $count_all = $this->db->count_all_results('', false);
+
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
@@ -522,30 +525,16 @@ class SPK_penawaran extends Admin_Controller
             $this->db->or_like('a.nm_project', $search['value'], 'both');
             $this->db->or_like('a.nm_customer', $search['value'], 'both');
             $this->db->or_like('b.grand_total', $search['value'], 'both');
+            $this->db->or_like('c.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
+
+        $count_filter = $this->db->count_all_results('', false);
+
         $this->db->order_by('a.input_date', 'desc');
         $this->db->limit($length, $start);
 
         $get_data = $this->db->get();
-
-        $this->db->select('a.*, b.grand_total');
-        $this->db->from('kons_tr_spk_penawaran a');
-        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
-        $this->db->where(1, 1);
-        $this->db->where('a.deleted_by', null);
-        if (!empty($search)) {
-            $this->db->group_start();
-            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
-            $this->db->or_like('a.nm_sales', $search['value'], 'both');
-            $this->db->or_like('a.nm_project', $search['value'], 'both');
-            $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('b.grand_total', $search['value'], 'both');
-            $this->db->group_end();
-        }
-        $this->db->order_by('a.input_date', 'desc');
-
-        $get_data_all = $this->db->get();
 
         $hasil = [];
 
@@ -672,7 +661,9 @@ class SPK_penawaran extends Admin_Controller
                 'nm_marketing' => ucfirst($nm_marketing),
                 'nm_paket' => $nm_paket,
                 'nm_customer' => $nm_customer,
-                'grand_total' => $grand_total,
+                'grand_total' => number_format($item->grand_total),
+                'created_by' => $item->nm_lengkap,
+                'created_date' => date('d F Y H:i:s', strtotime($item->input_date)),
                 'status' => $status,
                 'status_spk' => $status_spk,
                 'option' => $option
@@ -683,8 +674,8 @@ class SPK_penawaran extends Admin_Controller
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data_all->num_rows(),
-            'recordsFiltered' => $get_data_all->num_rows(),
+            'recordsTotal' => $count_all,
+            'recordsFiltered' => $count_filter,
             'data' => $hasil
         ]);
     }
