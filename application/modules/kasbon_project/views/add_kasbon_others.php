@@ -721,7 +721,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             if (qty_pengajuan > 0 && qty_pengajuan < 1) {
                 qty_pengajuan = 1;
             }
-            if (valid == '1' && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
+            if (valid == '1' && qty_pengajuan > 0 && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
                 valid = 0;
             }
         }
