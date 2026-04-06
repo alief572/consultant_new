@@ -879,7 +879,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 qty_pengajuan_custom = 1;
             }
 
-            if (valid == '1' && ((nominal_pengajuan * qty_pengajuan) > sisa_budget || (nominal_pengajuan_custom * qty_pengajuan_custom) > sisa_budget_custom)) {
+            if (valid == '1' && qty_pengajuan > 0 && ((nominal_pengajuan * qty_pengajuan) > sisa_budget || (nominal_pengajuan_custom * qty_pengajuan_custom) > sisa_budget_custom)) {
                 valid = 0;
             }
         }

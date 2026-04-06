@@ -640,6 +640,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var valid = 1;
 
+        var ttl_propose = 0;
         for (i = 1; i <= no; i++) {
             var qty_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][qty_pengajuan]"]').val());
             var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
@@ -649,9 +650,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             if (qty_pengajuan > 0 && qty_pengajuan < 1) {
                 qty_pengajuan = 1;
             }
-            if (valid == '1' && (qty_pengajuan * nominal_pengajuan) > sisa_budget) {
+            if (valid == '1' && qty_pengajuan > 0 && (qty_pengajuan * nominal_pengajuan) > sisa_budget) {
                 valid = 0;
             }
+
+            ttl_propose += (qty_pengajuan * nominal_pengajuan);
         }
 
         if (valid == '0') {
