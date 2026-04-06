@@ -22,6 +22,7 @@ echo form_open(site_url('master_kategori/kategori_edit/' . @$detail->id_kategori
     </div>
 </div>
 <?php echo form_close(); ?>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         $("#<?php echo $form_id; ?>").keypress(function(e) {
