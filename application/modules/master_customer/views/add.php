@@ -477,7 +477,7 @@ $email_pic = (!empty($restPIC[0]['email_pic'])) ? $restPIC[0]['email_pic'] : '';
         //     });
         //     return false;
         // }
-        if (alamat == '' || alamat == null || alamat == '-' || alamat == '0') {
+        if (alamat == '' || alamat == null || alamat == '-' || alamat == '0' || alamat == ' ') {
             Swal.fire({
                 title: "Error Message!",
                 text: 'Address in master customer tab is empty, please input first ...',
