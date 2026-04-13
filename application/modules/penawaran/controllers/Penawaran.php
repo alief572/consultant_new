@@ -822,7 +822,7 @@ class Penawaran extends Admin_Controller
             $filenames_po = $uploadData_po['file_name'];
         }
 
-        $sts_cust = $post['sts_cust'];
+        $sts_cust = $post['sts_cust'] ?? 0;
 
         $grand_total = $post['grand_total'];
 
@@ -1828,10 +1828,10 @@ class Penawaran extends Admin_Controller
             ];
 
             $insert_header = $this->db->insert('kons_tr_penawaran_non_konsultasi', $arr_insert);
-            if(!$insert_header) {
+            if (!$insert_header) {
                 throw new Exception($this->db->error()['message']);
             }
-            
+
 
             if (isset($post['detail'])) {
                 $arr_detail = [];
