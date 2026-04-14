@@ -16,6 +16,7 @@ $pic_penawaran = (!empty($data_penawaran->pic_penawaran)) ? $data_penawaran->pic
 $nm_pic_penawaran = (!empty($data_penawaran->nm_pic_penawaran)) ? $data_penawaran->nm_pic_penawaran : '';
 $address = (!empty($data_penawaran->address)) ? $data_penawaran->address : '';
 $keterangan_penawaran = (!empty($data_penawaran->keterangan_penawaran)) ? $data_penawaran->keterangan_penawaran : '';
+$biaya_kirim = $data_penawaran->biaya_kirim ?? 0;
 
 $subtotal = (!empty($data_penawaran->subtotal)) ? $data_penawaran->subtotal : '';
 $ppn = (!empty($data_penawaran->ppn)) ? $data_penawaran->ppn : '';
@@ -214,7 +215,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <b>PIC Penawaran <span class="text-danger">*</span></b>
+                        <b>Admin Sales <span class="text-danger">*</span></b>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -302,6 +303,10 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th colspan="4" class="text-right">Biaya Kirim</th>
+                        <th class="text-right"><?= number_format($data_penawaran->biaya_kirim, 2) ?></th>
+                    </tr>
+                    <tr>
                         <th colspan="4" class="text-right">Grand Total</th>
                         <th class="text-right"><?= number_format($grand_total_detail, 2) ?></th>
                     </tr>
@@ -328,8 +333,26 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                         <td class="text-right td_subtotal"><?= number_format($subtotal, 2) ?></td>
                     </tr>
                     <tr>
+                        <td>Discount</td>
+                        <td class="text-right">
+                            <div class="form-inline">
+                                <span>(%)</span>
+                                <input type="number" name="persen_disc" id="" class="form-control form-control-sm text-right" value="<?= !empty($data_penawaran->persen_disc) ? $data_penawaran->persen_disc : '0' ?>" step="0.01" disabled>
+                                <span>(Rp.)</span>
+                                <input type="text" name="nominal_disc" id="" class="form-control form-control-sm auto_num text-right" value="<?= number_format($data_penawaran->nominal_disc, 2) ?>" readonly>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>PPn</td>
-                        <td class="text-right td_ppn"><?= number_format($ppn, 2) ?></td>
+                        <td class="text-right">
+                            <div class="form-inline">
+                                <span>(%)</span>
+                                <input type="number" name="persen_ppn" id="" class="form-control form-control-sm text-right" value="<?= !empty($data_penawaran->persen_ppn) ? $data_penawaran->persen_ppn : '0' ?>" min="0" disabled>
+                                <span>(Rp.)</span>
+                                <input type="text" name="nominal_ppn" id="" class="form-control form-control-sm auto_num text-right" value="<?= number_format($ppn, 2) ?>" readonly>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
                 <tfoot>

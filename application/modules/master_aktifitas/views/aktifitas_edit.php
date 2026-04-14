@@ -53,7 +53,7 @@
                                                                     <td>
                                                                         <textarea name="keterangan[]" class="form-control"><?= $d->keterangan ?></textarea>
                                                                     </td>
-                                                                    
+
                                                                 </tr>
                                                         <?php
                                                             }
@@ -104,6 +104,7 @@
 <script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         $('.auto_num').autoNumeric('init');

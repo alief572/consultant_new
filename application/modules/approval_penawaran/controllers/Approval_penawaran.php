@@ -399,7 +399,11 @@ class Approval_penawaran extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $update_sts_penawaran = $this->db->update('kons_tr_penawaran', ['sts_quot' => 2], ['id_quotation' => $id_penawaran]);
+        $update_sts_penawaran = $this->db->update('kons_tr_penawaran', [
+            'sts_quot' => 2,
+            'approved_by' => $this->auth->user_id(),
+            'approved_date' => date('Y-m-d H:i:s')
+        ], ['id_quotation' => $id_penawaran]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -527,7 +531,9 @@ class Approval_penawaran extends Admin_Controller
         try {
             $arr_update = [
                 'sts_quot' => '1',
-                'reject_reason' => ''
+                'reject_reason' => '',
+                'approved_by' => $this->auth->user_id(),
+                'approved_date' => date('Y-m-d H:i:s')
             ];
 
             $this->db->update('kons_tr_penawaran_non_konsultasi', $arr_update, ['id_penawaran' => $post['id_penawaran']]);

@@ -681,6 +681,8 @@ class Approval_spk_project_leader extends Admin_Controller
         $data_arr = [
             'approval_project_leader_sts' => 1,
             'approval_project_leader_date' => date('Y-m-d H:i:s'),
+            'approved_by' => $this->auth->user_id(),
+            'approved_date' => date('Y-m-d H:i:s'),
             'reject_project_leader_sts' => null,
             'reject_project_leader_date' => null,
             'reject_project_leader_reason' => null

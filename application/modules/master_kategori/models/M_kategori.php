@@ -1,5 +1,5 @@
 <?php
-class M_kategori extends CI_Model 
+class M_kategori extends CI_Model
 {
     /**
      * @copyright dando ridwanto <dando.ridwanto@ymail.com>
@@ -16,25 +16,24 @@ class M_kategori extends CI_Model
             FROM 
                 kons_kategori_paket, 
                 (SELECT @row := 0) r 
-            WHERE 1=1 
+            WHERE 1=1 AND deleted_by IS NULL
         ";
         $data['totalData'] = $this->db->query($sql)->num_rows();
-        if( ! empty($like_value))
-        {
+        if (! empty($like_value)) {
             $sql .= " AND (
-                kategori_paket LIKE '%".$this->db->escape_like_str($like_value)."%' 
+                kategori_paket LIKE '%" . $this->db->escape_like_str($like_value) . "%' 
             ";
             $sql .= " ) ";
         }
-        
+
         $data['totalFiltered']  = $this->db->query($sql)->num_rows();
-        $columns_order_by = array( 
+        $columns_order_by = array(
             0 => 'nomor',
-            1 => 'kategori_paket' 
+            1 => 'kategori_paket'
         );
-        $sql .= " ORDER BY ".$columns_order_by[$column_order]." ".$column_dir.", nomor ";
-        $sql .= " LIMIT ".$limit_start." ,".$limit_length." ";
-        
+        $sql .= " ORDER BY " . $columns_order_by[$column_order] . " " . $column_dir . ", nomor ";
+        $sql .= " LIMIT " . $limit_start . " ," . $limit_length . " ";
+
         $data['query'] = $this->db->query($sql);
         return $data;
     }

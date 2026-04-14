@@ -67,7 +67,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th align="center">No</th>
                         <th align="center">ID Quotation</th>
                         <th align="center">Date</th>
-                        <th align="center">PIC Penawaran</th>
+                        <th align="center">Admin Sales</th>
                         <th align="center">Penawaran</th>
                         <th align="center">Customer</th>
                         <th align="center">Grand Total</th>
@@ -380,7 +380,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         Swal.fire({
                             icon: 'success',
                             title: 'Success !',
-                            text: 'Data has been deleted !',
+                            text: 'Data has been deal !',
                             showConfirmButton: false,
                             showCancelButton: false,
                             allowClickOutside: false,

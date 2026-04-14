@@ -55,6 +55,7 @@
     <div id="Notification_<?php echo $form_id; ?>"></div>
     <?php echo form_close(); ?>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {

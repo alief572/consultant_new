@@ -2604,13 +2604,13 @@ function generateNoPenawaran($employee_code, $tipe_penawaran)
 	return $kode_trans;
 }
 function generateNoPenawaranNon()
-{
+{ 
 	$CI = &get_instance();
 	$Ym 			= date('ym');
 	$srcMtr			= "SELECT MAX(id_penawaran) as maxP FROM kons_tr_penawaran_non_konsultasi WHERE id_penawaran LIKE '%-" . date('m') . "-" . date('y') . "%' ";
 	$resultMtr		= $CI->db->query($srcMtr)->result_array();
 	$angkaUrut2		= $resultMtr[0]['maxP'];
-	$urutan2		= (int)substr($angkaUrut2, 0, 3);
+	$urutan2		= (int)substr($angkaUrut2, 11, 3);
 	$urutan2++;
 	$urut2			= sprintf('%03s', $urutan2);
 	$kode_trans		= 'P-NON-KONS-' . $urut2 . '-' . date('m') . '-' . date('y');

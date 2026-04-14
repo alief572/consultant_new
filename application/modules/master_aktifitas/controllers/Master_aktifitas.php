@@ -133,7 +133,7 @@ class Master_aktifitas extends Admin_Controller
             FROM 
                 kons_master_aktifitas AS a,
                 (SELECT @row:=0) r
-            WHERE 1=1
+            WHERE 1=1 AND deleted_by IS NULL
         ";
 
         $data['totalData'] = $this->db->query($sql)->num_rows();
@@ -825,8 +825,13 @@ class Master_aktifitas extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $this->db->delete('kons_master_check_point', ['id_aktifitas' => $id]);
-        $this->db->delete('kons_master_aktifitas', ['id_aktifitas' => $id]);
+        $arr_delete = [
+            'deleted_by' => $this->auth->user_id(),
+            'deleted_date' => date('Y-m-d H:i:s')
+        ];
+
+        $this->db->update('kons_master_check_point', $arr_delete, ['id_aktifitas' => $id]);
+        $this->db->update('kons_master_aktifitas', $arr_delete, ['id_aktifitas' => $id]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

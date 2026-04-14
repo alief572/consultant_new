@@ -136,12 +136,20 @@ class Approval_kasbon_overbudget extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $this->db->update('kons_tr_kasbon_req_ovb_akomodasi_header', array('sts' => 1), array('id_request_ovb' => $id));
-        $this->db->update('kons_tr_kasbon_req_ovb_subcont_header', array('sts' => 1), array('id_request_ovb' => $id));
-        $this->db->update('kons_tr_kasbon_req_ovb_others_header', array('sts' => 1), array('id_request_ovb' => $id));
-        $this->db->update('kons_tr_kasbon_req_ovb_lab_header', array('sts' => 1), array('id_request_ovb' => $id));
-        $this->db->update('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header', array('sts' => 1), array('id_request_ovb' => $id));
-        $this->db->update('kons_tr_kasbon_req_ovb_subcont_perusahaan_header', array('sts' => 1), array('id_request_ovb' => $id));
+        $approved_data = [
+            'sts'           => 1,
+            'approved_by'   => $this->auth->user_id(),
+            'approved_date' => date('Y-m-d H:i:s')
+        ];
+        //penggunaan approved data untuk update semua tabel header, karena status approval ada di semua tabel header
+
+        $this->db->update('kons_tr_kasbon_req_ovb_akomodasi_header', $approved_data, ['id_request_ovb' => $id]);
+        $this->db->update('kons_tr_kasbon_req_ovb_subcont_header', $approved_data, ['id_request_ovb' => $id]);
+        $this->db->update('kons_tr_kasbon_req_ovb_others_header', $approved_data, ['id_request_ovb' => $id]);
+        $this->db->update('kons_tr_kasbon_req_ovb_lab_header', $approved_data, ['id_request_ovb' => $id]);
+        $this->db->update('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header', $approved_data, ['id_request_ovb' => $id]);
+        $this->db->update('kons_tr_kasbon_req_ovb_subcont_perusahaan_header', $approved_data, ['id_request_ovb' => $id]);
+
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

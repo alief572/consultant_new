@@ -286,7 +286,7 @@ class Master_kategori extends Admin_Controller
         } else {
             $this->db->trans_begin();
 
-            $this->db->delete('kons_kategori_paket', ['id_kategori_paket' => $id]);
+            $this->db->update('kons_kategori_paket', ['deleted_by' => $this->auth->user_id(), 'deleted_date' => date('Y-m-d H:i:s')], ['id_kategori_paket' => $id]);
 
             if ($this->db->trans_status() === false) {
                 $this->db->trans_rollback();
