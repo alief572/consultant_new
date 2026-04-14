@@ -515,6 +515,8 @@ class SPK_penawaran extends Admin_Controller
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->join('users c', 'c.id_user = a.input_by', 'left');
         $this->db->where('a.deleted_by', null);
+        $this->db->where('a.id_penawaran IS NOT NULL');
+        $this->db->where('a.id_penawaran <>', '');
 
         $count_all = $this->db->count_all_results('', false);
 
