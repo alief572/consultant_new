@@ -824,7 +824,7 @@ class Penawaran extends Admin_Controller
 
         $sts_cust = $post['sts_cust'] ?? 0;
 
-        $grand_total = $post['grand_total'];
+        $grand_total = $post['grand_total'] ?? 0;
 
         $ppn = 0;
         if (isset($post['include_ppn'])) {
