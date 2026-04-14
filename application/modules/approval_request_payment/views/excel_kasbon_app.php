@@ -52,6 +52,15 @@ header("Content-Disposition: attachment; filename=Approval Request Payment Kasbo
                         if ($get_kasbon_header->tipe == '3') {
                             $tipe = 'Kasbon Others';
                         }
+                        if ($get_kasbon_header->tipe == '4') {
+                            $tipe = 'Kasbon Lab';
+                        }
+                        if ($get_kasbon_header->tipe == '5') {
+                            $tipe = 'Kasbon Subcont Tenaga Ahli';
+                        }
+                        if ($get_kasbon_header->tipe == '6') {
+                            $tipe = 'Kasbon Subcont Perusahaan';
+                        }
                     }
 
                     echo '<tr>';
