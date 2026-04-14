@@ -221,12 +221,12 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $this->db->from('customer a');
         $this->db->join('customer_pic b', 'b.id_pic = a.id_pic', 'left');
         $this->db->where('a.nm_customer <>', '');
-        $this->db->where('a.id_customer', $get_penawaran->id_customer);
+        $this->db->where('a.id_customer', $get_spk_penawaran->id_customer);
         $get_customer = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
         $this->db->from(DBHR . '.employees a');
-        $this->db->where('a.id', $get_penawaran->id_marketing);
+        $this->db->where('a.id', $get_spk_penawaran->id_sales);
         $get_marketing = $this->db->get()->row();
 
         $this->db->select('a.id, a.name as nm_karyawan');
@@ -768,8 +768,6 @@ class Approval_spk_sales_konsultan extends Admin_Controller
                 'isu_khusus' => $isu_khusus,
                 'approval_sales_sts' => 1,
                 'approval_sales_date' => date('Y-m-d H:i:s'),
-                'approved_by' => $this->auth->user_id(),
-                'approved_date' => date('Y-m-d H:i:s'),
                 'reject_sales_sts' => null,
                 'reject_sales_date' => null,
                 'reject_sales_reason' => null
@@ -779,8 +777,6 @@ class Approval_spk_sales_konsultan extends Admin_Controller
             $data_arr_konsultan1 = [
                 'approval_konsultan_1_sts' => 1,
                 'approval_konsultan_1_date' => date('Y-m-d H:i:s'),
-                'approved_by' => $this->auth->user_id(),
-                'approved_date' => date('Y-m-d H:i:s'),
                 'reject_konsultan_1_sts' => null,
                 'reject_konsultan_1_date' => null,
                 'reject_konsultan_1_reason' => null
@@ -790,8 +786,6 @@ class Approval_spk_sales_konsultan extends Admin_Controller
             $data_arr_konsultan2 = [
                 'approval_konsultan_2_sts' => 1,
                 'approval_konsultan_2_date' => date('Y-m-d H:i:s'),
-                'approved_by' => $this->auth->user_id(),
-                'approved_date' => date('Y-m-d H:i:s'),
                 'reject_konsultan_2_sts' => null,
                 'reject_konsultan_2_date' => null,
                 'reject_konsultan_2_reason' => null
@@ -812,7 +806,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
             if (!$update_approve_spk_konsultan1) {
                 $this->db->trans_rollback();
 
-                print_r($this->db->error()['message']);
+                print_r($this->db->last_query());
                 exit;
             }
         }

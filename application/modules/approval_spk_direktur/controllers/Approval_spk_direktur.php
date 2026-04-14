@@ -663,8 +663,6 @@ class Approval_spk_direktur extends Admin_Controller
             'approval_level2_sts' => 1,
             'approval_level2_by' => $this->auth->user_id(),
             'approval_level2_date' => date('Y-m-d H:i:s'),
-            'approved_by' => $this->auth->user_id(),
-            'approved_date' => date('Y-m-d H:i:s'),
             'sts_spk' => 1
         ];
 
