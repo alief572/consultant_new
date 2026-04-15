@@ -509,6 +509,7 @@ class SPK_penawaran extends Admin_Controller
         $start = $this->input->post('start');
         $length = $this->input->post('length');
         $search = $this->input->post('search');
+        $filter_status = $this->input->post('filter_status');
 
         $this->db->select('a.*, b.grand_total, c.nm_lengkap');
         $this->db->from('kons_tr_spk_penawaran a');
@@ -517,6 +518,33 @@ class SPK_penawaran extends Admin_Controller
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.id_penawaran IS NOT NULL');
         $this->db->where('a.id_penawaran <>', '');
+
+        // Filter by status SPK
+        if (!empty($filter_status)) {
+            if ($filter_status === 'approved') {
+                $this->db->where('a.sts_spk', '1');
+            } elseif ($filter_status === 'rejected') {
+                $this->db->group_start();
+                $this->db->where('a.sts_spk', '0');
+                $this->db->or_where('a.reject_sales_sts IS NOT NULL');
+                $this->db->or_where('a.reject_konsultan_1_sts IS NOT NULL');
+                $this->db->or_where('a.reject_konsultan_2_sts IS NOT NULL');
+                $this->db->or_where('a.reject_project_leader_sts IS NOT NULL');
+                $this->db->or_where('a.reject_manager_sales_sts IS NOT NULL');
+                $this->db->or_where('a.reject_level2_by IS NOT NULL');
+                $this->db->group_end();
+            } elseif ($filter_status === 'waiting') {
+                // Waiting = belum approved (sts_spk bukan '1', termasuk NULL)
+                // DAN tidak ada satupun reject
+                $this->db->where('(a.sts_spk IS NULL OR a.sts_spk != \'1\')');
+                $this->db->where('a.reject_sales_sts IS NULL');
+                $this->db->where('a.reject_konsultan_1_sts IS NULL');
+                $this->db->where('a.reject_konsultan_2_sts IS NULL');
+                $this->db->where('a.reject_project_leader_sts IS NULL');
+                $this->db->where('a.reject_manager_sales_sts IS NULL');
+                $this->db->where('a.reject_level2_by IS NULL');
+            }
+        }
 
         $count_all = $this->db->count_all_results('', false);
 
