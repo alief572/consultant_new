@@ -217,7 +217,8 @@ class Spk_penawaran_model extends BF_Model
         return $action;
     }
 
-    public function get_spk_non_kons($id_spk_penawaran) {
+    public function get_spk_non_kons($id_spk_penawaran)
+    {
         $this->db->select('a.*');
         $this->db->from('kons_tr_spk_non_kons a');
         $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);

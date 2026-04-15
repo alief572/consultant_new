@@ -25,25 +25,37 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 <div class="box">
     <div class="box-header">
-        <?php if ($ENABLE_ADD) : ?>
-            <div class="dropdown text-right">
-                <a class="btn btn-sm btn-success" href="<?= base_url('spk_penawaran/create_spk') ?>">
-                    <i class="fa fa-plus"></i> Create SPK
-                </a>
-                <a class="btn btn-sm btn-primary" href="<?= base_url('spk_penawaran/create_spk_non_konsultasi') ?>">
-                    <i class="fa fa-plus"></i> Create SPK Non Konsultasi
-                </a>
-                <!-- <button type="button" class="btn btn-sm btn-danger" id="one_time">Update!</button> -->
+        <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
+            <div class="col-md-3">
+                <label for="filter_status_spk">Filter Status SPK</label>
+                <select id="filter_status_spk" class="form-control">
+                    <option value="">-- All Status --</option>
+                    <option value="waiting">Waiting Approval</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
             </div>
-        <?php endif; ?>
+            <?php if ($ENABLE_ADD) : ?>
+                <div class="col-md-9 text-right">
+                    <a class="btn btn-sm btn-success" href="<?= base_url('spk_penawaran/create_spk') ?>">
+                        <i class="fa fa-plus"></i> Create SPK
+                    </a>
+                    <!-- <a class="btn btn-sm btn-primary" href="<?= base_url('spk_penawaran/create_spk_non_konsultasi') ?>">
+                    <i class="fa fa-plus"></i> Create SPK Non Konsultasi
+                </a> -->
+                    <!-- <button type="button" class="btn btn-sm btn-danger" id="one_time">Update!</button> -->
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <ul class="nav nav-tabs" role="tablist">
+        <!-- <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="konsultasi active"><a href="javascript:void();" onclick="tab_konsultasi();">Konsultasi</a></li>
             <li role="presentation" class="non_konsultasi"><a href="javascript:void();" onclick="tab_non_konsultasi();">Non Konsultasi</a></li>
-        </ul>
+        </ul> -->
         <div id="konsultasi">
+
             <table id="table_penawaran" class="table table-bordered table-striped">
                 <thead class="bg-primary">
                     <tr>
@@ -115,6 +127,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
     $(document).ready(function() {
         DataTables();
+
+        $('#filter_status_spk').on('change', function() {
+            $('#table_penawaran').DataTable().ajax.reload();
+        });
     });
 
     $(document).on('click', '.del_spk', function() {
@@ -270,7 +286,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 type: "POST",
                 dataType: "JSON",
                 data: function(d) {
-
+                    d.filter_status = $('#filter_status_spk').val();
                 }
             },
             columns: [{
