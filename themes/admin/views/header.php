@@ -142,6 +142,14 @@
                 Helpdesk
               </a>
             </li>
+            <li>
+              <a href="https://sendigs.com/consultant_new/assets/pdf/Modul Consultant.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-secondary">
+                Manual Book
+              </a>
+            </li>
 
             <!-- User Account Menu -->
             <li class="dropdown user user-menu">
