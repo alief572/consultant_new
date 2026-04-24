@@ -106,13 +106,13 @@
         $(document).on('click', '.delete_aktifitas', function() {
             var id = $(this).data('id');
 
-            swal({
+            Swal.fire({
                 type: 'warning',
                 title: 'Are you sure?',
                 text: 'This data will be deleted !',
                 showCancelButton: true
-            }, function(submit) {
-                if (submit) {
+            }).then((submit) => {
+                if (submit.isConfirmed) {
                     $.ajax({
                         url: siteurl + active_controller + 'delete_aktifitas',
                         type: 'POST',
