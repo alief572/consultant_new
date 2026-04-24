@@ -107,7 +107,7 @@
             var id = $(this).data('id');
 
             Swal.fire({
-                type: 'warning',
+                icon: 'warning',
                 title: 'Are you sure?',
                 text: 'This data will be deleted !',
                 showCancelButton: true
@@ -123,24 +123,24 @@
                         dataType: 'JSON',
                         success: function(result) {
                             if (result.status == 1) {
-                                swal({
-                                    type: 'success',
+                                Swal.fire({
+                                    icon: 'success',
                                     title: 'Success !',
                                     text: result.msg
-                                }, function(data) {
+                                }).then(() => {
                                     datatable();
                                 });
                             } else {
-                                swal({
-                                    type: 'warning',
+                                Swal.fire({
+                                    icon: 'warning',
                                     title: 'Failed !',
                                     text: result.msg
                                 });
                             }
                         },
                         error: function(result) {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+                                icon: 'error',
                                 title: 'Error !',
                                 text: 'Please try again later !'
                             });
