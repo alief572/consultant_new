@@ -111,6 +111,16 @@ class Dashboard extends Admin_Controller
 
 		// echo $rest_fg1[0]->qty_stock;
 
+		// Get penawaran waiting approval counts
+		$count_penawaran = $this->dashboard_model->count_penawaran_waiting_approval();
+		$count_penawaran_non_kons = $this->dashboard_model->count_penawaran_non_kons_waiting_approval();
+
+		// Get SPK Penawaran waiting approval counts (4 stages)
+		$count_spk_sales_konsultan = $this->dashboard_model->count_spk_sales_konsultan_waiting();
+		$count_spk_project_leader = $this->dashboard_model->count_spk_project_leader_waiting();
+		$count_spk_manager_sales = $this->dashboard_model->count_spk_manager_sales_waiting();
+		$count_spk_direktur = $this->dashboard_model->count_spk_direktur_waiting();
+
 		$data = array(
 			'qty_order1' => $qty_order1,
 			'qty_order2' => $qty_order2,
@@ -125,7 +135,13 @@ class Dashboard extends Admin_Controller
 			'no_so' => $no_so,
 			'no_so2' => $no_so2,
 			'over1' => $over1,
-			'over2' => $over2
+			'over2' => $over2,
+			'count_penawaran' => $count_penawaran,
+			'count_penawaran_non_kons' => $count_penawaran_non_kons,
+			'count_spk_sales_konsultan' => $count_spk_sales_konsultan,
+			'count_spk_project_leader' => $count_spk_project_leader,
+			'count_spk_manager_sales' => $count_spk_manager_sales,
+			'count_spk_direktur' => $count_spk_direktur
 		);
 
 		$this->template->render('index', $data);

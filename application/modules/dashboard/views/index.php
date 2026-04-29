@@ -80,13 +80,103 @@
 	</div>
 </div> -->
 <!-- Dashboard2 -->
-<div class="row">
-	<div class="col-md-12">
-		
+<div class="row row-equal-cards">
+	<div class="col-md-4">
+		<div class="small-box bg-yellow">
+			<div class="inner">
+				<h3><?= $count_penawaran + $count_penawaran_non_kons ?></h3>
+				<p>Penawaran Menunggu Approval</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-file-text-o"></i>
+			</div>
+			<a href="<?= base_url('approval_penawaran') ?>" class="small-box-footer">
+				Lihat Detail <i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="small-box bg-green">
+			<div class="inner">
+				<h3><?= $count_spk_sales_konsultan ?></h3>
+				<p>SPK Penawaran Menunggu Approval Sales & Konsultan</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-user"></i>
+			</div>
+			<a href="<?= base_url('approval_spk_sales_konsultan') ?>" class="small-box-footer">
+				Lihat Detail <i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="small-box bg-aqua">
+			<div class="inner">
+				<h3><?= $count_spk_project_leader ?></h3>
+				<p>SPK Penawaran Menunggu Approval Project Leader</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-users"></i>
+			</div>
+			<a href="<?= base_url('approval_spk_project_leader') ?>" class="small-box-footer">
+				Lihat Detail <i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="row row-equal-cards">
+	<div class="col-md-4">
+		<div class="small-box bg-red">
+			<div class="inner">
+				<h3><?= $count_spk_manager_sales ?></h3>
+				<p>SPK Penawaran Menunggu Approval Manager Sales</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-user-md"></i>
+			</div>
+			<a href="<?= base_url('approval_spk_manager_sales') ?>" class="small-box-footer">
+				Lihat Detail <i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="small-box bg-purple">
+			<div class="inner">
+				<h3><?= $count_spk_direktur ?></h3>
+				<p>SPK Penawaran Menunggu Approval Direktur</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-user-secret"></i>
+			</div>
+			<a href="<?= base_url('approval_spk_direktur') ?>" class="small-box-footer">
+				Lihat Detail <i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
 	</div>
 </div>
 
 <style>
+	.row-equal-cards {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.row-equal-cards>[class*="col-"] {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.row-equal-cards .small-box {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	.row-equal-cards .small-box .inner {
+		flex: 1;
+	}
+
 	.mid {
 		vertical-align: middle !important;
 	}
