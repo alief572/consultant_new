@@ -38,7 +38,6 @@ $ENABLE_DELETE  = has_permission('Direktur.Delete');
                     <th align="center">Action</th>
                 </tr>
             </thead>
-
         </table>
     </div>
     <!-- /.box-body -->
