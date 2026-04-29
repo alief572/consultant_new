@@ -2147,168 +2147,146 @@ class Employees_model extends BF_Model
 	public function get_data_employees()
 	{
 		$draw = $this->input->post('draw');
-		$start = $this->input->post('start');
-		$length = $this->input->post('length');
-		$search = $this->input->post('search');
+		$start = $this->input->post('start', true);
+		$length = $this->input->post('length', true);
+		$search = $this->input->post('search', true);
+		$order = $this->input->post('order', true);
 
-		$qry = '
-			SELECT
-				a.*,
-				b.name as company_name,
-				c.name as department_name,
-				d.name as division_name,
-				e.name as title_name,
-				f.name as firstcontract,
-				g.name as secondcontract,
-				h.name as thirdcontract,
-				i.name as permanent,
-				j.name as position_name
-			FROM
-				employees a
-				LEFT JOIN companies b ON b.id = a.company_id
-				LEFT JOIN departments c ON c.id = a.department_id
-				LEFT JOIN divisions d ON d.id = a.division_id
-				LEFT JOIN titles e ON e.id = a.title_id
-				LEFT JOIN contracts f ON f.id = a.firstcontract_id
-				LEFT JOIN contracts g ON g.id = a.secondcontract_id
-				LEFT JOIN contracts h ON h.id = a.thirdcontract_id
-				LEFT JOIN contracts i ON i.id = a.permanent_id
-				LEFT JOIN positions j ON j.id = a.position_id
-			WHERE
-				1=1 AND
-				a.flag_active = "Y" AND
-				a.company_id = "COM003" AND
-				(
-					a.id LIKE "%' . $search['value'] . '%" OR
-					a.nik LIKE "%' . $search['value'] . '%" OR
-					a.name LIKE "%' . $search['value'] . '%" OR
-					a.hometown LIKE "%' . $search['value'] . '%" OR
-					a.birthday LIKE "%' . $search['value'] . '%" OR
-					a.nationality LIKE "%' . $search['value'] . '%" OR
-					a.flag_active LIKE "%' . $search['value'] . '%"
-				)
-			ORDER BY a.id ASC
-			LIMIT ' . $length . ' OFFSET ' . $start . '
-		';
-		$query = $this->dbhr->query($qry)->result();
+		// Column mapping for ordering
+		$columns = [
+			0 => 'no', // Not sortable in DB
+			1 => 'a.id',
+			2 => 'a.nik',
+			3 => 'a.name',
+			4 => 'a.hometown',
+			5 => 'a.birthday',
+			6 => 'a.genderid',
+			7 => 'a.relid',
+			8 => 'a.nationality',
+			9 => 'permanent_id',
+			10 => 'a.flag_active',
+			11 => 'option' // Not sortable
+		];
 
-		$qry_all = '
-			SELECT
-				a.*,
-				b.name as company_name,
-				c.name as department_name,
-				d.name as division_name,
-				e.name as title_name,
-				f.name as firstcontract,
-				g.name as secondcontract,
-				h.name as thirdcontract,
-				i.name as permanent,
-				j.name as position_name
-			FROM
-				employees a
-				LEFT JOIN companies b ON b.id = a.company_id
-				LEFT JOIN departments c ON c.id = a.department_id
-				LEFT JOIN divisions d ON d.id = a.division_id
-				LEFT JOIN titles e ON e.id = a.title_id
-				LEFT JOIN contracts f ON f.id = a.firstcontract_id
-				LEFT JOIN contracts g ON g.id = a.secondcontract_id
-				LEFT JOIN contracts h ON h.id = a.thirdcontract_id
-				LEFT JOIN contracts i ON i.id = a.permanent_id
-				LEFT JOIN positions j ON j.id = a.position_id
-			WHERE
-				1=1 AND
-				a.flag_active = "Y" AND
-				a.company_id = "COM003" AND
-				(
-					a.id LIKE "%' . $search['value'] . '%" OR
-					a.nik LIKE "%' . $search['value'] . '%" OR
-					a.name LIKE "%' . $search['value'] . '%" OR
-					a.hometown LIKE "%' . $search['value'] . '%" OR
-					a.birthday LIKE "%' . $search['value'] . '%" OR
-					a.nationality LIKE "%' . $search['value'] . '%" OR
-					a.flag_active LIKE "%' . $search['value'] . '%"
-				)
-			ORDER BY a.id ASC
-		';
-		$query_all = $this->dbhr->query($qry_all)->result();
+		// Base Query for counts and data
+		$this->dbhr->from('employees a');
+		$this->dbhr->where('a.flag_active', 'Y');
+		$this->dbhr->where('a.company_id', 'COM003');
 
+		// 1. Total records (without search)
+		$tempdb = clone $this->dbhr;
+		$recordsTotal = $tempdb->count_all_results();
+
+		// 2. Apply Search Filter
+		if (!empty($search['value'])) {
+			$s = $search['value'];
+			$this->dbhr->group_start();
+			$this->dbhr->like('a.id', $s);
+			$this->dbhr->or_like('a.nik', $s);
+			$this->dbhr->or_like('a.name', $s);
+			$this->dbhr->or_like('a.hometown', $s);
+			$this->dbhr->or_like('a.birthday', $s);
+			$this->dbhr->or_like('a.nationality', $s);
+			$this->dbhr->or_like('a.flag_active', $s);
+			$this->dbhr->group_end();
+		}
+
+		// 3. Filtered records count
+		$tempdb = clone $this->dbhr;
+		$recordsFiltered = $tempdb->count_all_results();
+
+		// 4. Data Fetching
+		$this->dbhr->select('
+			a.*,
+			b.name as company_name,
+			c.name as department_name,
+			d.name as division_name,
+			e.name as title_name,
+			f.name as firstcontract,
+			g.name as secondcontract,
+			h.name as thirdcontract,
+			i.name as permanent,
+			j.name as position_name
+		');
+		$this->dbhr->join('companies b', 'b.id = a.company_id', 'left');
+		$this->dbhr->join('departments c', 'c.id = a.department_id', 'left');
+		$this->dbhr->join('divisions d', 'd.id = a.division_id', 'left');
+		$this->dbhr->join('titles e', 'e.id = a.title_id', 'left');
+		$this->dbhr->join('contracts f', 'f.id = a.firstcontract_id', 'left');
+		$this->dbhr->join('contracts g', 'g.id = a.secondcontract_id', 'left');
+		$this->dbhr->join('contracts h', 'h.id = a.thirdcontract_id', 'left');
+		$this->dbhr->join('contracts i', 'i.id = a.permanent_id', 'left');
+		$this->dbhr->join('positions j', 'j.id = a.position_id', 'left');
+
+		// Ordering
+		if (isset($order[0]['column']) && isset($columns[$order[0]['column']])) {
+			$colIdx = $order[0]['column'];
+			if ($colIdx != 0 && $colIdx != 11) { // Skip 'no' and 'option'
+				$this->dbhr->order_by($columns[$colIdx], $order[0]['dir']);
+			} else {
+				$this->dbhr->order_by('a.id', 'asc');
+			}
+		} else {
+			$this->dbhr->order_by('a.id', 'asc');
+		}
+
+		// Paging
+		if ($length != -1) {
+			$this->dbhr->limit($length, $start);
+		}
+
+		$query = $this->dbhr->get()->result();
+
+		// Transformation
 		$hasil = [];
+		$no = $start + 1;
 
-		$int	= (0 + $start);
-		foreach ($query as $datas) {
-			$int++;
+		$religi_map = [
+			'1' => 'Islam',
+			'2' => 'Katolik',
+			'3' => 'Kristen',
+			'4' => 'Hindu',
+			'5' => 'Budha',
+			'6' => 'Kong Hu Chu'
+		];
 
-
-
-			$agama = $datas->relid;
-			$jk    = $datas->genderid;
-
-			$permanent    		= $datas->permanent_id;
-			$firstcontract   	= $datas->firstcontract_id;
-			$secondcontract	= $datas->secondcontract_id;
-			$thirdcontract		= $datas->thirdcontract_id;
-
-
-			if ($permanent == 'CTR004') {
-
+		foreach ($query as $row) {
+			$status = 'Belum Kontrak';
+			if ($row->permanent_id == 'CTR004') {
 				$status = 'Tetap';
-			} elseif ($thirdcontract == 'CTR003') {
-
+			} elseif ($row->thirdcontract_id == 'CTR003') {
 				$status = 'Kontrak Ketiga';
-			} elseif ($secondcontract == 'CTR002') {
+			} elseif ($row->secondcontract_id == 'CTR002') {
 				$status = 'Kontrak Kedua';
-			} elseif ($firstcontract == 'CTR001') {
-
+			} elseif ($row->firstcontract_id == 'CTR001') {
 				$status = 'Kontrak Pertama';
-			} elseif ($firstcontract == '0' && $secondcontract == '0' && $thirdcontract == '0' && $permanent == '0') {
-				$status = 'Belum Kontrak';
 			}
 
+			$gender = ($row->genderid === 'L') ? 'Laki-laki' : (($row->genderid === 'P') ? 'Perempuan' : $row->genderid);
+			$religi = isset($religi_map[$row->relid]) ? $religi_map[$row->relid] : '-';
 
-
-
-			if ($jk === 'L') {
-				$genderid = 'Laki-laki';
-			} elseif ($jk === 'P') {
-				$genderid = 'Perempuan';
-			}
-
-			if ($agama == '1') {
-				$religi = 'Islam';
-			} elseif ($agama == '2') {
-				$religi = 'Katolik';
-			} elseif ($agama == '3') {
-				$religi = 'Kristen';
-			} elseif ($agama == '4') {
-				$religi = 'Hindu';
-			} elseif ($agama == '5') {
-				$religi = 'Budha';
-			} elseif ($agama == '6') {
-				$religi = 'Kong Hu Chu';
-			}
-
-			$button = "<a href='" . site_url('employees/view/' . $datas->id) . "' class='btn btn-sm btn-info' title='View Data' data-role='qtip'><i class='fa fa-eye'></i></a>";
+			$button = "<a href='" . site_url('employees/view/' . $row->id) . "' class='btn btn-sm btn-info' title='View Data' data-role='qtip'><i class='fa fa-eye'></i></a>";
 
 			$hasil[] = [
-				'no' => $int,
-				'id' => $datas->id,
-				'nik' => $datas->nik,
-				'name' => $datas->name,
-				'hometown' => $datas->hometown,
-				'birthday' => $datas->birthday,
-				'gender' => $genderid,
+				'no' => $no++,
+				'id' => $row->id,
+				'nik' => $row->nik,
+				'name' => $row->name,
+				'hometown' => $row->hometown,
+				'birthday' => $row->birthday,
+				'gender' => $gender,
 				'religion' => $religi,
-				'nationality' => $datas->nationality,
+				'nationality' => $row->nationality,
 				'employee_status' => $status,
-				'status_aktif' => $datas->flag_active,
+				'status_aktif' => $row->flag_active,
 				'option' => $button
 			];
 		}
 
 		echo json_encode([
 			'draw' => intval($draw),
-			'recordsTotal' => count($query_all),
-			'recordsFiltered' => count($query_all),
+			'recordsTotal' => intval($recordsTotal),
+			'recordsFiltered' => intval($recordsFiltered),
 			'data' => $hasil
 		]);
 	}

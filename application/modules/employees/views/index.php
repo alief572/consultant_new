@@ -4,7 +4,7 @@ $ENABLE_MANAGE  = has_permission('Master_Employee.Manage');
 $ENABLE_VIEW    = has_permission('Master_Employee.View');
 $ENABLE_DELETE  = has_permission('Master_Employee.Delete');
 ?>
-<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.min.css">
 <div class="box box-primary">
 	<div class="box-header">
 		<h3 class="box-title"><?= $title; ?></h3>
@@ -13,33 +13,35 @@ $ENABLE_DELETE  = has_permission('Master_Employee.Delete');
 	</div>
 	<!-- /.box-header -->
 	<div class="box-body">
-		<table id="example1" class="table table-bordered table-striped">
-			<thead>
-				<tr class='bg-blue'>
-					<!--<th class="text-center">Foto</th> -->
-					<th class="text-center">No</th>
-					<th class="text-center">Id</th>
-					<th class="text-center">NIK</th>
-					<th class="text-center">Name</th>
-					<th class="text-center">Hometown</th>
-					<th class="text-center">Birthday</th>
-					<th class="text-center">Gender</th>
-					<th class="text-center">Religion</th>
-					<th class="text-center">Nationality</th>
-					<th class="text-center">Employee Status</th>
-					<th class="text-center">Status Aktif</th>
-					<th class="text-center">Option</th>
-				</tr>
-			</thead>
-			<tbody>
+		<div class="table-responsive">
+			<table id="example1" class="table table-bordered table-striped nowrap">
+				<thead>
+					<tr class='bg-blue'>
+						<!--<th class="text-center">Foto</th> -->
+						<th class="text-center">No</th>
+						<th class="text-center">Id</th>
+						<th class="text-center">NIK</th>
+						<th class="text-center">Name</th>
+						<th class="text-center">Hometown</th>
+						<th class="text-center">Birthday</th>
+						<th class="text-center">Gender</th>
+						<th class="text-center">Religion</th>
+						<th class="text-center">Nationality</th>
+						<th class="text-center">Employee Status</th>
+						<th class="text-center">Status Aktif</th>
+						<th class="text-center">Option</th>
+					</tr>
+				</thead>
+				<tbody>
 
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	</div>
 	<!-- /.box-body -->
 </div>
 <!-- /.box -->
-<script src="https://cdn.datatables.net/2.2.1/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.7/js/dataTables.min.js"></script>
 <script>
 	$(document).ready(function() {
 		DataTables();
@@ -71,17 +73,16 @@ $ENABLE_DELETE  = has_permission('Master_Employee.Delete');
 	}
 
 	function DataTables() {
-		var DataTables = $('#example1').dataTable({
+		var table = $('#example1').DataTable({
 			ajax: {
 				url: siteurl + active_controller + 'get_data_employees',
 				type: "POST",
 				dataType: "JSON",
-				data: function(d) {
-
-				}
 			},
 			columns: [{
 					data: 'no',
+					orderable: false,
+					searchable: false
 				},
 				{
 					data: 'id'
@@ -114,7 +115,9 @@ $ENABLE_DELETE  = has_permission('Master_Employee.Delete');
 					data: 'status_aktif'
 				},
 				{
-					data: 'option'
+					data: 'option',
+					orderable: false,
+					searchable: false
 				}
 			],
 			responsive: true,
@@ -122,7 +125,18 @@ $ENABLE_DELETE  = has_permission('Master_Employee.Delete');
 			serverSide: true,
 			stateSave: true,
 			destroy: true,
-			paging: true
+			paging: true,
+			searchDelay: 500,
+			autoWidth: false,
+			scrollX: true,
+			order: [
+				[1, 'asc']
+			],
+			lengthMenu: [
+				[10, 25, 50, 100],
+				[10, 25, 50, 100]
+			],
+			pageLength: 10
 		});
 	}
 </script>
