@@ -55,42 +55,45 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <li role="presentation" class="non_konsultasi"><a href="javascript:void();" onclick="tab_non_konsultasi();">Non Konsultasi</a></li>
         </ul> -->
         <div id="konsultasi">
+            <div class="table-responsive">
+                <table id="table_penawaran" class="table table-bordered table-striped nowrap">
+                    <thead class="bg-primary">
+                        <tr>
+                            <th align="center">No</th>
+                            <th align="center">Nomor SPK</th>
+                            <th align="center">Marketing</th>
+                            <th align="center">Package</th>
+                            <th align="center">Customer</th>
+                            <th align="center">Grand Total</th>
+                            <th align="center">Created By</th>
+                            <th align="center">Created Date</th>
+                            <th align="center">Status</th>
+                            <th align="center">Status SPK</th>
+                            <th align="center">Action</th>
+                        </tr>
+                    </thead>
 
-            <table id="table_penawaran" class="table table-bordered table-striped">
-                <thead class="bg-primary">
-                    <tr>
-                        <th align="center">No</th>
-                        <th align="center">Nomor SPK</th>
-                        <th align="center">Marketing</th>
-                        <th align="center">Package</th>
-                        <th align="center">Customer</th>
-                        <th align="center">Grand Total</th>
-                        <th align="center">Created By</th>
-                        <th align="center">Created Date</th>
-                        <th align="center">Status</th>
-                        <th align="center">Status SPK</th>
-                        <th align="center">Action</th>
-                    </tr>
-                </thead>
-
-            </table>
+                </table>
+            </div>
         </div>
         <div id="non_konsultasi" style="display: none;">
-            <table id="table_spk_non_konsultasi" class="table table-bordered table-striped">
-                <thead class="bg-primary">
-                    <tr>
-                        <th align="center">No</th>
-                        <th align="center">Nomor SPK</th>
-                        <th align="center">Marketing</th>
-                        <th align="center">Package</th>
-                        <th align="center">Customer</th>
-                        <th align="center">Grand Total</th>
-                        <th align="center">Status SPK</th>
-                        <th align="center">Action</th>
-                    </tr>
-                </thead>
+            <div class="table-responsive">
+                <table id="table_spk_non_konsultasi" class="table table-bordered table-striped nowrap">
+                    <thead class="bg-primary">
+                        <tr>
+                            <th align="center">No</th>
+                            <th align="center">Nomor SPK</th>
+                            <th align="center">Marketing</th>
+                            <th align="center">Package</th>
+                            <th align="center">Customer</th>
+                            <th align="center">Grand Total</th>
+                            <th align="center">Status SPK</th>
+                            <th align="center">Action</th>
+                        </tr>
+                    </thead>
 
-            </table>
+                </table>
+            </div>
         </div>
     </div>
     <!-- /.box-body -->
@@ -298,7 +301,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     data: 'nm_marketing'
                 },
                 {
-                    data: 'nm_paket'
+                    data: 'nm_paket',
+                    render: function(data, type, row) {
+                        if (type === 'display' && data && data.length > 40) {
+                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
+                        }
+                        return data;
+                    }
                 },
                 {
                     data: 'nm_customer'
@@ -327,7 +336,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             serverSide: true,
             stateSave: true,
             destroy: true,
-            paging: true
+            paging: true,
+            scrollX: true
         });
     }
 
@@ -363,7 +373,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     data: 'nm_marketing'
                 },
                 {
-                    data: 'nm_paket'
+                    data: 'nm_paket',
+                    render: function(data, type, row) {
+                        if (type === 'display' && data && data.length > 40) {
+                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
+                        }
+                        return data;
+                    }
                 },
                 {
                     data: 'nm_customer'
@@ -383,7 +399,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             serverSide: true,
             stateSave: true,
             destroy: true,
-            paging: true
+            paging: true,
+            scrollX: true
         });
     }
 </script>

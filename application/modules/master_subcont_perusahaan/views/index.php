@@ -23,19 +23,21 @@ $ENABLE_DELETE  = has_permission('Master_Subcont_Perusahaan.Delete');
 	</div>
 	<!-- /.box-header -->
 	<div class="box-body">
-		<table id="example1" class="table table-bordered table-striped">
-			<thead>
-				<tr>
-					<th>#</th>
-					<th>Nama Biaya</th>
-					<th>COA</th>
-					<th>Action</th>
-				</tr>
-			</thead>
-			<tbody>
+		<div class="table-responsive">
+			<table id="example1" class="table table-bordered table-striped nowrap">
+				<thead class="bg-primary">
+					<tr>
+						<th>#</th>
+						<th>Nama Biaya</th>
+						<th>COA</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
 
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	</div>
 	<!-- /.box-body -->
 </div>
@@ -103,7 +105,8 @@ $ENABLE_DELETE  = has_permission('Master_Subcont_Perusahaan.Delete');
 				serverSide: true,
 				stateSave: true,
 				destroy: true,
-				paging: true
+				paging: true,
+				scrollX: true
 			});
 		}
 

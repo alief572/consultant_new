@@ -21,27 +21,28 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 <div class="box">
     <div class="box-header">
-        
+
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <table id="table_penawaran" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th align="center">No</th>
-                    <th align="center">ID History</th>
-                    <th align="center">ID Quotation</th>
-                    <th align="center">Date</th>
-                    <th align="center">Marketing</th>
-                    <th align="center">Package</th>
-                    <th align="center">Customer</th>
-                    <th align="center">Grand Total</th>
-                    <th align="center">Revisi</th>
-                    <th align="center">Action</th>
-                </tr>
-            </thead>
-
-        </table>
+        <div class="table-responsive">
+            <table id="table_penawaran" class="table table-bordered table-striped nowrap">
+                <thead class="bg-primary">
+                    <tr>
+                        <th align="center">No</th>
+                        <th align="center">ID History</th>
+                        <th align="center">ID Quotation</th>
+                        <th align="center">Date</th>
+                        <th align="center">Marketing</th>
+                        <th align="center">Package</th>
+                        <th align="center">Customer</th>
+                        <th align="center">Grand Total</th>
+                        <th align="center">Revisi</th>
+                        <th align="center">Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
     <!-- /.box-body -->
 </div>
@@ -185,7 +186,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     data: 'nm_marketing'
                 },
                 {
-                    data: 'nm_paket'
+                    data: 'nm_paket',
+                    render: function(data, type, row) {
+                        if (type === 'display' && data && data.length > 40) {
+                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
+                        }
+                        return data;
+                    }
                 },
                 {
                     data: 'nm_customer'
@@ -204,7 +211,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             processing: false,
             serverSide: true,
             destroy: true,
-            paging: true
+            paging: true,
+            scrollX: true
         });
     }
 </script>

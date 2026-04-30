@@ -25,25 +25,27 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <table id="table_penawaran" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th align="center">No</th>
-                    <th align="center">Nomor SPK</th>
-                    <th align="center">Nomor Kasbon</th>
-                    <th align="center">Customer</th>
-                    <th align="center">Sales</th>
-                    <th align="center">Project Leader</th>
-                    <th align="center">Package</th>
-                    <th align="center">Keterangan</th>
-                    <th align="center">Tipe</th>
-                    <th align="center">Tipe Pembayaran</th>
-                    <th align="center">Nominal</th>
-                    <th align="center">Action</th>
-                </tr>
-            </thead>
+        <div class="table-responsive">
+            <table id="table_penawaran" class="table table-bordered table-striped nowrap">
+                <thead>
+                    <tr>
+                        <th align="center">No</th>
+                        <th align="center">Nomor SPK</th>
+                        <th align="center">Nomor Kasbon</th>
+                        <th align="center">Customer</th>
+                        <th align="center">Sales</th>
+                        <th align="center">Project Leader</th>
+                        <th align="center">Package</th>
+                        <th align="center">Keterangan</th>
+                        <th align="center">Tipe</th>
+                        <th align="center">Tipe Pembayaran</th>
+                        <th align="center">Nominal</th>
+                        <th align="center">Action</th>
+                    </tr>
+                </thead>
 
-        </table>
+            </table>
+        </div>
     </div>
     <!-- /.box-body -->
 </div>
@@ -138,10 +140,22 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
                     data: 'nm_project_leader'
                 },
                 {
-                    data: 'nm_project'
+                    data: 'nm_project',
+                    render: function(data, type, row) {
+                        if (type === 'display' && data && data.length > 40) {
+                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
+                        }
+                        return data;
+                    }
                 },
                 {
-                    data: 'keterangan'
+                    data: 'keterangan',
+                    render: function(data, type, row) {
+                        if (type === 'display' && data && data.length > 40) {
+                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
+                        }
+                        return data;
+                    }
                 },
                 {
                     data: 'tipe'
@@ -161,7 +175,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
             serverSide: true,
             stateSave: true,
             destroy: true,
-            paging: true
+            paging: true,
+            scrollX: true
         });
     }
 </script>

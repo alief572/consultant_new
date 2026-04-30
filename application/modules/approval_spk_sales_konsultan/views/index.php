@@ -25,7 +25,7 @@ $ENABLE_DELETE  = has_permission('Sales_&_Konsultan.Delete');
     <!-- /.box-header -->
     <div class="box-body">
         <div class="table-responsive">
-            <table id="table_penawaran" class="table table-bordered table-striped">
+            <table id="table_penawaran" class="table table-bordered table-striped nowrap">
                 <thead>
                     <tr>
                         <th align="center">No</th>
@@ -39,7 +39,6 @@ $ENABLE_DELETE  = has_permission('Sales_&_Konsultan.Delete');
                         <th align="center">Action</th>
                     </tr>
                 </thead>
-
             </table>
         </div>
     </div>
@@ -126,7 +125,13 @@ $ENABLE_DELETE  = has_permission('Sales_&_Konsultan.Delete');
                     data: 'nm_marketing'
                 },
                 {
-                    data: 'nm_paket'
+                    data: 'nm_paket',
+                    render: function(data, type, row) {
+                        if (type === 'display' && data && data.length > 40) {
+                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
+                        }
+                        return data;
+                    }
                 },
                 {
                     data: 'nm_customer'
@@ -149,7 +154,8 @@ $ENABLE_DELETE  = has_permission('Sales_&_Konsultan.Delete');
             serverSide: true,
             stateSave: true,
             destroy: true,
-            paging: true
+            paging: true,
+            scrollX: true
         });
     }
 </script>

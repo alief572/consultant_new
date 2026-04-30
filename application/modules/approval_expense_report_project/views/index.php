@@ -26,7 +26,7 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
     <!-- /.box-header -->
     <div class="box-body">
         <div class="table-responsive">
-            <table id="table_penawaran" class="table table-bordered table-striped">
+            <table id="table_penawaran" class="table table-bordered table-striped nowrap">
                 <thead>
                     <tr>
                         <th align="center">No</th>
@@ -187,7 +187,13 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
                     data: 'project_leader'
                 },
                 {
-                    data: 'package'
+                    data: 'package',
+                    render: function(data, type, row) {
+                        if (type === 'display' && data && data.length > 40) {
+                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
+                        }
+                        return data;
+                    }
                 },
                 {
                     data: 'keterangan'
@@ -206,7 +212,8 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
             serverSide: true,
             stateSave: true,
             destroy: true,
-            paging: true
+            paging: true,
+            scrollX: true
         });
     }
 </script>

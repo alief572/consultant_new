@@ -31,21 +31,22 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <table id="table_lab" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th align="center">No.</th>
-                    <th align="center">Isu Lingkungan</th>
-                    <th align="center">Pengaturan Perundang-undangan</th>
-                    <th align="center">Waktu</th>
-                    <th align="center">Harga SSC / Titik</th>
-                    <th align="center">Harga Lab / Titik</th>
-                    <th align="center">COA</th>
-                    <th align="center">Action</th>
-                </tr>
-            </thead>
-
-        </table>
+        <div class="table-responsive">
+            <table id="table_lab" class="table table-bordered table-striped nowrap">
+                <thead class="bg-primary">
+                    <tr>
+                        <th align="center">No.</th>
+                        <th align="center">Isu Lingkungan</th>
+                        <th align="center">Pengaturan Perundang-undangan</th>
+                        <th align="center">Waktu</th>
+                        <th align="center">Harga SSC / Titik</th>
+                        <th align="center">Harga Lab / Titik</th>
+                        <th align="center">COA</th>
+                        <th align="center">Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
     <!-- /.box-body -->
 </div>
@@ -386,7 +387,8 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
             serverSide: true,
             stateSave: true,
             destroy: true,
-            paging: true
+            paging: true,
+            scrollX: true
         });
     }
 </script>

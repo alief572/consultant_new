@@ -19,49 +19,51 @@ $ENABLE_DELETE  = has_permission('Master_Customer.Delete');
 	</div>
 	<!-- /.box-header -->
 	<div class="box-body">
-		<table id="example1" class="table table-bordered table-striped">
-			<thead>
-				<th class="text-center">#</th>
-				<th class="text-center">Customer</th>
-				<th class="text-center">Credibility</th>
-				<th class="text-center">Product Jual</th>
-				<th class="text-center">Country</th>
-				<th class="text-center">Status</th>
-				<th class="text-center">Option</th>
-			</thead>
-			<tbody>
-				<?php
-				$numb = 0;
-				foreach ($result as $record) {
-					$numb++;
-					if ($record->sts_aktif == 'N') {
-						$status = 'Non-Active';
-						$status_ = 'red';
-					} else {
-						$status = 'Active';
-						$status_ = 'green';
-					}
-				?>
-					<tr>
-						<td class="text-center"><?= $numb; ?></td>
-						<td><?= strtoupper($record->nm_customer) ?></td>
-						<td class="text-center"><?= strtoupper($record->kredibilitas) ?></td>
-						<td><?= strtoupper($record->produk_jual) ?></td>
-						<td class="text-center"><?= strtoupper($record->country_code) ?></td>
-						<td class="text-center"><span class='badge bg-<?= $status_; ?>'><?= $status; ?></span></td>
-						<td class="text-center">
-							<a href='<?= base_url('master_customer/add/' . $record->id_customer . '/view'); ?>' class="btn btn-warning btn-sm" title="Detail"><i class="fa fa-eye"></i></a>
-							<?php if ($ENABLE_MANAGE) : ?>
-								<a href='<?= base_url('master_customer/add/' . $record->id_customer); ?>' class="btn btn-primary btn-sm" title="Edit"><i class="fa fa-edit"></i></a>
-							<?php endif; ?>
-							<?php if ($ENABLE_DELETE) : ?>
-								<button type='button' class="btn btn-danger btn-sm delete" title="Delete" data-id="<?= $record->id_customer ?>"><i class="fa fa-trash"></i></a>
+		<div class="table-responsive">
+			<table id="example1" class="table table-bordered table-striped nowrap">
+				<thead>
+					<th class="text-center">#</th>
+					<th class="text-center">Customer</th>
+					<th class="text-center">Credibility</th>
+					<th class="text-center">Product Jual</th>
+					<th class="text-center">Country</th>
+					<th class="text-center">Status</th>
+					<th class="text-center">Option</th>
+				</thead>
+				<tbody>
+					<?php
+					$numb = 0;
+					foreach ($result as $record) {
+						$numb++;
+						if ($record->sts_aktif == 'N') {
+							$status = 'Non-Active';
+							$status_ = 'red';
+						} else {
+							$status = 'Active';
+							$status_ = 'green';
+						}
+					?>
+						<tr>
+							<td class="text-center"><?= $numb; ?></td>
+							<td><?= strtoupper($record->nm_customer) ?></td>
+							<td class="text-center"><?= strtoupper($record->kredibilitas) ?></td>
+							<td><?= strtoupper($record->produk_jual) ?></td>
+							<td class="text-center"><?= strtoupper($record->country_code) ?></td>
+							<td class="text-center"><span class='badge bg-<?= $status_; ?>'><?= $status; ?></span></td>
+							<td class="text-center">
+								<a href='<?= base_url('master_customer/add/' . $record->id_customer . '/view'); ?>' class="btn btn-warning btn-sm" title="Detail"><i class="fa fa-eye"></i></a>
+								<?php if ($ENABLE_MANAGE) : ?>
+									<a href='<?= base_url('master_customer/add/' . $record->id_customer); ?>' class="btn btn-primary btn-sm" title="Edit"><i class="fa fa-edit"></i></a>
 								<?php endif; ?>
-						</td>
-					</tr>
-				<?php } ?>
-			</tbody>
-		</table>
+								<?php if ($ENABLE_DELETE) : ?>
+									<button type='button' class="btn btn-danger btn-sm delete" title="Delete" data-id="<?= $record->id_customer ?>"><i class="fa fa-trash"></i></a>
+									<?php endif; ?>
+							</td>
+						</tr>
+					<?php } ?>
+				</tbody>
+			</table>
+		</div>
 	</div>
 	<!-- /.box-body -->
 </div>
@@ -79,7 +81,7 @@ $ENABLE_DELETE  = has_permission('Master_Customer.Delete');
 	$(document).ready(function() {
 		var table = $('#example1').DataTable({
 			orderCellsTop: true,
-			fixedHeader: true
+			scrollX: true
 		});
 	});
 

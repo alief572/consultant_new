@@ -39,45 +39,48 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <li role="presentation" class="non_konsultasi"><a href="javascript:void();" onclick="tab_non_konsultasi();">Non Konsultasi</a></li>
         </ul>
         <div id="konsultasi">
-            <table id="table_penawaran" class="table table-striped">
-                <thead class="bg-primary">
-                    <tr>
-                        <th align="center">No</th>
-                        <th align="center">ID Quotation</th>
-                        <th align="center">Date</th>
-                        <th align="center">Marketing</th>
-                        <th align="center">Package</th>
-                        <th align="center">Customer</th>
-                        <th align="center">Grand Total</th>
-                        <th align="center">Revisi</th>
-                        <th align="center">Created By</th>
-                        <th align="center">Created Date</th>
-                        <th align="center">Status Cust</th>
-                        <th align="center">Status Quot</th>
-                        <th align="center">Action</th>
-                    </tr>
-                </thead>
-
-            </table>
+            <div class="table-responsive">
+                <table id="table_penawaran" class="table table-striped nowrap">
+                    <thead class="bg-primary">
+                        <tr>
+                            <th align="center">No</th>
+                            <th align="center">ID Quotation</th>
+                            <th align="center">Date</th>
+                            <th align="center">Marketing</th>
+                            <th align="center">Package</th>
+                            <th align="center">Customer</th>
+                            <th align="center">Grand Total</th>
+                            <th align="center">Revisi</th>
+                            <th align="center">Created By</th>
+                            <th align="center">Created Date</th>
+                            <th align="center">Status Cust</th>
+                            <th align="center">Status Quot</th>
+                            <th align="center">Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
         <div id="non_konsultasi" style="display: none;">
-            <table id="table_penawaran_non_konsultasi" class="table table-bordered table-striped">
-                <thead class="bg-primary">
-                    <tr>
-                        <th align="center">No</th>
-                        <th align="center">ID Quotation</th>
-                        <th align="center">Date</th>
-                        <th align="center">Admin Sales</th>
-                        <th align="center">Penawaran</th>
-                        <th align="center">Customer</th>
-                        <th align="center">Grand Total</th>
-                        <th align="center">Created By</th>
-                        <th align="center">Created Date</th>
-                        <th align="center">Status Quotation</th>
-                        <th align="center">Action</th>
-                    </tr>
-                </thead>
-            </table>
+            <div class="table-responsive">
+                <table id="table_penawaran_non_konsultasi" class="table table-bordered table-striped nowrap">
+                    <thead class="bg-primary">
+                        <tr>
+                            <th align="center">No</th>
+                            <th align="center">ID Quotation</th>
+                            <th align="center">Date</th>
+                            <th align="center">Admin Sales</th>
+                            <th align="center">Penawaran</th>
+                            <th align="center">Customer</th>
+                            <th align="center">Grand Total</th>
+                            <th align="center">Created By</th>
+                            <th align="center">Created Date</th>
+                            <th align="center">Status Quotation</th>
+                            <th align="center">Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
     </div>
     <!-- /.box-body -->
@@ -140,7 +143,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
     $(document).on('click', '.deal_penawaran', function() {
         var id_penawaran = $(this).data('id_penawaran');
-        
+
         Swal.fire({
             icon: 'warning',
             title: 'Are you sure ?',
@@ -446,7 +449,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     data: 'nm_marketing'
                 },
                 {
-                    data: 'nm_paket'
+                    data: 'nm_paket',
+                    render: function(data, type, row) {
+                        if (type === 'display' && data && data.length > 40) {
+                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
+                        }
+                        return data;
+                    }
                 },
                 {
                     data: 'nm_customer'
@@ -477,7 +486,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             processing: false,
             serverSide: true,
             destroy: true,
-            paging: true
+            paging: true,
+            scrollX: true
         });
     }
 
@@ -554,7 +564,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             processing: false,
             serverSide: true,
             destroy: true,
-            paging: true
+            paging: true,
+            scrollX: true
         });
     }
 </script>
