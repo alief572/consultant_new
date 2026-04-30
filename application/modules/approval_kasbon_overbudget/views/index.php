@@ -25,22 +25,24 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <table id="table_penawaran" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th align="center">No.</th>
-                    <th align="center">ID Request</th>
-                    <th align="center">ID Budgeting</th>
-                    <th align="center">ID SPK Penawaran</th>
-                    <th align="center">ID Penawaran</th>
-                    <th align="center">Customer</th>
-                    <th align="center">Nominal</th>
-                    <th align="center">Status</th>
-                    <th align="center">Action</th>
-                </tr>
-            </thead>
+        <div class="table-responsive">
+            <table id="table_penawaran" class="table table-bordered table-striped nowrap">
+                <thead>
+                    <tr>
+                        <th align="center">No.</th>
+                        <th align="center">ID Request</th>
+                        <th align="center">ID Budgeting</th>
+                        <th align="center">ID SPK Penawaran</th>
+                        <th align="center">ID Penawaran</th>
+                        <th align="center">Customer</th>
+                        <th align="center">Nominal</th>
+                        <th align="center">Status</th>
+                        <th align="center">Action</th>
+                    </tr>
+                </thead>
 
-        </table>
+            </table>
+        </div>
     </div>
     <!-- /.box-body -->
 </div>
@@ -336,7 +338,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
             serverSide: true,
             stateSave: true,
             destroy: true,
-            paging: true
+            paging: true,
+            scrollX: true
         });
     }
 </script>
