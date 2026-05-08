@@ -13,9 +13,36 @@ $ENABLE_DELETE  = has_permission('Approval_SPK.Delete');
     }
 
     .dropdown-menu {
-        top: 100%;
-        position: absolute;
-        overflow: auto;
+        list-style: none;
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, .15);
+        border-radius: 4px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+        z-index: 99999;
+        padding: 5px 0;
+        margin: 0;
+        min-width: 150px;
+        display: none;
+    }
+
+    .dropdown-menu li a {
+        display: block;
+        padding: 5px 15px;
+        color: #333;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .dropdown-menu li a:hover {
+        background-color: #f5f5f5;
+    }
+
+    .table-responsive,
+    .dataTables_scrollBody,
+    .dataTables_wrapper,
+    .box-body,
+    .box {
+        overflow: visible !important;
     }
 </style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
@@ -150,5 +177,32 @@ $ENABLE_DELETE  = has_permission('Approval_SPK.Delete');
             paging: true
         });
     }
+</script>
+<script type="text/javascript">
+    $(document).on('click', '.dropdown-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('.dropdown-menu').hide();
+        var $btn = $(this);
+        var $menu = $btn.siblings('.dropdown-menu');
+        if ($menu.is(':visible')) {
+            $menu.hide();
+            return;
+        }
+        var offset = $btn.offset();
+        $menu.css({
+            position: 'fixed',
+            top: (offset.top + $btn.outerHeight() - $(window).scrollTop()) + 'px',
+            left: 'auto',
+            right: ($(window).width() - offset.left - $btn.outerWidth()) + 'px',
+            display: 'block',
+            zIndex: 99999
+        });
+    });
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.btn-group').length) {
+            $('.dropdown-menu').hide();
+        }
+    });
 </script>
 <script src="<?= base_url('assets/js/basic.js') ?>"></script>

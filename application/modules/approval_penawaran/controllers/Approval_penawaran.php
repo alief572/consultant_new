@@ -240,19 +240,19 @@ class Approval_penawaran extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*, c.name as nama_marketing');
+        $dbhr = $this->load->database('dbhr', true);
+
+        $this->db->select('a.*, b.nm_customer, d.nm_paket');
         $this->db->from('kons_tr_penawaran a');
         $this->db->join('customer b', 'b.id_customer = a.id_customer', 'left');
-        $this->db->join(DBHR . '.employees c', 'c.id = a.id_marketing', 'left');
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_paket', 'left');
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_quot', 1);
         $this->db->where('a.sts_deal', null);
-        if (!empty($search)) {
+        if (!empty($search) && !empty($search['value'])) {
             $this->db->group_start();
             $this->db->like('a.tgl_quotation', $search['value'], 'both');
             $this->db->or_like('a.id_quotation', $search['value'], 'both');
-            $this->db->or_like('c.name', $search['value'], 'both');
             $this->db->or_like('d.nm_paket', $search['value'], 'both');
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
             $this->db->or_like('a.grand_total', str_replace(',', '', $search['value']), 'both');
@@ -319,60 +319,46 @@ class Approval_penawaran extends Admin_Controller
                     aria-expanded="false">
                     <i class="fa fa-cogs"></i> <span class="caret"></span>
                 </button>
-                <div class="dropdown-menu dropdown-menu-right">
+                <ul class="dropdown-menu dropdown-menu-right" style="min-width: 150px; padding: 5px 0;">
             ';
 
             if ($this->viewPermission) {
                 $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('approval_penawaran/view_penawaran/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '" class="btn btn-sm btn-info" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-file"></i>
-                            </b>
-                            </div>
+                    <li>
+                        <a href="' . base_url('approval_penawaran/view_penawaran/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '" style="display: block; padding: 5px 15px; color: #333; text-decoration: none;">
+                            <i class="fa fa-file text-info"></i> View
                         </a>
-                        <span style="font-weight: 500"> View </span>
-                    </div>
+                    </li>
                 ';
             }
 
             if ($this->managePermission) {
                 $option .= '
-                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('approval_penawaran/approval/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '" class="btn btn-sm btn-success" style="color: #000000" >
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-edit"></i>
-                            </b>
-                            </div>
+                    <li>
+                        <a href="' . base_url('approval_penawaran/approval/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '" style="display: block; padding: 5px 15px; color: #333; text-decoration: none;">
+                            <i class="fa fa-check text-success"></i> Approval
                         </a>
-                        <span style="font-weight: 500"> Approve </span>
-                    </div>
+                    </li>
                 ';
             }
 
-            $option .= '</div>';
+            $option .= '</ul>';
 
+            // Get marketing name from HR database using separate connection
+            $nm_marketing = '';
+            if (!empty($item->id_marketing)) {
+                $get_marketing = $dbhr->get_where('employees', ['id' => $item->id_marketing])->row();
+                $nm_marketing = (!empty($get_marketing)) ? $get_marketing->name : '';
+            }
 
-            $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
-            $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nm_karyawan : '';
-
-            $this->db->select('a.*');
-            $this->db->from('kons_master_konsultasi_header a');
-            $this->db->where('a.id_konsultasi_h', $item->id_paket);
-            $get_package = $this->db->get()->row();
-
-            $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
-
-            $get_customers = $this->db->get_where('customer', ['id_customer' => $item->id_customer])->row();
-            $nm_customer = (!empty($get_customers)) ? $get_customers->nm_customer : '';
+            $nm_paket = (!empty($item->nm_paket)) ? $item->nm_paket : '';
+            $nm_customer = (!empty($item->nm_customer)) ? $item->nm_customer : '';
 
             $hasil[] = [
                 'no' => $no,
                 'id_quotation' => $item->id_quotation,
                 'tgl_quotation' => $item->tgl_quotation,
-                'nm_marketing' => ucfirst($item->nama_marketing),
+                'nm_marketing' => ucfirst($nm_marketing),
                 'nm_paket' => $nm_paket,
                 'nm_customer' => $nm_customer,
                 'grand_total' => number_format($item->grand_total),

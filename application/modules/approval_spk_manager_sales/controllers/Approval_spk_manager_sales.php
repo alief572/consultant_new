@@ -508,21 +508,16 @@ class Approval_spk_manager_sales extends Admin_Controller
                     aria-expanded="false">
                     <i class="fa fa-cogs"></i> <span class="caret"></span>
                 </button>
-                <div class="dropdown-menu dropdown-menu-right">
+                <ul class="dropdown-menu dropdown-menu-right" style="min-width: 150px; padding: 5px 0;">
             ';
 
             if ($this->viewPermission) {
                 $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('approval_spk_manager_sales/view_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-info" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-file"></i>
-                            </b>
-                            </div>
+                    <li>
+                        <a href="' . base_url('approval_spk_manager_sales/view_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" style="display: block; padding: 5px 15px; color: #333; text-decoration: none;">
+                            <i class="fa fa-file text-info"></i> View
                         </a>
-                        <span style="font-weight: 500"> View </span>
-                    </div>
+                    </li>
                 ';
             }
 
@@ -547,20 +542,15 @@ class Approval_spk_manager_sales extends Admin_Controller
 
                 if ($valid == 1) {
                     $option .= '
-                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('approval_spk_manager_sales/approval_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-success" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-check"></i>
-                            </b>
-                            </div>
+                    <li>
+                        <a href="' . base_url('approval_spk_manager_sales/approval_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" style="display: block; padding: 5px 15px; color: #333; text-decoration: none;">
+                            <i class="fa fa-check text-success"></i> Approval
                         </a>
-                        <span style="font-weight: 500"> Approval </span>
-                    </div>
+                    </li>
                 ';
                 }
             }
-            $option .= '</div>';
+            $option .= '</ul>';
 
             $nm_marketing = $item->nm_sales;
 
