@@ -66,18 +66,18 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
         <!-- /.box-header -->
         <div class="box-body">
             <div class="row">
-                <?php 
-                if($data_penawaran->sts_quot == '2') :
-                    ?>
+                <?php
+                if ($data_penawaran->sts_quot == '2') :
+                ?>
                     <div class="col-md-12">
                         <div class="alert alert-danger">
                             <h4>Reject Reason !</h4>
                             <?= $data_penawaran->reject_reason ?>
                         </div>
                     </div>
-                    <?php
+                <?php
                 endif;
-            ?>
+                ?>
                 <div class="col-md-2">
                     <b>Number</b>
                 </div>
@@ -97,7 +97,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                             if (isset($list_divisi)) {
                                 foreach ($list_divisi as $item_divisi) :
                                     if ($item_divisi->id_divisi == $id_divisi) {
-                                        echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . ' - '.$item_divisi->nm_company.'</option>';
+                                        echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . ' - ' . $item_divisi->nm_company . '</option>';
                                     }
                                 endforeach;
                             }

@@ -80,13 +80,15 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                         <select class="form-control form-control-sm select_divisi" name="divisi">
                             <!-- <option value="">- Select Divisi -</option> -->
                             <?php
-                            if (isset($list_divisi)) {
+                            if (isset($list_divisi)) :
                                 foreach ($list_divisi as $item_divisi) :
-                                    if ($item_divisi->id_divisi == $id_divisi) {
-                                        echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . ' - '.$item_divisi->nm_company.'</option>';
-                                    }
+                                    $selected = '';
+                                    if ($item_divisi->id_divisi == $id_divisi) :
+                                        $selected = 'selected';
+                                    endif;
+                                    echo '<option value="' . $item_divisi->id_divisi . '" ' . $selected . '>' . $item_divisi->nm_divisi . ' - ' . $item_divisi->nm_company . '</option>';
                                 endforeach;
-                            }
+                            endif;
                             ?>
                         </select>
                     </div>
@@ -101,13 +103,15 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                         <select class="form-control form-control-sm select_customer get_detail_customer" name="customer">
                             <!-- <option value="">- Select Customer -</option> -->
                             <?php
-                            if (isset($list_customer)) {
-                                foreach ($list_customer as $item_customer) {
-                                    if ($item_customer->id_customer == $id_customer) {
-                                        echo '<option value="' . $item_customer->id_customer . '">' . $item_customer->nm_customer . '</option>';
-                                    }
-                                }
-                            }
+                            if (isset($list_customer)) :
+                                foreach ($list_customer as $item_customer) :
+                                    $selected = '';
+                                    if ($item_customer->id_customer == $id_customer) :
+                                        $selected = 'selected';
+                                    endif;
+                                    echo '<option value="' . $item_customer->id_customer . '" ' . $selected . '>' . $item_customer->nm_customer . '</option>';
+                                endforeach;
+                            endif;
                             ?>
                         </select>
                     </div>
@@ -119,11 +123,13 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                     <select class="form-control form-control-sm select2" name="company">
                         <!-- <option value="">- Select Company -</option> -->
                         <?php
-                        foreach ($list_company as $item_company) {
-                            if ($item_company->id_company == $id_company) {
-                                echo '<option value="' . $item_company->id_company . '">' . $item_company->nm_company . '</option>';
-                            }
-                        }
+                        foreach ($list_company as $item_company) :
+                            $selected = '';
+                            if ($item_company->id_company == $id_company) :
+                                $selected = 'selected';
+                            endif;
+                            echo '<option value="' . $item_company->id_company . '" ' . $selected . '>' . $item_company->nm_company . '</option>';
+                        endforeach;
                         ?>
                     </select>
                 </div>
@@ -486,7 +492,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
 
     function hitung_disc_by_persen() {
         var disc_persen = $('input[name="disc_persen"]').val();
-        if(disc_persen !== '') {
+        if (disc_persen !== '') {
             disc_persen = disc_persen.split(',').join('');
             disc_persen = parseFloat(disc_persen);
         } else {
@@ -494,7 +500,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
         }
 
         var subtotal = $('.td_subtotal').html();
-        if(subtotal !== '') {
+        if (subtotal !== '') {
             subtotal = subtotal.split(',').join('');
             subtotal = parseFloat(subtotal);
         } else {
@@ -510,7 +516,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
 
     function hitung_disc_by_nominal() {
         var disc_nominal = $('input[name="disc_nominal"]').val();
-        if(disc_nominal !== '') {
+        if (disc_nominal !== '') {
             disc_nominal = disc_nominal.split(',').join('');
             disc_nominal = parseFloat(disc_nominal);
         } else {
@@ -518,7 +524,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
         }
 
         var subtotal = $('.td_subtotal').html();
-        if(subtotal !== '') {
+        if (subtotal !== '') {
             subtotal = subtotal.split(',').join('');
             subtotal = parseFloat(subtotal);
         } else {
@@ -636,7 +642,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
         }
 
         var disc_nominal = $('input[name="disc_nominal"]').val();
-        if(disc_nominal !== '') {
+        if (disc_nominal !== '') {
             disc_nominal = disc_nominal.split(',').join('');
             disc_nominal = parseFloat(disc_nominal);
         } else {
@@ -759,7 +765,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                             allowEscapeKey: false,
                             timer: 3000
                         }).then(() => {
-                            window.location.href = siteurl + active_controller + '/penawaran';
+                            window.location.href = siteurl + active_controller;
                         });
                     },
                     error: function(xhr, status, error) {

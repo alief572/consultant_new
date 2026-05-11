@@ -65,7 +65,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             <?php
                             if (isset($list_divisi)) {
                                 foreach ($list_divisi as $item_divisi) :
-                                    echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . ' - '.$item_divisi->nm_company.'</option>';
+                                    echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . ' - ' . $item_divisi->nm_company . '</option>';
                                 endforeach;
                             }
                             ?>
@@ -298,7 +298,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <td>PPn</td>
                         <td class="text-right td_ppn">
                             <div class="form-inline">
-                                 <span>(%)</span>
+                                <span>(%)</span>
                                 <input type="number" name="persen_ppn" id="" class="form-control form-control-sm text-right" value="0">
                                 <span>(Rp.)</span>
                                 <input type="text" name="nominal_ppn" id="" class="form-control form-control-sm auto_num text-right" value="0" readonly>
@@ -508,7 +508,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
     function hitung_disc_by_persen() {
         var disc_persen = $('input[name="disc_persen"]').val();
-        if(disc_persen !== '') {
+        if (disc_persen !== '') {
             disc_persen = disc_persen.split(',').join('');
             disc_persen = parseFloat(disc_persen);
         } else {
@@ -516,7 +516,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         }
 
         var subtotal = $('.td_subtotal').html();
-        if(subtotal !== '') {
+        if (subtotal !== '') {
             subtotal = subtotal.split(',').join('');
             subtotal = parseFloat(subtotal);
         } else {
@@ -532,7 +532,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
     function hitung_disc_by_nominal() {
         var disc_nominal = $('input[name="disc_nominal"]').val();
-        if(disc_nominal !== '') {
+        if (disc_nominal !== '') {
             disc_nominal = disc_nominal.split(',').join('');
             disc_nominal = parseFloat(disc_nominal);
         } else {
@@ -540,7 +540,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         }
 
         var subtotal = $('.td_subtotal').html();
-        if(subtotal !== '') {
+        if (subtotal !== '') {
             subtotal = subtotal.split(',').join('');
             subtotal = parseFloat(subtotal);
         } else {
@@ -581,7 +581,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         }
 
         var disc_nominal = $('input[name="disc_nominal"]').val();
-        if(disc_nominal !== '') {
+        if (disc_nominal !== '') {
             disc_nominal = disc_nominal.split(',').join('');
             disc_nominal = parseFloat(disc_nominal);
         } else {
@@ -704,7 +704,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             allowEscapeKey: false,
                             timer: 3000
                         }).then(() => {
-                            window.location.href = siteurl + active_controller + '/penawaran';
+                            window.location.href = siteurl + active_controller;
                         });
                     },
                     error: function(xhr, status, error) {
