@@ -562,7 +562,7 @@ class Approval_penawaran extends Admin_Controller
                 $this->db->group_start();
                 $this->db->like('a.id_penawaran', $search, 'both');
                 $this->db->or_like('a.tgl_quotation', $search, 'both');
-                $this->db->or_like('a.pic_penawaran', $search, 'both');
+                $this->db->or_like('a.nm_pic_penawaran', $search, 'both');
                 $this->db->or_like('a.keterangan_penawaran', $search, 'both');
                 $this->db->or_like('a.grand_total', $search, 'both');
                 $this->db->group_end();
@@ -591,7 +591,7 @@ class Approval_penawaran extends Admin_Controller
                     'no' => $no,
                     'id_quotation' => $item->id_penawaran,
                     'date' => $item->tgl_quotation,
-                    'pic_penawaran' => $item->pic_penawaran,
+                    'pic_penawaran' => $item->nm_pic_penawaran,
                     'penawaran' => $item->keterangan_penawaran,
                     'customer' => $item->nm_customer,
                     'grand_total' => number_format($item->grand_total),
