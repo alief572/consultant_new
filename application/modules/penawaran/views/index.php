@@ -26,9 +26,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <a class="btn btn-sm btn-success" style="font-weight: bold;" href="<?= base_url('penawaran/add_penawaran') ?>">
                     <i class="fa fa-plus"></i> Penawaran Konsultasi
                 </a>
-                <a class="btn btn-sm btn-primary" style="font-weight: bold;" href="<?= base_url('penawaran/add_penawaran_non') ?>">
+                <!-- <a class="btn btn-sm btn-primary" style="font-weight: bold;" href="<?= base_url('penawaran/add_penawaran_non') ?>">
                     <i class="fa fa-plus"></i> Penawaran Non Konsultasi
-                </a>
+                </a> -->
             </div>
         <?php endif; ?>
     </div>
