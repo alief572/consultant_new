@@ -640,7 +640,7 @@ class SPK_penawaran extends Admin_Controller
                 ';
             }
 
-            if (has_permission($this->deletePermission)) {
+            if ($this->auth->user_id() == '7') {
                 $option .= '
                     <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
                         <a href="#" class="btn btn-sm btn-danger del_spk" style="color: #000000" data-id_spk_penawaran="' . $item->id_spk_penawaran . '">
@@ -1015,269 +1015,206 @@ class SPK_penawaran extends Admin_Controller
         $this->template->render('add_spk_non_kons');
     }
 
+    /**
+     * Helper: clean numeric value from formatted string (remove comma separator)
+     */
+    private function _clean_number($value)
+    {
+        return ($value !== '') ? str_replace(',', '', $value) : 0;
+    }
+
+    /**
+     * Helper: get employee name, returns array [id, name]
+     */
+    private function _get_employee_info($id)
+    {
+        $emp = $this->Spk_penawaran_model->get_employee($id);
+        return [
+            'id' => !empty($emp) ? $emp->id : '',
+            'nm' => !empty($emp) ? $emp->nm_karyawan : ''
+        ];
+    }
+
     public function save_spk_penawaran()
     {
         $post = $this->input->post();
 
-        $id_spk_penawaran = $this->Spk_penawaran_model->generate_id_spk_penawaran();
+        // Early validation: check duplicate ID before heavy queries
+        if ($post['id_spk_penawaran'] !== '') {
+            if ($this->Spk_penawaran_model->is_spk_exists($post['id_spk_penawaran'])) {
+                echo json_encode(['status' => 0, 'msg' => 'Maaf, ID SPK sudah terdaftar sebelum nya !']);
+                return;
+            }
+            $id_spk_penawaran = $post['id_spk_penawaran'];
+        } else {
+            $id_spk_penawaran = $this->Spk_penawaran_model->generate_id_spk_penawaran();
+        }
 
+        // Fetch related data
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $post['id_quotation']])->row();
+        if (empty($get_penawaran)) {
+            echo json_encode(['status' => 0, 'msg' => 'Data penawaran tidak ditemukan !']);
+            return;
+        }
 
-        $this->db->select('a.id, a.id_aktifitas, a.mandays, a.mandays_rate, a.bobot, a.mandays_tandem, a.mandays_rate_tandem, a.harga_aktifitas, a.total_aktifitas, b.nm_aktifitas as aktifitas_nm');
-        $this->db->from('kons_tr_penawaran_aktifitas a');
-        $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
-        $this->db->where('a.id_penawaran', $post['id_quotation']);
-        $get_penawaran_aktifitas = $this->db->get()->result();
+        $get_penawaran_aktifitas = $this->Spk_penawaran_model->get_penawaran_aktifitas($post['id_quotation']);
 
-        $this->db->select('a.id_customer, a.nm_customer');
-        $this->db->from('customer a');
-        $this->db->where('a.id_customer', $get_penawaran->id_customer);
-        $get_customer = $this->db->get()->row();
+        // Customer
+        $get_customer = $this->db->get_where('customer', ['id_customer' => $get_penawaran->id_customer])->row();
+        $id_customer = !empty($get_customer) ? $get_customer->id_customer : '';
+        $nm_customer = !empty($get_customer) ? $get_customer->nm_customer : '';
 
-        $id_customer = (!empty($get_customer)) ? $get_customer->id_customer : '';
-        $nm_customer = (!empty($get_customer)) ? $get_customer->nm_customer : '';
+        // Employees (reusable helper eliminates 4x duplicate queries)
+        $marketing = $this->_get_employee_info($get_penawaran->id_marketing);
+        $project_leader = $this->_get_employee_info($post['project_leader']);
+        $konsultan_1 = $this->_get_employee_info($post['konsultan_1']);
+        $konsultan_2 = $this->_get_employee_info($post['konsultan_2']);
 
-        $this->dbhr->select('a.id, a.name as nm_karyawan');
-        $this->dbhr->from('employees a');
-        $this->dbhr->where('a.id', $get_penawaran->id_marketing);
-        $get_marketing = $this->dbhr->get()->row();
+        // Konsultasi & Divisi
+        $get_konsultasi = $this->Spk_penawaran_model->get_konsultasi($get_penawaran->id_paket);
+        $get_divisi = $this->Spk_penawaran_model->get_divisi($post['divisi']);
+        $id_divisi = !empty($get_divisi) ? $get_divisi->id : '';
+        $nm_divisi = !empty($get_divisi) ? $get_divisi->name : '';
 
-        $id_marketing = (!empty($get_marketing)) ? $get_marketing->id : '';
-        $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nm_karyawan : '';
-
-        $this->db->select('a.*, b.nm_paket');
-        $this->db->from('kons_master_konsultasi_header a');
-        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
-        $this->db->where('a.id_konsultasi_h', $get_penawaran->id_paket);
-        $get_konsultasi = $this->db->get()->row();
-
-        $get_divisi = $this->dbhr->get_where(DBHR . '.divisions', ['id' => $post['divisi']])->row();
-
-        $id_divisi = (!empty($get_divisi)) ? $get_divisi->id : '';
-        $nm_divisi = (!empty($get_divisi)) ? $get_divisi->name : '';
-
-        $this->dbhr->select('a.id, a.name as nm_karyawan');
-        $this->dbhr->from('employees a');
-        $this->dbhr->where('a.id', $post['project_leader']);
-        $get_project_leader = $this->dbhr->get()->row();
-
-        $id_project_leader = (!empty($get_project_leader)) ? $get_project_leader->id : '';
-        $nm_project_leader = (!empty($get_project_leader)) ? $get_project_leader->nm_karyawan : '';
-
-        $this->dbhr->select('a.id, a.name as nm_karyawan');
-        $this->dbhr->from('employees a');
-        $this->dbhr->where('a.id', $post['konsultan_1']);
-        $get_konsultan_1 = $this->dbhr->get()->row();
-
-        $id_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->id : '';
-        $nm_konsultan_1 = (!empty($get_konsultan_1)) ? $get_konsultan_1->nm_karyawan : '';
-
-        $this->dbhr->select('a.id, a.name as nm_karyawan');
-        $this->dbhr->from('employees a');
-        $this->dbhr->where('a.id', $post['konsultan_2']);
-        $get_konsultan_2 = $this->dbhr->get()->row();
-
-        $id_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->id : '';
-        $nm_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->nm_karyawan : '';
-
-        $tipe_info_awal_eks = (isset($post['informasi_awal_eksternal'])) ? $post['informasi_awal_eksternal'] : null;
-
+        // Informasi awal eksternal
+        $tipe_info_awal_eks = isset($post['informasi_awal_eksternal']) ? $post['informasi_awal_eksternal'] : null;
         $detail_info_awal_eks = '';
         $cp_info_awal_eks = '';
-        if (isset($post['informasi_awal_eksternal'])) {
+        if ($tipe_info_awal_eks !== null) {
             $detail_info_awal_eks = $post['informasi_awal_eksternal_detail_' . $tipe_info_awal_eks];
             $cp_info_awal_eks = $post['informasi_awal_eksternal_cp_' . $tipe_info_awal_eks];
         }
 
-        $this->db->trans_begin();
+        $now = date('Y-m-d H:i:s');
+        $user_id = $this->auth->user_id();
 
-        $lanjut = 1;
-
-        if ($post['id_spk_penawaran'] !== '') {
-            $check_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', array('id_spk_penawaran' => $post['id_spk_penawaran']))->num_rows();
-
-            if ($check_spk_penawaran > 0) {
-                $lanjut = 0;
-            } else {
-                $id_spk_penawaran = $post['id_spk_penawaran'];
-            }
-        }
-
-        // print_r($id_spk_penawaran);
-        // exit;
-
+        // Build main insert array
         $arr_insert = [
-            'id_spk_penawaran' => $id_spk_penawaran,
-            'id_penawaran' => $post['id_quotation'],
-            'id_customer' => $id_customer,
-            'nm_customer' => $nm_customer,
-            'address' => $post['alamat'],
-            'npwp_cust' => $post['no_npwp'],
-            'nm_pic' => $post['pic'],
-            'tipe_informasi_awal' => $get_penawaran->tipe_informasi_awal,
+            'id_spk_penawaran'      => $id_spk_penawaran,
+            'id_penawaran'          => $post['id_quotation'],
+            'id_customer'           => $id_customer,
+            'nm_customer'           => $nm_customer,
+            'address'               => $post['alamat'],
+            'npwp_cust'             => $post['no_npwp'],
+            'nm_pic'                => $post['pic'],
+            'tipe_informasi_awal'   => $get_penawaran->tipe_informasi_awal,
             'detail_informasi_awal' => $get_penawaran->detail_informasi_awal,
-            'waktu_from' => $post['waktu_from'],
-            'waktu_to' => $post['waktu_to'],
-            'id_sales' => $id_marketing,
-            'nm_sales' => $nm_marketing,
-            'upload_proposal' => $get_penawaran->upload_proposal,
-            'id_project' => $get_konsultasi->id_konsultasi_h,
-            'nm_project' => $get_konsultasi->nm_paket,
-            'id_divisi' => $id_divisi,
-            'nm_divisi' => $nm_divisi,
-            'id_project_leader' => $id_project_leader,
-            'nm_project_leader' => $nm_project_leader,
-            'id_konsultan_1' => $post['konsultan_1'],
-            'nm_konsultan_1' => $nm_konsultan_1,
-            'id_konsultan_2' => $post['konsultan_2'],
-            'nm_konsultan_2' => $nm_konsultan_2,
-            'nilai_kontrak' => ($post['nilai_kontrak'] !== '') ? str_replace(',', '', $post['nilai_kontrak']) : 0,
-            'biaya_subcont' => ($post['biaya_subcont'] !== '') ? str_replace(',', '', $post['biaya_subcont']) : 0,
-            'biaya_akomodasi' => ($post['biaya_akomodasi'] !== '') ? str_replace(',', '', $post['biaya_akomodasi']) : 0,
-            'biaya_others' => ($post['biaya_others'] !== '') ? str_replace(',', '', $post['biaya_others']) : 0,
-            'biaya_tandem' => ($post['biaya_tandem'] !== '') ? str_replace(',', '', $post['biaya_tandem']) : 0,
-            'biaya_lab' => ($post['biaya_lab'] !== '') ? str_replace(',', '', $post['biaya_lab']) : 0,
-            'biaya_subcont_tenaga_ahli' => ($post['biaya_subcont_tenaga_ahli'] !== '') ? str_replace(',', '', $post['biaya_subcont_tenaga_ahli']) : 0,
-            'biaya_subcont_perusahaan' => ($post['biaya_subcont_perusahaan'] !== '') ? str_replace(',', '', $post['biaya_subcont_perusahaan']) : 0,
-            'nilai_kontrak_bersih' => ($post['nilai_kontrak_bersih'] !== '') ? str_replace(',', '', $post['nilai_kontrak_bersih']) : 0,
-            'mandays_rate' => ($post['mandays_rate'] !== '') ? str_replace(',', '', $post['mandays_rate']) : 0,
-            'total_mandays' => ($post['total_mandays'] !== '') ? str_replace(',', '', $post['total_mandays']) : 0,
-            'mandays_subcont' => ($post['mandays_subcont'] !== '') ? str_replace(',', '', $post['mandays_subcont']) : 0,
-            'mandays_internal' => ($post['total_mandays'] !== '') ? str_replace(',', '', $post['total_mandays']) : 0,
-            'nm_pemberi_informasi_1_komisi' => $post['nm_pemberi_informasi_1_komisi'],
-            'persen_pemberi_informasi_1_komisi' => ($post['persentase_pemberi_informasi_1_komisi'] !== '') ? str_replace(',', '', $post['persentase_pemberi_informasi_1_komisi']) : 0,
-            'nominal_pemberi_informasi_1_komisi' => ($post['nominal_pemberi_informasi_1_komisi'] !== '') ? str_replace(',', '', $post['nominal_pemberi_informasi_1_komisi']) : 0,
-            'nm_pemberi_informasi_2_komisi' => $post['nm_pemberi_informasi_2_komisi'],
-            'persen_pemberi_informasi_2_komisi' => ($post['persentase_pemberi_informasi_2_komisi'] !== '') ? str_replace(',', '', $post['persentase_pemberi_informasi_2_komisi']) : 0,
-            'nominal_pemberi_informasi_2_komisi' => ($post['nominal_pemberi_informasi_2_komisi'] !== '') ? str_replace(',', '', $post['nominal_pemberi_informasi_2_komisi']) : 0,
-            'nm_sales_1_komisi' => $post['nm_sales_1_komisi'],
-            'persen_sales_1_komisi' => ($post['persentase_sales_1_komisi'] !== '') ? str_replace(',', '', $post['persentase_sales_1_komisi']) : 0,
-            'nominal_sales_1_komisi' => ($post['nominal_sales_1_komisi'] !== '') ? str_replace(',', '', $post['nominal_sales_1_komisi']) : 0,
-            'nm_sales_2_komisi' => $post['nm_sales_2_komisi'],
-            'persen_sales_2_komisi' => ($post['persentase_sales_2_komisi'] !== '') ? str_replace(',', '', $post['persentase_sales_2_komisi']) : 0,
-            'nominal_sales_2_komisi' => ($post['nominal_sales_2_komisi'] !== '') ? str_replace(',', '', $post['nominal_sales_2_komisi']) : 0,
-            'isu_khusus' => $post['isu_khusus'],
-            'tipe_info_awal_eks' => $tipe_info_awal_eks,
-            'detail_info_awal_eks' => $detail_info_awal_eks,
-            'cp_info_awal_eks' => $cp_info_awal_eks,
-            'input_by' => $this->auth->user_id(),
-            'input_date' => date('Y-m-d H:i:s')
+            'waktu_from'            => $post['waktu_from'],
+            'waktu_to'              => $post['waktu_to'],
+            'id_sales'              => $marketing['id'],
+            'nm_sales'              => $marketing['nm'],
+            'upload_proposal'       => $get_penawaran->upload_proposal,
+            'id_project'            => $get_konsultasi->id_konsultasi_h,
+            'nm_project'            => $get_konsultasi->nm_paket,
+            'id_divisi'             => $id_divisi,
+            'nm_divisi'             => $nm_divisi,
+            'id_project_leader'     => $project_leader['id'],
+            'nm_project_leader'     => $project_leader['nm'],
+            'id_konsultan_1'        => $post['konsultan_1'],
+            'nm_konsultan_1'        => $konsultan_1['nm'],
+            'id_konsultan_2'        => $post['konsultan_2'],
+            'nm_konsultan_2'        => $konsultan_2['nm'],
+            'nilai_kontrak'         => $this->_clean_number($post['nilai_kontrak']),
+            'biaya_subcont'         => $this->_clean_number($post['biaya_subcont']),
+            'biaya_akomodasi'       => $this->_clean_number($post['biaya_akomodasi']),
+            'biaya_others'          => $this->_clean_number($post['biaya_others']),
+            'biaya_tandem'          => $this->_clean_number($post['biaya_tandem']),
+            'biaya_lab'             => $this->_clean_number($post['biaya_lab']),
+            'biaya_subcont_tenaga_ahli' => $this->_clean_number($post['biaya_subcont_tenaga_ahli']),
+            'biaya_subcont_perusahaan'  => $this->_clean_number($post['biaya_subcont_perusahaan']),
+            'nilai_kontrak_bersih'  => $this->_clean_number($post['nilai_kontrak_bersih']),
+            'mandays_rate'          => $this->_clean_number($post['mandays_rate']),
+            'total_mandays'         => $this->_clean_number($post['total_mandays']),
+            'mandays_subcont'       => $this->_clean_number($post['mandays_subcont']),
+            'mandays_internal'      => $this->_clean_number($post['total_mandays']),
+            'nm_pemberi_informasi_1_komisi'      => $post['nm_pemberi_informasi_1_komisi'],
+            'persen_pemberi_informasi_1_komisi'   => $this->_clean_number($post['persentase_pemberi_informasi_1_komisi']),
+            'nominal_pemberi_informasi_1_komisi'  => $this->_clean_number($post['nominal_pemberi_informasi_1_komisi']),
+            'nm_pemberi_informasi_2_komisi'      => $post['nm_pemberi_informasi_2_komisi'],
+            'persen_pemberi_informasi_2_komisi'   => $this->_clean_number($post['persentase_pemberi_informasi_2_komisi']),
+            'nominal_pemberi_informasi_2_komisi'  => $this->_clean_number($post['nominal_pemberi_informasi_2_komisi']),
+            'nm_sales_1_komisi'     => $post['nm_sales_1_komisi'],
+            'persen_sales_1_komisi' => $this->_clean_number($post['persentase_sales_1_komisi']),
+            'nominal_sales_1_komisi' => $this->_clean_number($post['nominal_sales_1_komisi']),
+            'nm_sales_2_komisi'     => $post['nm_sales_2_komisi'],
+            'persen_sales_2_komisi' => $this->_clean_number($post['persentase_sales_2_komisi']),
+            'nominal_sales_2_komisi' => $this->_clean_number($post['nominal_sales_2_komisi']),
+            'isu_khusus'            => $post['isu_khusus'],
+            'tipe_info_awal_eks'    => $tipe_info_awal_eks,
+            'detail_info_awal_eks'  => $detail_info_awal_eks,
+            'cp_info_awal_eks'      => $cp_info_awal_eks,
+            'input_by'              => $user_id,
+            'input_date'            => $now
         ];
 
+        // Build aktifitas data
         $data_insert_aktifitas = [];
-        if (!empty($get_penawaran_aktifitas)) {
-            foreach ($get_penawaran_aktifitas as $item) {
-
-                $data_insert_aktifitas[] = [
-                    'id_penawaran' => $post['id_quotation'],
-                    'id_spk_penawaran' => $id_spk_penawaran,
-                    'id_aktifitas' => $item->id_aktifitas,
-                    'nm_aktifitas' => $item->aktifitas_nm,
-                    'bobot' => $item->bobot,
-                    'mandays' => $item->mandays,
-                    'mandays_rate' => $item->mandays_rate,
-                    'mandays_tandem' => $item->mandays_tandem,
-                    'mandays_rate_tandem' => $item->mandays_rate_tandem,
-                    'harga_aktifitas' => $item->harga_aktifitas,
-                    'total_aktifitas' => $item->total_aktifitas,
-                    'input_by' => $this->auth->user_id(),
-                    'input_date' => date('Y-m-d H:i:s')
-                ];
-            }
+        foreach ($get_penawaran_aktifitas as $item) {
+            $data_insert_aktifitas[] = [
+                'id_penawaran'       => $post['id_quotation'],
+                'id_spk_penawaran'   => $id_spk_penawaran,
+                'id_aktifitas'       => $item->id_aktifitas,
+                'nm_aktifitas'       => $item->aktifitas_nm,
+                'bobot'              => $item->bobot,
+                'mandays'            => $item->mandays,
+                'mandays_rate'       => $item->mandays_rate,
+                'mandays_tandem'     => $item->mandays_tandem,
+                'mandays_rate_tandem' => $item->mandays_rate_tandem,
+                'harga_aktifitas'    => $item->harga_aktifitas,
+                'total_aktifitas'    => $item->total_aktifitas,
+                'input_by'           => $user_id,
+                'input_date'         => $now
+            ];
         }
 
+        // Build subcont data
         $data_insert_subcont = [];
         if (isset($post['subcont'])) {
             foreach ($post['subcont'] as $item) {
                 $data_insert_subcont[] = [
                     'id_spk_penawaran' => $id_spk_penawaran,
-                    'nm_aktifitas' => $item['subcont_new'],
-                    'mandays_subcont' => $item['subcont_new_mandays'],
-                    'price_subcont' => $item['subcont_new_rate'],
-                    'total_subcont' => $item['subcont_new_price'],
-                    'keterangan' => $item['subcont_description'],
-                    'dibuat_oleh' => $this->auth->user_id(),
-                    'dibuat_tgl' => date('Y-m-d H:i:s')
+                    'nm_aktifitas'     => $item['subcont_new'],
+                    'mandays_subcont'  => $item['subcont_new_mandays'],
+                    'price_subcont'    => $item['subcont_new_rate'],
+                    'total_subcont'    => $item['subcont_new_price'],
+                    'keterangan'       => $item['subcont_description'],
+                    'dibuat_oleh'      => $user_id,
+                    'dibuat_tgl'       => $now
                 ];
             }
         }
 
+        // Build payment data
         $data_insert_payment = [];
         if (isset($post['pt'])) {
             foreach ($post['pt'] as $item) {
                 $data_insert_payment[] = [
                     'id_spk_penawaran' => $id_spk_penawaran,
-                    'term_payment' => $item['term_payment'],
-                    'persen_payment' => ($item['persen_payment'] !== '') ? str_replace(',', '', $item['persen_payment']) : 0,
-                    'nominal_payment' => ($item['nominal_payment'] !== '') ? str_replace(',', '', $item['nominal_payment']) : 0,
-                    'desc_payment' => $item['desc_payment'],
-                    'dibuat_oleh' => $this->auth->user_id(),
-                    'dibuat_tgl' => date('Y-m-d H:i:s')
+                    'term_payment'     => $item['term_payment'],
+                    'persen_payment'   => $this->_clean_number($item['persen_payment']),
+                    'nominal_payment'  => $this->_clean_number($item['nominal_payment']),
+                    'desc_payment'     => $item['desc_payment'],
+                    'dibuat_oleh'      => $user_id,
+                    'dibuat_tgl'       => $now
                 ];
             }
         }
 
-        $insert_spk_penawaran = $this->db->insert('kons_tr_spk_penawaran', $arr_insert);
-        if (!$insert_spk_penawaran) {
-            $this->db->trans_rollback();
-            print_r($this->db->last_query());
-            exit;
-        }
+        // Execute all inserts via model (single transaction)
+        $result = $this->Spk_penawaran_model->insert_spk_penawaran(
+            $arr_insert,
+            $data_insert_aktifitas,
+            $data_insert_subcont,
+            $data_insert_payment,
+            $post['id_quotation'],
+            $post['tipe_informasi_awal']
+        );
 
-        $update_penawaran = $this->db->update('kons_tr_penawaran', ['id_spk_penawaran' => $id_spk_penawaran], ['id_quotation' => $post['id_quotation']]);
-        if (!$update_penawaran) {
-            $this->db->trans_rollback();
-            print_r($this->db->error($update_penawaran) . ' ' . $this->db->last_query());
-            exit;
-        }
-
-        if (!empty($data_insert_aktifitas)) {
-            $insert_aktifitas = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert_aktifitas);
-            if (!$insert_aktifitas) {
-                $this->db->trans_rollback();
-
-                print_r($this->db->error($insert_aktifitas) . ' ' . $this->db->last_query());
-                exit;
-            }
-        }
-
-        // print_r($data_insert_subcont);
-
-        if (!empty($data_insert_subcont)) {
-            $insert_spk_penawaran_subcont = $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_insert_subcont);
-            if (!$insert_spk_penawaran_subcont) {
-                $this->db->trans_rollback();
-                print_r($this->db->last_query());
-                exit;
-            }
-        }
-
-        $insert_spk_penawaran_payment = $this->db->insert_batch('kons_tr_spk_penawaran_payment', $data_insert_payment);
-        if (!$insert_spk_penawaran_payment) {
-            $this->db->trans_rollback();
-            print_r($this->db->error($insert_spk_penawaran_payment) . ' ' . $this->db->last_query());
-            exit;
-        }
-
-        $update_penawaran = $this->db->update('kons_tr_penawaran', ['sts_cust' => $post['tipe_informasi_awal']], ['id_quotation' => $post['id_quotation']]);
-
-        if ($this->db->trans_status() === false || $lanjut < 1) {
-            $this->db->trans_rollback();
-            $valid = 0;
-            $msg = 'Please try again later !';
-            if ($lanjut < 1) {
-                $msg = 'Maaf, ID SPK sudah terdaftar sebelum nya !';
-            }
+        if ($result) {
+            echo json_encode(['status' => 1, 'msg' => 'Data has been successfully saved !']);
         } else {
-            $this->db->trans_commit();
-            $valid = 1;
-            $msg = 'Data has been successfully saved !';
+            echo json_encode(['status' => 0, 'msg' => 'Please try again later !']);
         }
-
-        echo json_encode([
-            'status' => $valid,
-            'msg' => $msg
-        ]);
     }
 
     public function update_spk_penawaran()

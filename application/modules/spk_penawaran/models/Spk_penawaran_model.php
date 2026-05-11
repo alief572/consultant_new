@@ -226,4 +226,95 @@ class Spk_penawaran_model extends BF_Model
 
         return $get_data;
     }
+
+    /**
+     * Get employee by ID from HR database
+     */
+    public function get_employee($id)
+    {
+        if (empty($id)) {
+            return null;
+        }
+        $this->dbhr->select('a.id, a.name as nm_karyawan');
+        $this->dbhr->from('employees a');
+        $this->dbhr->where('a.id', $id);
+        return $this->dbhr->get()->row();
+    }
+
+    /**
+     * Get penawaran aktifitas with joined activity name
+     */
+    public function get_penawaran_aktifitas($id_quotation)
+    {
+        $this->db->select('a.id, a.id_aktifitas, a.mandays, a.mandays_rate, a.bobot, a.mandays_tandem, a.mandays_rate_tandem, a.harga_aktifitas, a.total_aktifitas, b.nm_aktifitas as aktifitas_nm');
+        $this->db->from('kons_tr_penawaran_aktifitas a');
+        $this->db->join('kons_master_aktifitas b', 'b.id_aktifitas = a.id_aktifitas', 'left');
+        $this->db->where('a.id_penawaran', $id_quotation);
+        return $this->db->get()->result();
+    }
+
+    /**
+     * Get konsultasi header with paket name
+     */
+    public function get_konsultasi($id_paket)
+    {
+        $this->db->select('a.*, b.nm_paket');
+        $this->db->from('kons_master_konsultasi_header a');
+        $this->db->join('kons_master_paket b', 'b.id_paket = a.id_paket', 'left');
+        $this->db->where('a.id_konsultasi_h', $id_paket);
+        return $this->db->get()->row();
+    }
+
+    /**
+     * Get division by ID from HR database
+     */
+    public function get_divisi($id)
+    {
+        if (empty($id)) {
+            return null;
+        }
+        return $this->dbhr->get_where(DBHR . '.divisions', ['id' => $id])->row();
+    }
+
+    /**
+     * Check if SPK penawaran ID already exists
+     */
+    public function is_spk_exists($id_spk_penawaran)
+    {
+        return $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->num_rows() > 0;
+    }
+
+    /**
+     * Insert SPK penawaran with all related data (aktifitas, subcont, payment)
+     */
+    public function insert_spk_penawaran($arr_insert, $data_aktifitas, $data_subcont, $data_payment, $id_quotation, $tipe_informasi_awal)
+    {
+        $this->db->trans_begin();
+
+        $this->db->insert('kons_tr_spk_penawaran', $arr_insert);
+
+        $this->db->update('kons_tr_penawaran', ['id_spk_penawaran' => $arr_insert['id_spk_penawaran']], ['id_quotation' => $id_quotation]);
+
+        if (!empty($data_aktifitas)) {
+            $this->db->insert_batch('kons_tr_spk_aktifitas', $data_aktifitas);
+        }
+
+        if (!empty($data_subcont)) {
+            $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_subcont);
+        }
+
+        if (!empty($data_payment)) {
+            $this->db->insert_batch('kons_tr_spk_penawaran_payment', $data_payment);
+        }
+
+        $this->db->update('kons_tr_penawaran', ['sts_cust' => $tipe_informasi_awal], ['id_quotation' => $id_quotation]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            return false;
+        }
+
+        $this->db->trans_commit();
+        return true;
+    }
 }
