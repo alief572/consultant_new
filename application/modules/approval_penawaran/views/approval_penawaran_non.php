@@ -67,18 +67,18 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
         <!-- /.box-header -->
         <div class="box-body">
             <div class="row">
-                <?php 
-                if($data_penawaran->sts_quot == '2') :
-                    ?>
+                <?php
+                if ($data_penawaran->sts_quot == '2') :
+                ?>
                     <div class="col-md-12">
                         <div class="alert alert-danger">
                             <h4>Reject Reason !</h4>
                             <?= $data_penawaran->reject_reason ?>
                         </div>
                     </div>
-                    <?php
+                <?php
                 endif;
-            ?>
+                ?>
                 <div class="col-md-2">
                     <b>Number</b>
                 </div>
@@ -98,7 +98,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                             if (isset($list_divisi)) {
                                 foreach ($list_divisi as $item_divisi) :
                                     if ($item_divisi->id_divisi == $id_divisi) {
-                                        echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . '</option>';
+                                        echo '<option value="' . $item_divisi->id_divisi . '">' . $item_divisi->nm_divisi . ' - ' . $item_divisi->nm_company . '</option>';
                                     }
                                 endforeach;
                             }
@@ -375,7 +375,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
             <div class="col-md-6"></div>
 
             <div class="col-md-12">
-                <a href="<?= base_url('penawaran/') ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
+                <a href="<?= base_url('approval_penawaran/') ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
                 <button type="button" class="btn btn-sm btn-danger reject" title="Reject Penawaran Non Konsultasi"><i class="fa fa-close"></i> Reject</button>
                 <button type="button" class="btn btn-sm btn-success approve" title="Approve Penawaran Non Konsultasi"><i class="fa fa-check"></i> Approve</button>
             </div>
@@ -447,7 +447,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
     $(document).on('click', '.reject', function() {
         var reject_reason = $('textarea[name="reject_reason"]').val();
 
-        if(reject_reason.length < 1) {
+        if (reject_reason.length < 1) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Warning !',
@@ -466,7 +466,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
             showConfirmButton: true,
             showCancelButton: true
         }).then((next) => {
-            if(next.isConfirmed) {
+            if (next.isConfirmed) {
                 var id_penawaran = $('input[name="id_penawaran"]').val();
 
                 $.ajax({
@@ -524,7 +524,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
             showConfirmButton: true,
             showCancelButton: true
         }).then((next) => {
-            if(next.isConfirmed) {
+            if (next.isConfirmed) {
                 var id_penawaran = $('input[name="id_penawaran"]').val();
 
                 $.ajax({
