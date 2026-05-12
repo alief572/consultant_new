@@ -36,14 +36,6 @@ class Laporan_kunjungan_model extends BF_Model
         $this->db->from('kons_tr_spk_penawaran');
         $this->db->where('approval_level2_sts', 1);
 
-        // Admin sees all approved SPK, consultants only see their own
-        if (!$is_admin) {
-            $this->db->group_start();
-                $this->db->where('id_konsultan_1', $user_id);
-                $this->db->or_where('id_konsultan_2', $user_id);
-            $this->db->group_end();
-        }
-
         // Get total count (before search filter)
         $total = $this->db->count_all_results('', false);
 
