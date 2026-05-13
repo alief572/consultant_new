@@ -200,8 +200,13 @@ if ($tipe == 'Expense') {
                     foreach ($data_kasbon_subcont as $item) {
                         $no_subcont++;
 
-                        $sisa_qty = ($item->aktual_terpakai - $item->qty_pengajuan);
-                        $sisa_budget = ($item->sisa_budget - $item->total_pengajuan);
+                        // ============================================================
+                        // FIX: Use real-time calculation from controller (sisa_qty_realtime)
+                        // Fallback to old formula if field doesn't exist (backward compatible)
+                        // Formula: qty_estimasi - SUM(qty_pengajuan all other kasbons) - qty_pengajuan_this
+                        // ============================================================
+                        $sisa_qty = (isset($item->sisa_qty_realtime)) ? $item->sisa_qty_realtime : ($item->aktual_terpakai - $item->qty_pengajuan);
+                        $sisa_budget = (isset($item->sisa_budget_realtime)) ? $item->sisa_budget_realtime : ($item->sisa_budget - $item->total_pengajuan);
 
                         echo '<tr>';
                         echo '<td class="text-center">' . $no_subcont . '</td>';
@@ -275,8 +280,9 @@ if ($tipe == 'Expense') {
                     foreach ($data_kasbon_akomodasi as $item) {
                         $no_subcont++;
 
-                        $sisa_qty = ($item->aktual_terpakai + $item->qty_budget_tambahan - $item->qty_pengajuan);
-                        $sisa_budget = ($item->sisa_budget + $item->budget_tambahan - $item->total_pengajuan);
+                        // FIX: Real-time with qty_budget_tambahan & budget_tambahan included
+                        $sisa_qty = (isset($item->sisa_qty_realtime)) ? $item->sisa_qty_realtime : ($item->aktual_terpakai + $item->qty_budget_tambahan - $item->qty_pengajuan);
+                        $sisa_budget = (isset($item->sisa_budget_realtime)) ? $item->sisa_budget_realtime : ($item->sisa_budget + $item->budget_tambahan - $item->total_pengajuan);
 
                         echo '<tr>';
                         echo '<td class="text-center">' . $no_subcont . '</td>';
@@ -353,8 +359,9 @@ if ($tipe == 'Expense') {
                     foreach ($data_kasbon_others as $item) {
                         $no_subcont++;
 
-                        $sisa_qty = ($item->aktual_terpakai - $item->qty_pengajuan);
-                        $sisa_budget = ($item->sisa_budget - $item->total_pengajuan);
+                        // FIX: Real-time calculation
+                        $sisa_qty = (isset($item->sisa_qty_realtime)) ? $item->sisa_qty_realtime : ($item->aktual_terpakai - $item->qty_pengajuan);
+                        $sisa_budget = (isset($item->sisa_budget_realtime)) ? $item->sisa_budget_realtime : ($item->sisa_budget - $item->total_pengajuan);
 
                         echo '<tr>';
                         echo '<td class="text-center">' . $no_subcont . '</td>';
@@ -427,8 +434,9 @@ if ($tipe == 'Expense') {
                     foreach ($data_kasbon_lab as $item) {
                         $no_subcont++;
 
-                        $sisa_qty = ($item->aktual_terpakai - $item->qty_pengajuan);
-                        $sisa_budget = ($item->sisa_budget - $item->total_pengajuan);
+                        // FIX: Real-time calculation
+                        $sisa_qty = (isset($item->sisa_qty_realtime)) ? $item->sisa_qty_realtime : ($item->aktual_terpakai - $item->qty_pengajuan);
+                        $sisa_budget = (isset($item->sisa_budget_realtime)) ? $item->sisa_budget_realtime : ($item->sisa_budget - $item->total_pengajuan);
 
                         echo '<tr>';
                         echo '<td class="text-center">' . $no_subcont . '</td>';
@@ -501,8 +509,9 @@ if ($tipe == 'Expense') {
                     foreach ($data_kasbon_subcont_tenaga_ahli as $item) {
                         $no_subcont++;
 
-                        $sisa_qty = ($item->aktual_terpakai - $item->qty_pengajuan);
-                        $sisa_budget = ($item->sisa_budget - $item->total_pengajuan);
+                        // FIX: Real-time calculation
+                        $sisa_qty = (isset($item->sisa_qty_realtime)) ? $item->sisa_qty_realtime : ($item->aktual_terpakai - $item->qty_pengajuan);
+                        $sisa_budget = (isset($item->sisa_budget_realtime)) ? $item->sisa_budget_realtime : ($item->sisa_budget - $item->total_pengajuan);
 
                         echo '<tr>';
                         echo '<td class="text-center">' . $no_subcont . '</td>';
@@ -576,8 +585,9 @@ if ($tipe == 'Expense') {
                     foreach ($data_kasbon_subcont_perusahaan as $item) {
                         $no_subcont++;
 
-                        $sisa_qty = ($item->aktual_terpakai - $item->qty_pengajuan);
-                        $sisa_budget = ($item->sisa_budget - $item->total_pengajuan);
+                        // FIX: Real-time calculation
+                        $sisa_qty = (isset($item->sisa_qty_realtime)) ? $item->sisa_qty_realtime : ($item->aktual_terpakai - $item->qty_pengajuan);
+                        $sisa_budget = (isset($item->sisa_budget_realtime)) ? $item->sisa_budget_realtime : ($item->sisa_budget - $item->total_pengajuan);
 
                         echo '<tr>';
                         echo '<td class="text-center">' . $no_subcont . '</td>';
