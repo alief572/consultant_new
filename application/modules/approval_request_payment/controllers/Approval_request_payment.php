@@ -213,7 +213,7 @@ class Approval_request_payment extends Admin_Controller
 	##########
 	*/
 
-	public function approval_payment($id = null)
+	public function approval_payment_checker($id = null)
 	{
 		$id = urldecode($id);
 		$id = str_replace('|', '/', $id);
@@ -245,7 +245,7 @@ class Approval_request_payment extends Admin_Controller
 			$this->db->select('a.*');
 			$this->db->from('kons_tr_kasbon_project_subcont a');
 			$this->db->where('a.id_header', $id);
-$get_kasbon_subcont = $this->db->get()->result();
+			$get_kasbon_subcont = $this->db->get()->result();
 
 			$this->db->select('a.*, b.keterangan,
 				(a.qty_estimasi + COALESCE(a.qty_budget_tambahan, 0) - COALESCE(
