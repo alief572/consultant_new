@@ -22,7 +22,6 @@ $ENABLE_DELETE = has_permission('Laporan_Kunjungan.Delete');
                 <thead class="bg-primary">
                     <tr>
                         <th align="center">No</th>
-                        <th align="center">No SPK</th>
                         <th align="center">Perusahaan</th>
                         <th align="center">Project Name</th>
                         <th align="center">Project Leader</th>
@@ -49,7 +48,6 @@ $(document).ready(function() {
         },
         columns: [
             { data: 'no', orderable: false, searchable: false },
-            { data: 'no_spk' },
             { data: 'perusahaan' },
             { data: 'project' },
             { data: 'project_leader' },
