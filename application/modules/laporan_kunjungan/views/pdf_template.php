@@ -248,64 +248,6 @@
     </table>
     <?php endif; ?>
 
-    <!-- Potential Improvements Section -->
-    <?php if (!empty($report['improvements'])): ?>
-    <div class="section-title">Potensi Improvement</div>
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th style="width: 30px; text-align: center;">No</th>
-                <th>Potensi Improvement</th>
-                <th>Hasil Improvement</th>
-                <th style="width: 60px; text-align: center;">Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php $no = 1; foreach ($report['improvements'] as $improvement): ?>
-            <tr>
-                <td style="text-align: center;"><?php echo $no++; ?></td>
-                <td><?php echo htmlspecialchars($improvement['potensi_improvement']); ?></td>
-                <td><?php echo htmlspecialchars($improvement['hasil_improvement']); ?></td>
-                <td style="text-align: center;">
-                    <span class="<?php echo $improvement['status'] === 'done' ? 'status-done' : 'status-progress'; ?>">
-                        <?php echo ucfirst($improvement['status']); ?>
-                    </span>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <?php endif; ?>
-
-    <!-- Previous Improvements Section -->
-    <?php if (!empty($previous_improvements)): ?>
-    <div class="section-title">Potensi Improvement Sebelumnya</div>
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th style="width: 30px; text-align: center;">No</th>
-                <th>Potensi Improvement</th>
-                <th>Hasil Improvement</th>
-                <th style="width: 60px; text-align: center;">Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php $no = 1; foreach ($previous_improvements as $improvement): ?>
-            <tr>
-                <td style="text-align: center;"><?php echo $no++; ?></td>
-                <td><?php echo htmlspecialchars($improvement->potensi_improvement); ?></td>
-                <td><?php echo htmlspecialchars($improvement->hasil_improvement); ?></td>
-                <td style="text-align: center;">
-                    <span class="<?php echo $improvement->status === 'done' ? 'status-done' : 'status-progress'; ?>">
-                        <?php echo ucfirst($improvement->status); ?>
-                    </span>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <?php endif; ?>
-
     <!-- Footer -->
     <div class="footer-note">
         Dokumen ini digenerate secara otomatis oleh sistem pada <?php echo date('d-m-Y H:i'); ?>

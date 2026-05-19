@@ -33,8 +33,11 @@ class Laporan_kunjungan_model extends BF_Model
     public function get_approved_spk_list($user_id, $start, $length, $search = '', $is_admin = false)
     {
         // Base conditions
-        $this->db->from('kons_tr_spk_penawaran');
-        $this->db->where('approval_level2_sts', 1);
+        $this->db->select('a.*, c.nm_paket');
+        $this->db->from('kons_tr_spk_penawaran a');
+        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = b.id_paket', 'left');
+        $this->db->where('a.approval_level2_sts', 1);
 
         // Get total count (before search filter)
         $total = $this->db->count_all_results('', false);
@@ -42,10 +45,13 @@ class Laporan_kunjungan_model extends BF_Model
         // Apply search filter
         if (!empty($search)) {
             $this->db->group_start();
-                $this->db->like('id_spk_penawaran', $search, 'both', false);
-                $this->db->or_like('nm_customer', $search, 'both', false);
-                $this->db->or_like('nm_project', $search, 'both', false);
-                $this->db->or_like('nm_sales', $search, 'both', false);
+                $this->db->like('a.id_spk_penawaran', $search, 'both', false);
+                $this->db->or_like('a.nm_customer', $search, 'both', false);
+                $this->db->or_like('a.nm_project', $search, 'both', false);
+                $this->db->or_like('c.nm_paket', $search, 'both', false);
+                $this->db->or_like('a.nm_project_leader', $search, 'both', false);
+                $this->db->or_like('a.nm_konsultan_1', $search, 'both', false);
+                $this->db->or_like('a.nm_konsultan_2', $search, 'both', false);
             $this->db->group_end();
         }
 
@@ -53,7 +59,7 @@ class Laporan_kunjungan_model extends BF_Model
         $filtered = $this->db->count_all_results('', false);
 
         // Apply ordering and pagination
-        $this->db->order_by('input_date', 'DESC');
+        $this->db->order_by('a.input_date', 'DESC');
         $this->db->limit($length, $start);
 
         $data = $this->db->get()->result();
@@ -67,6 +73,8 @@ class Laporan_kunjungan_model extends BF_Model
 
     /**
      * Get single SPK project details.
+     * Joins with kons_tr_penawaran and kons_master_konsultasi_header
+     * to get Consultation Package name as project name.
      *
      * @param string $id_spk_penawaran SPK identifier
      *
@@ -74,8 +82,11 @@ class Laporan_kunjungan_model extends BF_Model
      */
     public function get_spk_detail($id_spk_penawaran)
     {
-        $this->db->from('kons_tr_spk_penawaran');
-        $this->db->where('id_spk_penawaran', $id_spk_penawaran);
+        $this->db->select('a.*, b.id_paket, c.nm_paket');
+        $this->db->from('kons_tr_spk_penawaran a');
+        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = b.id_paket', 'left');
+        $this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
 
         $query = $this->db->get();
 

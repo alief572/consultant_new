@@ -122,15 +122,14 @@ class Laporan_kunjungan extends Admin_Controller
                 $konsultan .= (!empty($konsultan) ? ', ' : '') . $item->nm_konsultan_2;
             }
 
-            // Format target completion date
-            $target_selesai = !empty($item->target_selesai) ? date('d-m-Y', strtotime($item->target_selesai)) : '-';
+            // Format target completion date (waktu_to = end date from SPK)
+            $target_selesai = !empty($item->waktu_to) ? date('d-m-Y', strtotime($item->waktu_to)) : '-';
 
             $hasil[] = [
                 'no'              => $no,
-                'no_spk'          => $item->id_spk_penawaran,
                 'perusahaan'      => $item->nm_customer,
-                'project'         => $item->nm_project,
-                'project_leader'  => ucfirst($item->nm_sales),
+                'project'         => !empty($item->nm_paket) ? $item->nm_paket : $item->nm_project,
+                'project_leader'  => ucfirst($item->nm_project_leader ?? ''),
                 'konsultan'       => $konsultan,
                 'target_selesai'  => $target_selesai,
                 'action'          => $action
@@ -418,10 +417,12 @@ class Laporan_kunjungan extends Admin_Controller
             redirect('laporan_kunjungan/visit_reports');
         }
 
-        // Check ownership — only the consultant who created the report can edit
-        if ((int) $report['header']['consultant_id'] !== (int) $this->auth->user_id()) {
-            $this->session->set_flashdata('message', 'Anda tidak memiliki akses untuk mengedit laporan ini.');
-            redirect('laporan_kunjungan/visit_reports');
+        // Check ownership — only the consultant who created the report can edit (admin bypass)
+        if (!$this->auth->is_admin()) {
+            if ((int) $report['header']['consultant_id'] !== (int) $this->auth->user_id()) {
+                $this->session->set_flashdata('message', 'Anda tidak memiliki akses untuk mengedit laporan ini.');
+                redirect('laporan_kunjungan/visit_reports');
+            }
         }
 
         // Get SPK info for the report

@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Laporan Kunjungan - <?= htmlspecialchars($spk_info->nm_project) ?></title>
+    <title>Laporan Kunjungan - <?= htmlspecialchars(!empty($spk_info->nm_paket) ? $spk_info->nm_paket : $spk_info->nm_project) ?></title>
     <style>
         @media print { .no-print { display: none; } }
         body { font-family: Arial, sans-serif; font-size: 11pt; color: #333; margin: 20px; }
@@ -30,7 +30,22 @@
             <td class="info-label">Perusahaan</td>
             <td>: <?= htmlspecialchars($spk_info->nm_customer) ?></td>
             <td class="info-label">Project</td>
-            <td>: <?= htmlspecialchars($spk_info->nm_project) ?></td>
+            <td>: <?= htmlspecialchars(!empty($spk_info->nm_paket) ? $spk_info->nm_paket : $spk_info->nm_project) ?></td>
+        </tr>
+        <tr>
+            <td class="info-label">Project Leader</td>
+            <td>: <?= htmlspecialchars(ucfirst($spk_info->nm_project_leader ?? '')) ?></td>
+            <td class="info-label">Target Selesai</td>
+            <td>: <?= !empty($spk_info->waktu_to) ? date('d-m-Y', strtotime($spk_info->waktu_to)) : '-' ?></td>
+        </tr>
+        <tr>
+            <td class="info-label">Konsultan</td>
+            <td colspan="3">: <?php
+                $konsultan_names = [];
+                if (!empty($spk_info->nm_konsultan_1)) $konsultan_names[] = ucfirst($spk_info->nm_konsultan_1);
+                if (!empty($spk_info->nm_konsultan_2)) $konsultan_names[] = ucfirst($spk_info->nm_konsultan_2);
+                echo htmlspecialchars(implode(', ', $konsultan_names) ?: '-');
+            ?></td>
         </tr>
     </table>
 
@@ -65,30 +80,6 @@
             <?php endif; ?>
         </tbody>
     </table>
-
-    <?php if (!empty($improvements)): ?>
-    <div class="section-title">Potensi Improvement</div>
-    <table class="data">
-        <thead>
-            <tr>
-                <th width="5%">No</th>
-                <th width="35%">Potensi Improvement</th>
-                <th width="35%">Hasil Improvement</th>
-                <th width="10%">Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($improvements as $index => $imp): ?>
-            <tr>
-                <td style="text-align:center;"><?= $index + 1 ?></td>
-                <td><?= htmlspecialchars($imp->potensi_improvement ?? '') ?></td>
-                <td><?= htmlspecialchars($imp->hasil_improvement ?? '') ?></td>
-                <td class="<?= $imp->status === 'done' ? 'status-done' : 'status-progress' ?>"><?= ucfirst($imp->status) ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <?php endif; ?>
 
     <div class="footer">
         Dokumen ini digenerate secara otomatis pada <?= date('d-m-Y H:i') ?>
