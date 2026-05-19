@@ -417,10 +417,12 @@ class Laporan_kunjungan extends Admin_Controller
             redirect('laporan_kunjungan/visit_reports');
         }
 
-        // Check ownership — only the consultant who created the report can edit
-        if ((int) $report['header']['consultant_id'] !== (int) $this->auth->user_id()) {
-            $this->session->set_flashdata('message', 'Anda tidak memiliki akses untuk mengedit laporan ini.');
-            redirect('laporan_kunjungan/visit_reports');
+        // Check ownership — only the consultant who created the report can edit (admin bypass)
+        if (!$this->auth->is_admin()) {
+            if ((int) $report['header']['consultant_id'] !== (int) $this->auth->user_id()) {
+                $this->session->set_flashdata('message', 'Anda tidak memiliki akses untuk mengedit laporan ini.');
+                redirect('laporan_kunjungan/visit_reports');
+            }
         }
 
         // Get SPK info for the report

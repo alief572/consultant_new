@@ -162,7 +162,7 @@ $existing_improvements = $report['improvements'];
             <input type="hidden" name="id" id="report_id" value="<?= htmlspecialchars($report['header']['id']) ?>">
             <input type="hidden" name="id_spk_penawaran" id="id_spk_penawaran" value="<?= htmlspecialchars($report['header']['id_spk_penawaran']) ?>">
             <input type="hidden" name="company_name" id="company_name" value="<?= htmlspecialchars($report['header']['company_name']) ?>">
-            <input type="hidden" name="project_name" id="project_name" value="<?= htmlspecialchars($report['header']['project_name']) ?>">
+            <input type="hidden" name="project_name" id="project_name" value="<?= htmlspecialchars(!empty($spk_info->nm_paket) ? $spk_info->nm_paket : ($report['header']['project_name'] ?? $spk_info->nm_project)) ?>">
             <input type="hidden" name="consultant_id" id="consultant_id" value="<?= htmlspecialchars($report['header']['consultant_id']) ?>">
             <input type="hidden" name="consultant_name" id="consultant_name_hidden" value="<?= htmlspecialchars($report['header']['consultant_name']) ?>">
             <input type="hidden" name="visit_date" id="visit_date" value="<?= htmlspecialchars($report['header']['visit_date']) ?>">
@@ -182,10 +182,10 @@ $existing_improvements = $report['improvements'];
                                 <strong><i class="fa fa-file-text-o"></i> No SPK:</strong> <?= htmlspecialchars($report['header']['id_spk_penawaran']) ?>
                             </div>
                             <div class="col-md-4">
-                                <strong><i class="fa fa-user"></i> Project Leader:</strong> <?= htmlspecialchars($spk_info->nm_sales ?? '-') ?>
+                                <strong><i class="fa fa-user"></i> Project Leader:</strong> <?= htmlspecialchars(ucfirst($spk_info->nm_project_leader ?? '-')) ?>
                             </div>
                             <div class="col-md-4">
-                                <strong><i class="fa fa-calendar"></i> Target Selesai:</strong> <?= !empty($spk_info->target_selesai) ? date('d-m-Y', strtotime($spk_info->target_selesai)) : '-' ?>
+                                <strong><i class="fa fa-calendar"></i> Target Selesai:</strong> <?= !empty($spk_info->waktu_to) ? date('d-m-Y', strtotime($spk_info->waktu_to)) : '-' ?>
                             </div>
                         </div>
                     </div>
@@ -200,7 +200,7 @@ $existing_improvements = $report['improvements'];
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Project</label>
-                                <input type="text" class="form-control" value="<?= htmlspecialchars($report['header']['project_name']) ?>" readonly>
+                                <input type="text" class="form-control" value="<?= htmlspecialchars(!empty($spk_info->nm_paket) ? $spk_info->nm_paket : ($report['header']['project_name'] ?? $spk_info->nm_project)) ?>" readonly>
                             </div>
                         </div>
                     </div>
