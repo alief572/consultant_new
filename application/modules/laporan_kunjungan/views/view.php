@@ -42,7 +42,22 @@
                 <td class="label-col">Perusahaan</td>
                 <td>: <?= htmlspecialchars($spk_info->nm_customer) ?></td>
                 <td class="label-col" style="text-align: right; width: 100px;">Project</td>
-                <td>: <?= htmlspecialchars($spk_info->nm_project) ?></td>
+                <td>: <?= htmlspecialchars(!empty($spk_info->nm_paket) ? $spk_info->nm_paket : $spk_info->nm_project) ?></td>
+            </tr>
+            <tr>
+                <td class="label-col">Project Leader</td>
+                <td>: <?= htmlspecialchars(ucfirst($spk_info->nm_project_leader ?? '')) ?></td>
+                <td class="label-col" style="text-align: right; width: 100px;">Target Selesai</td>
+                <td>: <?= !empty($spk_info->waktu_to) ? date('d-m-Y', strtotime($spk_info->waktu_to)) : '-' ?></td>
+            </tr>
+            <tr>
+                <td class="label-col">Konsultan</td>
+                <td colspan="3">: <?php
+                    $konsultan_names = [];
+                    if (!empty($spk_info->nm_konsultan_1)) $konsultan_names[] = ucfirst($spk_info->nm_konsultan_1);
+                    if (!empty($spk_info->nm_konsultan_2)) $konsultan_names[] = ucfirst($spk_info->nm_konsultan_2);
+                    echo htmlspecialchars(implode(', ', $konsultan_names) ?: '-');
+                ?></td>
             </tr>
         </table>
     </div>
