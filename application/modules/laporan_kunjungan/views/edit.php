@@ -150,7 +150,7 @@ $existing_improvements = $report['improvements'];
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-edit"></i> Edit Laporan Kunjungan</h3>
         <div class="box-tools pull-right">
-            <a href="<?= base_url('laporan_kunjungan/visit_reports') ?>" class="btn btn-default btn-sm">
+            <a href="<?= base_url('laporan_kunjungan') ?>" class="btn btn-default btn-sm">
                 <i class="fa fa-arrow-left"></i> Kembali
             </a>
         </div>
