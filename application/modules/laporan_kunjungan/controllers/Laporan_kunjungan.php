@@ -408,20 +408,20 @@ class Laporan_kunjungan extends Admin_Controller
 
         if (empty($report)) {
             $this->session->set_flashdata('message', 'Data laporan tidak ditemukan.');
-            redirect('laporan_kunjungan/visit_reports');
+            redirect('laporan_kunjungan');
         }
 
         // Check if report is finalized — reject editing
         if ($report['header']['status'] === 'final') {
             $this->session->set_flashdata('message', 'Laporan yang sudah final tidak dapat diedit.');
-            redirect('laporan_kunjungan/visit_reports');
+            redirect('laporan_kunjungan');
         }
 
         // Check ownership — only the consultant who created the report can edit (admin bypass)
         if (!$this->auth->is_admin()) {
             if ((int) $report['header']['consultant_id'] !== (int) $this->auth->user_id()) {
                 $this->session->set_flashdata('message', 'Anda tidak memiliki akses untuk mengedit laporan ini.');
-                redirect('laporan_kunjungan/visit_reports');
+                redirect('laporan_kunjungan');
             }
         }
 
@@ -1118,14 +1118,14 @@ class Laporan_kunjungan extends Admin_Controller
 
         if (empty($report)) {
             $this->session->set_flashdata('message', 'Data laporan tidak ditemukan.');
-            redirect('laporan_kunjungan/visit_reports');
+            redirect('laporan_kunjungan');
             return;
         }
 
         // Only finalized reports can be downloaded as PDF
         if ($report['header']['status'] !== 'final') {
             $this->session->set_flashdata('message', 'Hanya laporan final yang dapat di-download.');
-            redirect('laporan_kunjungan/visit_reports');
+            redirect('laporan_kunjungan');
             return;
         }
 
@@ -1172,7 +1172,7 @@ class Laporan_kunjungan extends Admin_Controller
             // Handle mPDF errors gracefully
             log_message('error', 'PDF Generation Error: ' . $e->getMessage());
             $this->session->set_flashdata('message', 'Gagal membuat PDF. Silakan coba lagi.');
-            redirect('laporan_kunjungan/visit_reports');
+            redirect('laporan_kunjungan');
             return;
         }
     }
