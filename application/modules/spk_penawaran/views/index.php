@@ -13,13 +13,20 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     }
 
     .dropdown-menu {
-        top: 100%;
         position: absolute;
-        overflow: auto;
+        z-index: 99999;
     }
 
     .btn {
         font-weight: bold;
+    }
+
+    .table-responsive,
+    .dataTables_scrollBody,
+    .dataTables_wrapper,
+    .box-body,
+    .box {
+        overflow: visible !important;
     }
 </style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
@@ -405,3 +412,42 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     }
 </script>
 <script src="<?= base_url('assets/js/basic.js') ?>"></script>
+<script type="text/javascript">
+    // Fix dropdown position: always show above/below button using fixed positioning
+    $(document).on('show.bs.dropdown', '.btn-group', function() {
+        var $btn = $(this).find('.dropdown-toggle');
+        var $menu = $(this).find('.dropdown-menu');
+        var btnOffset = $btn.offset();
+        var btnHeight = $btn.outerHeight();
+        var menuHeight = $menu.outerHeight() || 200;
+        var windowHeight = $(window).height();
+        var scrollTop = $(window).scrollTop();
+
+        // Calculate if dropdown should appear above or below
+        var spaceBelow = windowHeight - (btnOffset.top - scrollTop + btnHeight);
+        var showAbove = spaceBelow < menuHeight && (btnOffset.top - scrollTop) > menuHeight;
+
+        $menu.css({
+            position: 'fixed',
+            left: (btnOffset.left - $menu.outerWidth() + $btn.outerWidth()) + 'px',
+            right: 'auto',
+            display: 'block'
+        });
+
+        if (showAbove) {
+            $menu.css('top', (btnOffset.top - scrollTop - menuHeight) + 'px');
+        } else {
+            $menu.css('top', (btnOffset.top - scrollTop + btnHeight) + 'px');
+        }
+    });
+
+    $(document).on('hide.bs.dropdown', '.btn-group', function() {
+        $(this).find('.dropdown-menu').css({
+            position: '',
+            top: '',
+            left: '',
+            right: '',
+            display: ''
+        });
+    });
+</script>
