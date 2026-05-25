@@ -236,7 +236,7 @@ if ($tipe == 'Expense') {
 
 <div class="box <?= $box_kasbon_akomodasi ?>">
 	<div class="box-header">
-		<h4 style="font-weight: 800;">List Item Others</h4>
+		<h4 style="font-weight: 800;">List Item Akomodasi</h4>
 	</div>
 
 	<div class="box-body">
@@ -744,7 +744,7 @@ if ($tipe == 'Expense') {
 		var errors = "";
 		if ($("#bank_coa").val() == "0") errors = "Bank tidak boleh kosong";
 
-			swal({
+		swal({
 				title: "Anda Yakin?",
 				text: "Item Akan Di Approve!",
 				type: "info",
