@@ -241,6 +241,15 @@ class Approval_request_payment extends Admin_Controller
 			if ($get_kasbon_header->tipe == '3') {
 				$tipe = 'Kasbon Others';
 			}
+			if ($get_kasbon_header->tipe == '4') {
+				$tipe = 'Kasbon Lab';
+			}
+			if ($get_kasbon_header->tipe == '5') {
+				$tipe = 'Kasbon Subcont Tenaga Ahli';
+			}
+			if ($get_kasbon_header->tipe == '6') {
+				$tipe = 'Kasbon Subcont Perusahaan';
+			}
 
 			$this->db->select('a.*');
 			$this->db->from('kons_tr_kasbon_project_subcont a');
