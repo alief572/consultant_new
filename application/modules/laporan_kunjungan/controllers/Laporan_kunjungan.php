@@ -75,13 +75,14 @@ class Laporan_kunjungan extends Admin_Controller
             $is_admin
         );
 
-        // Get list of SPK IDs that have existing drafts
+        // Get list of SPK IDs that have existing drafts for the CURRENT user
         $spk_ids_in_result = array_map(function($item) { return $item->id_spk_penawaran; }, $result['data']);
         $drafts_map = [];
         if (!empty($spk_ids_in_result)) {
             $this->db->select('id_spk_penawaran');
             $this->db->from('visit_report_headers');
             $this->db->where('status', 'draft');
+            $this->db->where('consultant_id', $this->auth->user_id());
             $this->db->where_in('id_spk_penawaran', $spk_ids_in_result);
             $draft_rows = $this->db->get()->result();
             foreach ($draft_rows as $dr) {
@@ -99,6 +100,10 @@ class Laporan_kunjungan extends Admin_Controller
             $action = '';
             // Encode id_spk_penawaran: replace / with _SLASH_ for URL safety
             $id_encoded = str_replace('/', '_SLASH_', $item->id_spk_penawaran);
+
+            if (has_permission($this->viewPermission)) {
+                $action .= '<a href="' . base_url('laporan_kunjungan/view_spk/' . $id_encoded) . '" class="btn btn-sm btn-info" title="View"><i class="fa fa-eye"></i> View</a> ';
+            }
 
             if (has_permission($this->addPermission)) {
                 $has_draft = isset($drafts_map[$item->id_spk_penawaran]);
@@ -286,10 +291,11 @@ class Laporan_kunjungan extends Admin_Controller
         // Decode _SLASH_ encoding back to slashes
         $id_spk_decoded = str_replace('_SLASH_', '/', $id_spk_penawaran);
 
-        // Check if there's an existing draft for this SPK — if yes, redirect to edit
+        // Check if there's an existing draft for this SPK by the CURRENT user — if yes, redirect to edit
         $this->db->from('visit_report_headers');
         $this->db->where('id_spk_penawaran', $id_spk_decoded);
         $this->db->where('status', 'draft');
+        $this->db->where('consultant_id', $this->auth->user_id());
         $this->db->order_by('created_at', 'DESC');
         $this->db->limit(1);
         $existing_draft = $this->db->get()->row();
@@ -442,6 +448,119 @@ class Laporan_kunjungan extends Admin_Controller
     }
 
     /**
+     * Display SPK overview with visit list.
+     * Shows SPK info and all visit reports for this SPK.
+     * Restricted by viewPermission.
+     *
+     * @param string $id_spk_penawaran _SLASH_-encoded SPK ID
+     *
+     * @return void
+     */
+    public function view_spk($id_spk_penawaran)
+    {
+        if (!$this->auth->is_admin()) {
+            $this->auth->restrict($this->viewPermission);
+        }
+
+        // Decode _SLASH_ encoding back to slashes
+        $id_spk_decoded = str_replace('_SLASH_', '/', $id_spk_penawaran);
+
+        // Get SPK info
+        $spk_info = $this->Laporan_kunjungan_model->get_spk_detail($id_spk_decoded);
+
+        if (empty($spk_info)) {
+            $this->session->set_flashdata('message', 'Data SPK tidak ditemukan.');
+            redirect('laporan_kunjungan');
+        }
+
+        // Get list of all visit reports for this SPK
+        $this->db->select('id, report_id, visit_date, consultant_name, start_time, finish_time, status');
+        $this->db->from('visit_report_headers');
+        $this->db->where('id_spk_penawaran', $id_spk_decoded);
+        $this->db->order_by('visit_date', 'DESC');
+        $visit_list = $this->db->get()->result();
+
+        $data = [
+            'spk_info'          => $spk_info,
+            'visit_list'        => $visit_list,
+            'id_spk_penawaran'  => $id_spk_decoded,
+        ];
+
+        $this->template->set($data);
+        $this->template->title('Laporan Kunjungan - View SPK');
+        $this->template->render('view_spk');
+    }
+
+    /**
+     * AJAX GET: Get visit report detail for modal display (read-only).
+     * Returns JSON with header info, action plans, and improvements for a single visit.
+     *
+     * @param int $id_report Report header ID
+     *
+     * @return void Outputs JSON
+     */
+    public function get_visit_detail($id_report)
+    {
+        $report = $this->Laporan_kunjungan_model->get_report_by_id($id_report);
+
+        if (empty($report)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan.']);
+            return;
+        }
+
+        // Format header info
+        $header = $report['header'];
+        $visit_date = !empty($header['visit_date']) ? date('d-m-Y', strtotime($header['visit_date'])) : '-';
+        $start_time = !empty($header['start_time']) ? date('d-m-Y H:i', strtotime($header['start_time'])) : '-';
+        $finish_time = !empty($header['finish_time']) ? date('d-m-Y H:i', strtotime($header['finish_time'])) : '-';
+
+        // Build action plans list from activities
+        $action_plans = [];
+        if (!empty($report['activities'])) {
+            foreach ($report['activities'] as $activity) {
+                if (!empty($activity['action_plans'])) {
+                    foreach ($activity['action_plans'] as $plan) {
+                        $action_plans[] = [
+                            'visit_date'      => $visit_date,
+                            'consultant_name' => htmlspecialchars($header['consultant_name'] ?? ''),
+                            'activity_name'   => htmlspecialchars($activity['activity_name'] ?? ''),
+                            'description'     => htmlspecialchars($plan['description'] ?? ''),
+                            'pic'             => htmlspecialchars($plan['pic'] ?? ''),
+                            'due_date'        => !empty($plan['due_date']) ? date('d-m-Y', strtotime($plan['due_date'])) : '-',
+                            'status'          => $plan['status'] ?? 'progress',
+                        ];
+                    }
+                }
+            }
+        }
+
+        // Build improvements list
+        $improvements = [];
+        if (!empty($report['improvements'])) {
+            foreach ($report['improvements'] as $imp) {
+                $improvements[] = [
+                    'potensi_improvement' => htmlspecialchars($imp['potensi_improvement'] ?? ''),
+                    'hasil_improvement'   => htmlspecialchars($imp['hasil_improvement'] ?? ''),
+                    'status'              => $imp['status'] ?? 'progress',
+                ];
+            }
+        }
+
+        echo json_encode([
+            'status' => 1,
+            'data'   => [
+                'visit_date'      => $visit_date,
+                'consultant_name' => htmlspecialchars($header['consultant_name'] ?? ''),
+                'start_time'      => $start_time,
+                'finish_time'     => $finish_time,
+                'status'          => ucfirst($header['status']),
+                'action_plans'    => $action_plans,
+                'improvements'    => $improvements,
+            ]
+        ]);
+    }
+
+    /**
      * Display report view for an SPK project.
      * Shows all action plans and improvements across all visits for this SPK.
      * Restricted by viewPermission.
@@ -472,10 +591,18 @@ class Laporan_kunjungan extends Admin_Controller
         $all_action_plans = $this->Laporan_kunjungan_model->get_previous_action_plans($id_spk_decoded);
         $all_improvements = $this->Laporan_kunjungan_model->get_previous_improvements($id_spk_decoded);
 
+        // Get list of all visit reports for this SPK
+        $this->db->select('id, report_id, visit_date, consultant_name, start_time, finish_time, status');
+        $this->db->from('visit_report_headers');
+        $this->db->where('id_spk_penawaran', $id_spk_decoded);
+        $this->db->order_by('visit_date', 'DESC');
+        $visit_list = $this->db->get()->result();
+
         $data = [
             'spk_info'          => $spk_info,
             'action_plans'      => $all_action_plans,
             'improvements'      => $all_improvements,
+            'visit_list'        => $visit_list,
             'id_spk_penawaran'  => $id_spk_decoded,
         ];
 
