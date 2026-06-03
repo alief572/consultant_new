@@ -713,23 +713,24 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var valid = 1;
 
-        for (i = 1; i <= no; i++) {
-            var qty_pengajuan = get_num($('input[name="detail_others[' + i + '][qty_pengajuan]"]').val());
-            var qty_estimasi = get_num($('input[name="detail_others[' + i + '][qty_estimasi]"]').val());
-            var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
-            var price_unit_estimasi = get_num($('input[name="detail_others[' + i + '][price_unit_estimasi]"]').val());
-            var sisa_budget = get_num($('input[name="detail_others[' + i + '][sisa_budget]"]').val());
+        // for (i = 1; i <= no; i++) {
+        //     var qty_pengajuan = get_num($('input[name="detail_others[' + i + '][qty_pengajuan]"]').val());
+        //     var qty_estimasi = get_num($('input[name="detail_others[' + i + '][qty_estimasi]"]').val());
+        //     var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
+        //     var price_unit_estimasi = get_num($('input[name="detail_others[' + i + '][price_unit_estimasi]"]').val());
+        //     var sisa_budget = get_num($('input[name="detail_others[' + i + '][sisa_budget]"]').val());
 
-            if (qty_pengajuan > 0 && qty_pengajuan < 1) {
-                qty_pengajuan = 1;
-            }
-            // if (valid == '1' && qty_pengajuan > 0 && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
-            //     valid = 0;
-            // }
-        }
+        //     if (qty_pengajuan > 0 && qty_pengajuan < 1) {
+        //         qty_pengajuan = 1;
+        //     }
+        //     // if (valid == '1' && qty_pengajuan > 0 && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
+        //     //     valid = 0;
+        //     // }
+        // }
 
-        var total_sisa = $('input[name="total_sisa"]').val();
+        var total_sisa = get_num($('input[name="total_sisa"]').val());
 
+        var ttl_propose = 0;
         for (i = 1; i <= no; i++) {
             var qty_pengajuan = get_num($('input[name="detail_others[' + i + '][qty_pengajuan]"]').val());
             var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
