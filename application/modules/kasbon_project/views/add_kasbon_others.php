@@ -448,6 +448,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 </tfoot>
             </table>
 
+            <input type="hidden" name="total_sisa" value="<?= ($ttl_total_estimasi - $ttl_total_terpakai) ?>">
+
             <!-- <table class="table custom-table">
                 <thead>
                     <tr>
@@ -721,16 +723,32 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             if (qty_pengajuan > 0 && qty_pengajuan < 1) {
                 qty_pengajuan = 1;
             }
-            if (valid == '1' && qty_pengajuan > 0 && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
-                valid = 0;
+            // if (valid == '1' && qty_pengajuan > 0 && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
+            //     valid = 0;
+            // }
+        }
+
+        var total_sisa = $('input[name="total_sisa"]').val();
+
+        for (i = 1; i <= no; i++) {
+            var qty_pengajuan = get_num($('input[name="detail_others[' + i + '][qty_pengajuan]"]').val());
+            var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
+
+            if (qty_pengajuan > 0 && qty_pengajuan < 1) {
+                qty_pengajuan = 1;
             }
+            ttl_propose += (qty_pengajuan * nominal_pengajuan);
+        }
+
+        if (valid == '1' && ttl_propose > total_sisa) {
+            valid = 0;
         }
 
         if (valid == '0') {
             swal({
                 type: 'warning',
                 title: 'Warning !',
-                text: 'Qty atau Nominal pengajuan melebihi estimasi !'
+                text: 'Total pengajuan melebihi sisa budget !'
             });
         } else {
             swal({
