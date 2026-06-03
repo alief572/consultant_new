@@ -448,6 +448,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 </tfoot>
             </table>
 
+            <input type="hidden" name="total_sisa" value="<?= ($ttl_total_estimasi - $ttl_total_terpakai) ?>">
 
 
             <br><br>
@@ -583,27 +584,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         var no = "<?= $no ?>";
 
         var valid = 1;
+        var total_sisa = $('input[name="total_sisa"]').val();
+        var ttl_propose = 0;
 
         for (i = 1; i <= no; i++) {
             var qty_pengajuan = get_num($('input[name="detail_subcont_tenaga_ahli[' + i + '][qty_pengajuan]"]').val());
-            var qty_estimasi = get_num($('input[name="detail_subcont_tenaga_ahli[' + i + '][qty_estimasi]"]').val());
             var nominal_pengajuan = get_num($('input[name="detail_subcont_tenaga_ahli[' + i + '][nominal_pengajuan]"]').val());
-            var price_unit_estimasi = get_num($('input[name="detail_subcont_tenaga_ahli[' + i + '][price_unit_estimasi]"]').val());
-            var sisa_budget = get_num($('input[name="detail_subcont_tenaga_ahli[' + i + '][sisa_budget]"]').val());
 
             if (qty_pengajuan > 0 && qty_pengajuan < 1) {
                 qty_pengajuan = 1;
             }
-            if (valid == '1' && qty_pengajuan > 0 && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
-                valid = 0;
-            }
+            ttl_propose += (nominal_pengajuan * qty_pengajuan);
+        }
+
+        if (valid == '1' && ttl_propose > total_sisa) {
+            valid = 0;
         }
 
         if (valid == '0') {
             swal({
                 type: 'warning',
                 title: 'Warning !',
-                text: 'Qty atau Nominal pengajuan melebihi estimasi !'
+                text: 'Total pengajuan melebihi sisa budget !'
             });
         } else {
             swal({
