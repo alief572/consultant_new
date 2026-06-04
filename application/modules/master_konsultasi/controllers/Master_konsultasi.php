@@ -135,7 +135,7 @@ class Master_konsultasi extends Admin_Controller
                 a.*
             FROM 
                 kons_master_konsultasi_header AS a
-            WHERE 1=1 AND (
+            WHERE 1=1 AND a.deleted_by IS NULL AND a.status = 'active' AND (
                 a.id_konsultasi_h LIKE '%" . $this->db->escape_like_str($like_value) . "%' 
                 OR a.nm_paket LIKE '%" . $this->db->escape_like_str($like_value) . "%' 
                 OR DATE_FORMAT(a.input_date, '%d-%m-%Y %H:%i') LIKE '%" . $this->db->escape_like_str($like_value) . "%' 
@@ -392,7 +392,10 @@ class Master_konsultasi extends Admin_Controller
             $dt['id_paket']  = $id_paket;
             $dt['aktifitas'] = $this->db->query($sql);
             $dt['paket']     = $this->db->select('id_paket, nm_paket')->order_by('nm_paket', 'asc')->get('kons_master_paket');
-            $dt['all_aktifitas'] = $this->db->order_by('datet', 'desc')->get('kons_master_aktifitas');
+            $dt['all_aktifitas'] = $this->db->select('a.*')
+                ->from('kons_master_aktifitas a')
+                ->where('a.deleted_by IS NULL')
+                ->get();
 
             $this->template->set($dt);
             $this->template->render('konsultasi_new');
@@ -864,9 +867,16 @@ class Master_konsultasi extends Admin_Controller
 
         $valid = 1;
         $msg = '';
-        $delete = $this->db->where('id_konsultasi_h', $id)->delete('kons_master_konsultasi_header');
+
+        $arr_delete = [
+            'deleted_by' => $this->auth->user_id(),
+            'deleted_date' => date('Y-m-d H:i:s')
+        ];
+
+        $delete = $this->db->where('id_konsultasi_h', $id)->update('kons_master_konsultasi_header', $arr_delete);
+
         if ($delete) {
-            $delete_detail = $this->db->where('id_konsultasi_h', $id)->delete('kons_master_konsultasi_detail');
+            $delete_detail = $this->db->where('id_konsultasi_h', $id)->update('kons_master_konsultasi_detail', $arr_delete);
             if (!$delete_detail) {
                 $valid = 0;
                 $msg  = "Please try again later !";
