@@ -708,34 +708,54 @@ class Project_budgeting extends Admin_Controller
 
     public function del_spk_budgeting()
     {
+        $this->auth->restrict($this->deletePermission);
+
         $id = $this->input->post('id');
 
-        $this->db->trans_begin();
+        try {
+            if (empty($id)) {
+                throw new Exception('ID tidak boleh kosong !');
+            }
 
-        $this->db->delete('kons_tr_spk_budgeting_subcont_perusahaan', ['id_spk_budgeting' => $id]);
-        $this->db->delete('kons_tr_spk_budgeting_subcont_tenaga_ahli', ['id_spk_budgeting' => $id]);
-        $this->db->delete('kons_tr_spk_budgeting_lab', ['id_spk_budgeting' => $id]);
-        $this->db->delete('kons_tr_spk_budgeting_others', ['id_spk_budgeting' => $id]);
-        $this->db->delete('kons_tr_spk_budgeting_akomodasi', ['id_spk_budgeting' => $id]);
-        $this->db->delete('kons_tr_spk_budgeting_aktifitas', ['id_spk_budgeting' => $id]);
-        $this->db->delete('kons_tr_spk_budgeting', ['id_spk_budgeting' => $id]);
+            $get_spk_budgeting = $this->Project_budgeting_model->get_spk_budgeting($id);
 
-        if ($this->db->trans_status() === false) {
-            $this->db->trans_rollback();
+            if (empty($get_spk_budgeting)) {
+                throw new Exception('Maaf, data tidak ditemukan !');
+            }
 
-            $valid = 0;
-            $pesan = 'Sorry, please try again later !';
-        } else {
+            if ($get_spk_budgeting->sts == '1') {
+                throw new Exception('Maaf, data yang sudah di-approve tidak bisa dihapus !');
+            }
+
+            // Detail tables to delete (order: child first, header last)
+            $detail_tables = [
+                'kons_tr_spk_budgeting_subcont_perusahaan',
+                'kons_tr_spk_budgeting_subcont_tenaga_ahli',
+                'kons_tr_spk_budgeting_lab',
+                'kons_tr_spk_budgeting_others',
+                'kons_tr_spk_budgeting_akomodasi',
+                'kons_tr_spk_budgeting_aktifitas',
+                'kons_tr_spk_budgeting',
+            ];
+
+            $this->db->trans_begin();
+
+            foreach ($detail_tables as $table) {
+                $this->db->delete($table, ['id_spk_budgeting' => $id]);
+            }
+
+            if ($this->db->trans_status() === false) {
+                throw new Exception('Maaf, proses hapus Project Budgeting gagal !');
+            }
+
             $this->db->trans_commit();
 
-            $valid = 1;
-            $pesan = 'Data has been successfully deleted !';
-        }
+            echo json_encode(['status' => 1, 'pesan' => 'Data berhasil dihapus !']);
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
 
-        echo json_encode([
-            'status' => $valid,
-            'pesan' => $pesan
-        ]);
+            echo json_encode(['status' => 0, 'pesan' => $e->getMessage()]);
+        }
     }
 
     public function history_approval()
