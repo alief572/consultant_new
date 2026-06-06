@@ -45,23 +45,29 @@ class Project_budgeting extends Admin_Controller
 
         $status_s = $this->input->post('status');
 
-        $this->db->select('
-            a.*, 
-            b.grand_total,
-            CASE
-                WHEN c.id_spk_budgeting IS NULL THEN 1
-                WHEN c.sts = "1" THEN 2
-                WHEN c.sts = "2" THEN 3
-                WHEN c.sts NOT IN ("1","2") THEN 4
-            END as status
-        ', false);
+        $searchValue = '';
+        if (is_array($search) && isset($search['value'])) {
+            $searchValue = trim($search['value']);
+        }
+
+        // Count total records (matching base filter)
         $this->db->from('kons_tr_spk_penawaran a');
-        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
-        $this->db->join('kons_tr_spk_budgeting c', 'c.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->where('a.id_penawaran IS NOT NULL');
         $this->db->where('a.id_penawaran <>', '');
         $this->db->where('a.deleted_by', null);
         $this->db->where('a.sts_spk', 1);
+        $recordsTotal = $this->db->count_all_results();
+
+        // Build base query for filtered records / data retrieval
+        $this->db->from('kons_tr_spk_penawaran a');
+        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->join('kons_tr_spk_budgeting c', 'c.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = a.id_project', 'left');
+        $this->db->where('a.id_penawaran IS NOT NULL');
+        $this->db->where('a.id_penawaran <>', '');
+        $this->db->where('a.deleted_by', null);
+        $this->db->where('a.sts_spk', 1);
+
         if ($status_s == '1') {
             $this->db->where('c.id_spk_budgeting', null);
         }
@@ -76,124 +82,102 @@ class Project_budgeting extends Admin_Controller
             $this->db->where('c.sts <>', '1');
             $this->db->where('c.sts <>', '2');
         }
-        if (!empty($search)) {
+
+        if ($searchValue !== '') {
             $this->db->group_start();
-            $this->db->or_like('a.id_spk_penawaran', $search['value'], 'both');
-            $this->db->or_like('a.nm_sales', $search['value'], 'both');
-            $this->db->or_like('a.nm_project', $search['value'], 'both');
-            $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
+            $this->db->or_like('a.id_spk_penawaran', $searchValue, 'both');
+            $this->db->or_like('a.nm_sales', $searchValue, 'both');
+            $this->db->or_like('a.nm_project', $searchValue, 'both');
+            $this->db->or_like('a.nm_customer', $searchValue, 'both');
+            $this->db->or_like('a.nm_project_leader', $searchValue, 'both');
             $this->db->group_end();
         }
 
+        // Clone query to count filtered records efficiently without fetching them
         $db_clone = clone $this->db;
-        $count_all = $db_clone->count_all_results();
+        $recordsFiltered = $db_clone->count_all_results();
+
+        // Retrieve the actual page of data
+        $this->db->select('
+            a.*, 
+            b.grand_total,
+            c.id_spk_budgeting,
+            c.sts as sts_budgeting,
+            d.nm_paket,
+            CASE
+                WHEN c.id_spk_budgeting IS NULL THEN 1
+                WHEN c.sts = "1" THEN 2
+                WHEN c.sts = "2" THEN 3
+                WHEN c.sts NOT IN ("1","2") THEN 4
+            END as status
+        ', false);
 
         $this->db->order_by('status', 'asc');
         $this->db->order_by('a.input_date', 'desc');
-        $this->db->limit($length, $start);
+
+        if ($length != -1) {
+            $this->db->limit($length, $start);
+        }
 
         $get_data = $this->db->get();
 
         $hasil = [];
+        $no = 1 + intval($start);
 
-        $no = (1 + $start);
         foreach ($get_data->result() as $item) {
-
-            $status = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-
-            $option = '<a href="' . base_url('project_budgeting/add/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm " style="background-color: #E100A5; color: white;"><i class="fa fa-arrow-up"></i></a>';
-
-            $check_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting', ['id_spk_penawaran' => $item->id_spk_penawaran])->result();
-            if (count($check_spk_budgeting) > 0) {
-
-                $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-
-                if ($check_spk_budgeting[0]->sts == 1) {
-                    $status = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                }
-                if ($check_spk_budgeting[0]->sts == 2) {
-                    $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                }
-
-                $option = '
-                    <div class="btn-group">
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-accent text-primary dropdown-toggle"
-                            title="Actions"
-                            data-toggle="dropdown"
-                            id="dropdownMenu' . $no . '"
-                            aria-expanded="false">
-                            <i class="fa fa-cogs"></i> <span class="caret"></span>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                    ';
-
-                if ($this->viewPermission) {
-                    $option .= '
-                        <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem;">
-                            <a href="' . base_url('project_budgeting/view_budget/' . urlencode(str_replace('/', '|', $check_spk_budgeting[0]->id_spk_budgeting))) . '" class="btn btn-sm btn-info" style="color: #000000">
-                                <div class="col-12 dropdown-item">
-                                <b>
-                                    <i class="fa fa-file"></i>
-                                </b>
-                                </div>
-                            </a>
-                            <span style="font-weight: 500"> View </span>
-                        </div>
-                    ';
-                }
-
-                if ($this->deletePermission && $check_spk_budgeting[0]->sts !== '1') {
-                    $option .= '
-                        <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem;">
-                            <a href="javascript:void(0);" class="btn btn-sm btn-danger del_spk_budget" style="color: #000000" data-id="' . $check_spk_budgeting[0]->id_spk_budgeting . '">
-                                <div class="col-12 dropdown-item">
-                                <b>
-                                    <i class="fa fa-trash"></i>
-                                </b>
-                                </div>
-                            </a>
-                            <span style="font-weight: 500"> Delete </span>
-                        </div>
-                    ';
-                }
-                $option .= '</div>';
-            }
-
-            $nm_marketing = $item->nm_sales;
-
-            $this->db->select('a.nm_paket');
-            $this->db->from('kons_master_konsultasi_header a');
-            $this->db->where('a.id_konsultasi_h', $item->id_project);
-            $get_package = $this->db->get()->row();
-
-            $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
-
-            $nm_customer = $item->nm_customer;
-
-            // if ($value_show == '1') {
             $hasil[] = [
                 'no' => $no,
                 'id_spk_penawaran' => $item->id_spk_penawaran,
                 'nm_customer' => $item->nm_customer,
-                'nm_sales' => ucfirst($item->nm_sales),
-                'nm_project_leader' => ucfirst($item->nm_project_leader),
-                'nm_project' => $nm_paket,
-                'status' => $status,
-                'option' => $option
+                'nm_sales' => ucfirst($item->nm_sales ?? ''),
+                'nm_project_leader' => ucfirst($item->nm_project_leader ?? ''),
+                'nm_project' => $item->nm_paket ?? '',
+                'status' => $this->_render_status($item),
+                'option' => $this->_render_buttons($item, $no)
             ];
             $no++;
-            // }
         }
 
+        header('Content-Type: application/json');
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $count_all,
-            'recordsFiltered' => $count_all,
+            'recordsTotal' => intval($recordsTotal),
+            'recordsFiltered' => intval($recordsFiltered),
             'data' => $hasil
         ]);
+    }
+
+    private function _render_status($item)
+    {
+        $has_budgeting = !empty($item->id_spk_budgeting);
+        if (!$has_budgeting) {
+            return '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
+        }
+
+        $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
+        if ($item->sts_budgeting == 1) {
+            $status = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
+        }
+        if ($item->sts_budgeting == 2) {
+            $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+        }
+
+        return $status;
+    }
+
+    private function _render_buttons($item, $no)
+    {
+        $has_budgeting = !empty($item->id_spk_budgeting);
+        if (!$has_budgeting) {
+            return '<a href="' . base_url('project_budgeting/add/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm " style="background-color: #E100A5; color: white;"><i class="fa fa-arrow-up"></i></a>';
+        } else {
+
+            $view_btn = '<a href="' . base_url('project_budgeting/view_budget/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-info"><i class="fa fa-eye"></i></a>';
+
+            $history_btn = '<button type="button" class="btn btn-sm btn-info btn_history" data-id_spk_budgeting="' . $item->id_spk_budgeting . '"><i class="fa fa-history"></i></button>';
+
+            return $view_btn . ' ' . $history_btn;
+        }
     }
 
     public function add($id_spk_penawaran)
@@ -751,6 +735,141 @@ class Project_budgeting extends Admin_Controller
         echo json_encode([
             'status' => $valid,
             'pesan' => $pesan
+        ]);
+    }
+
+    public function history_approval()
+    {
+        $id_spk_budgeting = $this->input->get('id_spk_budgeting', true);
+
+        $get_spk_budgeting = $this->Project_budgeting_model->get_spk_budgeting($id_spk_budgeting);
+
+        if (empty($get_spk_budgeting)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Data not found!'
+            ]);
+            return;
+        }
+
+        $created_by_name = get_name('users', 'nm_lengkap', 'id_user', $get_spk_budgeting->create_by);
+        $approved_by_name = !empty($get_spk_budgeting->approved_by) ? get_name('users', 'nm_lengkap', 'id_user', $get_spk_budgeting->approved_by) : '';
+
+        // Build timeline steps
+        $steps = [];
+
+        // Step 1: Submitted
+        $steps[] = [
+            'icon' => 'fa-paper-plane',
+            'color' => '#17a2b8',
+            'title' => 'Submitted',
+            'user' => ucfirst($created_by_name),
+            'date' => date('d M Y, H:i', strtotime($get_spk_budgeting->create_date)),
+            'remark' => '',
+            'done' => true
+        ];
+
+        // Step 2: Approval
+        if ($get_spk_budgeting->sts == '1') {
+            $steps[] = [
+                'icon' => 'fa-check-circle',
+                'color' => '#28a745',
+                'title' => 'Approved',
+                'user' => ucfirst($approved_by_name),
+                'date' => !empty($get_spk_budgeting->approved_date) ? date('d M Y, H:i', strtotime($get_spk_budgeting->approved_date)) : '-',
+                'remark' => '',
+                'done' => true
+            ];
+        } elseif ($get_spk_budgeting->sts == '2') {
+            $steps[] = [
+                'icon' => 'fa-times-circle',
+                'color' => '#dc3545',
+                'title' => 'Rejected',
+                'user' => ucfirst($approved_by_name),
+                'date' => !empty($get_spk_budgeting->approved_date) ? date('d M Y, H:i', strtotime($get_spk_budgeting->approved_date)) : '-',
+                'remark' => !empty($get_spk_budgeting->reject_reason) ? $get_spk_budgeting->reject_reason : '',
+                'done' => true
+            ];
+        } else {
+            $steps[] = [
+                'icon' => 'fa-clock-o',
+                'color' => '#ffc107',
+                'title' => 'Waiting Approval',
+                'user' => '',
+                'date' => '',
+                'remark' => '',
+                'done' => false
+            ];
+        }
+
+        // Build HTML timeline
+        $html = '<div style="padding: 15px 20px;">';
+
+        // Header info
+        $html .= '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; padding: 15px 20px; margin-bottom: 25px; color: #fff;">';
+        $html .= '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">';
+        $html .= '<div>';
+        $html .= '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">ID Budgeting</div>';
+        $html .= '<div style="font-size: 15px; font-weight: 600;">' . $get_spk_budgeting->id_spk_budgeting . '</div>';
+        $html .= '</div>';
+        $html .= '<div style="text-align: right;">';
+        $html .= '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Project</div>';
+        $html .= '<div style="font-size: 14px; font-weight: 500;">' . (!empty($get_spk_budgeting->nm_paket) ? $get_spk_budgeting->nm_paket : $get_spk_budgeting->nm_project) . '</div>';
+        $html .= '</div>';
+        $html .= '</div>';
+        $html .= '</div>';
+
+        // Timeline
+        $html .= '<div style="position: relative; padding-left: 40px;">';
+
+        // Vertical line
+        $html .= '<div style="position: absolute; left: 15px; top: 5px; bottom: 5px; width: 2px; background: #e9ecef;"></div>';
+
+        $total_steps = count($steps);
+        foreach ($steps as $i => $step) {
+            $is_last = ($i === $total_steps - 1);
+            $opacity = $step['done'] ? '1' : '0.5';
+
+            $html .= '<div style="position: relative; margin-bottom: ' . ($is_last ? '0' : '25px') . '; opacity: ' . $opacity . ';">';
+
+            // Circle dot
+            $html .= '<div style="position: absolute; left: -33px; top: 3px; width: 28px; height: 28px; border-radius: 50%; background: ' . $step['color'] . '; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 1;">';
+            $html .= '<i class="fa ' . $step['icon'] . '" style="color: #fff; font-size: 12px;"></i>';
+            $html .= '</div>';
+
+            // Content card
+            $html .= '<div style="background: #fff; border: 1px solid #e9ecef; border-left: 3px solid ' . $step['color'] . '; border-radius: 6px; padding: 12px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">';
+
+            // Title row
+            $html .= '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">';
+            $html .= '<span style="font-weight: 600; font-size: 14px; color: ' . $step['color'] . ';">' . $step['title'] . '</span>';
+            if (!empty($step['date'])) {
+                $html .= '<span style="font-size: 12px; color: #6c757d;"><i class="fa fa-calendar-o" style="margin-right: 4px;"></i>' . $step['date'] . '</span>';
+            }
+            $html .= '</div>';
+
+            // User
+            if (!empty($step['user'])) {
+                $html .= '<div style="font-size: 13px; color: #495057;"><i class="fa fa-user-o" style="margin-right: 6px; color: #6c757d;"></i>' . $step['user'] . '</div>';
+            }
+
+            // Remark
+            if (!empty($step['remark'])) {
+                $html .= '<div style="margin-top: 8px; padding: 8px 12px; background: #fff3cd; border-radius: 4px; font-size: 12px; color: #856404; border: 1px solid #ffeaa7;">';
+                $html .= '<i class="fa fa-comment-o" style="margin-right: 6px;"></i><strong>Reason:</strong> ' . $step['remark'];
+                $html .= '</div>';
+            }
+
+            $html .= '</div>'; // end content card
+            $html .= '</div>'; // end step
+        }
+
+        $html .= '</div>'; // end timeline
+        $html .= '</div>'; // end wrapper
+
+        echo json_encode([
+            'status' => 1,
+            'result' => $html
         ]);
     }
 }
