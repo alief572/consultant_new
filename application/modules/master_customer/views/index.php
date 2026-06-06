@@ -31,36 +31,6 @@ $ENABLE_DELETE  = has_permission('Master_Customer.Delete');
 					<th class="text-center">Option</th>
 				</thead>
 				<tbody>
-					<?php
-					$numb = 0;
-					foreach ($result as $record) {
-						$numb++;
-						if ($record->sts_aktif == 'N') {
-							$status = 'Non-Active';
-							$status_ = 'red';
-						} else {
-							$status = 'Active';
-							$status_ = 'green';
-						}
-					?>
-						<tr>
-							<td class="text-center"><?= $numb; ?></td>
-							<td><?= strtoupper($record->nm_customer) ?></td>
-							<td class="text-center"><?= strtoupper($record->kredibilitas) ?></td>
-							<td><?= strtoupper($record->produk_jual) ?></td>
-							<td class="text-center"><?= strtoupper($record->country_code) ?></td>
-							<td class="text-center"><span class='badge bg-<?= $status_; ?>'><?= $status; ?></span></td>
-							<td class="text-center">
-								<a href='<?= base_url('master_customer/add/' . $record->id_customer . '/view'); ?>' class="btn btn-warning btn-sm" title="Detail"><i class="fa fa-eye"></i></a>
-								<?php if ($ENABLE_MANAGE) : ?>
-									<a href='<?= base_url('master_customer/add/' . $record->id_customer); ?>' class="btn btn-primary btn-sm" title="Edit"><i class="fa fa-edit"></i></a>
-								<?php endif; ?>
-								<?php if ($ENABLE_DELETE) : ?>
-									<button type='button' class="btn btn-danger btn-sm delete" title="Delete" data-id="<?= $record->id_customer ?>"><i class="fa fa-trash"></i></a>
-									<?php endif; ?>
-							</td>
-						</tr>
-					<?php } ?>
 				</tbody>
 			</table>
 		</div>
@@ -78,12 +48,68 @@ $ENABLE_DELETE  = has_permission('Master_Customer.Delete');
 	}
 </style>
 <script type="text/javascript">
+	var dataTable;
 	$(document).ready(function() {
-		var table = $('#example1').DataTable({
-			orderCellsTop: true,
-			scrollX: true
-		});
+		datatables();
 	});
+
+	function datatables() {
+		if ($.fn.DataTable.isDataTable('#example1')) {
+			dataTable.ajax.reload(null, false);
+		} else {
+			dataTable = $('#example1').DataTable({
+				ajax: {
+					url: siteurl + active_controller + '/get_data_customer',
+					type: "POST",
+					dataType: "JSON",
+					data: function(d) {}
+				},
+				columns: [
+					{
+						data: 'no',
+						className: 'text-center',
+						orderable: false,
+						searchable: false,
+						width: '50px'
+					},
+					{
+						data: 'nm_customer'
+					},
+					{
+						data: 'kredibilitas',
+						className: 'text-center'
+					},
+					{
+						data: 'produk_jual'
+					},
+					{
+						data: 'country_code',
+						className: 'text-center'
+					},
+					{
+						data: 'sts_aktif',
+						className: 'text-center',
+						orderable: false,
+						searchable: false
+					},
+					{
+						data: 'option',
+						className: 'text-center',
+						orderable: false,
+						searchable: false,
+						width: '120px'
+					}
+				],
+				responsive: true,
+				processing: true,
+				serverSide: true,
+				stateSave: true,
+				paging: true,
+				scrollX: true,
+				order: []
+			});
+		}
+	}
 
 	$(document).on('click', '.delete', function(e) {
 		e.preventDefault()
@@ -118,7 +144,7 @@ $ENABLE_DELETE  = has_permission('Master_Customer.Delete');
 								allowOutsideClick: false,
 								timer: 3000
 							}).then(() => {
-								window.location.reload(true);
+								datatables();
 							})
 						} else {
 							Swal.fire({
