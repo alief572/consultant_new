@@ -180,7 +180,7 @@ class Spk_penawaran_model extends BF_Model
         $this->dbhr->from('employees a');
         $this->dbhr->where('a.flag_active', 'Y');
         if (!empty($id)) {
-            $this->db->where('a.id', $id);
+            $this->dbhr->where('a.id', $id);
             $get_data = $this->dbhr->get()->row();
         } else {
             $get_data = $this->dbhr->get()->result();
@@ -282,6 +282,147 @@ class Spk_penawaran_model extends BF_Model
     public function is_spk_exists($id_spk_penawaran)
     {
         return $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->num_rows() > 0;
+    }
+
+    public function generate_id_history()
+    {
+        $Ym = date('Ym');
+        $srcMtr = "SELECT MAX(id_history) as maxP FROM kons_tr_spk_penawaran_history WHERE id_history LIKE '%/" . date('y') . "%' ";
+        $resultMtr = $this->db->query($srcMtr)->result_array();
+        $angkaUrut2 = isset($resultMtr[0]['maxP']) ? $resultMtr[0]['maxP'] : null;
+        $urutan2 = $angkaUrut2 ? (int)substr($angkaUrut2, 0, 3) : 0;
+        $urutan2++;
+        $urut2 = sprintf('%03s', $urutan2);
+        $kode_trans = $urut2 . '/SPK-HIST/' . date('m') . '/' . date('y');
+        return $kode_trans;
+    }
+
+    public function get_revisi($id_spk_penawaran)
+    {
+        $this->db->select_max('revisi');
+        $this->db->where('id_spk_penawaran', $id_spk_penawaran);
+        $result = $this->db->get('kons_tr_spk_penawaran_history')->row();
+        return isset($result->revisi) ? $result->revisi + 1 : 1;
+    }
+
+    public function save_to_history($id_spk_penawaran, $revisi)
+    {
+        $header = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
+        if (!$header) {
+            log_message('error', 'save_to_history: SPK not found - ' . $id_spk_penawaran);
+            return false;
+        }
+
+        $id_history = $this->generate_id_history();
+
+        $history_header = (array)$header;
+        $history_header['id_history'] = $id_history;
+        $history_header['revisi'] = $revisi;
+
+        unset(
+            $history_header['id'],
+            $history_header['edited_by'],
+            $history_header['edited_date']
+        );
+
+        // Filter keys to only contain columns existing in history table
+        $header_fields = $this->db->list_fields('kons_tr_spk_penawaran_history');
+        foreach ($history_header as $key => $value) {
+            if (!in_array($key, $header_fields)) {
+                unset($history_header[$key]);
+            }
+        }
+
+        $this->db->trans_begin();
+
+        // Insert header history
+        $insert_header = $this->db->insert('kons_tr_spk_penawaran_history', $history_header);
+        if (!$insert_header) {
+            $this->db->trans_rollback();
+            log_message('error', 'save_to_history: header insert failed for ' . $id_spk_penawaran . ' - ' . json_encode($this->db->error()));
+            return false;
+        }
+
+        // Insert aktifitas history
+        $aktifitas = $this->db->get_where('kons_tr_spk_aktifitas', ['id_spk_penawaran' => $id_spk_penawaran])->result();
+        if (!empty($aktifitas)) {
+            $aktifitas_fields = $this->db->list_fields('kons_tr_spk_aktifitas_history');
+            foreach ($aktifitas as $item) {
+                $item_arr = (array)$item;
+                $item_arr['id_history'] = $id_history;
+                unset($item_arr['id']);
+                
+                foreach ($item_arr as $key => $value) {
+                    if (!in_array($key, $aktifitas_fields)) {
+                        unset($item_arr[$key]);
+                    }
+                }
+                
+                $insert = $this->db->insert('kons_tr_spk_aktifitas_history', $item_arr);
+                if (!$insert) {
+                    $this->db->trans_rollback();
+                    log_message('error', 'save_to_history: aktifitas insert failed for ' . $id_spk_penawaran . ' - ' . json_encode($this->db->error()));
+                    return false;
+                }
+            }
+        }
+
+        // Insert subcont history
+        $subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
+        if (!empty($subcont)) {
+            $subcont_fields = $this->db->list_fields('kons_tr_spk_penawaran_subcont_history');
+            foreach ($subcont as $item) {
+                $item_arr = (array)$item;
+                $item_arr['id_history'] = $id_history;
+                unset($item_arr['id']);
+                
+                foreach ($item_arr as $key => $value) {
+                    if (!in_array($key, $subcont_fields)) {
+                        unset($item_arr[$key]);
+                    }
+                }
+                
+                $insert = $this->db->insert('kons_tr_spk_penawaran_subcont_history', $item_arr);
+                if (!$insert) {
+                    $this->db->trans_rollback();
+                    log_message('error', 'save_to_history: subcont insert failed for ' . $id_spk_penawaran . ' - ' . json_encode($this->db->error()));
+                    return false;
+                }
+            }
+        }
+
+        // Insert payment history
+        $payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
+        if (!empty($payment)) {
+            $payment_fields = $this->db->list_fields('kons_tr_spk_penawaran_payment_history');
+            foreach ($payment as $item) {
+                $item_arr = (array)$item;
+                $item_arr['id_history'] = $id_history;
+                unset($item_arr['id']);
+                
+                foreach ($item_arr as $key => $value) {
+                    if (!in_array($key, $payment_fields)) {
+                        unset($item_arr[$key]);
+                    }
+                }
+                
+                $insert = $this->db->insert('kons_tr_spk_penawaran_payment_history', $item_arr);
+                if (!$insert) {
+                    $this->db->trans_rollback();
+                    log_message('error', 'save_to_history: payment insert failed for ' . $id_spk_penawaran . ' - ' . json_encode($this->db->error()));
+                    return false;
+                }
+            }
+        }
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            log_message('error', 'save_to_history: transaction failed for ' . $id_spk_penawaran);
+            return false;
+        }
+
+        $this->db->trans_commit();
+        return true;
     }
 
     /**
