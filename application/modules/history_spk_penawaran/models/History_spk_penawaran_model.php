@@ -13,8 +13,9 @@ class History_spk_penawaran_model extends BF_Model
 
     public function get_data_history($search = null, $start = 0, $length = 10)
     {
-        $this->db->select('a.*');
+        $this->db->select('a.*, COALESCE(b.nm_paket, a.nm_project) as nm_projects');
         $this->db->from('kons_tr_spk_penawaran_history a');
+        $this->db->join('kons_master_konsultasi_header b', 'b.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.deleted_by IS NULL');
 
         if (!empty($search)) {
@@ -56,7 +57,7 @@ class History_spk_penawaran_model extends BF_Model
                 'tgl_spk' => $item->input_date,
                 'nm_sales' => $item->nm_sales,
                 'nm_customer' => $item->nm_customer,
-                'nm_project' => $item->nm_project,
+                'nm_project' => $item->nm_projects,
                 'nilai_kontrak' => $item->nilai_kontrak,
                 'revisi' => $item->revisi,
                 'status' => $item->sts_spk,
