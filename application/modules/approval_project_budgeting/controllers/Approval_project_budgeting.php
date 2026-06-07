@@ -43,62 +43,65 @@ class Approval_project_budgeting extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('a.*, b.nm_sales, c.nm_paket');
+        $searchValue = '';
+        if (is_array($search) && isset($search['value'])) {
+            $searchValue = trim($search['value']);
+        }
+
+        // Count total records (matching the filter a.sts <> 1, but without search)
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->where('a.sts <>', 1);
+        $recordsTotal = $this->db->count_all_results();
+
+        // Build base query for filtered records / data retrieval
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = b.id_project', 'left');
         $this->db->where('a.sts <>', 1);
-        if (!empty($search)) {
+
+        if ($searchValue !== '') {
             $this->db->group_start();
-            $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
-            $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('b.nm_sales', $search['value'], 'both');
-            $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
-            $this->db->or_like('c.nm_paket', $search['value'], 'both');
+            $this->db->like('a.id_spk_budgeting', $searchValue, 'both');
+            $this->db->or_like('a.nm_customer', $searchValue, 'both');
+            $this->db->or_like('b.nm_sales', $searchValue, 'both');
+            $this->db->or_like('a.nm_project_leader', $searchValue, 'both');
+            $this->db->or_like('c.nm_paket', $searchValue, 'both');
             $this->db->group_end();
         }
+
+        // Clone query to count filtered records efficiently without fetching them
+        $db_clone = clone $this->db;
+        $recordsFiltered = $db_clone->count_all_results();
+
+        // Retrieve the actual page of data
+        $this->db->select('a.*, b.nm_sales, c.nm_paket');
         $this->db->order_by('a.create_date', 'desc');
-        $this->db->limit($length, $start);
+
+        if ($length != -1) {
+            $this->db->limit($length, $start);
+        }
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*, b.nm_sales, c.nm_paket');
-        $this->db->from('kons_tr_spk_budgeting a');
-        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
-        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = b.id_project', 'left');
-        $this->db->where('a.sts <>', 1);
-        if (!empty($search)) {
-            $this->db->group_start();
-            $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
-            $this->db->or_like('a.nm_customer', $search['value'], 'both');
-            $this->db->or_like('b.nm_sales', $search['value'], 'both');
-            $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
-            $this->db->or_like('c.nm_paket', $search['value'], 'both');
-            $this->db->group_end();
-        }
-        $this->db->order_by('a.create_date', 'desc');
-
-        $get_data_all = $this->db->get();
-
         $hasil = [];
+        $no = 1 + intval($start);
 
-        $no = 1;
         foreach ($get_data->result() as $item) {
-
             $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
             if ($item->sts == 2) {
                 $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
             }
 
-            $option = '<a href="' . base_url('approval_project_budgeting/approval/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-success" title="Approval"><i class="fa fa-check"></i></a>';
+            $option = $this->_render_buttons($item);
+
 
 
             $hasil[] = [
                 'no' => $no,
                 'id_spk_budgeting' => $item->id_spk_budgeting,
                 'nm_customer' => $item->nm_customer,
-                'nm_sales' => ucfirst($item->nm_sales),
-                'nm_project_leader' => ucfirst($item->nm_project_leader),
+                'nm_sales' => ucfirst($item->nm_sales ?? ''),
+                'nm_project_leader' => ucfirst($item->nm_project_leader ?? ''),
                 'nm_project' => $item->nm_paket,
                 'reject_reason' => $item->reject_reason,
                 'status' => $status,
@@ -108,12 +111,20 @@ class Approval_project_budgeting extends Admin_Controller
             $no++;
         }
 
+        header('Content-Type: application/json');
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $get_data_all->num_rows(),
-            'recordsFiltered' => $get_data_all->num_rows(),
+            'recordsTotal' => intval($recordsTotal),
+            'recordsFiltered' => intval($recordsFiltered),
             'data' => $hasil
         ]);
+    }
+
+    public function _render_buttons($item)
+    {
+        $buttons = '<a href="' . base_url('approval_project_budgeting/approval/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-success" title="Approval"><i class="fa fa-check"></i></a>';
+
+        return $buttons;
     }
 
     public function add($id_spk_penawaran)

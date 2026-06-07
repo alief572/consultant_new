@@ -400,11 +400,31 @@ if ($header->metode_pembayaran == '3') {
                 <a href="<?= base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
                     <i class="fa fa-arrow-left"></i> Back
                 </a>
+                <button type="button" class="btn btn-sm btn-info btn_history_kasbon" data-id_kasbon="<?= $header->id ?>">
+                    <i class="fa fa-history"></i> History
+                </button>
             </div>
         </div>
     </div>
 </form>
 
+<div class="modal" id="dialog-history-kasbon" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">History Approval</h4>
+            </div>
+            <div class="modal-body" id="historyModalBodyKasbon">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script>
@@ -536,4 +556,37 @@ if ($header->metode_pembayaran == '3') {
         }
 
     })
+
+    $(document).on('click', '.btn_history_kasbon', function() {
+        var id_kasbon = $(this).data('id_kasbon');
+
+        $.ajax({
+            type: 'get',
+            url: siteurl + 'kasbon_project/history_approval',
+            data: {
+                'id_kasbon': id_kasbon
+            },
+            cache: false,
+            dataType: 'JSON',
+            success: function(result) {
+                if (result.status == 1) {
+                    $('#dialog-history-kasbon').modal();
+                    $('#historyModalBodyKasbon').html(result.result);
+                } else {
+                    swal({
+                        type: 'warning',
+                        title: 'Failed !',
+                        text: result.pesan
+                    });
+                }
+            },
+            error: function(result) {
+                swal({
+                    type: 'error',
+                    title: 'Error !',
+                    text: 'Please try again later!'
+                });
+            }
+        });
+    });
 </script>
