@@ -534,37 +534,37 @@ class Approval_kasbon_project extends Admin_Controller
         //     }
         // }
 
-        // if ($get_header_kasbon->metode_pembayaran == '2') {
+        if ($get_header_kasbon->metode_pembayaran == '2') {
 
-        //     $no_doc = $this->Approval_kasbon_project_model->no_sendigs('format_direct_payment');
+            $no_doc = $this->Approval_kasbon_project_model->no_sendigs('format_direct_payment');
 
-        //     $data_insert_direct_payment_sendigs = [
-        //         'no_doc' => $no_doc,
-        //         'tgl_doc' => date('Y-m-d'),
-        //         'ids' => $id_kasbon,
-        //         'id_spk_budgeting' => $get_header_kasbon->id_spk_budgeting,
-        //         'id_spk_penawaran' => $get_header_kasbon->id_spk_penawaran,
-        //         'id_penawaran' => $get_header_kasbon->id_penawaran,
-        //         'tipe' => $get_header_kasbon->tipe,
-        //         'deskripsi' => $get_header_kasbon->deskripsi,
-        //         'grand_total' => $get_header_kasbon->grand_total,
-        //         'bank' => $get_header_kasbon->bank,
-        //         'bank_number' => $get_header_kasbon->bank_number,
-        //         'bank_account' => $get_header_kasbon->bank_account,
-        //         'metode_pembayaran' => 1,
-        //         'sts' => 1,
-        //         'created_by' => $this->auth->user_id(),
-        //         'created_date' => date('Y-m-d H:i:s')
-        //     ];
+            $data_insert_direct_payment_sendigs = [
+                'no_doc' => $no_doc,
+                'tgl_doc' => date('Y-m-d'),
+                'ids' => $id_kasbon,
+                'id_spk_budgeting' => $get_header_kasbon->id_spk_budgeting,
+                'id_spk_penawaran' => $get_header_kasbon->id_spk_penawaran,
+                'id_penawaran' => $get_header_kasbon->id_penawaran,
+                'tipe' => $get_header_kasbon->tipe,
+                'deskripsi' => $get_header_kasbon->deskripsi,
+                'grand_total' => $get_header_kasbon->grand_total,
+                'bank' => $get_header_kasbon->bank,
+                'bank_number' => $get_header_kasbon->bank_number,
+                'bank_account' => $get_header_kasbon->bank_account,
+                'metode_pembayaran' => 1,
+                'sts' => 1,
+                'created_by' => $this->auth->user_id(),
+                'created_date' => date('Y-m-d H:i:s')
+            ];
 
-        //     $insert_direct_payment_sendigs = $this->otherdb->insert('tr_direct_payment', $data_insert_direct_payment_sendigs);
-        //     if (!$insert_direct_payment_sendigs) {
-        //         $this->db->trans_rollback();
+            $insert_direct_payment_sendigs = $this->otherdb->insert('tr_direct_payment', $data_insert_direct_payment_sendigs);
+            if (!$insert_direct_payment_sendigs) {
+                $this->db->trans_rollback();
 
-        //         print_r($this->db->last_query());
-        //         exit;
-        //     }
-        // }
+                print_r($this->db->last_query());
+                exit;
+            }
+        }
 
         // if ($get_header_kasbon->metode_pembayaran == '3') {
         // }
