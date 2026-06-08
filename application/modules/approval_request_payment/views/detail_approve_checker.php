@@ -153,7 +153,7 @@ if ($tipe == 'Expense') {
 			</tr>
 			<tr>
 				<th class="pd-5 valign-top" width="150">Keterangan</th>
-				<td class="pd-5 valign-top" width="400"><?= $data_kasbon_header->deskripsi ?></td>
+				<td class="pd-5 valign-top" width="400"><?= isset($data_kasbon_header->deskripsi) ? $data_kasbon_header->deskripsi : '-' ?></td>
 				<th class="pd-5 valign-top" width="150"></th>
 				<td class="pd-5 valign-top" width="400">
 				</td>
@@ -695,35 +695,40 @@ if ($tipe == 'Expense') {
 
 <div class="box">
 	<div class="box-body">
-		<div class="col-md-6">
-			<div class="form-group">
-				<label for="">Reject Reason</label>
-				<textarea class="form-control form-control-sm reject_reason" name="reject_reason"></textarea>
+		<div class="row">
+			<div class="col-md-12">
+				<h4 style="font-weight: 800;">Reject Reason</h4>
+				<textarea class="form-control reject_reason" name="reject_reason" rows="4" placeholder="Masukkan alasan reject disini..."></textarea>
 			</div>
 		</div>
-		<div class="col-md-6">
-			<table class="table">
-				<tr>
-					<th>Tgl Approve <br> <?= $tipe2 ?> oleh Direktur</th>
-					<th>:</th>
-					<th>
-						<?= date('d F Y H:i:s', strtotime($tgl_approve_direktur)) ?>
-					</th>
-				</tr>
-			</table>
+		<br>
+		<div class="row">
+			<div class="col-md-6">
+				<table class="table">
+					<tr>
+						<th>Tgl Approve <br> <?= $tipe2 ?> oleh Direktur</th>
+						<th>:</th>
+						<th>
+							<?= (!empty($tgl_approve_direktur)) ? date('d F Y H:i:s', strtotime($tgl_approve_direktur)) : '-' ?>
+						</th>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>
 
-<a href="<?= base_url('approval_request_payment/list_approve_checker') ?>" class="btn btn-sm btn-danger">
-	<i class="fa fa-arrow-left"></i> Back
-</a>
-<button type="button" class="btn btn-sm btn-danger" id="reject">
-	<i class="fa fa-close"></i> Reject
-</button>
-<button type="button" class="btn btn-sm btn-success" id="approve">
-	<i class="fa fa-check"></i> Approve
-</button>
+<div style="margin-top: 15px;">
+	<a href="<?= base_url('approval_request_payment/list_approve_checker') ?>" class="btn btn-sm btn-info">
+		<i class="fa fa-arrow-left"></i> Back
+	</a>
+	<button type="button" class="btn btn-sm btn-danger" id="reject">
+		<i class="fa fa-close"></i> Reject
+	</button>
+	<button type="button" class="btn btn-sm btn-success" id="approve">
+		<i class="fa fa-check"></i> Approve
+	</button>
+</div>
 
 <script src="<?= base_url('assets/js/number-divider.min.js') ?>"></script>
 <script type="text/javascript">

@@ -23,14 +23,18 @@ class Approval_request_payment extends Admin_Controller
 
 	protected $status;
 
+	protected $otherdb;
+
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model(array('Approval_request_payment/Approval_request_payment_model', 'All/All_model', 'Jurnal_nomor/Jurnal_model'));
+		$this->load->model(array('Approval_request_payment/Approval_request_payment_model', 'All/All_model', 'Jurnal_nomor/Jurnal_model', 'Perbaikan_data/Perbaikan_data_model'));
 		$this->template->title('Manage Request Payment');
 		$this->template->page_icon('fa fa-table');
 		$this->status = array("0" => "Baru", "1" => "Disetujui", "2" => "Selesai");
 		date_default_timezone_set("Asia/Bangkok");
+
+		$this->otherdb = $this->load->database('sendigs_finance', true);
 	}
 
 	public function index()
@@ -223,8 +227,6 @@ class Approval_request_payment extends Admin_Controller
 		if (!empty($get_kasbon_header)) {
 			$id_spk_penawaran = $get_kasbon_header->id_spk_penawaran;
 
-			$get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', array('id_spk_penawaran' => $id_spk_penawaran))->row();
-
 			$this->db->select('a.id_spk_penawaran, a.nm_project_leader, a.nm_sales, a.nm_customer, a.waktu_from, a.waktu_to, a.address as alamat, b.nm_paket');
 			$this->db->from('kons_tr_spk_penawaran a');
 			$this->db->join('kons_master_konsultasi_header b', 'b.id_konsultasi_h = a.id_project', 'left');
@@ -325,19 +327,48 @@ class Approval_request_payment extends Admin_Controller
 		} else {
 			$this->db->select('a.*, b.id_spk_penawaran');
 			$this->db->from('kons_tr_expense_report_project_header a');
-			$this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+			$this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
 			$this->db->where('a.id', $id);
 			$get_expense = $this->db->get()->row();
 
+			if (empty($get_expense)) {
+				$this->session->set_flashdata('error', 'Data expense report tidak ditemukan.');
+				redirect('approval_request_payment/list_approve_checker');
+				return;
+			}
+
 			$id_spk_penawaran = $get_expense->id_spk_penawaran;
 
-			$get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', array('id_spk_penawaran' => $id_spk_penawaran))->row();
+			// If id_spk_penawaran is null, try getting from id_header
+			if (empty($id_spk_penawaran) && !empty($get_expense->id_header)) {
+				$get_kasbon_for_spk = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $get_expense->id_header))->row();
+				if (!empty($get_kasbon_for_spk)) {
+					$id_spk_penawaran = $get_kasbon_for_spk->id_spk_penawaran;
+				}
+			}
 
-			$this->db->select('a.id_spk_penawaran, a.nm_project_leader, a.nm_sales, a.nm_customer, a.waktu_from, a.waktu_to, a.address as alamat, b.nm_paket');
-			$this->db->from('kons_tr_spk_penawaran a');
-			$this->db->join('kons_master_konsultasi_header b', 'b.id_konsultasi_h = a.id_project', 'left');
-			$this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
-			$get_spk_penawaran = $this->db->get()->row();
+			$get_spk_penawaran = null;
+			if (!empty($id_spk_penawaran)) {
+				$this->db->select('a.id_spk_penawaran, a.nm_project_leader, a.nm_sales, a.nm_customer, a.waktu_from, a.waktu_to, a.address as alamat, b.nm_paket');
+				$this->db->from('kons_tr_spk_penawaran a');
+				$this->db->join('kons_master_konsultasi_header b', 'b.id_konsultasi_h = a.id_project', 'left');
+				$this->db->where('a.id_spk_penawaran', $id_spk_penawaran);
+				$get_spk_penawaran = $this->db->get()->row();
+			}
+
+			// Create default object if not found
+			if (empty($get_spk_penawaran)) {
+				$get_spk_penawaran = (object) [
+					'id_spk_penawaran' => $id_spk_penawaran ?? '-',
+					'nm_project_leader' => '-',
+					'nm_sales' => '-',
+					'nm_customer' => '-',
+					'waktu_from' => '',
+					'waktu_to' => '',
+					'alamat' => '-',
+					'nm_paket' => '-'
+				];
+			}
 
 			$tipe = 'Expense';
 
@@ -345,41 +376,50 @@ class Approval_request_payment extends Admin_Controller
 
 			$list_detail_expense_detail = [];
 			foreach ($get_expense_detail as $item_expense_detail) :
-				if ($item_expense_detail->tipe == '1') {
+				if ($get_expense->tipe == '1') {
 					$get_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting_aktifitas', array('id' => $item_expense_detail->id_detail_kasbon))->row();
-					$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_subcont', array('id_header' => $item_expense_detail->id_header_kasbon, 'id_aktifitas' => $get_spk_budgeting->id_aktifitas))->row();
+					$get_kasbon = null;
+					if (!empty($get_spk_budgeting)) {
+						$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_subcont', array('id_header' => $item_expense_detail->id_header_kasbon, 'id_aktifitas' => $get_spk_budgeting->id_aktifitas))->row();
+					}
 
 					$list_detail_expense_detail[$item_expense_detail->id] = [
-						'nama_expense' => $get_spk_budgeting->nm_aktifitas,
+						'nama_expense' => !empty($get_spk_budgeting) ? $get_spk_budgeting->nm_aktifitas : '-',
 						'keterangan' => $item_expense_detail->keterangan,
-						'qty_kasbon' => $get_kasbon->qty_pengajuan,
-						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
+						'qty_kasbon' => !empty($get_kasbon) ? $get_kasbon->qty_pengajuan : 0,
+						'nominal_kasbon' => !empty($get_kasbon) ? $get_kasbon->nominal_pengajuan : 0,
 						'qty_expense' => $item_expense_detail->qty_expense,
 						'nominal_expense' => $item_expense_detail->nominal_expense
 					];
 				}
-				if ($item_expense_detail->tipe == '2') {
+				if ($get_expense->tipe == '2') {
 					$get_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting_akomodasi', array('id' => $item_expense_detail->id_detail_kasbon))->row();
-					$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_akomodasi', array('id_header' => $item_expense_detail->id_header_kasbon, 'id_akomodasi' => $item_expense_detail->id_akomodasi))->row();
+					$get_kasbon = null;
+					if (!empty($get_spk_budgeting)) {
+						$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_akomodasi', array('id_header' => $item_expense_detail->id_header_kasbon, 'id_akomodasi' => $item_expense_detail->id_akomodasi))->row();
+					}
 
 					$list_detail_expense_detail[$item_expense_detail->id] = [
-						'nama_expense' => $get_spk_budgeting->nm_item,
+						'nama_expense' => !empty($get_spk_budgeting) ? $get_spk_budgeting->nm_item : '-',
 						'keterangan' => $item_expense_detail->keterangan,
-						'qty_kasbon' => $get_kasbon->qty_pengajuan,
-						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
+						'qty_kasbon' => !empty($get_kasbon) ? $get_kasbon->qty_pengajuan : 0,
+						'nominal_kasbon' => !empty($get_kasbon) ? $get_kasbon->nominal_pengajuan : 0,
 						'qty_expense' => $item_expense_detail->qty_expense,
 						'nominal_expense' => $item_expense_detail->nominal_expense
 					];
 				}
-				if ($item_expense_detail->tipe == '3') {
+				if ($get_expense->tipe == '3') {
 					$get_spk_budgeting = $this->db->get_where('kons_tr_spk_budgeting_others', array('id' => $item_expense_detail->id_detail_kasbon))->row();
-					$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_others', array('id_header' => $item_expense_detail->id_header_kasbon, 'id_others' => $get_spk_budgeting->id_others))->row();
+					$get_kasbon = null;
+					if (!empty($get_spk_budgeting)) {
+						$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_others', array('id_header' => $item_expense_detail->id_header_kasbon, 'id_others' => $get_spk_budgeting->id_others))->row();
+					}
 
 					$list_detail_expense_detail[$item_expense_detail->id] = [
-						'nama_expense' => $get_kasbon->nm_item,
+						'nama_expense' => !empty($get_kasbon) ? $get_kasbon->nm_item : '-',
 						'keterangan' => $item_expense_detail->keterangan,
-						'qty_kasbon' => $get_kasbon->qty_pengajuan,
-						'nominal_kasbon' => $get_kasbon->nominal_pengajuan,
+						'qty_kasbon' => !empty($get_kasbon) ? $get_kasbon->qty_pengajuan : 0,
+						'nominal_kasbon' => !empty($get_kasbon) ? $get_kasbon->nominal_pengajuan : 0,
 						'qty_expense' => $item_expense_detail->qty_expense,
 						'nominal_expense' => $item_expense_detail->nominal_expense
 					];
@@ -410,12 +450,26 @@ class Approval_request_payment extends Admin_Controller
 			$this->db->where('b.id', $id);
 			$get_kasbon = $this->db->get()->row();
 
+			// Create default kasbon header if not found
+			if (empty($get_kasbon)) {
+				$get_kasbon = (object) [
+					'deskripsi' => '-',
+					'grand_total' => 0
+				];
+			}
+
 			$data = [
 				'id' => $id,
 				'id_spk_penawaran' => $id_spk_penawaran,
 				'data_spk_penawaran' => $get_spk_penawaran,
 				'list_expense_detail' => $get_expense_detail,
 				'data_kasbon_header' => $get_kasbon,
+				'data_kasbon_subcont' => [],
+				'data_kasbon_akomodasi' => [],
+				'data_kasbon_others' => [],
+				'data_kasbon_lab' => [],
+				'data_kasbon_subcont_tenaga_ahli' => [],
+				'data_kasbon_subcont_perusahaan' => [],
 				'tipe' => $tipe,
 				'title_expense' => $title_expense,
 				'list_detail_expense_detail' => $list_detail_expense_detail
@@ -424,9 +478,14 @@ class Approval_request_payment extends Admin_Controller
 
 		$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
 
+		$tgl_approve_direktur = '';
+		if (!empty($get_request_payment)) {
+			$tgl_approve_direktur = $get_request_payment->created_on;
+		}
+
 		$this->template->title('Approval Request Payment Finance');
 		$this->template->set($data);
-		$this->template->set('tgl_approve_direktur', $get_request_payment->created_on);
+		$this->template->set('tgl_approve_direktur', $tgl_approve_direktur);
 		$this->template->render('detail_approve_checker');
 	}
 
@@ -2337,7 +2396,7 @@ class Approval_request_payment extends Admin_Controller
 	public function fill_request_payment()
 	{
 
-		// $this->otherdb = $this->load->database('sendigs_finance', TRUE);
+		$this->otherdb = $this->load->database('sendigs_finance', TRUE);
 
 		$arr_kasbon_sendigs = [];
 		$arr_kasbon_sendigs_rp = [];
@@ -2345,6 +2404,7 @@ class Approval_request_payment extends Admin_Controller
 		$this->db->select('a.*');
 		$this->db->from('kons_tr_kasbon_project_header a');
 		$this->db->where('a.sts', 1);
+		$this->db->where('a.tipe', '1');
 		$get_kasbon = $this->db->get()->result();
 		// $sql = "SELECT * FORM tr_kasbon WHERE no_kasbon_consultant = '$this->id' ";
 		// $result = $this->db->get_where(DBSF . '.tr_kasbon', ['no_kasbon_consultant' => $this->id])->result();
@@ -2381,6 +2441,12 @@ class Approval_request_payment extends Admin_Controller
 				}
 				if ($item->tipe == '4') {
 					$project = 'Lab';
+				}
+				if ($item->tipe == '5') {
+					$project = 'Subcont Tenaga Ahli';
+				}
+				if ($item->tipe == '6') {
+					$project = 'Subcont Perusahaan';
 				}
 
 
@@ -2428,6 +2494,7 @@ class Approval_request_payment extends Admin_Controller
 		$this->db->select('a.*');
 		$this->db->from('kons_tr_expense_report_project_header a');
 		$this->db->where('a.sts', 1);
+		$this->db->where('a.selisih <', 0);
 		$get_expense = $this->db->get()->result();
 
 		$no = 0;
@@ -2441,64 +2508,62 @@ class Approval_request_payment extends Admin_Controller
 			$get_user_now = $this->db->get_where('users', array('id_user' => $this->auth->user_id()))->row();
 			$nama_now = (!empty($get_user_now)) ? $get_user_now->nm_lengkap : '';
 
-			if (count($get_expense_sendigs) < 1 && $item->selisih < 0) {
-				$no++;
+			// if (count($get_expense_sendigs) < 1) {
+			$no++;
 
-				$id_expense = $this->Perbaikan_data_model->no_sendigs('format_expense', $no);
+			$id_expense = $this->Perbaikan_data_model->no_sendigs('format_expense', $no);
 
-				$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item->id_header))->row();
+			$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item->id_header))->row();
 
-				$informasi = (!empty($get_kasbon)) ? $get_kasbon->deskripsi : '';
+			$informasi = (!empty($get_kasbon)) ? $get_kasbon->deskripsi : '';
 
-				$arr_expense_sendigs[] = [
-					'no_doc' => $id_expense,
-					'tgl_doc' => date('Y-m-d', strtotime($item->created_date)),
-					'nama' => strtoupper($nama),
-					'status' => 1,
-					'created_by' => $item->created_by,
-					'created_on' => $item->created_date,
-					'jumlah' => ($item->selisih * -1),
-					'informasi' => $informasi,
-					'id_kasbon' => $item->id_header,
-					'created_by' => $this->auth->user_id(),
-					'created_on' => date('Y-m-d H:i:s'),
-					'project_consultant' => 1,
-					'no_expense_consultant' => $item->id
-				];
+			$arr_expense_sendigs[] = [
+				'no_doc' => $id_expense,
+				'tgl_doc' => date('Y-m-d', strtotime($item->created_date)),
+				'nama' => strtoupper($nama),
+				'status' => 1,
+				'created_by' => $item->created_by,
+				'created_on' => $item->created_date,
+				'jumlah' => ($item->selisih * -1),
+				'informasi' => $informasi,
+				'id_kasbon' => $item->id_header,
+				'project_consultant' => 1,
+				'no_expense_consultant' => $item->id
+			];
 
-				$get_expense_detail = $this->db->get_where('kons_tr_expense_report_project_detail', array('id_header_expense' => $item->id))->result();
-				foreach ($get_expense_detail as $item_detail) {
+			$get_expense_detail = $this->db->get_where('kons_tr_expense_report_project_detail', array('id_header_expense' => $item->id))->result();
+			foreach ($get_expense_detail as $item_detail) {
 
-					$total_harga = ($item_detail->qty_expense * $item_detail->nominal_expense);
-					$arr_expense_detail_sendigs[] = [
-						'tanggal' => date('Y-m-d'),
-						'no_doc' => $id_expense,
-						'deskripsi' => $informasi,
-						'qty' => $item_detail->qty_expense,
-						'harga' => $item_detail->nominal_expense,
-						'total_harga' => $total_harga,
-						'keterangan' => $informasi,
-						'status' => 2,
-						'expense' => $total_harga,
-						'created_by' => $nama,
-						'created_on' => date('Y-m-d H:i:s')
-					];
-				}
-
-				$arr_expense_sendigs_rp[] = [
-					'no_doc' => $id_kasbon,
-					'nama' => $nama,
-					'tgl_doc' => date('Y-m-d', strtotime($item->created_date)),
-					'keperluan' => $informasi,
-					'tipe' => 'expense',
-					'jumlah' => ($item->selisih * -1),
-					'status' => 0,
+				$total_harga = ($item_detail->qty_expense * $item_detail->nominal_expense);
+				$arr_expense_detail_sendigs[] = [
 					'tanggal' => date('Y-m-d'),
-					'created_by' => $nama_now,
-					'created_on' => date('Y-m-d H:i:s'),
-					'ids' => $item->id
+					'no_doc' => $id_expense,
+					'deskripsi' => $informasi,
+					'qty' => $item_detail->qty_expense,
+					'harga' => $item_detail->nominal_expense,
+					'total_harga' => $total_harga,
+					'keterangan' => $informasi,
+					'status' => 2,
+					'expense' => $total_harga,
+					'created_by' => $nama,
+					'created_on' => date('Y-m-d H:i:s')
 				];
 			}
+
+			// $arr_expense_sendigs_rp[] = [
+			// 	'no_doc' => $id_kasbon,
+			// 	'nama' => $nama,
+			// 	'tgl_doc' => date('Y-m-d', strtotime($item->created_date)),
+			// 	'keperluan' => $informasi,
+			// 	'tipe' => 'expense',
+			// 	'jumlah' => ($item->selisih * -1),
+			// 	'status' => 0,
+			// 	'tanggal' => date('Y-m-d'),
+			// 	'created_by' => $nama_now,
+			// 	'created_on' => date('Y-m-d H:i:s'),
+			// 	'ids' => $item->id
+			// ];
+			// }
 		}
 
 		$this->db->trans_begin();
@@ -2512,6 +2577,9 @@ class Approval_request_payment extends Admin_Controller
 				exit;
 			}
 		}
+
+		// print_r($arr_expense_sendigs);
+		// exit;
 
 		if (!empty($arr_expense_sendigs)) {
 			$insert_expense_sendigs = $this->otherdb->insert_batch('tr_expense', $arr_expense_sendigs);
