@@ -98,6 +98,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
 
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <!-- page script -->
 <script type="text/javascript">
     $(document).ready(function() {
@@ -125,8 +127,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                 $('#dialog-rekap').modal('show');
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -155,8 +157,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                 $('#dialog-rekap').modal('show');
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -167,13 +169,13 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
     $(document).on('click', '.btn_save', function() {
         var id = $('input[name="id"]').val();
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be approved !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'approve',
@@ -184,8 +186,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.msg,
                                 allowOutsideClick: false,
@@ -193,12 +195,12 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                                 allowEnterKey: false,
                                 timer: 3000,
                                 showConfirmButton: false
-                            }, function(lanjut) {
+                            }).then((lanjut) => {
                                 location.reload();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.msg,
                                 allowOutsideClick: false,
@@ -210,8 +212,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !',
                             allowOutsideClick: false,
@@ -231,8 +233,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
         var reject_reason = $('textarea[name="reject_reason"]').val();
 
         if (reject_reason == '' || reject_reason == undefined) {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning',
                 text: 'Reject reason must be filled first !',
                 allowOutsideClick: false,
@@ -245,13 +247,13 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
             return false;
         } else {
             if (id !== undefined && id !== '') {
-                swal({
-                    type: 'warning',
+                Swal.fire({
+                    icon: 'warning',
                     title: 'Are you sure ?',
                     text: 'This data will be rejected !',
                     showCancelButton: true
-                }, function(next) {
-                    if (next) {
+                }).then((next) => {
+                    if (next.isConfirmed) {
                         $.ajax({
                             type: 'post',
                             url: siteurl + active_controller + 'reject',
@@ -263,8 +265,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                             dataType: 'json',
                             success: function(result) {
                                 if (result.status == 1) {
-                                    swal({
-                                        type: 'success',
+                                    Swal.fire({
+                                        icon: 'success',
                                         title: 'Success !',
                                         text: result.msg,
                                         allowOutsideClick: false,
@@ -272,12 +274,12 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                                         allowEnterKey: false,
                                         timer: 3000,
                                         showConfirmButton: false
-                                    }, function(lanjut) {
+                                    }).then((lanjut) => {
                                         location.reload();
                                     });
                                 } else {
-                                    swal({
-                                        type: 'warning',
+                                    Swal.fire({
+                                        icon: 'warning',
                                         title: 'Failed !',
                                         text: result.msg,
                                         allowOutsideClick: false,
@@ -289,8 +291,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                                 }
                             },
                             error: function(result) {
-                                swal({
-                                    type: 'error',
+                                Swal.fire({
+                                    icon: 'error',
                                     title: 'Error !',
                                     text: 'Please try again later !',
                                     allowOutsideClick: false,
@@ -304,8 +306,8 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Overbudget.Delete');
                     }
                 });
             } else {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !',
                     allowOutsideClick: false,
