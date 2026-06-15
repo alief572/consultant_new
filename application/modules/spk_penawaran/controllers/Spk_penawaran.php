@@ -691,7 +691,7 @@ class SPK_penawaran extends Admin_Controller
                 'nm_marketing' => ucfirst($nm_marketing),
                 'nm_paket' => $nm_paket,
                 'nm_customer' => $nm_customer,
-                'grand_total' => number_format($item->grand_total),
+                'grand_total' => number_format($item->nilai_kontrak),
                 'created_by' => $item->nm_lengkap,
                 'created_date' => date('d F Y H:i:s', strtotime($item->input_date)),
                 'status' => $status,
