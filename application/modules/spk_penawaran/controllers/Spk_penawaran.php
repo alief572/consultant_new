@@ -195,7 +195,7 @@ class SPK_penawaran extends Admin_Controller
             'list_divisi' => $get_divisi,
             'list_all_aktifitas' => $get_all_aktifitas,
             'detail_informasi_awal' => $detail_informasi_awal,
-            'nilai_project' => $get_penawaran->grand_total,
+            'nilai_project' => $get_spk_penawaran->nilai_kontrak,
             'nilai_akomodasi' => $nilai_akomodasi,
             'nilai_others' => $nilai_others,
             'nilai_lab' => $nilai_lab,
