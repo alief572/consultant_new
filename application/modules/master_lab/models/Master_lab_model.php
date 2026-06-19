@@ -150,6 +150,7 @@ class Master_lab_model extends BF_Model
         $this->db->select('a.id, a.isu_lingkungan, a.peraturan, a.waktu, a.harga_ssc, a.harga_lab, a.no_coa, a.nm_coa');
         $this->db->from('kons_master_lab a');
         $this->db->where('a.id', $id);
+        $this->db->where('a.deleted_by IS NULL');
         $get_data = $this->db->get()->row();
 
         return $get_data;

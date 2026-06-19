@@ -31,28 +31,65 @@ class Master_biaya_model extends BF_Model
         $start = $this->input->post('start');
         $length = $this->input->post('length');
         $search = $this->input->post('search');
+        $order = $this->input->post('order');
 
-        $this->db->select('a.id, a.nm_biaya, a.no_coa, a.nm_coa, IF(a.tipe_biaya = 1, "Akomodasi", "Others") as tipe');
+        // Column mapping for ordering (0-based index from Datatables columns)
+        $columns = [
+            0 => 'no', // Not sortable
+            1 => 'a.nm_biaya',
+            2 => 'IF(a.tipe_biaya = 1, "Akomodasi", "Others")',
+            3 => 'a.no_coa',
+            4 => 'option' // Not sortable
+        ];
+
+        // Base Query
         $this->db->from('kons_master_biaya a');
-        $this->db->where('a.deleted_by', null);
-        if (!empty($search)) {
+        $this->db->where('a.deleted_by IS NULL');
+
+        // 1. Total records (without search)
+        $tempdb = clone $this->db;
+        $recordsTotal = $tempdb->count_all_results();
+
+        // 2. Apply Search Filter
+        if (!empty($search['value'])) {
+            $s = $search['value'];
             $this->db->group_start();
-            $this->db->like('a.nm_biaya', $search['value'], 'both');
-            $this->db->or_like('IF(a.tipe_biaya = 1, "Akomodasi", "Others")', $search['value'], 'both');
+            $this->db->like('a.nm_biaya', $s, 'both');
+            $this->db->or_like('IF(a.tipe_biaya = 1, "Akomodasi", "Others")', $s, 'both');
+            $this->db->or_like('a.no_coa', $s, 'both');
+            $this->db->or_like('a.nm_coa', $s, 'both');
             $this->db->group_end();
         }
 
-        $db_clone = clone $this->db;
-        $count_all = $db_clone->count_all_results();
+        // 3. Filtered records count
+        $tempdb = clone $this->db;
+        $recordsFiltered = $tempdb->count_all_results();
 
-        $this->db->order_by('a.id', 'desc');
-        $this->db->limit($length, $start);
+        // 4. Select and Fetch Data
+        $this->db->select('a.id, a.nm_biaya, a.no_coa, a.nm_coa, IF(a.tipe_biaya = 1, "Akomodasi", "Others") as tipe');
+
+        // Ordering
+        if (isset($order[0]['column']) && isset($columns[$order[0]['column']])) {
+            $colIdx = $order[0]['column'];
+            if ($colIdx != 0 && $colIdx != 4) { // Skip 'no' and 'option'
+                $this->db->order_by($columns[$colIdx], $order[0]['dir']);
+            } else {
+                $this->db->order_by('a.id', 'desc');
+            }
+        } else {
+            $this->db->order_by('a.id', 'desc');
+        }
+
+        // Paging
+        if ($length != -1) {
+            $this->db->limit($length, $start);
+        }
 
         $get_data_biaya = $this->db->get();
 
         $hasil = [];
+        $no = $start + 1;
 
-        $no = 1;
         foreach ($get_data_biaya->result() as $item) {
 
             $edit = '';
@@ -63,14 +100,14 @@ class Master_biaya_model extends BF_Model
             }
 
             if (has_permission($this->ENABLE_DELETE)) {
-                $delete = '<button type="button" class="btn btn-sm btn-sm btn-danger del_biaya" data-id="' . $item->id . '" title="Delete Biaya"><i class="fa fa-trash"></i></button>';
+                $delete = '<button type="button" class="btn btn-sm btn-danger del_biaya" data-id="' . $item->id . '" title="Delete Biaya"><i class="fa fa-trash"></i></button>';
             }
 
             $buttons = $edit . ' ' . $delete;
 
             $coa = '';
             if ($item->no_coa !== null && $item->nm_coa !== null) {
-                $coa = '(' . $item->no_coa . ') -' . $item->nm_coa;
+                $coa = '(' . $item->no_coa . ') - ' . $item->nm_coa;
             }
 
             $hasil[] = [
@@ -86,8 +123,8 @@ class Master_biaya_model extends BF_Model
 
         echo json_encode([
             'draw' => intval($draw),
-            'recordsTotal' => $count_all,
-            'recordsFiltered' => $count_all,
+            'recordsTotal' => intval($recordsTotal),
+            'recordsFiltered' => intval($recordsFiltered),
             'data' => $hasil
         ]);
     }

@@ -26,19 +26,15 @@ class Master_customer extends Admin_Controller
 	public function index()
 	{
 		$this->auth->restrict($this->viewPermission);
-		$where = [
-			'deleted_date' => NULL
-		];
-		$listData = $this->Customer_model->get_data($where);
-
-		$data = [
-			'result' =>  $listData
-		];
 
 		history("View data customer");
-		$this->template->set($data);
 		$this->template->title('Master Customer');
 		$this->template->render('index');
+	}
+
+	public function get_data_customer()
+	{
+		$this->Customer_model->get_data_customer();
 	}
 
 	public function add($id = null, $tanda = null)

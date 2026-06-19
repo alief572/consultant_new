@@ -493,22 +493,46 @@ class Master_aktifitas extends Admin_Controller
     {
         if (! $this->input->is_ajax_request()) {
             exit('No direct script access allowed');
+        }
+
+        // Check if the activity exists before proceeding
+        $nm_aktifitas = $this->db->select('nm_aktifitas')
+            ->where('id_aktifitas', $id_aktifitas)
+            ->get('kons_master_aktifitas')
+            ->row();
+
+        if (! $nm_aktifitas) {
+            echo $this->query_error('Data tidak ditemukan atau sudah dihapus');
+            return;
+        }
+
+        // Start database transaction for data safety and consistency
+        $this->db->trans_begin();
+
+        $arr_delete = [
+            'deleted_by' => $this->auth->user_id(),
+            'deleted_date' => date('Y-m-d H:i:s')
+        ];
+
+        // 1. Soft delete the activity
+        $this->db->where('id_aktifitas', $id_aktifitas)->update('kons_master_aktifitas', $arr_delete);
+
+        // 2. Delete all related check points (optimized to 1 query instead of loop query)
+        $this->db->where('id_aktifitas', $id_aktifitas)->delete('kons_master_check_point');
+
+        // Check transaction status
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            echo $this->query_error('Terjadi kesalahan, coba lagi');
         } else {
-            //##&## INSERT ACTIVITY USERS
-            $nm_aktifitas = $this->db->where('id_aktifitas', $id_aktifitas)->get('kons_master_aktifitas')->row();
+            $this->db->trans_commit();
+
+            // Record user activity log
             H_activity_record("Master Aktifitas > Delete Aktifitas > " . $nm_aktifitas->nm_aktifitas);
 
-            $deleted = $this->db->where('id_aktifitas', $id_aktifitas)->delete('kons_master_aktifitas');
-            if ($deleted) {
-                //###%&# DELETE SEMUA CHECK POINT JIKA ADA
-                $this->cpoint_delete_all($id_aktifitas);
-
-                $pesan  = "Data Successfully Deleted";
-                $params['datatable_reload'] = "#my-grid";
-                echo $this->query_success($pesan, $params);
-            } else {
-                echo $this->query_error('Terjadi kesalahan, coba lagi');
-            }
+            $pesan  = "Data Successfully Deleted";
+            $params['datatable_reload'] = "#my-grid";
+            echo $this->query_success($pesan, $params);
         }
     }
 

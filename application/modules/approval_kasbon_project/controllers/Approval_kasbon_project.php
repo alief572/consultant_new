@@ -52,6 +52,7 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->join('kons_tr_spk_budgeting b', 'b.id_spk_budgeting = a.id_spk_budgeting', 'left');
         $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = b.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = c.id_project', 'left');
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.sts_reject IS NULL');
         $this->db->group_start();
         $this->db->where('a.sts', '');
@@ -161,7 +162,13 @@ class Approval_kasbon_project extends Admin_Controller
         $id_kasbon = urldecode($id_kasbon);
         $id_kasbon = str_replace('|', '/', $id_kasbon);
 
-        $get_header = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id_kasbon])->row();
+        $get_header = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id_kasbon, 'deleted_at' => NULL])->row();
+
+        if (empty($get_header)) {
+            $this->session->set_flashdata('alert_data', '<div class="alert alert-warning" id="flash-message">Data tidak ditemukan</div>');
+            redirect(site_url('approval_kasbon_project'));
+            return;
+        }
 
         $id_spk_budgeting = $get_header->id_spk_budgeting;
 
@@ -312,7 +319,7 @@ class Approval_kasbon_project extends Admin_Controller
             ];
         endforeach;
 
-        $get_header = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id_kasbon])->row();
+        $get_header = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id_kasbon, 'deleted_at' => NULL])->row();
 
         $data = [
             'id_kasbon' => $id_kasbon,

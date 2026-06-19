@@ -40,6 +40,7 @@ class Laporan_kunjungan extends Admin_Controller
         if (!$this->auth->is_admin()) {
             $this->auth->restrict($this->viewPermission);
         }
+
         $this->template->title('Laporan Kunjungan - Daftar SPK');
         $this->template->render('index');
     }

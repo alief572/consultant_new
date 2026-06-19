@@ -816,7 +816,10 @@ class SPK_penawaran extends Admin_Controller
             ';
 
 
-            $get_marketing = $this->db->get_where('employee', ['id' => $item->id_marketing])->row();
+            $this->db->select('a.id, a.name as nm_karyawan');
+            $this->db->from(DBHR . '.employees a');
+            $this->db->where('a.id', $item->id_marketing);
+            $get_marketing = $this->db->get()->row();
             $nm_marketing = (!empty($get_marketing)) ? $get_marketing->nm_karyawan : '';
 
             $this->db->select('a.*');
@@ -1211,6 +1214,8 @@ class SPK_penawaran extends Admin_Controller
         );
 
         if ($result) {
+            $revisi = $this->Spk_penawaran_model->get_revisi($id_spk_penawaran);
+            $this->Spk_penawaran_model->save_to_history($id_spk_penawaran, $revisi);
             echo json_encode(['status' => 1, 'msg' => 'Data has been successfully saved !']);
         } else {
             echo json_encode(['status' => 0, 'msg' => 'Please try again later !']);
@@ -1274,6 +1279,9 @@ class SPK_penawaran extends Admin_Controller
 
         $nm_konsultan_2 = (!empty($get_konsultan_2)) ? $get_konsultan_2->nm_karyawan : '';
 
+        $revisi = $this->Spk_penawaran_model->get_revisi($id_spk_penawaran);
+        $this->Spk_penawaran_model->save_to_history($id_spk_penawaran, $revisi);
+
         $this->db->trans_begin();
 
         $this->db->delete('kons_tr_spk_aktifitas', ['id_spk_penawaran' => $id_spk_penawaran]);
@@ -1293,6 +1301,7 @@ class SPK_penawaran extends Admin_Controller
             'id_customer' => $get_customer->id_customer,
             'nm_customer' => $get_customer->nm_customer,
             'address' => $post['address'],
+            'npwp_cust' => $post['no_npwp'],
             'nm_pic' => $post['pic'],
             'tipe_informasi_awal' => $get_penawaran->tipe_informasi_awal,
             'detail_informasi_awal' => $get_penawaran->detail_informasi_awal,
@@ -1315,6 +1324,7 @@ class SPK_penawaran extends Admin_Controller
             'biaya_subcont' => ($post['biaya_subcont'] !== '') ? str_replace(',', '', $post['biaya_subcont']) : 0,
             'biaya_akomodasi' => ($post['biaya_akomodasi'] !== '') ? str_replace(',', '', $post['biaya_akomodasi']) : 0,
             'biaya_others' => ($post['biaya_others'] !== '') ? str_replace(',', '', $post['biaya_others']) : 0,
+            'biaya_tandem' => ($post['biaya_tandem'] !== '') ? str_replace(',', '', $post['biaya_tandem']) : 0,
             'biaya_lab' => ($post['biaya_lab'] !== '') ? str_replace(',', '', $post['biaya_lab']) : 0,
             'biaya_subcont_tenaga_ahli' => ($post['biaya_subcont_tenaga_ahli'] !== '') ? str_replace(',', '', $post['biaya_subcont_tenaga_ahli']) : 0,
             'biaya_subcont_perusahaan' => ($post['biaya_subcont_perusahaan'] !== '') ? str_replace(',', '', $post['biaya_subcont_perusahaan']) : 0,
@@ -1410,11 +1420,13 @@ class SPK_penawaran extends Admin_Controller
             exit;
         }
 
-        $insert_aktifitas = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert_aktifitas);
-        if (!$insert_aktifitas) {
-            $this->db->trans_rollback();
-            print_r($this->db->error($insert_aktifitas) . ' ' . $this->db->last_query());
-            exit;
+        if (!empty($data_insert_aktifitas)) {
+            $insert_aktifitas = $this->db->insert_batch('kons_tr_spk_aktifitas', $data_insert_aktifitas);
+            if (!$insert_aktifitas) {
+                $this->db->trans_rollback();
+                print_r($this->db->error($insert_aktifitas) . ' ' . $this->db->last_query());
+                exit;
+            }
         }
 
         if (!empty($data_insert_subcont)) {
@@ -1426,11 +1438,13 @@ class SPK_penawaran extends Admin_Controller
             }
         }
 
-        $insert_spk_penawaran_payment = $this->db->insert_batch('kons_tr_spk_penawaran_payment', $data_insert_payment);
-        if (!$insert_spk_penawaran_payment) {
-            $this->db->trans_rollback();
-            print_r($this->db->error($insert_spk_penawaran_payment) . ' ' . $this->db->last_query());
-            exit;
+        if (!empty($data_insert_payment)) {
+            $insert_spk_penawaran_payment = $this->db->insert_batch('kons_tr_spk_penawaran_payment', $data_insert_payment);
+            if (!$insert_spk_penawaran_payment) {
+                $this->db->trans_rollback();
+                print_r($this->db->error($insert_spk_penawaran_payment) . ' ' . $this->db->last_query());
+                exit;
+            }
         }
 
         $update_penawaran_sts_cust = $this->db->update('kons_tr_penawaran', ['sts_cust' => $post['tipe_informasi_awal']], ['id_quotation' => $get_spk_penawaran->id_penawaran]);
@@ -1985,6 +1999,10 @@ class SPK_penawaran extends Admin_Controller
                 $this->db->insert_batch('kons_tr_spk_non_kons_payment', $arr_insert_top);
             }
 
+            if ($this->db->trans_status() === false) {
+                throw new Exception('Database transaction failed');
+            }
+
             $this->db->trans_commit();
 
             $this->output->set_status_header(200);
@@ -2056,7 +2074,8 @@ class SPK_penawaran extends Admin_Controller
         $draw = $this->input->post('draw', true);
         $length = $this->input->post('length', true);
         $start = $this->input->post('start', true);
-        $search = $this->input->post('search', true)['value'];
+        $search_post = $this->input->post('search', true);
+        $search = is_array($search_post) ? ($search_post['value'] ?? '') : '';
         $order = $this->input->post('order', true);
 
         $this->db->select('a.*');
@@ -2080,7 +2099,7 @@ class SPK_penawaran extends Admin_Controller
 
             $no_search = 1;
             foreach ($columnSearch as $item_search) {
-                if ($no_search = 1) {
+                if ($no_search == 1) {
                     $this->db->like($item_search, $search, 'both');
                 } else {
                     $this->db->or_like($item_search, $search, 'both');

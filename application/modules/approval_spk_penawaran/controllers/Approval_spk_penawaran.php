@@ -38,6 +38,9 @@ class Approval_spk_penawaran extends Admin_Controller
 
     public function view_spk($id_spk_penawaran)
     {
+        $id_spk_penawaran = urldecode($id_spk_penawaran);
+        $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
+
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
         $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
@@ -236,6 +239,9 @@ class Approval_spk_penawaran extends Admin_Controller
 
     public function approval_spk($id_spk_penawaran)
     {
+        $id_spk_penawaran = urldecode($id_spk_penawaran);
+        $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
+
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
         $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();

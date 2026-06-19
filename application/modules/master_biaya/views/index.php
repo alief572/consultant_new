@@ -74,43 +74,51 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<!-- page script -->
 	<script type="text/javascript">
+		var dataTable;
 		$(document).ready(function() {
 			datatables();
 		});
 
 		function datatables() {
-			// var dataTable = $('#example1').dataTable();
-			// datatable.destroy();
+			if ($.fn.DataTable.isDataTable('#example1')) {
+				dataTable.ajax.reload(null, false);
+			} else {
+				dataTable = $('#example1').DataTable({
+					ajax: {
+						url: siteurl + active_controller + 'get_data_biaya',
+						type: "POST",
+						dataType: "JSON",
+						data: function(d) {
 
-			var dataTable = $('#example1').dataTable({
-				ajax: {
-					url: siteurl + active_controller + 'get_data_biaya',
-					type: "POST",
-					dataType: "JSON",
-					data: function(d) {
-
-					}
-				},
-				columns: [{
+						}
+					},
+					columns: [{
 						data: 'no',
+						className: 'text-center',
+						orderable: false,
+						searchable: false,
+						width: '50px'
 					}, {
 						data: 'nm_biaya'
 					}, {
 						data: 'tipe_biaya'
-					},
-					{
+					}, {
 						data: 'coa'
 					}, {
-						data: 'option'
-					}
-				],
-				responsive: true,
-				processing: true,
-				serverSide: true,
-				stateSave: true,
-				destroy: true,
-				paging: true
-			});
+						data: 'option',
+						className: 'text-center',
+						orderable: false,
+						searchable: false,
+						width: '120px'
+					}],
+					responsive: true,
+					processing: true,
+					serverSide: true,
+					stateSave: true,
+					paging: true,
+					order: []
+				});
+			}
 		}
 
 		$(document).on('click', '.add', function() {

@@ -56,6 +56,24 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
     <!-- /.box-body -->
 </div>
 <div id="form-data"></div>
+
+<div class="modal" id="dialog-history" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">History Approval</h4>
+            </div>
+            <div class="modal-body" id="historyModalBody">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- DataTables -->
 <!-- <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
@@ -109,6 +127,39 @@ $ENABLE_DELETE  = has_permission('Project_Budgeting.Delete');
                             text: 'Please try again later!'
                         });
                     }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.btn_history', function() {
+        var id_spk_budgeting = $(this).data('id_spk_budgeting');
+
+        $.ajax({
+            type: 'get',
+            url: siteurl + active_controller + 'history_approval',
+            data: {
+                'id_spk_budgeting': id_spk_budgeting
+            },
+            cache: false,
+            dataType: 'JSON',
+            success: function(result) {
+                if (result.status == 1) {
+                    $('#dialog-history').modal();
+                    $('#historyModalBody').html(result.result);
+                } else {
+                    swal({
+                        type: 'warning',
+                        title: 'Failed !',
+                        text: result.pesan
+                    });
+                }
+            },
+            error: function(result) {
+                swal({
+                    type: 'error',
+                    title: 'Error !',
+                    text: 'Please try again later!'
                 });
             }
         });

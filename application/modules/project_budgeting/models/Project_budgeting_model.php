@@ -3,6 +3,11 @@
 class Project_budgeting_model extends BF_Model
 {
 
+    protected $ENABLE_ADD;
+    protected $ENABLE_MANAGE;
+    protected $ENABLE_VIEW;
+    protected $ENABLE_DELETE;
+
     public function __construct()
     {
         parent::__construct();
@@ -25,5 +30,13 @@ class Project_budgeting_model extends BF_Model
         $kode_trans        = "SPK-BUDGET/" . date('y') . "/" . date('m') . "/" . $urut2;
 
         return $kode_trans;
+    }
+
+    public function get_spk_budgeting($id_spk_budgeting)
+    {
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_master_konsultasi_header b', 'b.id_konsultasi_h = a.id_project', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        return $this->db->get()->row();
     }
 }
