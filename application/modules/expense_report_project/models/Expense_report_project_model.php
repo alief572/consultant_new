@@ -154,7 +154,7 @@ class Expense_report_project_model extends BF_Model
         $ttl_debit = 0;
         $ttl_kredit = 0;
         if ($kelebihan_expense == '0' && $kelebihan_kasbon == '0') {
-            $arr_coa_jurnal = ['5101-01-03', '1103-01-04'];
+            $arr_coa_jurnal = ['5101-01-03', '1103-01-14'];
 
             $this->gl->select('a.no_perkiraan, a.nama as nm_coa');
             $this->gl->from('coa_master a');
@@ -488,7 +488,7 @@ class Expense_report_project_model extends BF_Model
                     if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
-                    if ($item_coa->no_perkiraan == '1103-01-04') {
+                    if ($item_coa->no_perkiraan == '1103-01-14') {
                         $kredit = $total_kasbon;
                     }
 
@@ -539,7 +539,7 @@ class Expense_report_project_model extends BF_Model
         }
 
         if ($kontrol > 0) {
-            $arr_coa_jurnal = ['5101-01-03', '1103-01-04'];
+            $arr_coa_jurnal = ['5101-01-03', '1103-01-14'];
 
             $coa_bank = '';
             if ($post['id_bank'] !== '') {
@@ -882,7 +882,7 @@ class Expense_report_project_model extends BF_Model
                     if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
-                    if ($item_coa->no_perkiraan == '1103-01-04') {
+                    if ($item_coa->no_perkiraan == '1103-01-14') {
                         $kredit = $total_kasbon;
                     }
                     if ($coa_bank !== '' && $item_coa->no_perkiraan == $coa_bank) {
@@ -937,7 +937,7 @@ class Expense_report_project_model extends BF_Model
         }
 
         if ($kontrol < 0) {
-            $arr_coa_jurnal = ['5101-01-03', '1103-01-04', '2040-20-0'];
+            $arr_coa_jurnal = ['5101-01-03', '1103-01-14', '9999-99-99'];
 
             $this->gl->select('a.no_perkiraan, a.nama as nm_coa');
             $this->gl->from('coa_master a');
@@ -1271,10 +1271,10 @@ class Expense_report_project_model extends BF_Model
                     if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
-                    if ($item_coa->no_perkiraan == '1103-01-04') {
+                    if ($item_coa->no_perkiraan == '1103-01-14') {
                         $kredit = $total_kasbon;
                     }
-                    if ($item_coa->no_perkiraan == '2040-20-0') {
+                    if ($item_coa->no_perkiraan == '9999-99-99') {
                         $kredit = ($kontrol * -1);
                     }
 

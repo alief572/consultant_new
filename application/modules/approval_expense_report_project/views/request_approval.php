@@ -678,6 +678,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
         var id_expense = "<?= $header->id ?>";
         var id_header = "<?= $id_header ?>";
         var id_bank = $('select[name="bank"]').val();
+        var id_penawaran = $('input[name="id_penawaran"]').val();
 
         $.ajax({
             type: 'post',
@@ -685,7 +686,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
             data: {
                 'id_expense': id_expense,
                 'id_header': id_header,
-                'id_bank': id_bank
+                'id_bank': id_bank,
+                'id_penawaran': id_penawaran
             },
             cache: false,
             dataType: 'json',

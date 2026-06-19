@@ -2553,8 +2553,6 @@ class Approval_expense_report_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-     
-
         $this->db->update('kons_tr_expense_report_project_header', [
             'sts' => 1,
             'sts_req' => null,
@@ -2625,14 +2623,14 @@ class Approval_expense_report_project extends Admin_Controller
         // print_r($arr_jurnal);
         // exit;
 
-        $insert_jurnal = $this->db->insert_batch(DBSF . '.tr_jurnal', $arr_jurnal);
+        // $insert_jurnal = $this->db->insert_batch(DBSF . '.tr_jurnal', $arr_jurnal);
 
-        if (!empty($arr_tabungan_pph21)) {
-            $insert_tabungan_pph21 = $this->db->insert_batch(DBSF . '.tr_tabungan_pph21', $arr_tabungan_pph21);
-        }
+        // if (!empty($arr_tabungan_pph21)) {
+        //     $insert_tabungan_pph21 = $this->db->insert_batch(DBSF . '.tr_tabungan_pph21', $arr_tabungan_pph21);
+        // }
 
         if ($get_header->selisih < 0) {
-            $this->db->insert('request_payment', array(
+            $insert_request_payment = $this->db->insert('request_payment', array(
                 'no_doc' => $get_header->id,
                 'nama' => $get_user->nm_lengkap,
                 'tgl_doc' => date('Y-m-d', strtotime($get_header->created_date)),
@@ -2645,6 +2643,7 @@ class Approval_expense_report_project extends Admin_Controller
                 'currency' => 'IDR'
             ));
         }
+
 
 
         if ($this->db->trans_status() === false) {
@@ -2746,7 +2745,7 @@ class Approval_expense_report_project extends Admin_Controller
         $total_kasbon = (isset($get_expense) && $get_expense->total_kasbon > 0) ? $get_expense->total_kasbon : 0;
 
         if ($get_expense->selisih == '0') {
-            $arr_coa_jurnal = ['5101-01-03', '1103-01-04'];
+            $arr_coa_jurnal = ['5101-01-03', '1103-01-14'];
 
             $this->gl->select('a.no_perkiraan, a.nama as nm_coa');
             $this->gl->from('coa_master a');
@@ -2779,7 +2778,7 @@ class Approval_expense_report_project extends Admin_Controller
                         $no_coa = '';
                         $nm_coa = '';
 
-                        if ($tipe == 2) {
+                        if ($tipe == '2') {
                             $this->db->select('a.*');
                             $this->db->from('kons_tr_spk_budgeting_akomodasi a');
                             $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
@@ -2798,11 +2797,11 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_akomodasi)) ? $get_akomodasi->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
-                        if ($tipe == 3) {
+                        if ($tipe == '3') {
                             $this->db->select('a.*');
                             $this->db->from('kons_tr_spk_budgeting_others a');
                             $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
@@ -2821,11 +2820,11 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_others)) ? $get_others->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
-                        if ($tipe == 4) {
+                        if ($tipe == '4') {
                             $this->db->select('a.*');
                             $this->db->from('kons_tr_spk_budgeting_lab a');
                             $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
@@ -2844,11 +2843,11 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_lab)) ? $get_lab->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
-                        if ($tipe == 5) {
+                        if ($tipe == '5') {
                             $this->db->select('a.*');
                             $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
                             $this->db->where('a.id_header', $item_expense->id_header_kasbon);
@@ -2861,11 +2860,11 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_subcont_tenaga_ahli)) ? $get_subcont_tenaga_ahli->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
-                        if ($tipe == 6) {
+                        if ($tipe == '6') {
                             $this->db->select('a.*');
                             $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
                             $this->db->where('a.id_header', $item_expense->id_header_kasbon);
@@ -2878,8 +2877,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_subcont_perusahaan)) ? $get_subcont_perusahaan->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         // if ($get_expense_header->tipe == 1) {
@@ -2887,7 +2886,7 @@ class Approval_expense_report_project extends Admin_Controller
                         //     $get_master_biaya = $this->db->get_where('kons_master_biaya', ['id' => $get_detail->id_item])->row();
 
                         //     $keterangan = (!empty($get_master_biaya)) ? $get_master_biaya->nm_biaya : '';
-                        //     $no_coa = (!empty($get_master_biaya)) ? $get_master_biaya->no_coa : '';
+                        //     $no_coa = (!empty($get_master_biaya)) ? $get_master_biaya->no_coa : '5101-01-03';
                         //     $nm_coa = (!empty($get_master_biaya)) ? $get_master_biaya->nm_coa : '';
                         // }
 
@@ -2947,7 +2946,7 @@ class Approval_expense_report_project extends Admin_Controller
                     if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
-                    if ($item_coa->no_perkiraan == '1103-01-04') {
+                    if ($item_coa->no_perkiraan == '1103-01-14') {
                         $kredit = $total_kasbon;
                     }
 
@@ -3057,8 +3056,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_akomodasi)) ? $get_akomodasi->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         if ($tipe == 3) {
@@ -3080,8 +3079,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_others)) ? $get_others->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         if ($tipe == 4) {
@@ -3103,8 +3102,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_lab)) ? $get_lab->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         if ($tipe == 5) {
@@ -3120,8 +3119,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_subcont_tenaga_ahli)) ? $get_subcont_tenaga_ahli->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         if ($tipe == 6) {
@@ -3137,8 +3136,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_subcont_perusahaan)) ? $get_subcont_perusahaan->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         // if ($get_expense_header->tipe == 1) {
@@ -3146,7 +3145,7 @@ class Approval_expense_report_project extends Admin_Controller
                         //     $get_master_biaya = $this->db->get_where('kons_master_biaya', ['id' => $get_detail->id_item])->row();
 
                         //     $keterangan = (!empty($get_master_biaya)) ? $get_master_biaya->nm_biaya : '';
-                        //     $no_coa = (!empty($get_master_biaya)) ? $get_master_biaya->no_coa : '';
+                        //     $no_coa = (!empty($get_master_biaya)) ? $get_master_biaya->no_coa : '5101-01-03';
                         //     $nm_coa = (!empty($get_master_biaya)) ? $get_master_biaya->nm_coa : '';
                         // }
 
@@ -3259,7 +3258,7 @@ class Approval_expense_report_project extends Admin_Controller
             }
         }
         if ($get_expense->selisih < 0) {
-            $arr_coa_jurnal = ['5101-01-03', '1030-20-4', '2040-20-0'];
+            $arr_coa_jurnal = ['5101-01-03', '1103-01-14', '9999-99-99'];
 
             $this->gl->select('a.no_perkiraan, a.nama as nm_coa');
             $this->gl->from('coa_master a');
@@ -3311,8 +3310,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_akomodasi)) ? $get_akomodasi->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         if ($tipe == 3) {
@@ -3334,8 +3333,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_others)) ? $get_others->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         if ($tipe == 4) {
@@ -3357,8 +3356,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_lab)) ? $get_lab->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         if ($tipe == 5) {
@@ -3374,8 +3373,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_subcont_tenaga_ahli)) ? $get_subcont_tenaga_ahli->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         if ($tipe == 6) {
@@ -3391,8 +3390,8 @@ class Approval_expense_report_project extends Admin_Controller
                             $get_coa_biaya = $this->db->get()->row();
 
                             $keterangan = (!empty($get_subcont_perusahaan)) ? $get_subcont_perusahaan->nm_item : '';
-                            $no_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->no_coa : '';
-                            $nm_coa = (!empty($get_coa_biaya)) ? $get_coa_biaya->nm_coa : '';
+                            $no_coa = (!empty($get_coa_biaya->no_coa)) ? $get_coa_biaya->no_coa : '5101-01-03';
+                            $nm_coa = (!empty($get_coa_biaya->nm_coa)) ? $get_coa_biaya->nm_coa : 'Biaya Pengeluaran Lainnya';
                         }
 
                         // if ($get_expense_header->tipe == 1) {
@@ -3400,7 +3399,7 @@ class Approval_expense_report_project extends Admin_Controller
                         //     $get_master_biaya = $this->db->get_where('kons_master_biaya', ['id' => $get_detail->id_item])->row();
 
                         //     $keterangan = (!empty($get_master_biaya)) ? $get_master_biaya->nm_biaya : '';
-                        //     $no_coa = (!empty($get_master_biaya)) ? $get_master_biaya->no_coa : '';
+                        //     $no_coa = (!empty($get_master_biaya)) ? $get_master_biaya->no_coa : '5101-01-03';
                         //     $nm_coa = (!empty($get_master_biaya)) ? $get_master_biaya->nm_coa : '';
                         // }
 
@@ -3458,10 +3457,10 @@ class Approval_expense_report_project extends Admin_Controller
                     if ($item_coa->no_perkiraan == '5101-01-03') {
                         $debit = $total_expense;
                     }
-                    if ($item_coa->no_perkiraan == '1030-20-4') {
+                    if ($item_coa->no_perkiraan == '1103-01-14') {
                         $kredit = $total_kasbon;
                     }
-                    if ($item_coa->no_perkiraan == '2040-20-0') {
+                    if ($item_coa->no_perkiraan == '9999-99-99') {
                         $kredit = ($get_expense->selisih * -1);
                     }
 

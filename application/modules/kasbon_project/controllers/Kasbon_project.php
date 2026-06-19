@@ -266,7 +266,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_subcont a
                 WHERE
                     a.sts = "1" AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
                 
                 UNION ALL
 
@@ -281,7 +282,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_akomodasi a
                 WHERE
                     a.sts = "1" AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
 
                 UNION ALL
 
@@ -296,7 +298,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_others a
                 WHERE
                     a.sts = "1" AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
 
                 UNION ALL
 
@@ -311,7 +314,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_lab a
                 WHERE
                     a.sts = "1" AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
 
                 UNION ALL
 
@@ -326,7 +330,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_subcont_tenaga_ahli a
                 WHERE
                     a.sts = "1" AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
 
                 UNION ALL
 
@@ -341,7 +346,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_subcont_perusahaan a
                 WHERE
                     a.sts = "1" AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
             ';
 
             $get_total_kasbon  = $this->db->query($sql_total_kasbon)->result();
@@ -363,7 +369,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_subcont a
                 WHERE
                     a.sts IS NULL AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
                 
                 UNION ALL
 
@@ -378,7 +385,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_akomodasi a
                 WHERE
                     a.sts IS NULL AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
 
                 UNION ALL
 
@@ -393,7 +401,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_others a
                 WHERE
                     a.sts IS NULL AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
 
                 UNION ALL
 
@@ -408,7 +417,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_lab a
                 WHERE
                     a.sts IS NULL AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
 
                 UNION ALL
 
@@ -423,7 +433,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_subcont_tenaga_ahli a
                 WHERE
                     a.sts IS NULL AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
 
                 UNION ALL
 
@@ -438,7 +449,8 @@ class Kasbon_project extends Admin_Controller
                     kons_tr_kasbon_project_subcont_perusahaan a
                 WHERE
                     a.sts IS NULL AND
-                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '"
+                    a.id_spk_budgeting = "' . $item->id_spk_budgeting . '" AND
+                    a.deleted_at IS NULL
             ';
 
             $get_total_kasbon_nd  = $this->db->query($sql_total_kasbon_nd)->result();
@@ -894,6 +906,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 1);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -910,6 +923,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 1);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1099,6 +1113,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 2);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1115,6 +1130,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 2);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1290,6 +1306,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 3);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1306,6 +1323,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 3);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1480,6 +1498,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 4);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1496,6 +1515,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 4);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1670,6 +1690,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 5);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1686,6 +1707,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 5);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1860,6 +1882,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 6);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -1876,6 +1899,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 6);
+        $this->db->where('a.deleted_at IS NULL');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2945,6 +2969,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_subcont a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_subcont = $this->db->get()->result();
 
         $nilai_kasbon_aktual = 0;
@@ -2955,6 +2980,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_akomodasi a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_akomodasi = $this->db->get()->result();
 
         $nilai_kasbon_aktual_akomodasi = 0;
@@ -2965,6 +2991,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_others a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_others = $this->db->get()->result();
 
         $nilai_kasbon_aktual_others = 0;
@@ -2975,6 +3002,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_lab a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_lab = $this->db->get()->result();
 
         $nilai_kasbon_aktual_lab = 0;
@@ -2985,6 +3013,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_subcont_tenaga_ahli = $this->db->get()->result();
 
         $nilai_kasbon_aktual_subcont_tenaga_ahli = 0;
@@ -2995,6 +3024,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_subcont_perusahaan = $this->db->get()->result();
 
         $nilai_kasbon_aktual_subcont_perusahaan = 0;
@@ -3125,6 +3155,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_subcont a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_subcont = $this->db->get()->result();
 
         $nilai_kasbon_on_proses = 0;
@@ -3137,6 +3168,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_akomodasi a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_akomodasi = $this->db->get()->result();
 
         $nilai_kasbon_on_proses_akomodasi = 0;
@@ -3149,6 +3181,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_others a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_others = $this->db->get()->result();
 
         $nilai_kasbon_on_proses_others = 0;
@@ -3161,6 +3194,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_lab a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_lab = $this->db->get()->result();
 
         $nilai_kasbon_on_proses_lab = 0;
@@ -3173,6 +3207,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_subcont_tenaga_ahli = $this->db->get()->result();
 
         $nilai_kasbon_on_proses_subcont_tenaga_ahli = 0;
@@ -3185,6 +3220,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_by IS NULL');
         $get_kasbon_subcont_perusahaan = $this->db->get()->result();
 
         $nilai_kasbon_on_proses_subcont_perusahaan = 0;
@@ -3509,7 +3545,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_kasbon_subcont);
+        $this->db->where('a.deleted_at IS NULL');
         $get_kasbon_subcont = $this->db->get()->row();
+
+        if (empty($get_kasbon_subcont)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -3580,7 +3622,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_spk_budgeting_aktifitas a');
@@ -3719,7 +3767,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_spk_budgeting_akomodasi a');
@@ -3826,7 +3880,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_akomodasi a');
@@ -4184,7 +4244,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -4249,7 +4315,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -4314,7 +4386,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -4379,7 +4457,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -4444,7 +4528,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -4509,7 +4599,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -4574,7 +4670,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -4639,7 +4741,13 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         $get_header = $this->db->get()->row();
+
+        if (empty($get_header)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -6403,163 +6511,277 @@ class Kasbon_project extends Admin_Controller
     public function del_kasbon_subcont()
     {
         $id = $this->input->post('id');
+        $now = date('Y-m-d H:i:s');
+        $user_id = $this->auth->user_id();
+
+        // Validate record exists and not already deleted
+        $record = $this->db->get_where('kons_tr_kasbon_project_header', [
+            'id' => $id,
+            'deleted_at' => NULL
+        ])->row();
+
+        if (empty($record)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->trans_start();
 
-        $del_header = $this->db->delete('kons_tr_kasbon_project_header', ['id' => $id]);
-        $del_kasbon_subcont = $this->db->delete('kons_tr_kasbon_project_subcont', ['id_header' => $id]);
+        // Soft delete header
+        $this->db->where('id', $id);
+        $this->db->update('kons_tr_kasbon_project_header', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
+
+        // Soft delete detail
+        $this->db->where('id_header', $id);
+        $this->db->update('kons_tr_kasbon_project_subcont', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
-
             $valid = 0;
             $pesan = 'Please try again later !';
         } else {
             $this->db->trans_commit();
-
             $valid = 1;
             $pesan = 'Data has been deleted !';
         }
 
-        echo json_encode([
-            'status' => $valid,
-            'pesan' => $pesan
-        ]);
+        echo json_encode(['status' => $valid, 'pesan' => $pesan]);
     }
 
     public function del_kasbon_akomodasi()
     {
         $id = $this->input->post('id');
+        $now = date('Y-m-d H:i:s');
+        $user_id = $this->auth->user_id();
+
+        // Validate record exists and not already deleted
+        $record = $this->db->get_where('kons_tr_kasbon_project_header', [
+            'id' => $id,
+            'deleted_at' => NULL
+        ])->row();
+
+        if (empty($record)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->trans_start();
 
-        $del_header = $this->db->delete('kons_tr_kasbon_project_header', ['id' => $id]);
-        $del_kasbon_akomodasi = $this->db->delete('kons_tr_kasbon_project_akomodasi', ['id_header' => $id]);
+        // Soft delete header
+        $this->db->where('id', $id);
+        $this->db->update('kons_tr_kasbon_project_header', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
+
+        // Soft delete detail
+        $this->db->where('id_header', $id);
+        $this->db->update('kons_tr_kasbon_project_akomodasi', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
-
             $valid = 0;
             $pesan = 'Please try again later !';
         } else {
             $this->db->trans_commit();
-
             $valid = 1;
             $pesan = 'Data has been deleted !';
         }
 
-        echo json_encode([
-            'status' => $valid,
-            'pesan' => $pesan
-        ]);
+        echo json_encode(['status' => $valid, 'pesan' => $pesan]);
     }
 
     public function del_kasbon_others()
     {
         $id = $this->input->post('id_kasbon_others');
+        $now = date('Y-m-d H:i:s');
+        $user_id = $this->auth->user_id();
+
+        // Validate record exists and not already deleted
+        $record = $this->db->get_where('kons_tr_kasbon_project_header', [
+            'id' => $id,
+            'deleted_at' => NULL
+        ])->row();
+
+        if (empty($record)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->trans_start();
 
-        $this->db->delete('kons_tr_kasbon_project_header', ['id' => $id]);
-        $this->db->delete('kons_tr_kasbon_project_others', ['id_header' => $id]);
+        // Soft delete header
+        $this->db->where('id', $id);
+        $this->db->update('kons_tr_kasbon_project_header', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
+
+        // Soft delete detail
+        $this->db->where('id_header', $id);
+        $this->db->update('kons_tr_kasbon_project_others', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
-
             $valid = 0;
             $pesan = 'Please try again later !';
         } else {
             $this->db->trans_commit();
-
             $valid = 1;
             $pesan = 'Data has been deleted !';
         }
 
-        echo json_encode([
-            'status' => $valid,
-            'pesan' => $pesan
-        ]);
+        echo json_encode(['status' => $valid, 'pesan' => $pesan]);
     }
 
     public function del_kasbon_lab()
     {
         $id = $this->input->post('id_kasbon_lab');
+        $now = date('Y-m-d H:i:s');
+        $user_id = $this->auth->user_id();
+
+        // Validate record exists and not already deleted
+        $record = $this->db->get_where('kons_tr_kasbon_project_header', [
+            'id' => $id,
+            'deleted_at' => NULL
+        ])->row();
+
+        if (empty($record)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->trans_start();
 
-        $this->db->delete('kons_tr_kasbon_project_header', ['id' => $id]);
-        $this->db->delete('kons_tr_kasbon_project_lab', ['id_header' => $id]);
+        // Soft delete header
+        $this->db->where('id', $id);
+        $this->db->update('kons_tr_kasbon_project_header', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
+
+        // Soft delete detail
+        $this->db->where('id_header', $id);
+        $this->db->update('kons_tr_kasbon_project_lab', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
-
             $valid = 0;
             $pesan = 'Please try again later !';
         } else {
             $this->db->trans_commit();
-
             $valid = 1;
             $pesan = 'Data has been deleted !';
         }
 
-        echo json_encode([
-            'status' => $valid,
-            'pesan' => $pesan
-        ]);
+        echo json_encode(['status' => $valid, 'pesan' => $pesan]);
     }
 
     public function del_kasbon_subcont_tenaga_ahli()
     {
         $id = $this->input->post('id_kasbon_subcont_tenaga_ahli');
+        $now = date('Y-m-d H:i:s');
+        $user_id = $this->auth->user_id();
+
+        // Validate record exists and not already deleted
+        $record = $this->db->get_where('kons_tr_kasbon_project_header', [
+            'id' => $id,
+            'deleted_at' => NULL
+        ])->row();
+
+        if (empty($record)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->trans_start();
 
-        $this->db->delete('kons_tr_kasbon_project_header', ['id' => $id]);
-        $this->db->delete('kons_tr_kasbon_project_subcont_tenaga_ahli', ['id_header' => $id]);
+        // Soft delete header
+        $this->db->where('id', $id);
+        $this->db->update('kons_tr_kasbon_project_header', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
+
+        // Soft delete detail
+        $this->db->where('id_header', $id);
+        $this->db->update('kons_tr_kasbon_project_subcont_tenaga_ahli', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
-
             $valid = 0;
             $pesan = 'Please try again later !';
         } else {
             $this->db->trans_commit();
-
             $valid = 1;
             $pesan = 'Data has been deleted !';
         }
 
-        echo json_encode([
-            'status' => $valid,
-            'pesan' => $pesan
-        ]);
+        echo json_encode(['status' => $valid, 'pesan' => $pesan]);
     }
 
     public function del_kasbon_subcont_perusahaan()
     {
         $id = $this->input->post('id_kasbon_subcont_perusahaan');
+        $now = date('Y-m-d H:i:s');
+        $user_id = $this->auth->user_id();
+
+        // Validate record exists and not already deleted
+        $record = $this->db->get_where('kons_tr_kasbon_project_header', [
+            'id' => $id,
+            'deleted_at' => NULL
+        ])->row();
+
+        if (empty($record)) {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+            return;
+        }
 
         $this->db->trans_start();
 
-        $this->db->delete('kons_tr_kasbon_project_header', ['id' => $id]);
-        $this->db->delete('kons_tr_kasbon_project_subcont_perusahaan', ['id_header' => $id]);
+        // Soft delete header
+        $this->db->where('id', $id);
+        $this->db->update('kons_tr_kasbon_project_header', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
+
+        // Soft delete detail
+        $this->db->where('id_header', $id);
+        $this->db->update('kons_tr_kasbon_project_subcont_perusahaan', [
+            'deleted_at' => $now,
+            'deleted_by' => $user_id
+        ]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
-
             $valid = 0;
             $pesan = 'Please try again later !';
         } else {
             $this->db->trans_commit();
-
             $valid = 1;
             $pesan = 'Data has been deleted !';
         }
 
-        echo json_encode([
-            'status' => $valid,
-            'pesan' => $pesan
-        ]);
+        echo json_encode(['status' => $valid, 'pesan' => $pesan]);
     }
 
     public function paid_kasbon_subcont()
@@ -7989,6 +8211,156 @@ class Kasbon_project extends Admin_Controller
         echo json_encode([
             'status' => $valid,
             'pesan' => $pesan
+        ]);
+    }
+
+    public function history_approval()
+    {
+        $id_kasbon = $this->input->get('id_kasbon', true);
+
+        $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id_kasbon])->row();
+
+        if (empty($get_kasbon)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Data not found!'
+            ]);
+            return;
+        }
+
+        $created_by_name = get_name('users', 'nm_lengkap', 'id_user', $get_kasbon->created_by);
+        $approved_by_name = !empty($get_kasbon->approved_by) ? get_name('users', 'nm_lengkap', 'id_user', $get_kasbon->approved_by) : '';
+
+        // Tipe label mapping
+        $tipe_labels = [
+            1 => 'Subcont',
+            2 => 'Akomodasi',
+            3 => 'Others',
+            4 => 'Lab',
+            5 => 'Subcont Tenaga Ahli',
+            6 => 'Subcont Perusahaan'
+        ];
+        $tipe_label = isset($tipe_labels[$get_kasbon->tipe]) ? $tipe_labels[$get_kasbon->tipe] : '-';
+
+        // Build timeline steps
+        $steps = [];
+
+        // Step 1: Submitted
+        $steps[] = [
+            'icon' => 'fa-paper-plane',
+            'color' => '#17a2b8',
+            'title' => 'Submitted',
+            'user' => ucfirst($created_by_name),
+            'date' => date('d M Y, H:i', strtotime($get_kasbon->created_date)),
+            'remark' => '',
+            'done' => true
+        ];
+
+        // Step 2: Approval
+        if ($get_kasbon->sts == '1') {
+            $steps[] = [
+                'icon' => 'fa-check-circle',
+                'color' => '#28a745',
+                'title' => 'Approved',
+                'user' => ucfirst($approved_by_name),
+                'date' => !empty($get_kasbon->approved_date) ? date('d M Y, H:i', strtotime($get_kasbon->approved_date)) : '-',
+                'remark' => '',
+                'done' => true
+            ];
+        } elseif ($get_kasbon->sts_reject == '1') {
+            $steps[] = [
+                'icon' => 'fa-times-circle',
+                'color' => '#dc3545',
+                'title' => 'Rejected',
+                'user' => ucfirst($approved_by_name),
+                'date' => !empty($get_kasbon->approved_date) ? date('d M Y, H:i', strtotime($get_kasbon->approved_date)) : '-',
+                'remark' => !empty($get_kasbon->reject_reason) ? $get_kasbon->reject_reason : '',
+                'done' => true
+            ];
+        } else {
+            $steps[] = [
+                'icon' => 'fa-clock-o',
+                'color' => '#ffc107',
+                'title' => 'Waiting Approval',
+                'user' => '',
+                'date' => '',
+                'remark' => '',
+                'done' => false
+            ];
+        }
+
+        // Build HTML timeline
+        $html = '<div style="padding: 15px 20px;">';
+
+        // Header info
+        $html .= '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; padding: 15px 20px; margin-bottom: 25px; color: #fff;">';
+        $html .= '<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">';
+        $html .= '<div>';
+        $html .= '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">ID Kasbon</div>';
+        $html .= '<div style="font-size: 15px; font-weight: 600;">' . $get_kasbon->id . '</div>';
+        $html .= '</div>';
+        $html .= '<div style="text-align: center;">';
+        $html .= '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Deskripsi</div>';
+        $html .= '<div style="font-size: 14px; font-weight: 500;">' . $get_kasbon->deskripsi . '</div>';
+        $html .= '</div>';
+        $html .= '<div style="text-align: right;">';
+        $html .= '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Tipe</div>';
+        $html .= '<div style="font-size: 14px; font-weight: 500;">' . $tipe_label . '</div>';
+        $html .= '</div>';
+        $html .= '</div>';
+        $html .= '</div>';
+
+        // Timeline
+        $html .= '<div style="position: relative; padding-left: 40px;">';
+
+        // Vertical line
+        $html .= '<div style="position: absolute; left: 15px; top: 5px; bottom: 5px; width: 2px; background: #e9ecef;"></div>';
+
+        $total_steps = count($steps);
+        foreach ($steps as $i => $step) {
+            $is_last = ($i === $total_steps - 1);
+            $opacity = $step['done'] ? '1' : '0.5';
+
+            $html .= '<div style="position: relative; margin-bottom: ' . ($is_last ? '0' : '25px') . '; opacity: ' . $opacity . ';">';
+
+            // Circle dot
+            $html .= '<div style="position: absolute; left: -33px; top: 3px; width: 28px; height: 28px; border-radius: 50%; background: ' . $step['color'] . '; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 1;">';
+            $html .= '<i class="fa ' . $step['icon'] . '" style="color: #fff; font-size: 12px;"></i>';
+            $html .= '</div>';
+
+            // Content card
+            $html .= '<div style="background: #fff; border: 1px solid #e9ecef; border-left: 3px solid ' . $step['color'] . '; border-radius: 6px; padding: 12px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">';
+
+            // Title row
+            $html .= '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">';
+            $html .= '<span style="font-weight: 600; font-size: 14px; color: ' . $step['color'] . ';">' . $step['title'] . '</span>';
+            if (!empty($step['date'])) {
+                $html .= '<span style="font-size: 12px; color: #6c757d;"><i class="fa fa-calendar-o" style="margin-right: 4px;"></i>' . $step['date'] . '</span>';
+            }
+            $html .= '</div>';
+
+            // User
+            if (!empty($step['user'])) {
+                $html .= '<div style="font-size: 13px; color: #495057;"><i class="fa fa-user-o" style="margin-right: 6px; color: #6c757d;"></i>' . $step['user'] . '</div>';
+            }
+
+            // Remark
+            if (!empty($step['remark'])) {
+                $html .= '<div style="margin-top: 8px; padding: 8px 12px; background: #fff3cd; border-radius: 4px; font-size: 12px; color: #856404; border: 1px solid #ffeaa7;">';
+                $html .= '<i class="fa fa-comment-o" style="margin-right: 6px;"></i><strong>Reason:</strong> ' . $step['remark'];
+                $html .= '</div>';
+            }
+
+            $html .= '</div>'; // end content card
+            $html .= '</div>'; // end step
+        }
+
+        $html .= '</div>'; // end timeline
+        $html .= '</div>'; // end wrapper
+
+        echo json_encode([
+            'status' => 1,
+            'result' => $html
         ]);
     }
 }

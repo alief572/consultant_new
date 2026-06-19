@@ -26,3 +26,6 @@ application/config/constants.php
 /docker/*
 docker-compose.yml
 application/config/config.php
+/.kiro
+/tests
+Dockerfile

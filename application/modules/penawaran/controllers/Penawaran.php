@@ -963,7 +963,7 @@ class Penawaran extends Admin_Controller
                         throw new Exception("Failed to insert into {$table}.");
                     }
 
-                    $history_data = array_map(function($row) use ($id_history) {
+                    $history_data = array_map(function ($row) use ($id_history) {
                         $row['id_history'] = $id_history;
                         return $row;
                     }, $data);
@@ -981,7 +981,6 @@ class Penawaran extends Admin_Controller
             $this->db->trans_commit();
             $msg = 'Data has been successfully saved !';
             $this->Penawaran_model->history_penawaran($id_penawaran);
-
         } catch (Exception $e) {
             $this->db->trans_rollback();
             $valid = 0;
@@ -1256,14 +1255,13 @@ class Penawaran extends Admin_Controller
             }
 
             $this->db->trans_commit();
-            
+
             $this->Penawaran_model->history_penawaran($id_penawaran);
 
             echo json_encode([
                 'status' => 1,
                 'msg'    => 'Data has been successfully saved !',
             ]);
-
         } catch (Exception $e) {
             $this->db->trans_rollback();
             echo json_encode([
