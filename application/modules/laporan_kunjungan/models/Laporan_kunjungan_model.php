@@ -32,12 +32,12 @@ class Laporan_kunjungan_model extends BF_Model
      */
     public function get_approved_spk_list($user_id, $start, $length, $search = '', $is_admin = false)
     {
-        // Base conditions
+        // Base conditions - only show SPK with Approved status (sts_spk = '1')
         $this->db->select('a.*, c.nm_paket');
         $this->db->from('kons_tr_spk_penawaran a');
         $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = b.id_paket', 'left');
-        $this->db->where('a.approval_level2_sts', 1);
+        $this->db->where('a.sts_spk', '1');
 
         // Get total count (before search filter)
         $total = $this->db->count_all_results('', false);
