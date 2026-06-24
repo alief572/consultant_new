@@ -512,8 +512,8 @@ class Laporan_kunjungan extends Admin_Controller
         // Format header info
         $header = $report['header'];
         $visit_date = !empty($header['visit_date']) ? date('d-m-Y', strtotime($header['visit_date'])) : '-';
-        $start_time = !empty($header['start_time']) ? date('d-m-Y H:i', strtotime($header['start_time'])) : '-';
-        $finish_time = !empty($header['finish_time']) ? date('d-m-Y H:i', strtotime($header['finish_time'])) : '-';
+        $start_time = !empty($header['start_time']) ? (strlen($header['start_time']) > 10 ? date('d-m-Y H:i', strtotime($header['start_time'])) : $header['start_time']) : '-';
+        $finish_time = !empty($header['finish_time']) ? (strlen($header['finish_time']) > 10 ? date('d-m-Y H:i', strtotime($header['finish_time'])) : $header['finish_time']) : '-';
 
         // Build action plans list from activities
         $action_plans = [];
@@ -531,6 +531,17 @@ class Laporan_kunjungan extends Admin_Controller
                             'status'          => $plan['status'] ?? 'progress',
                         ];
                     }
+                } else {
+                    // Activity without action plans - still show the activity
+                    $action_plans[] = [
+                        'visit_date'      => $visit_date,
+                        'consultant_name' => htmlspecialchars($header['consultant_name'] ?? ''),
+                        'activity_name'   => htmlspecialchars($activity['activity_name'] ?? ''),
+                        'description'     => '-',
+                        'pic'             => '-',
+                        'due_date'        => '-',
+                        'status'          => '-',
+                    ];
                 }
             }
         }
