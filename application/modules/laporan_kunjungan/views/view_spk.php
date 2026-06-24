@@ -78,8 +78,8 @@
                     <td class="text-center"><?= $idx + 1 ?></td>
                     <td><?= !empty($visit->visit_date) ? date('d-m-Y', strtotime($visit->visit_date)) : '-' ?></td>
                     <td><?= htmlspecialchars($visit->consultant_name ?? '') ?></td>
-                    <td><?= !empty($visit->start_time) ? date('d-m-Y H:i', strtotime($visit->start_time)) : '-' ?></td>
-                    <td><?= !empty($visit->finish_time) ? date('d-m-Y H:i', strtotime($visit->finish_time)) : '-' ?></td>
+                    <td><?= !empty($visit->start_time) ? (strlen($visit->start_time) > 10 ? date('d-m-Y H:i', strtotime($visit->start_time)) : date('H:i', strtotime($visit->start_time))) : '-' ?></td>
+                    <td><?= !empty($visit->finish_time) ? (strlen($visit->finish_time) > 10 ? date('d-m-Y H:i', strtotime($visit->finish_time)) : date('H:i', strtotime($visit->finish_time))) : '-' ?></td>
                     <td class="text-center">
                         <?php if ($visit->status === 'final'): ?>
                             <span class="label label-success">Final</span>
