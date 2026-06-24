@@ -26,7 +26,7 @@ class Laporan_kunjungan extends Admin_Controller
         $this->template->title('Laporan Kunjungan');
         $this->template->page_icon('fa fa-clipboard');
         $this->load->model('laporan_kunjungan/Laporan_kunjungan_model');
-        date_default_timezone_set('Asia/Bangkok');
+        date_default_timezone_set('Asia/Jakarta');
     }
 
     /**
