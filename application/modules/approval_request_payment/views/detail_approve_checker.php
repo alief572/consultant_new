@@ -807,7 +807,7 @@ if ($tipe == 'Expense') {
 
 	$(document).on('click', '#reject', function(e) {
 		var id = $('input[name="id"]').val();
-		var reject_reason = $('.reject_reason').val();
+		var reject_reason = $('.reject_reason').val().trim();
 
 		if (reject_reason !== '') {
 			swal({
