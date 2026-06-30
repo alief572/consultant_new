@@ -378,7 +378,9 @@ class Approval_kasbon_project extends Admin_Controller
             $data_update = [
                 'sts'           => 2,
                 'reject_reason' => $reject_reason,
-                'updated_at'    => date('Y-m-d H:i:s') // Opsional: tambah jejak waktu
+                'rejected_by'   => $this->auth->user_id(),
+                'rejected_date' => date('Y-m-d H:i:s'),
+                'updated_at'    => date('Y-m-d H:i:s')
             ];
 
             // Jalankan update
@@ -388,8 +390,10 @@ class Approval_kasbon_project extends Admin_Controller
             ]);
 
             $data_update_pengajuan = [
-                'sts_reject' => 1,
-                'reject_reason' => $reject_reason
+                'sts_reject'    => 1,
+                'reject_reason' => $reject_reason,
+                'rejected_by'   => $this->auth->user_id(),
+                'rejected_date' => date('Y-m-d H:i:s')
             ];
 
             $this->db->update('kons_tr_kasbon_project_header', $data_update_pengajuan, [

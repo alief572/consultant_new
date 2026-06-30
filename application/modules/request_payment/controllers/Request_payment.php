@@ -1198,25 +1198,45 @@ class Request_payment extends Admin_Controller
 		$get_req_payment = $this->db->get_where('request_payment', ['no_doc' => $post['id']])->row_array();
 		if ($post['tingkat_approval'] == '1') {
 			if ($get_req_payment['tipe'] == 'kasbon') {
-				$this->db->update('kons_tr_kasbon_project_header', array('sts_req_payment' => null, 'sts_reject' => 1, 'sts_reject_manage' => null, 'reject_reason' => $post['reject_reason'], 'sts' => null), array('id' => $post['id']));
+				$this->db->update('kons_tr_kasbon_project_header', array(
+					'sts_req_payment' => null,
+					'sts_reject' => 1,
+					'sts_reject_manage' => null,
+					'reject_reason' => $post['reject_reason'],
+					'rejected_by' => $this->auth->user_id(),
+					'rejected_date' => date('Y-m-d H:i:s'),
+					'sts' => null
+				), array('id' => $post['id']));
 
 				$this->db->update('kons_tr_kasbon_project_subcont', array('sts' => null), array('id_header' => $post['id']));
 				$this->db->update('kons_tr_kasbon_project_akomodasi', array('sts' => null), array('id_header' => $post['id']));
 				$this->db->update('kons_tr_kasbon_project_others', array('sts' => null), array('id_header' => $post['id']));
 			}
 			if ($get_req_payment['tipe'] == 'expense') {
-				$this->db->update('tr_expense', ['status' => 1, 'sts_reject' => 1, 'sts_reject_manage' => 0, 'reject_reason' => $post['reject_reason']], ['no_doc' => $post['id']]);
-
-				$this->db->update('tr_expense_detail', ['req_payment' => 0], ['no_doc' => $post['id']]);
+				$this->db->update('kons_tr_expense_report_project_header', [
+					'sts_reject' => 1,
+					'sts_reject_manage' => 0,
+					'reject_reason' => $post['reject_reason'],
+					'rejected_by' => $this->auth->user_id(),
+					'rejected_date' => date('Y-m-d H:i:s')
+				], ['id' => $post['id']]);
 			}
 		} else {
 			if ($get_req_payment['tipe'] == 'kasbon') {
-				$this->db->update('tr_kasbon', ['status' => 1, 'sts_reject_manage' => 1, 'reject_reason' => $post['reject_reason']], ['no_doc' => $post['no_doc']]);
+				$this->db->update('kons_tr_kasbon_project_header', [
+					'sts_reject_manage' => 1,
+					'reject_reason' => $post['reject_reason'],
+					'rejected_by' => $this->auth->user_id(),
+					'rejected_date' => date('Y-m-d H:i:s')
+				], ['id' => $post['id']]);
 			}
 			if ($get_req_payment['tipe'] == 'expense') {
-				$this->db->update('tr_expense', ['status' => 1, 'sts_reject_manage' => 1, 'reject_reason' => $post['reject_reason']], ['no_doc' => $post['no_doc']]);
-
-				$this->db->update('tr_expense_detail', ['req_payment' => 0], ['no_doc' => $post['no_doc']]);
+				$this->db->update('kons_tr_expense_report_project_header', [
+					'sts_reject_manage' => 1,
+					'reject_reason' => $post['reject_reason'],
+					'rejected_by' => $this->auth->user_id(),
+					'rejected_date' => date('Y-m-d H:i:s')
+				], ['id' => $post['id']]);
 			}
 		}
 
