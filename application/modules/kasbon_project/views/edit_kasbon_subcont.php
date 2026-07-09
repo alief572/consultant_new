@@ -583,11 +583,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             } else {
                 var nominal_pengajuan = 0;
             }
-            if (qty_pengajuan < 1) {
-                var total_pengajuan = get_num($('input[name="detail_subcont[' + i + '][total_pengajuan]"]').val());
-            } else {
+            // if (qty_pengajuan < 1) {
+            //     var total_pengajuan = get_num($('input[name="detail_subcont[' + i + '][total_pengajuan]"]').val());
+            // } else {
                 var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
-            }
+            // }
 
             // if ($('input[name="subcont_custom[' + i + '][qty_pengajuan]"]').length > 0) {
             //     var qty_pengajuan_custom = $('input[name="subcont_custom[' + i + '][qty_pengajuan]"]').val();

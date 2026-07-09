@@ -600,11 +600,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             }
 
             var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
-            if (qty_pengajuan < 1) {
-                var total_pengajuan = get_num($('input[name="detail_others[' + i + '][total_pengajuan]"]').val());
-            } else {
+            // if (qty_pengajuan < 1) {
+            //     var total_pengajuan = get_num($('input[name="detail_others[' + i + '][total_pengajuan]"]').val());
+            // } else {
                 var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
-            }
+            // }
 
             $('input[name="detail_others[' + i + '][total_pengajuan]"]').autoNumeric('set', total_pengajuan);
 
