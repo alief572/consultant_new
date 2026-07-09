@@ -147,6 +147,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 1);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -160,6 +161,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_akomodasi');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 2);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -173,6 +175,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_others');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 3);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -186,6 +189,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_lab');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 4);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -199,6 +203,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_tenaga_ahli');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 5);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -212,6 +217,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_perusahaan');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 6);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -2191,6 +2197,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 1);
         if (!empty($search)) {
             $this->db->group_start();
@@ -2207,6 +2214,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 1);
         if (!empty($search)) {
             $this->db->group_start();
@@ -2387,6 +2395,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 2);
         if (!empty($search)) {
             $this->db->group_start();
@@ -2403,6 +2412,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 2);
         if (!empty($search)) {
             $this->db->group_start();
@@ -2552,6 +2562,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 3);
         if (!empty($search)) {
             $this->db->group_start();
@@ -2568,6 +2579,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 3);
         if (!empty($search)) {
             $this->db->group_start();
@@ -2720,6 +2732,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 4);
         if (!empty($search)) {
             $this->db->group_start();
@@ -2736,6 +2749,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 4);
         if (!empty($search)) {
             $this->db->group_start();
@@ -2888,6 +2902,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 5);
         if (!empty($search)) {
             $this->db->group_start();
@@ -2904,6 +2919,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 5);
         if (!empty($search)) {
             $this->db->group_start();
@@ -3056,6 +3072,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 6);
         if (!empty($search)) {
             $this->db->group_start();
@@ -3072,6 +3089,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.*');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 6);
         if (!empty($search)) {
             $this->db->group_start();
