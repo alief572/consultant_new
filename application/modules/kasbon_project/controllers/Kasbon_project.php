@@ -490,6 +490,7 @@ class Kasbon_project extends Admin_Controller
             $this->db->select('a.id');
             $this->db->from('kons_tr_kasbon_project_header a');
             $this->db->where('a.id_spk_budgeting', $item->id_spk_budgeting);
+            $this->db->where('a.deleted_at IS NULL');
             $this->db->where('a.sts', null);
             $count_waiting_detail = $this->db->get()->num_rows();
 
@@ -3716,6 +3717,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.id_akomodasi ,SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
         $this->db->from('kons_tr_kasbon_project_akomodasi a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->group_by('a.id_akomodasi');
         $get_kasbon_akomodasi = $this->db->get()->result();
 
@@ -3919,6 +3921,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_kasbon_project_akomodasi a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.id_header', $id_header);
         $get_kasbon_akomodasi = $this->db->get()->result();
 
@@ -3981,6 +3984,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.id_others ,SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
         $this->db->from('kons_tr_kasbon_project_others a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->group_by('a.id_others');
         $get_kasbon_others = $this->db->get()->result();
 
@@ -4050,6 +4054,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.id_lab ,SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
         $this->db->from('kons_tr_kasbon_project_lab a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->group_by('a.id_lab');
         $get_kasbon_lab = $this->db->get()->result();
 
@@ -4121,6 +4126,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.id_subcont ,SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
         $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->group_by('a.id_subcont');
         $get_kasbon_subcont_tenaga_ahli = $this->db->get()->result();
 
@@ -4192,6 +4198,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.id_subcont ,SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
         $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->group_by('a.id_subcont');
         $get_kasbon_subcont_perusahaan = $this->db->get()->result();
 
@@ -4556,6 +4563,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_kasbon_project_others a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.id_header', $id_header);
         // $this->db->group_by('a.id_item');
         $get_data_kasbon = $this->db->get()->result();
@@ -4628,6 +4636,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_lab a');
         $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         // $this->db->group_by('a.id_item');
         $get_data_kasbon = $this->db->get()->result();
 
@@ -4699,6 +4708,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
         $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         // $this->db->group_by('a.id_item');
         $get_data_kasbon = $this->db->get()->result();
 
@@ -4770,6 +4780,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
         $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_header);
+        $this->db->where('a.deleted_at IS NULL');
         // $this->db->group_by('a.id_item');
         $get_data_kasbon = $this->db->get()->result();
 
