@@ -112,7 +112,7 @@ if ($reject_reason !== null && $reject_reason !== '') {
                         echo '<tr>';
 
                         echo '<td class="text-center" valign="top">' . $no . '</td>';
-                        echo '<td valign="top">' . $item['nm_biaya'] . '</td>';
+                        echo '<td valign="top">' . (!empty($item['nm_biaya']) ? $item['nm_biaya'] : $item['nm_item']) . '</td>';
                         echo '<td class="text-right" valign="top">' . number_format($item['qty_budget_tambahan']) . '</td>';
                         echo '<td class="text-right" valign="top">' . number_format($item['budget_tambahan'], 2) . '</td>';
                         echo '<td class="text-right" valign="top">' . number_format(($item['qty_budget_tambahan'] * $item['budget_tambahan']), 2) . '</td>';
