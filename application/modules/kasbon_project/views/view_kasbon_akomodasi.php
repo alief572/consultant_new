@@ -192,7 +192,7 @@ if ($header->metode_pembayaran == '3') {
                             echo '<tr>';
 
                             echo '<td class="text-center">' . $no . '</td>';
-                            echo '<td>' . $item->nm_biaya . '</td>';
+                            echo '<td>' . (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item) . '</td>';
                             echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
                             echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
@@ -323,7 +323,7 @@ if ($header->metode_pembayaran == '3') {
                             echo '<tr>';
 
                             echo '<td class="text-center">' . $no . '</td>';
-                            echo '<td class="text-left">' . $item->nm_biaya . '</td>';
+                            echo '<td class="text-left">' . (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item) . '</td>';
                             echo '<td class="text-center">' . number_format($qty_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($nominal_pengajuan, 2) . '</td>';
                             echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';

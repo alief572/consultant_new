@@ -7147,7 +7147,7 @@ class Kasbon_project extends Admin_Controller
             foreach ($post['req_akomodasi'] as $item) {
                 $qty_budget_tambahan = str_replace(',', '', $item['qty_budget_tambahan']);
                 $budget_tambahan = str_replace(',', '', $item['budget_tambahan']);
-                if ($qty_budget_tambahan > 0) {
+                if ($qty_budget_tambahan > 0 || $budget_tambahan > 0) {
                     $data_detail[] = [
                         'id_request_ovb' => $id_request_ovb,
                         'id_detail' => $item['id_detail'],
@@ -7167,25 +7167,6 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
-        $data_detail_custom = [];
-        if (isset($post['custom_akomodasi'])) {
-            foreach ($post['custom_akomodasi'] as $item) :
-                if (isset($item['nm_item']) && $item['nm_item'] !== '')
-                    $data_detail_custom[] = [
-                        'id_spk_budgeting' => $post['id_spk_budgeting'],
-                        'id_spk_penawaran' => $post['id_spk_penawaran'],
-                        'id_penawaran' => $post['id_penawaran'],
-                        'nm_item' => $item['nm_item'],
-                        'estimasi_qty' => $item['qty_estimasi_akomodasi'],
-                        'estimasi_harga' => str_replace(',', '', $item['harga_estimasi_akomodasi']),
-                        'estimasi_total' => str_replace(',', '', $item['total_estimasi_akomodasi']),
-                        'reason' => $item['reason'],
-                        'created_by' => $this->auth->user_id(),
-                        'created_date' => date('Y-m-d H:i:s')
-                    ];
-            endforeach;
-        }
-
         if (!empty($data_detail)) {
             $insert_header = $this->db->insert('kons_tr_kasbon_req_ovb_akomodasi_header', $data_header);
             if (!$insert_header) {
@@ -7203,17 +7184,6 @@ class Kasbon_project extends Admin_Controller
                 exit;
             }
         }
-
-        if (!empty($data_detail_custom)) :
-            $insert_detail_custom = $this->db->insert_batch('kons_tr_kasbon_custom_akomodasi', $data_detail_custom);
-
-            if (!$insert_detail_custom) :
-                $this->db->trans_rollback();
-
-                print_r($this->db->last_query());
-                exit;
-            endif;
-        endif;
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -7596,7 +7566,7 @@ class Kasbon_project extends Admin_Controller
             foreach ($post['req_subcont'] as $item) {
                 $qty_budget_tambahan = str_replace(',', '', $item['qty_budget_tambahan']);
                 $budget_tambahan = str_replace(',', '', $item['budget_tambahan']);
-                if ($qty_budget_tambahan > 0) {
+                if ($qty_budget_tambahan > 0 || $budget_tambahan > 0) {
                     $data_detail[] = [
                         'id_request_ovb' => $id_request_ovb,
                         'id_detail' => $item['id_detail'],
@@ -7615,30 +7585,6 @@ class Kasbon_project extends Admin_Controller
                 }
             }
         }
-
-        $data_custom_subcont = [];
-        if (isset($post['custom_subcont'])) {
-            if (!empty($post['custom_subcont'])) {
-                foreach ($post['custom_subcont'] as $item) :
-                    $data_custom_subcont[] = [
-                        'id_spk_budgeting' => $item['id_spk_budgeting'],
-                        'id_spk_penawaran' => $item['id_spk_penawaran'],
-                        'id_penawaran' => $item['id_penawaran'],
-                        'nm_item' => $item['nm_item'],
-                        'estimasi_qty' => $item['estimasi_qty'],
-                        'estimasi_harga' => str_replace(',', '', $item['estimasi_harga']),
-                        'estimasi_total' => str_replace(',', '', $item['estimasi_total']),
-                        'qty_budget' => $item['qty_budget_tambahan'],
-                        'price_budget' => str_replace(',', '', $item['price_budget_tambahan']),
-                        'total_budget' => str_replace(',', '', $item['total_budget_tambahan']),
-                        'reason' => $item['reason'],
-                        'created_by' => $this->auth->user_id(),
-                        'created_date' => date('Y-m-d H:i:s')
-                    ];
-                endforeach;
-            }
-        }
-
         if (!empty($data_detail)) {
             $insert_header = $this->db->insert('kons_tr_kasbon_req_ovb_subcont_header', $data_header);
             if (!$insert_header) {
@@ -7653,16 +7599,6 @@ class Kasbon_project extends Admin_Controller
                 $this->db->trans_rollback();
 
                 print_r('Query Detail - ' . $this->db->error($insert_detail));
-                exit;
-            }
-        }
-
-        if (!empty($data_custom_subcont)) {
-            $insert_custom_subcont = $this->db->insert_batch('kons_tr_kasbon_custom_ovb_subcont', $data_custom_subcont);
-            if (!$insert_custom_subcont) {
-                $this->db->trans_rollback();
-
-                print_r('Query Detail Custom Subcont - ' . $this->db->last_query());
                 exit;
             }
         }
@@ -7812,7 +7748,7 @@ class Kasbon_project extends Admin_Controller
             foreach ($post['req_others'] as $item) {
                 $qty_budget_tambahan = str_replace(',', '', $item['qty_budget_tambahan']);
                 $budget_tambahan = str_replace(',', '', $item['budget_tambahan']);
-                if ($qty_budget_tambahan > 0) {
+                if ($qty_budget_tambahan > 0 || $budget_tambahan > 0) {
                     $data_detail[] = [
                         'id_request_ovb' => $id_request_ovb,
                         'id_detail' => $item['id_detail'],
@@ -7832,25 +7768,6 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
-        $data_detail_custom = [];
-        if (isset($post['custom_others'])) {
-            foreach ($post['custom_others'] as $item) :
-                if (isset($item['nm_item']) && $item['nm_item'] !== '')
-                    $data_detail_custom[] = [
-                        'id_spk_budgeting' => $post['id_spk_budgeting'],
-                        'id_spk_penawaran' => $post['id_spk_penawaran'],
-                        'id_penawaran' => $post['id_penawaran'],
-                        'nm_item' => $item['nm_item'],
-                        'estimasi_qty' => $item['qty_estimasi_others'],
-                        'estimasi_harga' => str_replace(',', '', $item['harga_estimasi_others']),
-                        'estimasi_total' => str_replace(',', '', $item['total_estimasi_others']),
-                        'reason' => $item['reason'],
-                        'created_by' => $this->auth->user_id(),
-                        'created_date' => date('Y-m-d H:i:s')
-                    ];
-            endforeach;
-        }
-
         if (!empty($data_detail)) {
             $insert_header = $this->db->insert('kons_tr_kasbon_req_ovb_others_header', $data_header);
             if (!$insert_header) {
@@ -7868,17 +7785,6 @@ class Kasbon_project extends Admin_Controller
                 exit;
             }
         }
-
-        if (!empty($data_detail_custom)) :
-            $insert_detail_custom = $this->db->insert_batch('kons_tr_kasbon_custom_others', $data_detail_custom);
-
-            if (!$insert_detail_custom) :
-                $this->db->trans_rollback();
-
-                print_r($this->db->last_query());
-                exit;
-            endif;
-        endif;
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -7921,7 +7827,7 @@ class Kasbon_project extends Admin_Controller
             foreach ($post['req_lab'] as $item) {
                 $qty_budget_tambahan = str_replace(',', '', $item['qty_budget_tambahan']);
                 $budget_tambahan = str_replace(',', '', $item['budget_tambahan']);
-                if ($qty_budget_tambahan > 0) {
+                if ($qty_budget_tambahan > 0 || $budget_tambahan > 0) {
                     $data_detail[] = [
                         'id_request_ovb' => $id_request_ovb,
                         'id_detail' => $item['id_detail'],
@@ -7941,25 +7847,6 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
-        $data_detail_custom = [];
-        if (isset($post['custom_lab'])) {
-            foreach ($post['custom_lab'] as $item) :
-                if (isset($item['nm_item']) && $item['nm_item'] !== '')
-                    $data_detail_custom[] = [
-                        'id_spk_budgeting' => $post['id_spk_budgeting'],
-                        'id_spk_penawaran' => $post['id_spk_penawaran'],
-                        'id_penawaran' => $post['id_penawaran'],
-                        'nm_item' => $item['nm_item'],
-                        'estimasi_qty' => $item['qty_estimasi_lab'],
-                        'estimasi_harga' => str_replace(',', '', $item['harga_estimasi_lab']),
-                        'estimasi_total' => str_replace(',', '', $item['total_estimasi_lab']),
-                        'reason' => $item['reason'],
-                        'created_by' => $this->auth->user_id(),
-                        'created_date' => date('Y-m-d H:i:s')
-                    ];
-            endforeach;
-        }
-
         if (!empty($data_detail)) {
             $insert_header = $this->db->insert('kons_tr_kasbon_req_ovb_lab_header', $data_header);
             if (!$insert_header) {
@@ -7977,17 +7864,6 @@ class Kasbon_project extends Admin_Controller
                 exit;
             }
         }
-
-        if (!empty($data_detail_custom)) :
-            $insert_detail_custom = $this->db->insert_batch('kons_tr_kasbon_custom_lab', $data_detail_custom);
-
-            if (!$insert_detail_custom) :
-                $this->db->trans_rollback();
-
-                print_r($this->db->last_query());
-                exit;
-            endif;
-        endif;
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -8030,7 +7906,7 @@ class Kasbon_project extends Admin_Controller
             foreach ($post['req_subcont_tenaga_ahli'] as $item) {
                 $qty_budget_tambahan = str_replace(',', '', $item['qty_budget_tambahan']);
                 $budget_tambahan = str_replace(',', '', $item['budget_tambahan']);
-                if ($qty_budget_tambahan > 0) {
+                if ($qty_budget_tambahan > 0 || $budget_tambahan > 0) {
                     $data_detail[] = [
                         'id_request_ovb' => $id_request_ovb,
                         'id_detail' => $item['id_detail'],
@@ -8050,25 +7926,6 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
-        $data_detail_custom = [];
-        if (isset($post['custom_subcont_tenaga_ahli'])) {
-            foreach ($post['custom_subcont_tenaga_ahli'] as $item) :
-                if (isset($item['nm_item']) && $item['nm_item'] !== '')
-                    $data_detail_custom[] = [
-                        'id_spk_budgeting' => $post['id_spk_budgeting'],
-                        'id_spk_penawaran' => $post['id_spk_penawaran'],
-                        'id_penawaran' => $post['id_penawaran'],
-                        'nm_item' => $item['nm_item'],
-                        'estimasi_qty' => $item['qty_estimasi_subcont_tenaga_ahli'],
-                        'estimasi_harga' => str_replace(',', '', $item['harga_estimasi_subcont_tenaga_ahli']),
-                        'estimasi_total' => str_replace(',', '', $item['total_estimasi_subcont_tenaga_ahli']),
-                        'reason' => $item['reason'],
-                        'created_by' => $this->auth->user_id(),
-                        'created_date' => date('Y-m-d H:i:s')
-                    ];
-            endforeach;
-        }
-
         if (!empty($data_detail)) {
             $insert_header = $this->db->insert('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header', $data_header);
             if (!$insert_header) {
@@ -8086,17 +7943,6 @@ class Kasbon_project extends Admin_Controller
                 exit;
             }
         }
-
-        if (!empty($data_detail_custom)) :
-            $insert_detail_custom = $this->db->insert_batch('kons_tr_kasbon_custom_subcont_tenaga_ahli', $data_detail_custom);
-
-            if (!$insert_detail_custom) :
-                $this->db->trans_rollback();
-
-                print_r($this->db->last_query());
-                exit;
-            endif;
-        endif;
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -8139,7 +7985,7 @@ class Kasbon_project extends Admin_Controller
             foreach ($post['req_subcont_perusahaan'] as $item) {
                 $qty_budget_tambahan = str_replace(',', '', $item['qty_budget_tambahan']);
                 $budget_tambahan = str_replace(',', '', $item['budget_tambahan']);
-                if ($qty_budget_tambahan > 0) {
+                if ($qty_budget_tambahan > 0 || $budget_tambahan > 0) {
                     $data_detail[] = [
                         'id_request_ovb' => $id_request_ovb,
                         'id_detail' => $item['id_detail'],
@@ -8159,25 +8005,6 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
-        $data_detail_custom = [];
-        if (isset($post['custom_subcont_perusahaan'])) {
-            foreach ($post['custom_subcont_perusahaan'] as $item) :
-                if (isset($item['nm_item']) && $item['nm_item'] !== '')
-                    $data_detail_custom[] = [
-                        'id_spk_budgeting' => $post['id_spk_budgeting'],
-                        'id_spk_penawaran' => $post['id_spk_penawaran'],
-                        'id_penawaran' => $post['id_penawaran'],
-                        'nm_item' => $item['nm_item'],
-                        'estimasi_qty' => $item['qty_estimasi_subcont_perusahaan'],
-                        'estimasi_harga' => str_replace(',', '', $item['harga_estimasi_subcont_perusahaan']),
-                        'estimasi_total' => str_replace(',', '', $item['total_estimasi_subcont_perusahaan']),
-                        'reason' => $item['reason'],
-                        'created_by' => $this->auth->user_id(),
-                        'created_date' => date('Y-m-d H:i:s')
-                    ];
-            endforeach;
-        }
-
         if (!empty($data_detail)) {
             $insert_header = $this->db->insert('kons_tr_kasbon_req_ovb_subcont_perusahaan_header', $data_header);
             if (!$insert_header) {
@@ -8195,17 +8022,6 @@ class Kasbon_project extends Admin_Controller
                 exit;
             }
         }
-
-        if (!empty($data_detail_custom)) :
-            $insert_detail_custom = $this->db->insert_batch('kons_tr_kasbon_custom_subcont_perusahaan', $data_detail_custom);
-
-            if (!$insert_detail_custom) :
-                $this->db->trans_rollback();
-
-                print_r($this->db->last_query());
-                exit;
-            endif;
-        endif;
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
