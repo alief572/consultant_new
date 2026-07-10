@@ -177,7 +177,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
                         echo '<td class="text-center">' . $no . '</td>';
                         echo '<td>';
-                        echo $item->nm_biaya;
+                        echo (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item);
                         echo '<input type="hidden" name="detail_lab[' . $no . '][id_lab]" value="' . $item->id_lab . '">';
                         echo '<input type="hidden" name="detail_lab[' . $no . '][id_item]" value="' . $item->id_item . '">';
                         echo '<input type="hidden" name="detail_lab[' . $no . '][nm_item]" value="' . $item->nm_item . '">';
@@ -371,7 +371,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         echo '<td class="text-center">' . $no . '</td>';
 
                         echo '<td>';
-                        echo $item->nm_biaya;
+                        echo (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item);
                         echo '<input type="hidden" name="detail_lab[' . $no . '][id_lab]" value="' . $item->id_lab . '">';
                         echo '<input type="hidden" name="detail_lab[' . $no . '][id_item]" value="' . $item->id_item . '">';
                         echo '<input type="hidden" name="detail_lab[' . $no . '][nm_item]" value="' . $item->nm_item . '">';

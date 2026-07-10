@@ -47,7 +47,7 @@ class Approval_kasbon_overbudget_model extends BF_Model
                     a.sts,
                     a.id_penawaran,
                     (SELECT b.nm_customer FROM kons_tr_spk_penawaran b WHERE b.id_spk_penawaran = a.id_spk_penawaran LIMIT 1) AS nama_customer,
-                    (SELECT COALESCE(SUM(d.budget_tambahan), 0) FROM ' . $t['detail'] . ' d WHERE d.id_request_ovb = a.id_request_ovb) AS nominal,
+                    (SELECT COALESCE(SUM(d.budget_tambahan * d.qty_budget_tambahan), 0) FROM ' . $t['detail'] . ' d WHERE d.id_request_ovb = a.id_request_ovb) AS nominal,
                     "' . $t['tipe'] . '" AS tipe
                 FROM
                     ' . $t['header'] . ' a
