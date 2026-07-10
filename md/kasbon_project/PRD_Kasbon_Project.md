@@ -5,69 +5,64 @@
 - **Status:** Approved
 - **Author:** Alief Daffa Naufal
 - **Tim Terkait:** UI/UX Designer, Tech Lead, Backend, QA
-- **Tanggal:** 9 Juli 2026
+- **Tanggal:** 9 Juli 2026 (Updated: 10 Juli 2026)
 
 ---
 
 ## 2. Executive Summary (Latar Belakang)
-- **Background:** Permintaan dana uang muka operasional (Kasbon) oleh konsultan sering melebihi batas anggaran awal tanpa validasi yang *strict*, sehingga menyebabkan kerugian ( *overbudgeting* ) di akhir proyek.
-- **Objective:** Mengunci pengajuan kasbon agar selalu <= Total Plafon Budget. Apabila pengeluaran dirasa membengkak (contoh: tiket pesawat mendadak naik), *user* dipaksa melalui prosedur khusus yaitu Pengajuan *Overbudget* (OVB).
-- **Target Audience:** Konsultan Lapangan (Pemohon) dan Finance (Validasi pencairan).
+- **Background:** Permintaan dana operasional (Kasbon) oleh konsultan sering melebihi batas anggaran awal tanpa validasi yang ketat. Di samping itu, metode pengajuan dana tidak selalu berupa kasbon tunai, melainkan bisa berupa pembayaran langsung ke vendor (Direct Payment) atau sistem Purchase Order (PO).
+- **Objective:** Mengunci pengajuan kasbon agar selalu <= Total Plafon Budget. Apabila pengeluaran melebihi plafon, harus melalui prosedur *Overbudget* (OVB). Selain itu, mengakomodasi pemilihan metode pembayaran.
+- **Target Audience:** Konsultan Lapangan (Pemohon) dan Tim Operasional.
 
 ---
 
 ## 3. Goals & Success Metrics
-- **Business Goals:** Nol (0) kebocoran anggaran operasional tak terkontrol. Setiap pembengkakan tercatat resmi dan di- *approve* Direksi via mekanisme OVB.
+- **Business Goals:** Menghilangkan kebocoran anggaran operasional tak terkontrol dan memperjelas skema pencairan dana (Tunai vs B2B Transfer).
 - **Success Metrics (KPI):**
-  - 100% *Rejection* otomatis oleh sistem jika nilai form kasbon melebihi Sisa Limit Plafon.
-  - Efisiensi waktu pengecekan manual limit oleh Finance menjadi otomatis/instan.
-- **Non-Goals:** Kasbon Project HANYA mencatat permohonan "Uang Keluar". Tidak mencatat struk kembalian/ *reimburse* (ini ada di Modul *Expense Report*).
+  - 100% *Rejection* otomatis oleh sistem jika form kasbon melebihi Sisa Limit Plafon.
+  - Mempercepat validasi tipe pembayaran (Kasbon/DP/PO) di sisi Finance.
+- **Non-Goals:** Tidak mencakup otorisasi / persetujuan akhir dan transfer dana (hal ini ditangani oleh Modul *Approval Kasbon Project*).
 
 ---
 
 ## 4. User Journey & Flow
 - **User Persona:** Dina (Konsultan Lapangan).
 - **User Journey Map:**
-  1. Dina masuk ke menu Kasbon Project dan melihat Proyek A (Budget disetujui Rp 10 Juta).
-  2. Dina mengajukan Kasbon Akomodasi Rp 2 Juta. (Sisa plafon Rp 8 Juta).
-  3. Sistem memproses draf dan mengarahkan ke Finance.
-  4. Di tahap lain, Dina mengajukan Kasbon lagi sebesar Rp 9 Juta. Sistem **memblokir** karena sisa tinggal Rp 8 Juta, dan tombol beralih ke warna kuning ( *Request OVB* ).
-  5. Dina mengajukan OVB, disetujui oleh Direksi. Saldo plafon Dina bertambah menjadi Rp 12 Juta.
-  6. Dina baru bisa mengajukan Kasbon reguler.
+  1. Dina masuk ke menu Kasbon Project dan melihat sisa budget proyeknya.
+  2. Dina mengajukan form pengeluaran, dan memilih **Metode Pembayaran** (misal: "Direct Payment" untuk bayar sewa mobil).
+  3. Sistem memvalidasi apakah uang yang diajukan melebihi sisa plafon. Jika melampaui, tombol pengajuan akan berubah menjadi *Request OVB*.
+  4. Jika dana cukup, draf akan diteruskan ke modul Approval.
 
 ---
 
 ## 5. Functional Requirements (Fitur Utama)
 | ID | Fitur/Komponen | Deskripsi | Prioritas |
 |---|---|---|---|
-| FR-01 | Smart Baseline Tracker | Backend secara terus menerus mengecek (Total Budget + Total OVB) dikurangi Total Kasbon (Draft + Approved). | P0 (Wajib) |
-| FR-02 | Dynamic UI Button | Menyembunyikan tombol "Add Kasbon" dan memunculkan "Request OVB" secara *real-time* jika limit tercapai. | P0 (Wajib) |
-| FR-03 | Request OVB Mechanism | Modul terpisah tempat *user* mengajukan "Budget Tambahan". Bila *Approved*, kuota limit proyek bertambah. | P0 (Wajib) |
-| FR-04 | Checkbox / Tab Input | *User* bisa memilih parsial komponen mana saja yang ingin dicairkan (Lab saja, atau Akomodasi saja). | P1 (Penting) |
+| FR-01 | Smart Baseline Tracker | Backend secara terus-menerus mengecek (Total Budget + OVB) - Total Kasbon, termasuk elemen baru seperti `subcont_perusahaan`. | P0 (Wajib) |
+| FR-02 | Metode Pembayaran | Opsi tipe pengajuan dana: Kasbon (Tunai), Direct Payment, atau PO (Purchase Order). | P0 (Wajib) |
+| FR-03 | Dynamic UI Button | Menyembunyikan tombol pengajuan reguler dan memunculkan "Request OVB" jika sisa limit sudah minus/habis. | P0 (Wajib) |
+| FR-04 | Kategori Biaya Lengkap | Mengelompokkan input menjadi Subcont, Akomodasi, Others, Lab, Tenaga Ahli, hingga Subcont Perusahaan. | P1 (Penting) |
 
 ---
 
 ## 6. Non-Functional Requirements
-- **Performance:** Kueri agregasi raksasa (`UNION ALL` hingga 12 tabel) harus dioptimasi agar tidak *timeout* saat dimuat dalam DataTables (Server-side rendering mutlak).
-- **Security:** Manipulasi JS di sisi *client* (DOM Manipulation) tidak boleh bisa menembus sisa plafon, validasi akhir tetap di Backend `save()`.
-- **Scalability & Platform:** Mendukung penggunaan via Tablet/Mobile browser (untuk konsultan *remote*).
+- **Performance:** Kueri agregasi UNION ALL sangat besar (memasukkan 14-16 kueri penggabungan) sehingga harus dilayani via AJAX Server-side.
+- **Security:** Validasi mutlak pada `get_data_spk()` agar data di sisi antarmuka tidak bisa dimanipulasi dengan *Inspect Element*.
 
 ---
 
 ## 7. UX/UI Design & Wireframes
 - **Link Figma/Adobe XD:** `[Masukkan Link Figma Di Sini]`
 - **Design Notes:** 
-  - Harus ada indikator **Progress Bar** Sisa Plafon Anggaran (Sangat mencolok di UI).
-  - Tombol **OVB** gunakan warna mencolok seperti *Warning (Kuning / Oranye)* dengan ikon panah ke atas.
+  - Sediakan Dropdown mencolok untuk *Metode Pembayaran*.
+  - Indikator Progress Bar Sisa Plafon harus ada di layar.
 
 ---
 
-## 8. Constraints & Assumptions (Kendala & Asumsi)
-- **Assumptions:** Data Project Budgeting (sebagai pembatas plafon) telah final dan nilainya absolut.
-- **Constraints:** Struktur DB *highly fragmented* (dipecah per jenis biaya), sehingga kueri menjadi sangat kompleks di tingkat Controller.
+## 8. Constraints & Assumptions
+- **Assumptions:** Budget di Modul Project Budgeting bersifat mutlak sebagai batas penahan (Plafon).
 
 ---
 
 ## 9. Future Iterations / Phase 2
-- Integrasi ke ERP Finance pusat ( *seamless transfer* lewat API *banking* ).
-- Sisa plafon yang tidak dipakai sampai akhir proyek secara otomatis ditandai sebagai "Net Profit Tambahan".
+- *Machine Learning* untuk mendeteksi anomali (misal: Jika pengajuan hotel di luar kota terlalu mahal dibandingkan rata-rata *history* perusahaan).
