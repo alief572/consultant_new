@@ -903,17 +903,17 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
     function persen_komisi(tipe) {
         var persentase = get_num($('input[name="persentase_' + tipe + '_komisi"]').val());
-        if (persentase > 2) {
-            swal({
-                type: 'warning',
-                title: 'Warning !',
-                text: 'Persen komisi tidak boleh lebih dari 2% !'
-            });
+        // if (persentase > 2) {
+        //    swal({
+        //        type: 'warning',
+        //        title: 'Warning !',
+        //        text: 'Persen komisi tidak boleh lebih dari 2% !'
+        //    });
 
-            persentase = 2;
+        //    persentase = 2;
 
-            $('input[name="persentase_' + tipe + '_komisi"]').val(persentase);
-        }
+        //    $('input[name="persentase_' + tipe + '_komisi"]').val(persentase);
+        // }
         var nilai_internal = get_num($('.total_nilai_kontrak_bersih').val());
 
         var nilai_komisi = parseFloat(nilai_internal * persentase / 100);
