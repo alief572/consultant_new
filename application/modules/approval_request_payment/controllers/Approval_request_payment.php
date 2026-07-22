@@ -803,7 +803,7 @@ class Approval_request_payment extends Admin_Controller
 			$this->db->trans_commit();
 			$result = true;
 
-			$this->fill_request_payment();
+			// $this->fill_request_payment();
 		}
 		$param = array(
 			'save' => $result
@@ -2472,7 +2472,7 @@ class Approval_request_payment extends Admin_Controller
 		$this->db->select('a.*');
 		$this->db->from('kons_tr_kasbon_project_header a');
 		$this->db->where('a.sts', 1);
-		$this->db->where('a.tipe', '1');
+		// $this->db->where('a.tipe', '1');
 		$get_kasbon = $this->db->get()->result();
 		// $sql = "SELECT * FORM tr_kasbon WHERE no_kasbon_consultant = '$this->id' ";
 		// $result = $this->db->get_where(DBSF . '.tr_kasbon', ['no_kasbon_consultant' => $this->id])->result();
@@ -2488,7 +2488,12 @@ class Approval_request_payment extends Admin_Controller
 
 			if (count($get_kasbon_sendigs) < 1) {
 				$no++;
-				$id_kasbon = $this->Perbaikan_data_model->no_sendigs('format_kasbon', $no);
+
+				if(strpos($item->id, 'REQ') !== false) {
+					$id_kasbon = $this->Perbaikan_data_model->no_sendigs('format_kasbon', $no);
+				} else {
+					$id_kasbon = $item->id;
+				}
 
 				$get_user = $this->db->get_where('users', array('id_user' => $item->created_by))->row();
 				$nama = (!empty($get_user)) ? $get_user->nm_lengkap : '';
@@ -2554,6 +2559,7 @@ class Approval_request_payment extends Admin_Controller
 				];
 			}
 		}
+
 
 		$arr_expense_sendigs = [];
 		$arr_expense_detail_sendigs = [];
@@ -2707,5 +2713,17 @@ class Approval_request_payment extends Admin_Controller
 		}
 
 		// echo $msg;
+	}
+
+	function test_aja() {
+		$id_kasbon = 'KS-2026-00213';
+
+		if(strpos($id_kasbon, 'REQ') !== false) {
+			echo 'ada REQ !';
+		} else {
+			echo 'aman aja !';
+		}
+
+		exit;
 	}
 }

@@ -627,36 +627,50 @@ class Request_payment extends Admin_Controller
 			if ($get_header_kasbon->tipe == '4') :
 				$project = 'Lab';
 			endif;
+			if ($get_header_kasbon->tipe == '5') :
+				$project = 'Subcont Tenaga Ahli';
+			endif;
+			if ($get_header_kasbon->tipe == '6') :
+				$project = 'Subcont Perusahaan';
+			endif;
 
 			$no_doc = '';
 			$newcode = '';
-			$data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => 'format_kasbon'))->row();
-			if ($data !== false) {
-				if (stripos($data->info, 'YEAR', 0) !== false) {
-					if ($data->info3 != date("Y")) {
-						$years = date("Y");
-						$number = 1;
-						$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+
+			if(strpos($post['id'], 'REQ') !== false) {
+				
+				$data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => 'format_kasbon'))->row();
+				if ($data !== false) {
+					if (stripos($data->info, 'YEAR', 0) !== false) {
+						if ($data->info3 != date("Y")) {
+							$years = date("Y");
+							$number = 1;
+							$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+						} else {
+							$years = $data->info3;
+							$number = ($data->info2 + 1);
+							$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+						}
+						$newcode = str_ireplace('XXXX', $newnumber, $data->info);
+						$newcode = str_ireplace('YEAR', $years, $newcode);
+						$newdata = array('info2' => $number, 'info3' => $years);
 					} else {
-						$years = $data->info3;
 						$number = ($data->info2 + 1);
 						$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+						$newcode = str_ireplace('XXXX', $newnumber, $data->info);
+						$newdata = array('info2' => $number);
 					}
-					$newcode = str_ireplace('XXXX', $newnumber, $data->info);
-					$newcode = str_ireplace('YEAR', $years, $newcode);
-					$newdata = array('info2' => $number, 'info3' => $years);
+					$this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
+	
+					$no_doc = $newcode;
 				} else {
-					$number = ($data->info2 + 1);
-					$newnumber = sprintf('%0' . $data->info4 . 'd', $number);
-					$newcode = str_ireplace('XXXX', $newnumber, $data->info);
-					$newdata = array('info2' => $number);
+					return false;
 				}
-				$this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
-
-				$no_doc = $newcode;
 			} else {
-				return false;
+				$no_doc = $post['id'];
 			}
+
+			
 
 			$get_user = $this->db->get_where('users', array('id_user' => $get_header_kasbon->created_by))->row();
 
