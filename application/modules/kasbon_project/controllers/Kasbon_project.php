@@ -5225,7 +5225,7 @@ class Kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $id = $this->Kasbon_project_model->generate_id_kasbon_project();
+        $id = $this->Kasbon_project_model->generate_id_kasbon_project($post['metode_pembayaran']);
 
         $grand_total = 0;
         foreach ($post['detail_akomodasi'] as $item) {
@@ -5361,7 +5361,7 @@ class Kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $id = $this->Kasbon_project_model->generate_id_kasbon_project();
+        $id = $this->Kasbon_project_model->generate_id_kasbon_project($post['metode_pembayaran']);
 
         $grand_total = 0;
         foreach ($post['dt'] as $item) {
@@ -5501,7 +5501,7 @@ class Kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $id = $this->Kasbon_project_model->generate_id_kasbon_project();
+        $id = $this->Kasbon_project_model->generate_id_kasbon_project($post['metode_pembayaran']);
 
         $grand_total = 0;
         foreach ($post['detail_others'] as $item) {
@@ -5634,7 +5634,7 @@ class Kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $id = $this->Kasbon_project_model->generate_id_kasbon_project();
+        $id = $this->Kasbon_project_model->generate_id_kasbon_project($post['metode_pembayaran']);
 
         $grand_total = 0;
         foreach ($post['detail_lab'] as $item) {
@@ -5766,7 +5766,7 @@ class Kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $id = $this->Kasbon_project_model->generate_id_kasbon_project();
+        $id = $this->Kasbon_project_model->generate_id_kasbon_project($post['metode_pembayaran']);
 
         $grand_total = 0;
         foreach ($post['detail_subcont_tenaga_ahli'] as $item) {
@@ -5899,7 +5899,7 @@ class Kasbon_project extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $id = $this->Kasbon_project_model->generate_id_kasbon_project();
+        $id = $this->Kasbon_project_model->generate_id_kasbon_project($post['metode_pembayaran']);
 
         $grand_total = 0;
         foreach ($post['detail_subcont_perusahaan'] as $item) {

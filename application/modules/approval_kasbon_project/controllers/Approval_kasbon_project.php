@@ -548,7 +548,7 @@ class Approval_kasbon_project extends Admin_Controller
 
         if ($get_header_kasbon->metode_pembayaran == '2') {
 
-            $no_doc = $this->Approval_kasbon_project_model->no_sendigs('format_direct_payment');
+            $no_doc = $id_kasbon;
 
             $data_insert_direct_payment_sendigs = [
                 'no_doc' => $no_doc,
