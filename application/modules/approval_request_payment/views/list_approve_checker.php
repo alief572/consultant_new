@@ -326,12 +326,12 @@ endforeach;
                                         echo '</a>';
                                     endif;
 
-                                    echo ' <a href="' . base_url('approval_request_payment/print_kasbon/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
+                                    echo ' <a href="' . base_url('approval_request_payment/print_direct_payment/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
                                     echo '<i class="fa fa-print"></i>';
                                     echo '</a>';
 
 
-                                    echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Kasbon" target="_blank"><i class="fa fa-eye"></i></a>';
+                                    echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Direct Payment" target="_blank"><i class="fa fa-eye"></i></a>';
                                 endif;
                                 echo '</td>';
                                 echo '</tr>';
