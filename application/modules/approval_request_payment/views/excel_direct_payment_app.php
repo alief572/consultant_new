@@ -38,7 +38,7 @@ header("Content-Disposition: attachment; filename=Approval Request Payment Payme
 
                 $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc))->row();
 
-                if (!empty($get_kasbon_header)) {
+                if (!empty($get_kasbon_header) && $get_kasbon_header->metode_pembayaran == '2') {
                     $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', array('id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran))->row();
 
                     $tipe = '';
