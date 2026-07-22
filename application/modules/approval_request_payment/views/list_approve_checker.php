@@ -9,6 +9,7 @@ $count_kasbon = 0;
 $count_expense = 0;
 $count_periodik = 0;
 $count_pembayaran_po = 0;
+$count_direct_payment = 0;
 
 foreach ($data as $item) :
     if ($item->tipe == 'kasbon' && $item->status !== '2' && is_null($item->app_checker)) {
@@ -16,6 +17,13 @@ foreach ($data as $item) :
 
         if (!empty($get_kasbon_header)) {
             $count_kasbon += 1;
+        }
+    }
+    if ($item->tipe == 'kasbon' && $item->status == '2' && is_null($item->app_checker)) {
+        $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item->no_doc))->row();
+
+        if (!empty($get_kasbon_header)) {
+            $count_direct_payment += 1;
         }
     }
     if ($item->tipe == 'expense' && $item->status !== '2' && is_null($item->app_checker)) {
@@ -54,6 +62,17 @@ endforeach;
                     </div>
                 </div>
             </div>
+            <div class="col-md-4" style="margin-top: 2vh;">
+                <div class="panel panel-default">
+                    <div class="panel-heading bg-green">Direct Payment</div>
+                    <div class="panel-body">
+                        <h2><?= $count_direct_payment ?></h2>
+                    </div>
+                    <div class="panel-footer w-100">
+                        <button type="button" class="btn btn-sm btn-primary btn_view_req" style="width: 100%;" data-val="direct_payment"><i class="fa fa-eye"></i> View</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-md-12 list_kasbon" style="display: none;">
@@ -76,7 +95,7 @@ endforeach;
                         $ttl_kasbon = 0;
                         foreach ($data as $item_kasbon) :
 
-                            $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc))->row();
+                            $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc, 'metode_pembayaran !=' => '2'))->row();
 
                             if (!empty($get_kasbon_header)) {
                                 $tipe = '';
@@ -225,6 +244,107 @@ endforeach;
                     </tfoot>
                 </table>
             </div>
+            <div class="col-md-12 list_direct_payment" style="display: none;">
+                <a href="<?= base_url('approval_request_payment/export_excel_direct_payment_checker/?tingkat=1') ?>" class="btn btn-sm btn-success"><i class="fa fa-files"></i> Export Excel</a>
+                <h2>Request Direct Payment</h2>
+                <table class="table table-bordered" style="width: 100%;" id="example_direct_payment">
+                    <thead>
+                        <tr>
+                            <th class="text-center">No. Direct Payment</th>
+                            <th class="text-center">Request By</th>
+                            <th class="text-center">Tanggal Pengajuan</th>
+                            <th class="text-center">Deskripsi Pengajuan</th>
+                            <th class="text-center">Kategori</th>
+                            <th class="text-center">Nilai Pengajuan</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $ttl_kasbon = 0;
+                        foreach ($data as $item_kasbon) :
+
+                            $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item_kasbon->no_doc, 'metode_pembayaran =' => '2'))->row();
+
+                            if (!empty($get_kasbon_header)) {
+                                $tipe = '';
+                                $link_view = '';
+                                if (!empty($get_kasbon_header)) {
+                                    if ($get_kasbon_header->tipe == '1') {
+                                        $tipe = 'Kasbon Subcont';
+                                    }
+                                    if ($get_kasbon_header->tipe == '2') {
+                                        $tipe = 'Kasbon Akomodasi';
+                                    }
+                                    if ($get_kasbon_header->tipe == '3') {
+                                        $tipe = 'Kasbon Others';
+                                    }
+                                    if ($get_kasbon_header->tipe == '4') {
+                                        $tipe = 'Kasbon Lab';
+                                    }
+                                    if ($get_kasbon_header->tipe == '5') {
+                                        $tipe = 'Kasbon Subcont Tenaga Ahli';
+                                    }
+                                    if ($get_kasbon_header->tipe == '6') {
+                                        $tipe = 'Kasbon Subcont Perusahaan';
+                                    }
+
+
+
+                                    if ($get_kasbon_header->tipe == '1') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_subcont/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
+                                    if ($get_kasbon_header->tipe == '2') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
+                                    if ($get_kasbon_header->tipe == '3') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_others/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
+                                    if ($get_kasbon_header->tipe == '4') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_lab/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
+                                    if ($get_kasbon_header->tipe == '5') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
+                                    if ($get_kasbon_header->tipe == '6') {
+                                        $link_view = base_url('kasbon_project/view_kasbon_subcont_perusahaan/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc)));
+                                    }
+                                }
+
+                                echo '<tr>';
+                                echo '<td>' . $item_kasbon->no_doc . '</td>';
+                                echo '<td>' . $item_kasbon->nama . '</td>';
+                                echo '<td>' . $item_kasbon->tgl_doc . '</td>';
+                                echo '<td>' . $item_kasbon->keperluan . '</td>';
+                                echo '<td>' . $tipe . '</td>';
+                                echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
+                                echo '<td>';
+                                if ($ENABLE_MANAGE) :
+
+                                    echo ' <a href="' . base_url('approval_request_payment/print_kasbon/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
+                                    echo '<i class="fa fa-print"></i>';
+                                    echo '</a>';
+
+
+                                    echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Kasbon" target="_blank"><i class="fa fa-eye"></i></a>';
+                                endif;
+                                echo '</td>';
+                                echo '</tr>';
+
+                                $ttl_kasbon += $item_kasbon->jumlah;
+                            }
+                        endforeach;
+                        ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" class="text-right">Grand Total</th>
+                            <th class="text-right"><?= number_format($ttl_kasbon) ?></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -256,6 +376,11 @@ endforeach;
             [6, 'desc']
         ]
     });
+    $('#example_direct_payment').dataTable({
+        order: [
+            [6, 'desc']
+        ]
+    });
     $('#example_expense').dataTable({
         order: [
             [6, 'desc']
@@ -277,37 +402,22 @@ endforeach;
         var val = $(this).data('val');
         // alert(val);
 
+        var all_lists = [
+            ".list_transportasi", 
+            ".list_kasbon", 
+            ".list_expense", 
+            ".list_periodik", 
+            ".list_pembayaran_po", 
+            ".list_direct_payment"
+        ];
+        
+        $.each(all_lists, function(index, item) {
+            if (item !== ".list_" + val) {
+                $(item).hide();
+            }
+        });
+
         $(".list_" + val).toggle();
-        if (val == "transportasi") {
-            $(".list_kasbon").hide();
-            $(".list_expense").hide();
-            $(".list_periodik").hide();
-            $('.list_pembayaran_po').hide();
-        }
-        if (val == "kasbon") {
-            $(".list_transportasi").hide();
-            $(".list_expense").hide();
-            $(".list_periodik").hide();
-            $('.list_pembayaran_po').hide();
-        }
-        if (val == "expense") {
-            $(".list_transportasi").hide();
-            $(".list_kasbon").hide();
-            $(".list_periodik").hide();
-            $('.list_pembayaran_po').hide();
-        }
-        if (val == "periodik") {
-            $(".list_transportasi").hide();
-            $(".list_kasbon").hide();
-            $(".list_expense").hide();
-            $('.list_pembayaran_po').hide();
-        }
-        if (val == "pembayaran_po") {
-            $(".list_transportasi").hide();
-            $(".list_kasbon").hide();
-            $(".list_expense").hide();
-            $(".list_periodik").hide();
-        }
     });
 
     $(document).on('click', '.view_receive_invoice', function() {
