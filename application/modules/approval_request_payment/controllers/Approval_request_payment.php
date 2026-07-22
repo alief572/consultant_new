@@ -2715,15 +2715,25 @@ class Approval_request_payment extends Admin_Controller
 		// echo $msg;
 	}
 
-	function test_aja() {
-		$id_kasbon = 'KS-2026-00213';
+	function export_excel_direct_payment_checker() {
+		$tingkat = $this->input->get('tingkat');
 
-		if(strpos($id_kasbon, 'REQ') !== false) {
-			echo 'ada REQ !';
-		} else {
-			echo 'aman aja !';
+		// if ($tingkat !== '1') {
+		// 	$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker = 1');
+		// } else {
+		// 	$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker IS NULL');
+		// }
+
+		$data = $this->Approval_request_payment_model->GetListDataApproval('a.app_checker = 1');
+
+		$list_no_invoice = [];
+		$this->db->select('id, invoice_no');
+		$this->db->from('tr_invoice_po');
+		$get_invoice_no = $this->db->get()->result();
+		foreach ($get_invoice_no as $item_no_invoice) {
+			$list_no_invoice[$item_no_invoice->id] = $item_no_invoice->invoice_no;
 		}
 
-		exit;
+		$this->load->view('excel_direct_payment_app', array('data' => $data, 'tingkat' => $tingkat));
 	}
 }
