@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Penawaran.Add');
-$ENABLE_MANAGE  = has_permission('Penawaran.Manage');
-$ENABLE_VIEW    = has_permission('Penawaran.View');
-$ENABLE_DELETE  = has_permission('Penawaran.Delete');
+$ENABLE_ADD     = has_permission('SPK_Penawaran.Add');
+$ENABLE_MANAGE  = has_permission('SPK_Penawaran.Manage');
+$ENABLE_VIEW    = has_permission('SPK_Penawaran.View');
+$ENABLE_DELETE  = has_permission('SPK_Penawaran.Delete');
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -46,6 +46,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <div class="col-md-9 text-right">
                     <a class="btn btn-sm btn-success" href="<?= base_url('spk_penawaran/create_spk') ?>">
                         <i class="fa fa-plus"></i> Create SPK
+                    </a>
+                    <a class="btn btn-sm btn-info" href="<?= base_url('spk_penawaran/export_excel') ?>" target="_blank">
+                        <i class="fa fa-file-excel-o"></i> Export Excel
                     </a>
                     <!-- <a class="btn btn-sm btn-primary" href="<?= base_url('spk_penawaran/create_spk_non_konsultasi') ?>">
                     <i class="fa fa-plus"></i> Create SPK Non Konsultasi

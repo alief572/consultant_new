@@ -2167,4 +2167,47 @@ class SPK_penawaran extends Admin_Controller
 
         echo json_encode($response);
     }
+
+    public function export_excel()
+    {
+        $this->db->select('a.*, b.grand_total, c.nm_lengkap');
+        $this->db->from('kons_tr_spk_penawaran a');
+        $this->db->join('kons_tr_penawaran b', 'b.id_quotation = a.id_penawaran', 'left');
+        $this->db->join('users c', 'c.id_user = a.input_by', 'left');
+        $this->db->where('a.deleted_by', null);
+        $this->db->where('a.id_penawaran IS NOT NULL');
+        $this->db->where('a.id_penawaran <>', '');
+        $this->db->order_by('a.input_date', 'desc');
+        $get_data = $this->db->get()->result();
+
+        $hasil = [];
+        $no = 1;
+        foreach ($get_data as $item) {
+            $this->db->select('a.*');
+            $this->db->from('kons_master_konsultasi_header a');
+            $this->db->where('a.id_konsultasi_h', $item->id_project);
+            $get_package = $this->db->get()->row();
+            $nm_paket = (!empty($get_package)) ? $get_package->nm_paket : '';
+
+            $grand_total = (!empty($item->grand_total) && $item->grand_total > 0) ? $item->grand_total : $item->nilai_kontrak;
+
+            $hasil[] = [
+                'no' => $no,
+                'id_spk_penawaran' => $item->id_spk_penawaran,
+                'nm_marketing' => ucfirst($item->nm_sales),
+                'nm_paket' => $nm_paket,
+                'nm_customer' => $item->nm_customer,
+                'grand_total' => $grand_total,
+                'created_by' => $item->nm_lengkap,
+                'created_date' => date('d F Y H:i:s', strtotime($item->input_date))
+            ];
+            $no++;
+        }
+
+        $data = [
+            'results' => $hasil
+        ];
+
+        $this->load->view('export_excel', $data);
+    }
 }
