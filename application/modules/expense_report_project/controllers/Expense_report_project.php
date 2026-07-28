@@ -3240,7 +3240,7 @@ class Expense_report_project extends Admin_Controller
 
         $this->db->trans_start();
 
-        $id = $this->Expense_report_project_model->generate_id_expense_report_header();
+        $id = $this->Expense_report_project_model->generate_id_expense_report_header('format_expense');
 
         $config['upload_path'] = './uploads/expense_report_project/'; //path folder
         $config['allowed_types'] = '*'; //type yang dapat diakses bisa anda sesuaikan
