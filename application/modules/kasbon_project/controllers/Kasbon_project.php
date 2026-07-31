@@ -3920,6 +3920,12 @@ class Kasbon_project extends Admin_Controller
         }
 
         $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_spk_budgeting_akomodasi a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_spk_budgeting', $get_header->id_spk_budgeting);
+        $get_data_budgeting_akomodasi = $this->db->get()->result();
+
+        $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_kasbon_project_akomodasi a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
         $this->db->where('a.deleted_at IS NULL');
@@ -3950,6 +3956,7 @@ class Kasbon_project extends Admin_Controller
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
+            'list_akomodasi' => $get_data_budgeting_akomodasi,
             'list_data_kasbon' => $get_data_akomodasi,
             'list_budget_tambahan' => $data_budget_tambahan,
             'data_list_kasbon_akomodasi' => $data_list_kasbon_akomodasi
