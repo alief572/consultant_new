@@ -5373,7 +5373,9 @@ class Kasbon_project extends Admin_Controller
 
         $grand_total = 0;
         foreach ($post['dt'] as $item) {
-            $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            if (isset($item['total_pengajuan'])) {
+                $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            }
         }
 
         $reset_kasbon_subcont = $this->db->delete('kons_tr_kasbon_project_akomodasi', ['id_header' => $post['id_header']]);
@@ -5405,6 +5407,9 @@ class Kasbon_project extends Admin_Controller
 
         if (isset($post['dt'])) {
             foreach ($post['dt'] as $item) {
+                if (!isset($item['qty_pengajuan'])) {
+                    continue;
+                }
                 $qty_pengajuan = str_replace(',', '', $item['qty_pengajuan']);
                 $nominal_pengajuan = str_replace(',', '', $item['nominal_pengajuan']);
                 $total_pengajuan = str_replace(',', '', $item['total_pengajuan']);
@@ -6036,7 +6041,9 @@ class Kasbon_project extends Admin_Controller
 
         $grand_total = 0;
         foreach ($post['detail_others'] as $item) {
-            $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            if (isset($item['total_pengajuan'])) {
+                $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            }
         }
 
         $this->db->trans_begin();
@@ -6063,6 +6070,9 @@ class Kasbon_project extends Admin_Controller
 
         if (isset($post['detail_others'])) {
             foreach ($post['detail_others'] as $item) {
+                if (!isset($item['qty_pengajuan'])) {
+                    continue;
+                }
                 $qty_pengajuan = str_replace(',', '', $item['qty_pengajuan']);
                 $nominal_pengajuan = str_replace(',', '', $item['nominal_pengajuan']);
                 $total_pengajuan = str_replace(',', '', $item['total_pengajuan']);
@@ -6167,7 +6177,9 @@ class Kasbon_project extends Admin_Controller
 
         $grand_total = 0;
         foreach ($post['detail_lab'] as $item) {
-            $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            if (isset($item['total_pengajuan'])) {
+                $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            }
         }
 
         $this->db->trans_begin();
@@ -6194,6 +6206,9 @@ class Kasbon_project extends Admin_Controller
 
         if (isset($post['detail_lab'])) {
             foreach ($post['detail_lab'] as $item) {
+                if (!isset($item['qty_pengajuan'])) {
+                    continue;
+                }
                 $qty_pengajuan = str_replace(',', '', $item['qty_pengajuan']);
                 $nominal_pengajuan = str_replace(',', '', $item['nominal_pengajuan']);
                 $total_pengajuan = str_replace(',', '', $item['total_pengajuan']);
@@ -6298,7 +6313,9 @@ class Kasbon_project extends Admin_Controller
 
         $grand_total = 0;
         foreach ($post['detail_subcont_tenaga_ahli'] as $item) {
-            $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            if (isset($item['total_pengajuan'])) {
+                $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            }
         }
 
         $this->db->trans_begin();
@@ -6325,6 +6342,9 @@ class Kasbon_project extends Admin_Controller
 
         if (isset($post['detail_subcont_tenaga_ahli'])) {
             foreach ($post['detail_subcont_tenaga_ahli'] as $item) {
+                if (!isset($item['qty_pengajuan'])) {
+                    continue;
+                }
                 $qty_pengajuan = str_replace(',', '', $item['qty_pengajuan']);
                 $nominal_pengajuan = str_replace(',', '', $item['nominal_pengajuan']);
                 $total_pengajuan = str_replace(',', '', $item['total_pengajuan']);
@@ -6429,7 +6449,9 @@ class Kasbon_project extends Admin_Controller
 
         $grand_total = 0;
         foreach ($post['detail_subcont_perusahaan'] as $item) {
-            $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            if (isset($item['total_pengajuan'])) {
+                $grand_total += (str_replace(',', '', $item['total_pengajuan']));
+            }
         }
 
         $this->db->trans_begin();
@@ -6456,6 +6478,9 @@ class Kasbon_project extends Admin_Controller
 
         if (isset($post['detail_subcont_perusahaan'])) {
             foreach ($post['detail_subcont_perusahaan'] as $item) {
+                if (!isset($item['qty_pengajuan'])) {
+                    continue;
+                }
                 $qty_pengajuan = str_replace(',', '', $item['qty_pengajuan']);
                 $nominal_pengajuan = str_replace(',', '', $item['nominal_pengajuan']);
                 $total_pengajuan = str_replace(',', '', $item['total_pengajuan']);

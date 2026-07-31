@@ -67,6 +67,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     <input type="hidden" name="id_spk_budgeting" value="<?= $header->id_spk_budgeting ?>">
     <input type="hidden" name="id_spk_penawaran" value="<?= $header->id_spk_penawaran ?>">
     <input type="hidden" name="id_penawaran" value="<?= $header->id_penawaran ?>">
+    <input type="hidden" name="metode_pembayaran" value="<?= $header->metode_pembayaran ?>">
     <div class="box">
         <div class="box-header">
 
