@@ -67,6 +67,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     <input type="hidden" name="id_spk_budgeting" value="<?= $header->id_spk_budgeting ?>">
     <input type="hidden" name="id_spk_penawaran" value="<?= $header->id_spk_penawaran ?>">
     <input type="hidden" name="id_penawaran" value="<?= $header->id_penawaran ?>">
+    <input type="hidden" name="metode_pembayaran" value="<?= $header->metode_pembayaran ?>">
 
     <div class="box">
         <div class="box-header">
@@ -165,194 +166,190 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     $ttl_total_overbudget = 0;
 
                     foreach ($list_data_subcont_tenaga_ahli as $item) {
-                        if (isset($list_arr_kasbon[$item->id_subcont])) {
-                            $no++;
+                        $no++;
 
-                            $qty_pengajuan = (isset($list_arr_kasbon[$item->id_subcont])) ? $list_arr_kasbon[$item->id_subcont]['qty_pengajuan'] : 0;
-                            $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_subcont])) ? $list_arr_kasbon[$item->id_subcont]['nominal_pengajuan'] : 0;
-                            $total_pengajuan = (isset($list_arr_kasbon[$item->id_subcont])) ? $list_arr_kasbon[$item->id_subcont]['total_pengajuan'] : 0;
-                            $aktual_terpakai = (isset($list_arr_kasbon[$item->id_subcont])) ? $list_arr_kasbon[$item->id_subcont]['aktual_terpakai'] : 0;
-                            if ($aktual_terpakai <= 0) {
-                                $aktual_terpakai = $item->qty_final;
-                            }
-                            $sisa_budget = (isset($list_arr_kasbon[$item->id_subcont])) ? $list_arr_kasbon[$item->id_subcont]['sisa_budget'] : 0;
-                            if ($sisa_budget <= 0) {
-                                $sisa_budget = $item->total_final;
-                            }
-
-                            $qty_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['qty_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['qty_terpakai'] : 0;
-                            $nominal_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['nominal_terpakai'] : 0;
-                            $total_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['total_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['total_terpakai'] : 0;
-
-                            $qty_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['qty_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['qty_overbudget'] : 0;
-                            $nominal_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['nominal_overbudget'] : 0;
-                            $total_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['total_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['total_overbudget'] : 0;
-
-                            echo '<tr>';
-
-                            echo '<td class="text-center">';
-                            echo $no;
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][id_subcont]" value="' . $item->id_subcont . '">';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][id_item]" value="' . $item->id_item . '">';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nm_item]" value="' . (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item) . '">';
-                            echo '</td>';
-
-                            echo '<td>' . (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item) . '</td>';
-
-                            echo '<td class="text-center">';
-                            echo number_format($item->qty_final);
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_estimasi]" value="' . $item->qty_final . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo number_format($item->price_unit_final, 2);
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][price_unit_estimasi]" value="' . $item->price_unit_final . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo number_format($item->total_final, 2);
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_budget_estimasi]" value="' . $item->total_final . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-center">';
-                            echo number_format($qty_terpakai);
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_terpakai]" value="' . $qty_terpakai . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nominal_terpakai]" value="' . $nominal_terpakai . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_terpakai]" value="' . $total_terpakai . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-center">';
-                            echo number_format($qty_overbudget);
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_overbudget]" value="' . $qty_overbudget . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nominal_overbudget]" value="' . $nominal_overbudget . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_overbudget]" value="' . $total_overbudget . '">';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
-                            echo '</td>';
-
-                            echo '</tr>';
-
-                            // Sampai sini saja yang aktif
-
-                            $ttl_qty_estimasi += $item->qty_estimasi;
-                            $ttl_total_estimasi += $item->total_estimasi;
-                            $ttl_qty_terpakai += $qty_terpakai;
-                            $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
-                            $ttl_qty_overbudget += $qty_overbudget;
-                            $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
+                        $qty_pengajuan = (isset($list_arr_kasbon[$item->id_subcont])) ? $list_arr_kasbon[$item->id_subcont]['qty_pengajuan'] : 0;
+                        $nominal_pengajuan = (isset($list_arr_kasbon[$item->id_subcont])) ? $list_arr_kasbon[$item->id_subcont]['nominal_pengajuan'] : 0;
+                        $total_pengajuan = (isset($list_arr_kasbon[$item->id_subcont])) ? $list_arr_kasbon[$item->id_subcont]['total_pengajuan'] : 0;
+                        $aktual_terpakai = (isset($list_arr_kasbon[$item->id_subcont])) ? $list_arr_kasbon[$item->id_subcont]['aktual_terpakai'] : 0;
+                        if ($aktual_terpakai <= 0) {
+                            $aktual_terpakai = $item->qty_final;
                         }
+                        $sisa_budget = (isset($list_arr_kasbon[$item->id_subcont])) ? $list_arr_kasbon[$item->id_subcont]['sisa_budget'] : 0;
+                        if ($sisa_budget <= 0) {
+                            $sisa_budget = $item->total_final;
+                        }
+
+                        $qty_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['qty_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['qty_terpakai'] : 0;
+                        $nominal_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['nominal_terpakai'] : 0;
+                        $total_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['total_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['total_terpakai'] : 0;
+
+                        $qty_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['qty_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['qty_overbudget'] : 0;
+                        $nominal_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['nominal_overbudget'] : 0;
+                        $total_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['total_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['total_overbudget'] : 0;
+
+                        echo '<tr>';
+
+                        echo '<td class="text-center">';
+                        echo $no;
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][id_subcont]" value="' . $item->id_subcont . '">';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][id_item]" value="' . $item->id_item . '">';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nm_item]" value="' . (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item) . '">';
+                        echo '</td>';
+
+                        echo '<td>' . (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item) . '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($item->qty_final);
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_estimasi]" value="' . $item->qty_final . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo number_format($item->price_unit_final, 2);
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][price_unit_estimasi]" value="' . $item->price_unit_final . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo number_format($item->total_final, 2);
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_budget_estimasi]" value="' . $item->total_final . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($qty_terpakai);
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_terpakai]" value="' . $qty_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nominal_terpakai]" value="' . $nominal_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_terpakai]" value="' . $total_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($qty_overbudget);
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_overbudget]" value="' . $qty_overbudget . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nominal_overbudget]" value="' . $nominal_overbudget . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_overbudget]" value="' . $total_overbudget . '">';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        // Sampai sini saja yang aktif
+
+                        $ttl_qty_estimasi += $item->qty_final;
+                        $ttl_total_estimasi += $item->total_final;
+                        $ttl_qty_terpakai += $qty_terpakai;
+                        $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
+                        $ttl_qty_overbudget += $qty_overbudget;
+                        $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
                     }
 
                     foreach ($list_data_subcont_tenaga_ahli_custom as $item) {
-                        if (isset($list_arr_kasbon[$item->id])) {
-                            $no++;
+                        $no++;
 
-                            $qty_pengajuan = (isset($list_arr_kasbon[$item->id])) ? $list_arr_kasbon[$item->id]['qty_pengajuan'] : 0;
-                            $nominal_pengajuan = (isset($list_arr_kasbon[$item->id])) ? $list_arr_kasbon[$item->id]['nominal_pengajuan'] : 0;
-                            $total_pengajuan = (isset($list_arr_kasbon[$item->id])) ? $list_arr_kasbon[$item->id]['total_pengajuan'] : 0;
-                            $aktual_terpakai = (isset($list_arr_kasbon[$item->id])) ? $list_arr_kasbon[$item->id]['aktual_terpakai'] : 0;
-                            if ($aktual_terpakai <= 0) {
-                                $aktual_terpakai = $item->estimasi_qty;
-                            }
-                            $sisa_budget = (isset($list_arr_kasbon[$item->id])) ? $list_arr_kasbon[$item->id]['sisa_budget'] : 0;
-                            if ($sisa_budget <= 0) {
-                                $sisa_budget = $item->estimasi_total;
-                            }
-
-                            $qty_terpakai = (isset($list_arr_kasbon[$item->id]['qty_terpakai'])) ? $list_arr_kasbon[$item->id]['qty_terpakai'] : 0;
-                            $nominal_terpakai = (isset($list_arr_kasbon[$item->id]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id]['nominal_terpakai'] : 0;
-                            $total_terpakai = (isset($list_arr_kasbon[$item->id]['total_terpakai'])) ? $list_arr_kasbon[$item->id]['total_terpakai'] : 0;
-
-                            $qty_overbudget = (isset($list_arr_kasbon[$item->id]['qty_overbudget'])) ? $list_arr_kasbon[$item->id]['qty_overbudget'] : 0;
-                            $nominal_overbudget = (isset($list_arr_kasbon[$item->id]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id]['nominal_overbudget'] : 0;
-                            $total_overbudget = (isset($list_arr_kasbon[$item->id]['total_overbudget'])) ? $list_arr_kasbon[$item->id]['total_overbudget'] : 0;
-
-                            echo '<tr>';
-
-                            echo '<td class="text-center">';
-                            echo $no;
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][id_subcont]" value="' . $item->id . '">';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][id_item]" value="' . $item->id . '">';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nm_item]" value="' . $item->nm_item . '">';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][custom_subcont_tenaga_ahli]" value="1">';
-                            echo '</td>';
-
-                            echo '<td>' . $item->nm_item . '</td>';
-
-                            echo '<td class="text-center">';
-                            echo number_format($item->estimasi_qty);
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_estimasi]" value="' . $item->estimasi_qty . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo number_format($item->estimasi_harga, 2);
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][price_unit_estimasi]" value="' . $item->estimasi_harga . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo number_format($item->estimasi_total, 2);
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_budget_estimasi]" value="' . $item->estimasi_total . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-center">';
-                            echo number_format($qty_terpakai);
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_terpakai]" value="' . $qty_terpakai . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nominal_terpakai]" value="' . $nominal_terpakai . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_terpakai]" value="' . $total_terpakai . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-center">';
-                            echo number_format($qty_overbudget);
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_overbudget]" value="' . $qty_overbudget . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nominal_overbudget]" value="' . $nominal_overbudget . '">';
-                            echo '</td>';
-
-                            echo '<td class="text-right">';
-                            echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_overbudget]" value="' . $total_overbudget . '">';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
-                            echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
-                            echo '</td>';
-
-                            echo '</tr>';
-
-                            // Sampai sini saja yang aktif
-
-                            $ttl_qty_estimasi += $item->estimasi_qty;
-                            $ttl_total_estimasi += $item->estimasi_total;
-                            $ttl_qty_terpakai += $qty_terpakai;
-                            $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
-                            $ttl_qty_overbudget += $qty_overbudget;
-                            $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
+                        $qty_pengajuan = (isset($list_arr_kasbon[$item->id])) ? $list_arr_kasbon[$item->id]['qty_pengajuan'] : 0;
+                        $nominal_pengajuan = (isset($list_arr_kasbon[$item->id])) ? $list_arr_kasbon[$item->id]['nominal_pengajuan'] : 0;
+                        $total_pengajuan = (isset($list_arr_kasbon[$item->id])) ? $list_arr_kasbon[$item->id]['total_pengajuan'] : 0;
+                        $aktual_terpakai = (isset($list_arr_kasbon[$item->id])) ? $list_arr_kasbon[$item->id]['aktual_terpakai'] : 0;
+                        if ($aktual_terpakai <= 0) {
+                            $aktual_terpakai = $item->estimasi_qty;
                         }
+                        $sisa_budget = (isset($list_arr_kasbon[$item->id])) ? $list_arr_kasbon[$item->id]['sisa_budget'] : 0;
+                        if ($sisa_budget <= 0) {
+                            $sisa_budget = $item->estimasi_total;
+                        }
+
+                        $qty_terpakai = (isset($list_arr_kasbon[$item->id]['qty_terpakai'])) ? $list_arr_kasbon[$item->id]['qty_terpakai'] : 0;
+                        $nominal_terpakai = (isset($list_arr_kasbon[$item->id]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id]['nominal_terpakai'] : 0;
+                        $total_terpakai = (isset($list_arr_kasbon[$item->id]['total_terpakai'])) ? $list_arr_kasbon[$item->id]['total_terpakai'] : 0;
+
+                        $qty_overbudget = (isset($list_arr_kasbon[$item->id]['qty_overbudget'])) ? $list_arr_kasbon[$item->id]['qty_overbudget'] : 0;
+                        $nominal_overbudget = (isset($list_arr_kasbon[$item->id]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id]['nominal_overbudget'] : 0;
+                        $total_overbudget = (isset($list_arr_kasbon[$item->id]['total_overbudget'])) ? $list_arr_kasbon[$item->id]['total_overbudget'] : 0;
+
+                        echo '<tr>';
+
+                        echo '<td class="text-center">';
+                        echo $no;
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][id_subcont]" value="' . $item->id . '">';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][id_item]" value="' . $item->id . '">';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nm_item]" value="' . $item->nm_item . '">';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][custom_subcont_tenaga_ahli]" value="1">';
+                        echo '</td>';
+
+                        echo '<td>' . $item->nm_item . '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($item->estimasi_qty);
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_estimasi]" value="' . $item->estimasi_qty . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo number_format($item->estimasi_harga, 2);
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][price_unit_estimasi]" value="' . $item->estimasi_harga . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo number_format($item->estimasi_total, 2);
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_budget_estimasi]" value="' . $item->estimasi_total . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($qty_terpakai);
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_terpakai]" value="' . $qty_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nominal_terpakai]" value="' . $nominal_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_terpakai]" value="' . $total_terpakai . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-center">';
+                        echo number_format($qty_overbudget);
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][qty_overbudget]" value="' . $qty_overbudget . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][nominal_overbudget]" value="' . $nominal_overbudget . '">';
+                        echo '</td>';
+
+                        echo '<td class="text-right">';
+                        echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][total_overbudget]" value="' . $total_overbudget . '">';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][sisa_budget]" value="' . $sisa_budget . '">';
+                        echo '<input type="hidden" name="detail_subcont_tenaga_ahli[' . $no . '][aktual_terpakai]" value="' . $aktual_terpakai . '">';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        // Sampai sini saja yang aktif
+
+                        $ttl_qty_estimasi += $item->estimasi_qty;
+                        $ttl_total_estimasi += $item->estimasi_total;
+                        $ttl_qty_terpakai += $qty_terpakai;
+                        $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
+                        $ttl_qty_overbudget += $qty_overbudget;
+                        $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
                     }
                     ?>
                 </tbody>
@@ -605,7 +602,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             // if (qty_pengajuan < 1) {
             //     var total_pengajuan = get_num($('input[name="detail_subcont_tenaga_ahli[' + i + '][total_pengajuan]"]').val());
             // } else {
-                var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
+            var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
             // }
 
             $('input[name="detail_subcont_tenaga_ahli[' + i + '][total_pengajuan]"]').autoNumeric('set', total_pengajuan);
