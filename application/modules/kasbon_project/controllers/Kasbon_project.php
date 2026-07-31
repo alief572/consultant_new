@@ -3862,6 +3862,7 @@ class Kasbon_project extends Admin_Controller
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
+            'list_akomodasi' => $get_data_akomodasi,
             'list_data_kasbon' => $get_kasbon_akomodasi,
             'list_data_kasbon_custom' => $get_kasbon_akomodasi_custom,
             'list_budget_tambahan' => $data_budget_tambahan,

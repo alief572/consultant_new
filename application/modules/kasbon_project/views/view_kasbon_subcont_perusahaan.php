@@ -180,93 +180,89 @@ if ($header->metode_pembayaran == '3') {
                     $ttl_total_overbudget = 0;
 
                     foreach ($list_data_subcont_perusahaan as $item) {
-                        if (isset($list_arr_kasbon[$item->id_subcont])) {
-                            $no++;
+                        $no++;
 
-                            $qty_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['qty_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['qty_terpakai'] : 0;
-                            $nominal_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['nominal_terpakai'] : 0;
-                            $total_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['total_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['total_terpakai'] : 0;
+                        $qty_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['qty_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['qty_terpakai'] : 0;
+                        $nominal_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['nominal_terpakai'] : 0;
+                        $total_terpakai = (isset($list_arr_kasbon[$item->id_subcont]['total_terpakai'])) ? $list_arr_kasbon[$item->id_subcont]['total_terpakai'] : 0;
 
-                            $qty_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['qty_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['qty_overbudget'] : 0;
-                            $nominal_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['nominal_overbudget'] : 0;
-                            $total_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['total_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['total_overbudget'] : 0;
+                        $qty_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['qty_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['qty_overbudget'] : 0;
+                        $nominal_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['nominal_overbudget'] : 0;
+                        $total_overbudget = (isset($list_arr_kasbon[$item->id_subcont]['total_overbudget'])) ? $list_arr_kasbon[$item->id_subcont]['total_overbudget'] : 0;
 
-                            echo '<tr>';
+                        echo '<tr>';
 
-                            echo '<td class="text-center">' . $no . '</td>';
-                            echo '<td>' . (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item) . '</td>';
-                            echo '<td class="text-center">' . number_format($item->qty_estimasi, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->total_estimasi, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($qty_terpakai, 2) . '</td>';
-                            echo '<td class="text-right">';
-                            echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-right">';
-                            echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-center">' . number_format($qty_overbudget, 2) . '</td>';
-                            echo '<td class="text-right">';
-                            echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-right">';
-                            echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
-                            echo '</td>';
+                        echo '<td class="text-center">' . $no . '</td>';
+                        echo '<td>' . (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_final, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->price_unit_final, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->total_final, 2) . '</td>';
+                        echo '<td class="text-center">' . number_format($qty_terpakai, 2) . '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-center">' . number_format($qty_overbudget, 2) . '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
+                        echo '</td>';
 
-                            echo '</tr>';
+                        echo '</tr>';
 
-                            $ttl_qty_estimasi += $item->qty_estimasi;
-                            $ttl_total_estimasi += $item->total_estimasi;
-                            $ttl_qty_terpakai += $qty_terpakai;
-                            $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
-                            $ttl_qty_overbudget += $qty_overbudget;
-                            $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
-                        }
+                        $ttl_qty_estimasi += $item->qty_final;
+                        $ttl_total_estimasi += $item->total_final;
+                        $ttl_qty_terpakai += $qty_terpakai;
+                        $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
+                        $ttl_qty_overbudget += $qty_overbudget;
+                        $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
                     }
 
                     foreach ($list_data_subcont_perusahaan_custom as $item) {
-                        if (isset($list_arr_kasbon[$item->id])) {
-                            $no++;
+                        $no++;
 
-                            $qty_terpakai = (isset($list_arr_kasbon[$item->id]['qty_terpakai'])) ? $list_arr_kasbon[$item->id]['qty_terpakai'] : 0;
-                            $nominal_terpakai = (isset($list_arr_kasbon[$item->id]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id]['nominal_terpakai'] : 0;
-                            $total_terpakai = (isset($list_arr_kasbon[$item->id]['total_terpakai'])) ? $list_arr_kasbon[$item->id]['total_terpakai'] : 0;
+                        $qty_terpakai = (isset($list_arr_kasbon[$item->id]['qty_terpakai'])) ? $list_arr_kasbon[$item->id]['qty_terpakai'] : 0;
+                        $nominal_terpakai = (isset($list_arr_kasbon[$item->id]['nominal_terpakai'])) ? $list_arr_kasbon[$item->id]['nominal_terpakai'] : 0;
+                        $total_terpakai = (isset($list_arr_kasbon[$item->id]['total_terpakai'])) ? $list_arr_kasbon[$item->id]['total_terpakai'] : 0;
 
-                            $qty_overbudget = (isset($list_arr_kasbon[$item->id]['qty_overbudget'])) ? $list_arr_kasbon[$item->id]['qty_overbudget'] : 0;
-                            $nominal_overbudget = (isset($list_arr_kasbon[$item->id]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id]['nominal_overbudget'] : 0;
-                            $total_overbudget = (isset($list_arr_kasbon[$item->id]['total_overbudget'])) ? $list_arr_kasbon[$item->id]['total_overbudget'] : 0;
+                        $qty_overbudget = (isset($list_arr_kasbon[$item->id]['qty_overbudget'])) ? $list_arr_kasbon[$item->id]['qty_overbudget'] : 0;
+                        $nominal_overbudget = (isset($list_arr_kasbon[$item->id]['nominal_overbudget'])) ? $list_arr_kasbon[$item->id]['nominal_overbudget'] : 0;
+                        $total_overbudget = (isset($list_arr_kasbon[$item->id]['total_overbudget'])) ? $list_arr_kasbon[$item->id]['total_overbudget'] : 0;
 
-                            echo '<tr>';
+                        echo '<tr>';
 
-                            echo '<td class="text-center">' . $no . '</td>';
-                            echo '<td>' . $item->nm_item . '</td>';
-                            echo '<td class="text-center">' . number_format($item->estimasi_qty, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->estimasi_harga, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->estimasi_total, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($qty_terpakai, 2) . '</td>';
-                            echo '<td class="text-right">';
-                            echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-right">';
-                            echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-center">' . number_format($qty_overbudget, 2) . '</td>';
-                            echo '<td class="text-right">';
-                            echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-right">';
-                            echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
-                            echo '</td>';
+                        echo '<td class="text-center">' . $no . '</td>';
+                        echo '<td>' . $item->nm_item . '</td>';
+                        echo '<td class="text-center">' . number_format($item->estimasi_qty, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->estimasi_harga, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->estimasi_total, 2) . '</td>';
+                        echo '<td class="text-center">' . number_format($qty_terpakai, 2) . '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-center">' . number_format($qty_overbudget, 2) . '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_overbudget > 0) ? number_format($nominal_overbudget, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
+                        echo '</td>';
 
-                            echo '</tr>';
+                        echo '</tr>';
 
-                            $ttl_qty_estimasi += $item->estimasi_qty;
-                            $ttl_total_estimasi += $item->estimasi_total;
-                            $ttl_qty_terpakai += $qty_terpakai;
-                            $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
-                            $ttl_qty_overbudget += $qty_overbudget;
-                            $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
-                        }
+                        $ttl_qty_estimasi += $item->estimasi_qty;
+                        $ttl_total_estimasi += $item->estimasi_total;
+                        $ttl_qty_terpakai += $qty_terpakai;
+                        $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
+                        $ttl_qty_overbudget += $qty_overbudget;
+                        $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
                     }
                     ?>
                 </tbody>

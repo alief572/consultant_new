@@ -175,98 +175,94 @@ if ($header->metode_pembayaran == '3') {
                     $ttl_qty_overbudget = 0;
                     $ttl_total_overbudget = 0;
 
-                    foreach ($list_data_kasbon as $item) {
-                        if (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) {
-                            $no++;
+                    foreach ($list_akomodasi as $item) {
+                        $no++;
 
-                            $qty_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['qty_pengajuan'] : 0;
-                            $nominal_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['nominal_pengajuan'] : 0;
-                            $total_pengajuan = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['total_pengajuan'] : 0;
+                        $qty_terpakai = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['qty_pengajuan'] : 0;
+                        $nominal_terpakai = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['nominal_pengajuan'] : 0;
+                        $total_terpakai = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['total_pengajuan'] : 0;
 
-                            $aktual_terpakai = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['aktual_terpakai'] : 0;
-                            $sisa_budget = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['sisa_budget'] : 0;
+                        $qty_overbudget = (isset($list_budget_tambahan[$item->id])) ? $list_budget_tambahan[$item->id]['qty_budget_tambahan'] : 0;
+                        $budget_overbudget = (isset($list_budget_tambahan[$item->id])) ? $list_budget_tambahan[$item->id]['budget_tambahan'] : 0;
+                        $total_overbudget = $budget_overbudget;
 
-                            $budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['budget_tambahan'] : 0;
-                            $qty_budget_tambahan = (isset($data_list_kasbon_akomodasi[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi[$item->id_akomodasi]['qty_budget_tambahan'] : 0;
+                        echo '<tr>';
 
-                            echo '<tr>';
+                        echo '<td class="text-center">' . $no . '</td>';
+                        echo '<td>' . (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_final) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->price_unit_final, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->total_final, 2) . '</td>';
+                        echo '<td class="text-center">' . number_format($qty_terpakai, 2) . '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_terpakai > 0) ? number_format($nominal_terpakai, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_terpakai > 0) ? number_format($total_terpakai, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-center">' . number_format($qty_overbudget, 2) . '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_overbudget > 0) ? number_format($budget_overbudget, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-right">';
+                        echo ($qty_overbudget > 0) ? number_format($total_overbudget, 2) : '-';
+                        echo '</td>';
 
-                            echo '<td class="text-center">' . $no . '</td>';
-                            echo '<td>' . (!empty($item->nm_biaya) ? $item->nm_biaya : $item->nm_item) . '</td>';
-                            echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($item->qty_terpakai, 2) . '</td>';
-                            echo '<td class="text-right">';
-                            echo ($item->qty_terpakai > 0) ? number_format($item->nominal_terpakai, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-right">';
-                            echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
-                            echo '<td class="text-right">';
-                            echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-right">';
-                            echo ($item->qty_overbudget > 0) ? number_format($item->total_overbudget, 2) : '-';
-                            echo '</td>';
+                        echo '</tr>';
 
-                            echo '</tr>';
-
-                            $ttl_qty_estimasi += $item->qty_estimasi;
-                            $ttl_total_estimasi += $item->total_budget_estimasi;
-                            $ttl_qty_terpakai += $item->qty_terpakai;
-                            $ttl_total_terpakai += ($item->qty_terpakai) ? $item->total_terpakai : 0;
-                            $ttl_qty_overbudget += $item->qty_overbudget;
-                            $ttl_total_overbudget += ($item->qty_overbudget) ? $item->total_overbudget : 0;
-                        }
+                        $ttl_qty_estimasi += $item->qty_final;
+                        $ttl_total_estimasi += $item->total_final;
+                        $ttl_qty_terpakai += $qty_terpakai;
+                        $ttl_total_terpakai += ($qty_terpakai > 0) ? $total_terpakai : 0;
+                        $ttl_qty_overbudget += $qty_overbudget;
+                        $ttl_total_overbudget += ($qty_overbudget > 0) ? $total_overbudget : 0;
                     }
 
                     foreach ($list_data_kasbon_custom as $item) {
                         if (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) {
-                            $no++;
-
-                            $qty_pengajuan = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['qty_pengajuan'] : 0;
-                            $nominal_pengajuan = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['nominal_pengajuan'] : 0;
-                            $total_pengajuan = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['total_pengajuan'] : 0;
-
-                            $aktual_terpakai = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['aktual_terpakai'] : 0;
-                            $sisa_budget = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['sisa_budget'] : 0;
-
-                            $budget_tambahan = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['budget_tambahan'] : 0;
-                            $qty_budget_tambahan = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['qty_budget_tambahan'] : 0;
-
-                            echo '<tr>';
-
-                            echo '<td class="text-center">' . $no . '</td>';
-                            echo '<td>' . $item->nm_item . '</td>';
-                            echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
-                            echo '<td class="text-center">' . number_format($item->qty_terpakai, 2) . '</td>';
-                            echo '<td class="text-right">';
-                            echo ($item->qty_terpakai > 0) ? number_format($item->nominal_terpakai, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-right">';
-                            echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
-                            echo '<td class="text-right">';
-                            echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
-                            echo '</td>';
-                            echo '<td class="text-right">';
-                            echo ($item->qty_overbudget > 0) ? number_format($item->total_overbudget, 2) : '-';
-                            echo '</td>';
-
-                            echo '</tr>';
-
-                            $ttl_qty_estimasi += $item->qty_estimasi;
-                            $ttl_total_estimasi += $item->total_budget_estimasi;
-                            $ttl_qty_terpakai += $item->qty_terpakai;
-                            $ttl_total_terpakai += ($item->qty_terpakai) ? $item->total_terpakai : 0;
-                            $ttl_qty_overbudget += $item->qty_overbudget;
-                            $ttl_total_overbudget += ($item->qty_overbudget) ? $item->total_overbudget : 0;
                         }
+                        $no++;
+
+                        $qty_pengajuan = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['qty_pengajuan'] : 0;
+                        $nominal_pengajuan = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['nominal_pengajuan'] : 0;
+                        $total_pengajuan = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['total_pengajuan'] : 0;
+
+                        $aktual_terpakai = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['aktual_terpakai'] : 0;
+                        $sisa_budget = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['sisa_budget'] : 0;
+
+                        $budget_tambahan = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['budget_tambahan'] : 0;
+                        $qty_budget_tambahan = (isset($data_list_kasbon_akomodasi_custom[$item->id_akomodasi])) ? $data_list_kasbon_akomodasi_custom[$item->id_akomodasi]['qty_budget_tambahan'] : 0;
+
+                        echo '<tr>';
+
+                        echo '<td class="text-center">' . $no . '</td>';
+                        echo '<td>' . $item->nm_item . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_estimasi) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->price_unit_estimasi, 2) . '</td>';
+                        echo '<td class="text-right">' . number_format($item->total_budget_estimasi, 2) . '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_terpakai, 2) . '</td>';
+                        echo '<td class="text-right">';
+                        echo ($item->qty_terpakai > 0) ? number_format($item->nominal_terpakai, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-right">';
+                        echo ($item->qty_terpakai > 0) ? number_format($item->total_terpakai, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-center">' . number_format($item->qty_overbudget, 2) . '</td>';
+                        echo '<td class="text-right">';
+                        echo ($item->qty_overbudget > 0) ? number_format($item->nominal_overbudget, 2) : '-';
+                        echo '</td>';
+                        echo '<td class="text-right">';
+                        echo ($item->qty_overbudget > 0) ? number_format($item->total_overbudget, 2) : '-';
+                        echo '</td>';
+
+                        echo '</tr>';
+
+                        $ttl_qty_estimasi += $item->qty_estimasi;
+                        $ttl_total_estimasi += $item->total_budget_estimasi;
+                        $ttl_qty_terpakai += $item->qty_terpakai;
+                        $ttl_total_terpakai += ($item->qty_terpakai) ? $item->total_terpakai : 0;
+                        $ttl_qty_overbudget += $item->qty_overbudget;
+                        $ttl_total_overbudget += ($item->qty_overbudget) ? $item->total_overbudget : 0;
                     }
                     ?>
                 </tbody>
