@@ -3343,13 +3343,13 @@ class Expense_report_project extends Admin_Controller
 
         if (isset($post['detail_subcont'])) {
             foreach ($post['detail_subcont'] as $item) {
-                $qty_kasbon = $item['qty_kasbon'];
-                $nominal_kasbon = $item['nominal_kasbon'];
-                $total_kasbon = $item['total_kasbon'];
+                $qty_kasbon = str_replace(',', '', $item['qty_kasbon']);
+                $nominal_kasbon = str_replace(',', '', $item['nominal_kasbon']);
+                $total_kasbon = ($qty_kasbon * $nominal_kasbon);
 
                 $qty_expense = str_replace(',', '', $item['qty_expense']);
-                if ($qty_expense < 1) {
-                    $qty_expense = 1;
+                if ($qty_expense <= 0) {
+                    $qty_expense = 0;
                 }
                 $nominal_expense = str_replace(',', '', $item['nominal_expense']);
                 $total_expense = ($nominal_expense * $qty_expense);
@@ -3363,7 +3363,7 @@ class Expense_report_project extends Admin_Controller
                         'id_penawaran' => $post['id_penawaran'],
                         'id_detail_kasbon' => $item['id_detail_kasbon'],
                         'tipe' => 1,
-                        'qty_expense' => str_replace(',', '', $item['qty_expense']),
+                        'qty_expense' => $qty_expense,
                         'nominal_expense' => $nominal_expense,
                         'keterangan' => $item['keterangan'],
                         'created_by' => $this->auth->user_id(),
@@ -3561,8 +3561,8 @@ class Expense_report_project extends Admin_Controller
 
         if (isset($post['detail_subcont'])) {
             foreach ($post['detail_subcont'] as $item) {
-                $qty_kasbon = $item['qty_kasbon'];
-                $nominal_kasbon = $item['nominal_kasbon'];
+                $qty_kasbon = str_replace(',', '', $item['qty_kasbon']);
+                $nominal_kasbon = str_replace(',', '', $item['nominal_kasbon']);
 
                 $qty_expense = str_replace(',', '', $item['qty_expense']);
                 $nominal_expense = str_replace(',', '', $item['nominal_expense']);

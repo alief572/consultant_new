@@ -294,7 +294,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                                     <option value="">- Pilih Bank -</option>
                                     <?php
                                     foreach ($list_bank  as $item) :
-                                        echo '<option value="' . $item->id . '">' . $item->nama_bank . ' - ' . $item->rekening . ' - ' . $item->nama . '</option>';
+                                        $selected = ($item->id == $header->id_bank) ? 'selected' : '';
+                                        echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama_bank . ' - ' . $item->rekening . ' - ' . $item->nama . '</option>';
                                     endforeach;
                                     ?>
                                 </select>
@@ -460,6 +461,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
             width: '100%'
         });
 
+        hitung_total(1);
         set_jurnal();
     });
 
@@ -650,14 +652,11 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 
         for (i = 1; i <= count_no; i++) {
             var qty_kasbon = get_num($('input[name="detail_subcont[' + i + '][qty_kasbon]"]').val());
-            if (qty_kasbon < 1) {
-                qty_kasbon = 1;
-            }
             var nominal_kasbon = get_num($('input[name="detail_subcont[' + i + '][nominal_kasbon]"]').val());
 
             var qty_expense = get_num($('input[name="detail_subcont[' + i + '][qty_expense]"]').val());
-            if (qty_expense < 1) {
-                qty_expense = 1;
+            if (qty_expense <= 0) {
+                qty_expense = 0;
             }
             var nominal_expense = get_num($('input[name="detail_subcont[' + i + '][nominal_expense]"]').val());
 

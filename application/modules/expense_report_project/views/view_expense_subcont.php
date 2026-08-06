@@ -196,7 +196,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 
                     echo '</tr>';
 
-                    $ttl_kasbon += ($item['total_kasbon']);
+                    $ttl_kasbon += ($item['qty_kasbon'] * $item['nominal_kasbon']);
                     $ttl_expense_report += ($total_expense);
 
                     $count_no++;
