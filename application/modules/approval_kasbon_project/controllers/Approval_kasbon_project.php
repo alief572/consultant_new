@@ -193,40 +193,590 @@ class Approval_kasbon_project extends Admin_Controller
         $this->db->where('a.custom_subcont', '1');
         $get_kasbon_subcont_custom = $this->db->get()->result();
 
+        // ----------------------------------------------------
+        // Tipe 2: AKOMODASI
+        // ----------------------------------------------------
         $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_kasbon_project_akomodasi a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_kasbon);
         $this->db->where('a.sts', null);
-        $get_kasbon_akomodasi = $this->db->get()->result();
+        $get_kasbon_akomodasi_submitted = $this->db->get()->result();
 
+        $submitted_akomodasi = [];
+        foreach ($get_kasbon_akomodasi_submitted as $item) {
+            $submitted_akomodasi[$item->id_akomodasi] = $item;
+        }
+
+        $this->db->select('a.id_akomodasi, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
+        $this->db->from('kons_tr_kasbon_project_akomodasi a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.id_header !=', $id_kasbon);
+        $this->db->where('a.deleted_at IS NULL');
+        $this->db->group_by('a.id_akomodasi');
+        $get_prior_akomodasi = $this->db->get()->result();
+
+        $prior_akomodasi_map = [];
+        foreach ($get_prior_akomodasi as $p) {
+            $prior_akomodasi_map[$p->id_akomodasi] = $p;
+        }
+
+        $this->db->select('b.id_detail, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
+        $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->where('a.tipe', 2);
+        $this->db->where('a.sts', 1);
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->group_by('b.id_detail');
+        $get_ovb_akomodasi_agg = $this->db->get()->result();
+
+        $ovb_akomodasi_map = [];
+        foreach ($get_ovb_akomodasi_agg as $o) {
+            $ovb_akomodasi_map[$o->id_detail] = $o;
+        }
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_spk_budgeting_akomodasi a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budgeting_akomodasi = $this->db->get()->result();
+
+        $get_kasbon_akomodasi = [];
+        $processed_akomodasi_ids = [];
+
+        foreach ($get_budgeting_akomodasi as $b_item) {
+            $item_id = $b_item->id;
+            $processed_akomodasi_ids[] = $item_id;
+
+            if (isset($submitted_akomodasi[$item_id])) {
+                $get_kasbon_akomodasi[] = $submitted_akomodasi[$item_id];
+            } else {
+                $prior_qty = isset($prior_akomodasi_map[$item_id]) ? (float)$prior_akomodasi_map[$item_id]->ttl_qty_pengajuan : 0;
+                $prior_total = isset($prior_akomodasi_map[$item_id]) ? (float)$prior_akomodasi_map[$item_id]->ttl_total_pengajuan : 0;
+
+                $ovb_qty = isset($ovb_akomodasi_map[$item_id]) ? (float)$ovb_akomodasi_map[$item_id]->ttl_qty_tambahan : 0;
+                $ovb_total = isset($ovb_akomodasi_map[$item_id]) ? (float)$ovb_akomodasi_map[$item_id]->total_budget_tambahan : 0;
+                $ovb_nominal = ($ovb_qty > 0) ? ($ovb_total / $ovb_qty) : 0;
+
+                $qty_estimasi = (float)$b_item->qty_final;
+                $price_unit_estimasi = (float)$b_item->price_unit_final;
+                $total_budget_estimasi = (float)$b_item->total_final;
+
+                $qty_terpakai = $prior_qty;
+                $nominal_terpakai = $price_unit_estimasi;
+                $total_terpakai = $prior_total;
+
+                $qty_overbudget = $ovb_qty;
+                $nominal_overbudget = $ovb_nominal;
+                $total_overbudget = $ovb_total;
+
+                $sisa_budget = ($total_budget_estimasi - $total_terpakai + $total_overbudget);
+                $aktual_terpakai = $qty_terpakai;
+
+                $obj = new stdClass();
+                $obj->id_header = $id_kasbon;
+                $obj->id_spk_budgeting = $id_spk_budgeting;
+                $obj->id_spk_penawaran = $b_item->id_spk_penawaran;
+                $obj->id_penawaran = $b_item->id_penawaran;
+                $obj->id_akomodasi = $item_id;
+                $obj->id_item = $b_item->id_item;
+                $obj->nm_item = $b_item->nm_item;
+                $obj->nm_biaya = !empty($b_item->nm_biaya) ? $b_item->nm_biaya : $b_item->nm_item;
+                $obj->qty_pengajuan = 0;
+                $obj->nominal_pengajuan = 0;
+                $obj->total_pengajuan = 0;
+                $obj->qty_estimasi = $qty_estimasi;
+                $obj->price_unit_estimasi = $price_unit_estimasi;
+                $obj->total_budget_estimasi = $total_budget_estimasi;
+                $obj->qty_budget_tambahan = $ovb_qty;
+                $obj->budget_tambahan = $ovb_total;
+                $obj->aktual_terpakai = $aktual_terpakai;
+                $obj->sisa_budget = $sisa_budget;
+                $obj->qty_terpakai = $qty_terpakai;
+                $obj->nominal_terpakai = $nominal_terpakai;
+                $obj->total_terpakai = $total_terpakai;
+                $obj->qty_overbudget = $qty_overbudget;
+                $obj->nominal_overbudget = $nominal_overbudget;
+                $obj->total_overbudget = $total_overbudget;
+                $obj->custom_akomodasi = 0;
+
+                $get_kasbon_akomodasi[] = $obj;
+            }
+        }
+
+        foreach ($submitted_akomodasi as $item_id => $s_item) {
+            if (!in_array($item_id, $processed_akomodasi_ids)) {
+                $get_kasbon_akomodasi[] = $s_item;
+            }
+        }
+
+        // ----------------------------------------------------
+        // Tipe 3: OTHERS
+        // ----------------------------------------------------
         $this->db->select('a.*, IF(a.custom_others = 1, a.nm_item, b.nm_biaya) as nm_biaya');
         $this->db->from('kons_tr_kasbon_project_others a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_kasbon);
         $this->db->where('a.sts', null);
-        $get_kasbon_others = $this->db->get()->result();
+        $get_kasbon_others_submitted = $this->db->get()->result();
 
+        $submitted_others = [];
+        foreach ($get_kasbon_others_submitted as $item) {
+            $submitted_others[$item->id_others] = $item;
+        }
+
+        $this->db->select('a.id_others, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
+        $this->db->from('kons_tr_kasbon_project_others a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.id_header !=', $id_kasbon);
+        $this->db->where('a.deleted_at IS NULL');
+        $this->db->group_by('a.id_others');
+        $get_prior_others = $this->db->get()->result();
+
+        $prior_others_map = [];
+        foreach ($get_prior_others as $p) {
+            $prior_others_map[$p->id_others] = $p;
+        }
+
+        $this->db->select('b.id_detail, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
+        $this->db->from('kons_tr_kasbon_req_ovb_others_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_others_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->where('a.tipe', 3);
+        $this->db->where('a.sts', 1);
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->group_by('b.id_detail');
+        $get_ovb_others_agg = $this->db->get()->result();
+
+        $ovb_others_map = [];
+        foreach ($get_ovb_others_agg as $o) {
+            $ovb_others_map[$o->id_detail] = $o;
+        }
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_spk_budgeting_others a');
+        $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budgeting_others = $this->db->get()->result();
+
+        $get_kasbon_others = [];
+        $processed_others_ids = [];
+
+        foreach ($get_budgeting_others as $b_item) {
+            $item_id = $b_item->id;
+            $processed_others_ids[] = $item_id;
+
+            if (isset($submitted_others[$item_id])) {
+                $get_kasbon_others[] = $submitted_others[$item_id];
+            } else {
+                $prior_qty = isset($prior_others_map[$item_id]) ? (float)$prior_others_map[$item_id]->ttl_qty_pengajuan : 0;
+                $prior_total = isset($prior_others_map[$item_id]) ? (float)$prior_others_map[$item_id]->ttl_total_pengajuan : 0;
+
+                $ovb_qty = isset($ovb_others_map[$item_id]) ? (float)$ovb_others_map[$item_id]->ttl_qty_tambahan : 0;
+                $ovb_total = isset($ovb_others_map[$item_id]) ? (float)$ovb_others_map[$item_id]->total_budget_tambahan : 0;
+                $ovb_nominal = ($ovb_qty > 0) ? ($ovb_total / $ovb_qty) : 0;
+
+                $qty_estimasi = (float)$b_item->qty_final;
+                $price_unit_estimasi = (float)$b_item->price_unit_final;
+                $total_budget_estimasi = (float)$b_item->total_final;
+
+                $qty_terpakai = $prior_qty;
+                $nominal_terpakai = $price_unit_estimasi;
+                $total_terpakai = $prior_total;
+
+                $qty_overbudget = $ovb_qty;
+                $nominal_overbudget = $ovb_nominal;
+                $total_overbudget = $ovb_total;
+
+                $sisa_budget = ($total_budget_estimasi - $total_terpakai + $total_overbudget);
+                $aktual_terpakai = $qty_terpakai;
+
+                $obj = new stdClass();
+                $obj->id_header = $id_kasbon;
+                $obj->id_spk_budgeting = $id_spk_budgeting;
+                $obj->id_spk_penawaran = $b_item->id_spk_penawaran;
+                $obj->id_penawaran = $b_item->id_penawaran;
+                $obj->id_others = $item_id;
+                $obj->id_item = $b_item->id_item;
+                $obj->nm_item = $b_item->nm_item;
+                $obj->nm_biaya = !empty($b_item->nm_biaya) ? $b_item->nm_biaya : $b_item->nm_item;
+                $obj->qty_pengajuan = 0;
+                $obj->nominal_pengajuan = 0;
+                $obj->total_pengajuan = 0;
+                $obj->qty_estimasi = $qty_estimasi;
+                $obj->price_unit_estimasi = $price_unit_estimasi;
+                $obj->total_budget_estimasi = $total_budget_estimasi;
+                $obj->qty_budget_tambahan = $ovb_qty;
+                $obj->budget_tambahan = $ovb_total;
+                $obj->aktual_terpakai = $aktual_terpakai;
+                $obj->sisa_budget = $sisa_budget;
+                $obj->qty_terpakai = $qty_terpakai;
+                $obj->nominal_terpakai = $nominal_terpakai;
+                $obj->total_terpakai = $total_terpakai;
+                $obj->qty_overbudget = $qty_overbudget;
+                $obj->nominal_overbudget = $nominal_overbudget;
+                $obj->total_overbudget = $total_overbudget;
+                $obj->custom_others = 0;
+
+                $get_kasbon_others[] = $obj;
+            }
+        }
+
+        foreach ($submitted_others as $item_id => $s_item) {
+            if (!in_array($item_id, $processed_others_ids)) {
+                $get_kasbon_others[] = $s_item;
+            }
+        }
+
+        // ----------------------------------------------------
+        // Tipe 4: LAB
+        // ----------------------------------------------------
         $this->db->select('a.*, IF(a.custom_lab = 1, a.nm_item, b.isu_lingkungan) as nm_biaya');
         $this->db->from('kons_tr_kasbon_project_lab a');
         $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_kasbon);
         $this->db->where('a.sts', null);
-        $get_kasbon_lab = $this->db->get()->result();
+        $get_kasbon_lab_submitted = $this->db->get()->result();
 
+        $submitted_lab = [];
+        foreach ($get_kasbon_lab_submitted as $item) {
+            $submitted_lab[$item->id_lab] = $item;
+        }
+
+        $this->db->select('a.id_lab, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
+        $this->db->from('kons_tr_kasbon_project_lab a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.id_header !=', $id_kasbon);
+        $this->db->where('a.deleted_at IS NULL');
+        $this->db->group_by('a.id_lab');
+        $get_prior_lab = $this->db->get()->result();
+
+        $prior_lab_map = [];
+        foreach ($get_prior_lab as $p) {
+            $prior_lab_map[$p->id_lab] = $p;
+        }
+
+        $this->db->select('b.id_detail, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
+        $this->db->from('kons_tr_kasbon_req_ovb_lab_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_lab_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->where('a.tipe', 4);
+        $this->db->where('a.sts', 1);
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->group_by('b.id_detail');
+        $get_ovb_lab_agg = $this->db->get()->result();
+
+        $ovb_lab_map = [];
+        foreach ($get_ovb_lab_agg as $o) {
+            $ovb_lab_map[$o->id_detail] = $o;
+        }
+
+        $this->db->select('a.*, b.isu_lingkungan as nm_biaya');
+        $this->db->from('kons_tr_spk_budgeting_lab a');
+        $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budgeting_lab = $this->db->get()->result();
+
+        $get_kasbon_lab = [];
+        $processed_lab_ids = [];
+
+        foreach ($get_budgeting_lab as $b_item) {
+            $item_id = $b_item->id;
+            $processed_lab_ids[] = $item_id;
+
+            if (isset($submitted_lab[$item_id])) {
+                $get_kasbon_lab[] = $submitted_lab[$item_id];
+            } else {
+                $prior_qty = isset($prior_lab_map[$item_id]) ? (float)$prior_lab_map[$item_id]->ttl_qty_pengajuan : 0;
+                $prior_total = isset($prior_lab_map[$item_id]) ? (float)$prior_lab_map[$item_id]->ttl_total_pengajuan : 0;
+
+                $ovb_qty = isset($ovb_lab_map[$item_id]) ? (float)$ovb_lab_map[$item_id]->ttl_qty_tambahan : 0;
+                $ovb_total = isset($ovb_lab_map[$item_id]) ? (float)$ovb_lab_map[$item_id]->total_budget_tambahan : 0;
+                $ovb_nominal = ($ovb_qty > 0) ? ($ovb_total / $ovb_qty) : 0;
+
+                $qty_estimasi = (float)$b_item->qty_final;
+                $price_unit_estimasi = (float)$b_item->price_unit_final;
+                $total_budget_estimasi = (float)$b_item->total_final;
+
+                $qty_terpakai = $prior_qty;
+                $nominal_terpakai = $price_unit_estimasi;
+                $total_terpakai = $prior_total;
+
+                $qty_overbudget = $ovb_qty;
+                $nominal_overbudget = $ovb_nominal;
+                $total_overbudget = $ovb_total;
+
+                $sisa_budget = ($total_budget_estimasi - $total_terpakai + $total_overbudget);
+                $aktual_terpakai = $qty_terpakai;
+
+                $obj = new stdClass();
+                $obj->id_header = $id_kasbon;
+                $obj->id_spk_budgeting = $id_spk_budgeting;
+                $obj->id_spk_penawaran = $b_item->id_spk_penawaran;
+                $obj->id_penawaran = $b_item->id_penawaran;
+                $obj->id_lab = $item_id;
+                $obj->id_item = $b_item->id_item;
+                $obj->nm_item = $b_item->nm_item;
+                $obj->nm_biaya = !empty($b_item->nm_biaya) ? $b_item->nm_biaya : $b_item->nm_item;
+                $obj->qty_pengajuan = 0;
+                $obj->nominal_pengajuan = 0;
+                $obj->total_pengajuan = 0;
+                $obj->qty_estimasi = $qty_estimasi;
+                $obj->price_unit_estimasi = $price_unit_estimasi;
+                $obj->total_budget_estimasi = $total_budget_estimasi;
+                $obj->qty_budget_tambahan = $ovb_qty;
+                $obj->budget_tambahan = $ovb_total;
+                $obj->aktual_terpakai = $aktual_terpakai;
+                $obj->sisa_budget = $sisa_budget;
+                $obj->qty_terpakai = $qty_terpakai;
+                $obj->nominal_terpakai = $nominal_terpakai;
+                $obj->total_terpakai = $total_terpakai;
+                $obj->qty_overbudget = $qty_overbudget;
+                $obj->nominal_overbudget = $nominal_overbudget;
+                $obj->total_overbudget = $total_overbudget;
+                $obj->custom_lab = 0;
+
+                $get_kasbon_lab[] = $obj;
+            }
+        }
+
+        foreach ($submitted_lab as $item_id => $s_item) {
+            if (!in_array($item_id, $processed_lab_ids)) {
+                $get_kasbon_lab[] = $s_item;
+            }
+        }
+
+        // ----------------------------------------------------
+        // Tipe 5: SUBCONT TENAGA AHLI
+        // ----------------------------------------------------
         $this->db->select('a.*, IF(a.custom_subcont_tenaga_ahli = 1, a.nm_item, b.nm_biaya) as nm_biaya');
         $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
         $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_kasbon);
         $this->db->where('a.sts', null);
-        $get_kasbon_subcont_tenaga_ahli = $this->db->get()->result();
+        $get_kasbon_subcont_tenaga_ahli_submitted = $this->db->get()->result();
 
+        $submitted_subcont_tenaga_ahli = [];
+        foreach ($get_kasbon_subcont_tenaga_ahli_submitted as $item) {
+            $submitted_subcont_tenaga_ahli[$item->id_subcont] = $item;
+        }
+
+        $this->db->select('a.id_subcont, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
+        $this->db->from('kons_tr_kasbon_project_subcont_tenaga_ahli a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.id_header !=', $id_kasbon);
+        $this->db->where('a.deleted_at IS NULL');
+        $this->db->group_by('a.id_subcont');
+        $get_prior_subcont_tenaga_ahli = $this->db->get()->result();
+
+        $prior_subcont_tenaga_ahli_map = [];
+        foreach ($get_prior_subcont_tenaga_ahli as $p) {
+            $prior_subcont_tenaga_ahli_map[$p->id_subcont] = $p;
+        }
+
+        $this->db->select('b.id_detail, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
+        $this->db->from('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->where('a.tipe', 5);
+        $this->db->where('a.sts', 1);
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->group_by('b.id_detail');
+        $get_ovb_subcont_tenaga_ahli_agg = $this->db->get()->result();
+
+        $ovb_subcont_tenaga_ahli_map = [];
+        foreach ($get_ovb_subcont_tenaga_ahli_agg as $o) {
+            $ovb_subcont_tenaga_ahli_map[$o->id_detail] = $o;
+        }
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_spk_budgeting_subcont_tenaga_ahli a');
+        $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budgeting_subcont_tenaga_ahli = $this->db->get()->result();
+
+        $get_kasbon_subcont_tenaga_ahli = [];
+        $processed_subcont_tenaga_ahli_ids = [];
+
+        foreach ($get_budgeting_subcont_tenaga_ahli as $b_item) {
+            $item_id = $b_item->id;
+            $processed_subcont_tenaga_ahli_ids[] = $item_id;
+
+            if (isset($submitted_subcont_tenaga_ahli[$item_id])) {
+                $get_kasbon_subcont_tenaga_ahli[] = $submitted_subcont_tenaga_ahli[$item_id];
+            } else {
+                $prior_qty = isset($prior_subcont_tenaga_ahli_map[$item_id]) ? (float)$prior_subcont_tenaga_ahli_map[$item_id]->ttl_qty_pengajuan : 0;
+                $prior_total = isset($prior_subcont_tenaga_ahli_map[$item_id]) ? (float)$prior_subcont_tenaga_ahli_map[$item_id]->ttl_total_pengajuan : 0;
+
+                $ovb_qty = isset($ovb_subcont_tenaga_ahli_map[$item_id]) ? (float)$ovb_subcont_tenaga_ahli_map[$item_id]->ttl_qty_tambahan : 0;
+                $ovb_total = isset($ovb_subcont_tenaga_ahli_map[$item_id]) ? (float)$ovb_subcont_tenaga_ahli_map[$item_id]->total_budget_tambahan : 0;
+                $ovb_nominal = ($ovb_qty > 0) ? ($ovb_total / $ovb_qty) : 0;
+
+                $qty_estimasi = (float)$b_item->qty_final;
+                $price_unit_estimasi = (float)$b_item->price_unit_final;
+                $total_budget_estimasi = (float)$b_item->total_final;
+
+                $qty_terpakai = $prior_qty;
+                $nominal_terpakai = $price_unit_estimasi;
+                $total_terpakai = $prior_total;
+
+                $qty_overbudget = $ovb_qty;
+                $nominal_overbudget = $ovb_nominal;
+                $total_overbudget = $ovb_total;
+
+                $sisa_budget = ($total_budget_estimasi - $total_terpakai + $total_overbudget);
+                $aktual_terpakai = $qty_terpakai;
+
+                $obj = new stdClass();
+                $obj->id_header = $id_kasbon;
+                $obj->id_spk_budgeting = $id_spk_budgeting;
+                $obj->id_spk_penawaran = $b_item->id_spk_penawaran;
+                $obj->id_penawaran = $b_item->id_penawaran;
+                $obj->id_subcont = $item_id;
+                $obj->id_item = $b_item->id_item;
+                $obj->nm_item = $b_item->nm_item;
+                $obj->nm_biaya = !empty($b_item->nm_biaya) ? $b_item->nm_biaya : $b_item->nm_item;
+                $obj->qty_pengajuan = 0;
+                $obj->nominal_pengajuan = 0;
+                $obj->total_pengajuan = 0;
+                $obj->qty_estimasi = $qty_estimasi;
+                $obj->price_unit_estimasi = $price_unit_estimasi;
+                $obj->total_budget_estimasi = $total_budget_estimasi;
+                $obj->qty_budget_tambahan = $ovb_qty;
+                $obj->budget_tambahan = $ovb_total;
+                $obj->aktual_terpakai = $aktual_terpakai;
+                $obj->sisa_budget = $sisa_budget;
+                $obj->qty_terpakai = $qty_terpakai;
+                $obj->nominal_terpakai = $nominal_terpakai;
+                $obj->total_terpakai = $total_terpakai;
+                $obj->qty_overbudget = $qty_overbudget;
+                $obj->nominal_overbudget = $nominal_overbudget;
+                $obj->total_overbudget = $total_overbudget;
+                $obj->custom_subcont_tenaga_ahli = 0;
+
+                $get_kasbon_subcont_tenaga_ahli[] = $obj;
+            }
+        }
+
+        foreach ($submitted_subcont_tenaga_ahli as $item_id => $s_item) {
+            if (!in_array($item_id, $processed_subcont_tenaga_ahli_ids)) {
+                $get_kasbon_subcont_tenaga_ahli[] = $s_item;
+            }
+        }
+
+        // ----------------------------------------------------
+        // Tipe 6: SUBCONT PERUSAHAAN
+        // ----------------------------------------------------
         $this->db->select('a.*, IF(a.custom_subcont_perusahaan = 1, a.nm_item, b.nm_biaya) as nm_biaya');
         $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
         $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_header', $id_kasbon);
         $this->db->where('a.sts', null);
-        $get_kasbon_subcont_perusahaan = $this->db->get()->result();
+        $get_kasbon_subcont_perusahaan_submitted = $this->db->get()->result();
+
+        $submitted_subcont_perusahaan = [];
+        foreach ($get_kasbon_subcont_perusahaan_submitted as $item) {
+            $submitted_subcont_perusahaan[$item->id_subcont] = $item;
+        }
+
+        $this->db->select('a.id_subcont, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
+        $this->db->from('kons_tr_kasbon_project_subcont_perusahaan a');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->where('a.id_header !=', $id_kasbon);
+        $this->db->where('a.deleted_at IS NULL');
+        $this->db->group_by('a.id_subcont');
+        $get_prior_subcont_perusahaan = $this->db->get()->result();
+
+        $prior_subcont_perusahaan_map = [];
+        foreach ($get_prior_subcont_perusahaan as $p) {
+            $prior_subcont_perusahaan_map[$p->id_subcont] = $p;
+        }
+
+        $this->db->select('b.id_detail, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
+        $this->db->from('kons_tr_kasbon_req_ovb_subcont_perusahaan_header a');
+        $this->db->join('kons_tr_kasbon_req_ovb_subcont_perusahaan_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->where('a.tipe', 6);
+        $this->db->where('a.sts', 1);
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->group_by('b.id_detail');
+        $get_ovb_subcont_perusahaan_agg = $this->db->get()->result();
+
+        $ovb_subcont_perusahaan_map = [];
+        foreach ($get_ovb_subcont_perusahaan_agg as $o) {
+            $ovb_subcont_perusahaan_map[$o->id_detail] = $o;
+        }
+
+        $this->db->select('a.*, b.nm_biaya');
+        $this->db->from('kons_tr_spk_budgeting_subcont_perusahaan a');
+        $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
+        $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
+        $get_budgeting_subcont_perusahaan = $this->db->get()->result();
+
+        $get_kasbon_subcont_perusahaan = [];
+        $processed_subcont_perusahaan_ids = [];
+
+        foreach ($get_budgeting_subcont_perusahaan as $b_item) {
+            $item_id = $b_item->id;
+            $processed_subcont_perusahaan_ids[] = $item_id;
+
+            if (isset($submitted_subcont_perusahaan[$item_id])) {
+                $get_kasbon_subcont_perusahaan[] = $submitted_subcont_perusahaan[$item_id];
+            } else {
+                $prior_qty = isset($prior_subcont_perusahaan_map[$item_id]) ? (float)$prior_subcont_perusahaan_map[$item_id]->ttl_qty_pengajuan : 0;
+                $prior_total = isset($prior_subcont_perusahaan_map[$item_id]) ? (float)$prior_subcont_perusahaan_map[$item_id]->ttl_total_pengajuan : 0;
+
+                $ovb_qty = isset($ovb_subcont_perusahaan_map[$item_id]) ? (float)$ovb_subcont_perusahaan_map[$item_id]->ttl_qty_tambahan : 0;
+                $ovb_total = isset($ovb_subcont_perusahaan_map[$item_id]) ? (float)$ovb_subcont_perusahaan_map[$item_id]->total_budget_tambahan : 0;
+                $ovb_nominal = ($ovb_qty > 0) ? ($ovb_total / $ovb_qty) : 0;
+
+                $qty_estimasi = (float)$b_item->qty_final;
+                $price_unit_estimasi = (float)$b_item->price_unit_final;
+                $total_budget_estimasi = (float)$b_item->total_final;
+
+                $qty_terpakai = $prior_qty;
+                $nominal_terpakai = $price_unit_estimasi;
+                $total_terpakai = $prior_total;
+
+                $qty_overbudget = $ovb_qty;
+                $nominal_overbudget = $ovb_nominal;
+                $total_overbudget = $ovb_total;
+
+                $sisa_budget = ($total_budget_estimasi - $total_terpakai + $total_overbudget);
+                $aktual_terpakai = $qty_terpakai;
+
+                $obj = new stdClass();
+                $obj->id_header = $id_kasbon;
+                $obj->id_spk_budgeting = $id_spk_budgeting;
+                $obj->id_spk_penawaran = $b_item->id_spk_penawaran;
+                $obj->id_penawaran = $b_item->id_penawaran;
+                $obj->id_subcont = $item_id;
+                $obj->id_item = $b_item->id_item;
+                $obj->nm_item = $b_item->nm_item;
+                $obj->nm_biaya = !empty($b_item->nm_biaya) ? $b_item->nm_biaya : $b_item->nm_item;
+                $obj->qty_pengajuan = 0;
+                $obj->nominal_pengajuan = 0;
+                $obj->total_pengajuan = 0;
+                $obj->qty_estimasi = $qty_estimasi;
+                $obj->price_unit_estimasi = $price_unit_estimasi;
+                $obj->total_budget_estimasi = $total_budget_estimasi;
+                $obj->qty_budget_tambahan = $ovb_qty;
+                $obj->budget_tambahan = $ovb_total;
+                $obj->aktual_terpakai = $aktual_terpakai;
+                $obj->sisa_budget = $sisa_budget;
+                $obj->qty_terpakai = $qty_terpakai;
+                $obj->nominal_terpakai = $nominal_terpakai;
+                $obj->total_terpakai = $total_terpakai;
+                $obj->qty_overbudget = $qty_overbudget;
+                $obj->nominal_overbudget = $nominal_overbudget;
+                $obj->total_overbudget = $total_overbudget;
+                $obj->custom_subcont_perusahaan = 0;
+
+                $get_kasbon_subcont_perusahaan[] = $obj;
+            }
+        }
+
+        foreach ($submitted_subcont_perusahaan as $item_id => $s_item) {
+            if (!in_array($item_id, $processed_subcont_perusahaan_ids)) {
+                $get_kasbon_subcont_perusahaan[] = $s_item;
+            }
+        }
 
         $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_detail a');
