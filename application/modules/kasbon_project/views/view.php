@@ -118,101 +118,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 </div>
 
-<div class="box">
-    <div class="box-header">
-        <table border="0" style="width: 100%;">
-            <tr>
-                <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Biaya Subcont</h4>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>Budget</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;">Rp. <?= number_format($budget_subcont) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>Actual</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_subcont_on_process">Rp. <?= number_format($nilai_kasbon_on_proses) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-                <th class="pd-5">
-                    <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
-                        <table border="0" style="width: 100%;">
-                            <tr>
-                                <th class="">
-                                    <h4>Sisa Budget</h4>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_subcont_on_process">Rp. <?= number_format($budget_subcont - $nilai_kasbon_on_proses) ?></h3>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-                </th>
-            </tr>
-        </table>
-    </div>
 
-    <div class="box-body" style="overflow: visible !important;">
-        <table id="example1" class="table table-striped mt-5" style="overflow: visible !important;">
-            <thead>
-                <tr>
-                    <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
-                    <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Tipe</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Reject Reason</th>
-                </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
-
-        <br><br>
-
-        <h4 style="font-weight: 800;">Overbudget Subcont</h4>
-        <table class="table table-striped mt-5" id="table_ovb_subcont" style="overflow: visible !important;">
-            <thead>
-                <tr>
-                    <th class="text-center">No</th>
-                    <th class="text-center">ID Request</th>
-                    <th class="text-center">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
-    </div>
-</div>
 
 <div class="box">
     <div class="box-header">
@@ -707,13 +613,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
 <script>
     $(document).ready(function() {
-        DataTables_kasbon_subcont('view');
         DataTables_kasbon_akomodasi('view');
         DataTables_kasbon_others('view');
         DataTables_kasbon_lab('view');
         DataTables_kasbon_subcont_tenaga_ahli('view');
         DataTables_kasbon_subcont_perusahaan('view');
-        DataTables_ovb_subcont('view');
         DataTables_ovb_akomodasi('view');
         DataTables_ovb_others('view');
         DataTables_ovb_lab('view');
@@ -721,50 +625,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         DataTables_ovb_subcont_perusahaan('view');
     });
 
-    function DataTables_kasbon_subcont(view = null) {
-        var dataTables_kasbon_subcont = $('#example1').DataTable();
 
-        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_kasbon_subcont.destroy();
-        dataTables_kasbon_subcont = $('#example1').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: siteurl + active_controller + 'get_data_kasbon_subcont',
-                type: "POST",
-                dataType: "JSON",
-                data: function(d) {
-                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
-                }
-            },
-            columns: [{
-                    data: 'no'
-                },
-                {
-                    data: 'req_number'
-                },
-                {
-                    data: 'nm_aktifitas'
-                },
-                {
-                    data: 'date'
-                },
-                {
-                    data: 'total'
-                },
-                {
-                    data: 'tipe'
-                },
-                {
-                    data: 'status'
-                },
-                {
-                    data: 'reject_reason'
-                }
-            ]
-        });
-    }
 
     function DataTables_kasbon_akomodasi(view = null) {
         var dataTables_kasbon_akomodasi = $('#table_kasbon_akomodasi').DataTable();
@@ -991,35 +852,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     }
 
-    function DataTables_ovb_subcont(view = null) {
-        var dataTables_ovb_subcont = $('#table_ovb_subcont').DataTable();
 
-        // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_ovb_subcont.destroy();
-        dataTables_ovb_subcont = $('#table_ovb_subcont').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: siteurl + active_controller + 'get_data_ovb_subcont',
-                type: "POST",
-                dataType: "JSON",
-                data: function(d) {
-                    d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = null
-                }
-            },
-            columns: [{
-                    data: 'no'
-                },
-                {
-                    data: 'id_request_ovb'
-                },
-                {
-                    data: 'amount'
-                }
-            ]
-        });
-    }
 
     function DataTables_ovb_akomodasi(view = null) {
         var dataTables_ovb_akomodasi = $('#table_ovb_akomodasi').DataTable();
@@ -1207,7 +1040,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             cache: false,
             dataType: 'json',
             success: function(result) {
-                $('.budget_subcont_on_process').html('Rp. ' + number_format(result.nilai_budget_subcont));
                 $('.budget_akomodasi_on_process').html(number_format(result.nilai_budget_akomodasi));
                 $('.budget_others_on_process').html('Rp. ' + number_format(result.nilai_budget_others));
             },
@@ -1217,53 +1049,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     }
 
-    $(document).on('click', '.del_kasbon_subcont', function() {
-        var id_kasbon_subcont = $(this).data('id_kasbon_subcont');
 
-        swal({
-            type: 'warning',
-            title: 'Are you sure?',
-            text: 'This data will be deleted !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'del_kasbon_subcont',
-                    data: {
-                        'id_kasbon_subcont': id_kasbon_subcont
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    success: function(result) {
-                        if (result.status == '1') {
-                            swal({
-                                type: 'success',
-                                title: 'Success !',
-                                text: result.pesan
-                            }, function(lanjut) {
-                                DataTables_kasbon_subcont();
-                                hitung_all_budget_process();
-                            });
-                        } else {
-                            swal({
-                                type: 'error',
-                                title: 'Failed !',
-                                text: result.pesan
-                            });
-                        }
-                    },
-                    error: function(result) {
-                        swal({
-                            type: 'error',
-                            title: 'Error !',
-                            text: 'Please try again later !'
-                        });
-                    }
-                });
-            }
-        });
-    });
 
     $(document).on('click', '.del_kasbon_akomodasi', function() {
         var id_kasbon_akomodasi = $(this).data('id_kasbon_akomodasi');
@@ -1361,53 +1147,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     });
 
-    $(document).on('click', '.paid_kasbon_subcont', function() {
-        var id_kasbon_subcont = $(this).data('id_kasbon_subcont');
 
-        swal({
-            type: 'warning',
-            title: 'Are you sure?',
-            text: 'This data will be paid !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'paid_kasbon_subcont',
-                    data: {
-                        'id_kasbon_subcont': id_kasbon_subcont
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    success: function(result) {
-                        if (result.status == '1') {
-                            swal({
-                                type: 'success',
-                                title: 'Success !',
-                                text: result.pesan
-                            }, function(lanjut) {
-                                DataTables_kasbon_subcont();
-                                hitung_all_budget_process();
-                            });
-                        } else {
-                            swal({
-                                type: 'error',
-                                title: 'Failed !',
-                                text: result.pesan
-                            });
-                        }
-                    },
-                    error: function(result) {
-                        swal({
-                            type: 'error',
-                            title: 'Error !',
-                            text: 'Please try again later !'
-                        });
-                    }
-                });
-            }
-        });
-    });
 
     $(document).on('click', '.paid_kasbon_akomodasi', function() {
         var id_kasbon_akomodasi = $(this).data('id_kasbon_akomodasi');

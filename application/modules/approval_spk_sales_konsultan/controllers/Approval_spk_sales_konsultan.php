@@ -168,7 +168,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $data = [
             'list_spk_aktifitas' => $get_list_spk_aktifitas,
             'list_spk_penawaran' => $get_spk_penawaran,
-            'list_spk_penawaran_subcont' => $get_spk_penawaran_subcont,
+
             'list_spk_penawaran_payment' => $get_spk_penawaran_payment,
             'list_penawaran' => $get_penawaran,
             'list_customer' => $get_customer,
@@ -335,7 +335,7 @@ class Approval_spk_sales_konsultan extends Admin_Controller
         $data = [
             'list_spk_aktifitas' => $get_list_spk_aktifitas,
             'list_spk_penawaran' => $get_spk_penawaran,
-            'list_spk_penawaran_subcont' => $get_spk_penawaran_subcont,
+
             'list_spk_penawaran_payment' => $get_spk_penawaran_payment,
             'list_penawaran' => $get_penawaran,
             'list_customer' => $get_customer,

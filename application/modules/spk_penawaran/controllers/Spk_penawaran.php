@@ -1118,7 +1118,7 @@ class SPK_penawaran extends Admin_Controller
             'id_konsultan_2'        => $post['konsultan_2'],
             'nm_konsultan_2'        => $konsultan_2['nm'],
             'nilai_kontrak'         => $this->_clean_number($post['nilai_kontrak']),
-            'biaya_subcont'         => $this->_clean_number($post['biaya_subcont']),
+            'biaya_subcont'         => 0,
             'biaya_akomodasi'       => $this->_clean_number($post['biaya_akomodasi']),
             'biaya_others'          => $this->_clean_number($post['biaya_others']),
             'biaya_tandem'          => $this->_clean_number($post['biaya_tandem']),
@@ -1128,7 +1128,7 @@ class SPK_penawaran extends Admin_Controller
             'nilai_kontrak_bersih'  => $this->_clean_number($post['nilai_kontrak_bersih']),
             'mandays_rate'          => $this->_clean_number($post['mandays_rate']),
             'total_mandays'         => $this->_clean_number($post['total_mandays']),
-            'mandays_subcont'       => $this->_clean_number($post['mandays_subcont']),
+            'mandays_subcont'       => 0,
             'mandays_internal'      => $this->_clean_number($post['total_mandays']),
             'nm_pemberi_informasi_1_komisi'      => $post['nm_pemberi_informasi_1_komisi'],
             'persen_pemberi_informasi_1_komisi'   => $this->_clean_number($post['persentase_pemberi_informasi_1_komisi']),
@@ -1172,20 +1172,6 @@ class SPK_penawaran extends Admin_Controller
 
         // Build subcont data
         $data_insert_subcont = [];
-        if (isset($post['subcont'])) {
-            foreach ($post['subcont'] as $item) {
-                $data_insert_subcont[] = [
-                    'id_spk_penawaran' => $id_spk_penawaran,
-                    'nm_aktifitas'     => $item['subcont_new'],
-                    'mandays_subcont'  => $item['subcont_new_mandays'],
-                    'price_subcont'    => $item['subcont_new_rate'],
-                    'total_subcont'    => $item['subcont_new_price'],
-                    'keterangan'       => $item['subcont_description'],
-                    'dibuat_oleh'      => $user_id,
-                    'dibuat_tgl'       => $now
-                ];
-            }
-        }
 
         // Build payment data
         $data_insert_payment = [];
@@ -1207,7 +1193,6 @@ class SPK_penawaran extends Admin_Controller
         $result = $this->Spk_penawaran_model->insert_spk_penawaran(
             $arr_insert,
             $data_insert_aktifitas,
-            $data_insert_subcont,
             $data_insert_payment,
             $post['id_quotation'],
             $post['tipe_informasi_awal']
@@ -1321,7 +1306,7 @@ class SPK_penawaran extends Admin_Controller
             'id_konsultan_2' => $post['konsultan_2'],
             'nm_konsultan_2' => $nm_konsultan_2,
             'nilai_kontrak' => ($post['nilai_kontrak'] !== '') ? str_replace(',', '', $post['nilai_kontrak']) : 0,
-            'biaya_subcont' => ($post['biaya_subcont'] !== '') ? str_replace(',', '', $post['biaya_subcont']) : 0,
+            'biaya_subcont' => 0,
             'biaya_akomodasi' => ($post['biaya_akomodasi'] !== '') ? str_replace(',', '', $post['biaya_akomodasi']) : 0,
             'biaya_others' => ($post['biaya_others'] !== '') ? str_replace(',', '', $post['biaya_others']) : 0,
             'biaya_tandem' => ($post['biaya_tandem'] !== '') ? str_replace(',', '', $post['biaya_tandem']) : 0,
@@ -1331,7 +1316,7 @@ class SPK_penawaran extends Admin_Controller
             'nilai_kontrak_bersih' => ($post['nilai_kontrak_bersih'] !== '') ? str_replace(',', '', $post['nilai_kontrak_bersih']) : 0,
             'mandays_rate' => ($post['mandays_rate'] !== '') ? str_replace(',', '', $post['mandays_rate']) : 0,
             'total_mandays' => ($post['total_mandays'] !== '') ? str_replace(',', '', $post['total_mandays']) : 0,
-            'mandays_subcont' => ($post['mandays_subcont'] !== '') ? str_replace(',', '', $post['mandays_subcont']) : 0,
+            'mandays_subcont' => 0,
             'mandays_internal' => ($post['total_mandays'] !== '') ? str_replace(',', '', $post['total_mandays']) : 0,
             'nm_pemberi_informasi_1_komisi' => $post['nm_pemberi_informasi_1_komisi'],
             'persen_pemberi_informasi_1_komisi' => ($post['persentase_pemberi_informasi_1_komisi'] !== '') ? str_replace(',', '', $post['persentase_pemberi_informasi_1_komisi']) : 0,
@@ -1382,21 +1367,6 @@ class SPK_penawaran extends Admin_Controller
 
         $data_insert_subcont = [];
 
-        if (isset($post['subcont'])) {
-            foreach ($post['subcont'] as $item) {
-                $data_insert_subcont[] = [
-                    'id_spk_penawaran' => $id_spk_penawaran,
-                    'nm_aktifitas' => $item['subcont_new'],
-                    'mandays_subcont' => $item['subcont_new_mandays'],
-                    'price_subcont' => $item['subcont_new_rate'],
-                    'total_subcont' => $item['subcont_new_price'],
-                    'keterangan' => $item['subcont_description'],
-                    'dibuat_oleh' => $this->auth->user_id(),
-                    'dibuat_tgl' => date('Y-m-d H:i:s')
-                ];
-            }
-        }
-
         $data_insert_payment = [];
 
         if (isset($post['pt'])) {
@@ -1429,14 +1399,7 @@ class SPK_penawaran extends Admin_Controller
             }
         }
 
-        if (!empty($data_insert_subcont)) {
-            $insert_spk_penawaran_subcont = $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_insert_subcont);
-            if (!$insert_spk_penawaran_subcont) {
-                $this->db->trans_rollback();
-                print_r($this->db->error($insert_spk_penawaran_subcont) . ' ' . $this->db->last_query());
-                exit;
-            }
-        }
+
 
         if (!empty($data_insert_payment)) {
             $insert_spk_penawaran_payment = $this->db->insert_batch('kons_tr_spk_penawaran_payment', $data_insert_payment);
