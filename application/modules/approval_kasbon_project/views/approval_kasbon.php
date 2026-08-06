@@ -319,6 +319,7 @@ if ($header->metode_pembayaran == '3') {
         <?php
         $no = 0;
         foreach ($list_kasbon_subcont as $item) {
+          if ($item->qty_pengajuan <= 0) continue;
           $no++;
 
           $sisa_qty_setelah = (($item->qty_estimasi - $item->qty_terpakai) + $item->qty_overbudget - $item->qty_pengajuan);
@@ -338,6 +339,7 @@ if ($header->metode_pembayaran == '3') {
         }
 
         foreach ($list_kasbon_subcont_custom as $item) {
+          if ($item->qty_pengajuan <= 0) continue;
           $no++;
 
           $sisa_qty_setelah = (($item->qty_estimasi - $item->qty_terpakai) + $item->qty_overbudget - $item->qty_pengajuan);
@@ -501,6 +503,7 @@ if ($header->metode_pembayaran == '3') {
 
         $no = 0;
         foreach ($list_kasbon_akomodasi as $item) {
+          if ($item->qty_pengajuan <= 0) continue;
           $no++;
 
           $sisa_qty_setelah = (($item->qty_estimasi - $item->qty_terpakai) + $item->qty_overbudget - $item->qty_pengajuan);
@@ -668,6 +671,7 @@ if ($header->metode_pembayaran == '3') {
 
         $no = 0;
         foreach ($list_kasbon_others as $item) {
+          if ($item->qty_pengajuan <= 0) continue;
           $no++;
 
           $qty_tambahan = (isset($data_overbudget_others[$item->id_others])) ? $data_overbudget_others[$item->id_others]['qty_budget_tambahan'] : 0;
@@ -840,6 +844,7 @@ if ($header->metode_pembayaran == '3') {
 
         $no = 0;
         foreach ($list_kasbon_lab as $item) {
+          if ($item->qty_pengajuan <= 0) continue;
           $no++;
 
           $qty_tambahan = (isset($data_overbudget_lab[$item->id_lab])) ? $data_overbudget_lab[$item->id_lab]['qty_budget_tambahan'] : 0;
@@ -1012,6 +1017,7 @@ if ($header->metode_pembayaran == '3') {
 
         $no = 0;
         foreach ($list_kasbon_subcont_tenaga_ahli as $item) {
+          if ($item->qty_pengajuan <= 0) continue;
           $no++;
 
           $qty_tambahan = (isset($data_overbudget_subcont_tenaga_ahli[$item->id_subcont])) ? $data_overbudget_subcont_tenaga_ahli[$item->id_subcont]['qty_budget_tambahan'] : 0;
@@ -1184,6 +1190,7 @@ if ($header->metode_pembayaran == '3') {
 
         $no = 0;
         foreach ($list_kasbon_subcont_perusahaan as $item) {
+          if ($item->qty_pengajuan <= 0) continue;
           $no++;
 
           $qty_tambahan = (isset($data_overbudget_subcont_perusahaan[$item->id_subcont])) ? $data_overbudget_subcont_perusahaan[$item->id_subcont]['qty_budget_tambahan'] : 0;
