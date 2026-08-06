@@ -339,52 +339,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
         </div>
     </div>
 
-    <div class="box">
-        <div class="box-header">
-            <h4 style="font-weight: 600;">Subcont</h4>
-        </div>
-        <div class="box-body">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th class="text-center" width="20">No.</th>
-                        <th class="text-center" width="200">Activity Name</th>
-                        <th class="text-center" width="150">Mandays Subcont</th>
-                        <th class="text-center" width="150">Mandays Rate Subcont</th>
-                        <th class="text-center" width="200">Price</th>
-                    </tr>
-                </thead>
-                <tbody class="list_subcont">
-                    <?php
-                    $total_activity = 0;
-                    $total_mandays_subcont = 0;
-                    if (!empty($list_spk_penawaran_subcont)) {
-                        $no_subcont = 0;
-                        foreach ($list_spk_penawaran_subcont as $item) {
-                            $no_subcont++;
-                            echo '<tr class="tr_list_subcont tr_list_subcont_' . $no_subcont . '">';
-                            echo '<td class="text-center">' . $no_subcont . '</td>';
-                            echo '<td>' . $item->nm_aktifitas . '</td>';
-                            echo '<td class="text-center">' . number_format($item->mandays_subcont) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->price_subcont, 2) . '</td>';
-                            echo '<td class="text-right">' . number_format($item->total_subcont, 2) . '</td>';
-                            echo '</tr>';
 
-                            $total_mandays_subcont += $item->mandays_subcont;
-                            $total_activity += $item->total_subcont;
-                        }
-                    }
-                    ?>
-                </tbody>
-                <tbody>
-                    <tr>
-                        <td colspan="4" class="text-right">Grand Total</td>
-                        <td class="text-right td_grand_total_subcont"><?= number_format($total_activity, 2) ?></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
 
     <div class="box">
         <div class="box-header">
@@ -447,17 +402,6 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                     <td class="pd-5" width="400" valign="top">
                         <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays) ?>" readonly>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Biaya Subcont</td>
-                    <td class="pd-5" valign="top">
-                        <input type="text" name="biaya_subcont" id="" class="form-control form-control-sm text-right biaya_subcont" value="<?= number_format($total_activity, 2) ?>" readonly>
-                    </td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="pd-5 semi-bold" valign="top">Mandays Subcont</td>
-                    <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right total_mandays_subcont" value="<?= $total_mandays_subcont ?>" readonly>
-                    </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Others</td>
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_others" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_others, 2) ?>" readonly>
@@ -481,7 +425,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
                 </tr>
                 <tr>
                     <?php
-                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity - $nilai_lab - $nilai_subcont_tenaga_ahli - $nilai_subcont_perusahaan);
+                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $nilai_lab - $nilai_subcont_tenaga_ahli - $nilai_subcont_perusahaan);
                     ?>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                     <td class="pd-5" valign="top">
@@ -796,62 +740,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
         return s.join(dec);
     }
 
-    function hitung_mandays_subcont() {
-        var no = "<?= $no ?>";
 
-        var mandays = 0;
-        for (i = 1; i <= no; i++) {
-            var mandayss = get_num($('input[name="dt[' + i + '][mandays]"]').val());
-
-            mandays += mandayss;
-        }
-
-        $('input[name="total_mandays"]').val(mandays);
-        $('.ttl_mandays').html(mandays);
-
-        var total_mandays = get_num($('input[name="total_mandays"]').val());
-
-        var ttl_mandays_subcont = 0;
-        for (i = 1; i <= no; i++) {
-            var mandays_subcont = get_num($('input[name="dt[' + i + '][mandays_subcont]"]').val());
-
-            ttl_mandays_subcont += mandays_subcont;
-        }
-
-        $('.ttl_mandays_subcont').html(ttl_mandays_subcont);
-        $('input[name="mandays_subcont"]').val(ttl_mandays_subcont);
-
-        var mandays_internal = parseFloat(total_mandays - ttl_mandays_subcont);
-
-        $('.total_mandays_internal').val(mandays_internal);
-    }
-
-    function hitung_total_subcont() {
-
-        var nilai_kontrak = get_num($('input[name="nilai_kontrak"]').val());
-        var biaya_akomodasi = get_num($('input[name="biaya_akomodasi"]').val());
-        var biaya_others = get_num($('input[name="biaya_others"]').val());
-        var biaya_tandem = get_num($('input[name="biaya_tandem"]').val());
-        var total_mandays = "<?= $total_mandays ?>";
-
-        var ttl_subcont = 0;
-
-        var no = $('.tr_list_subcont').length;
-        for (i = 1; i <= no; i++) {
-            var total_subcont = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
-
-            ttl_subcont += parseFloat(total_subcont);
-        }
-
-        $('.biaya_subcont').val(number_format(ttl_subcont, 2));
-        $('.ttl_total_subcont').html(number_format(ttl_subcont, 2));
-
-        $('input[name="nilai_kontrak_bersih"]').val(number_format((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont), 2));
-
-        var mandays_rate = parseFloat((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_tandem) / total_mandays);
-
-        $('.total_mandays_rate').val(number_format(mandays_rate, 2));
-    }
 
     function persen_komisi(tipe) {
         var persentase = get_num($('input[name="persentase_' + tipe + '_komisi"]').val());
@@ -910,94 +799,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
         $('.ttl_nominal_payment').html(number_format(ttl_nominal_payment, 2));
     }
 
-    function hitung_grand_ttl_subcont() {
-        var no = '<?= $no ?>';
 
-        var ttl_grand_total = 0;
-        for (i = 1; i <= no; i++) {
-            var mandays = get_num($('input[name="dt[' + i + '][mandays]"]').val());
-            var mandays_rate = get_num($('input[name="dt[' + i + '][mandays_rate]"]').val());
-            var mandays_tandem = get_num($('input[name="dt[' + i + '][mandays_tandem]"]').val());
-            var mandays_rate_tandem = get_num($('input[name="dt[' + i + '][mandays_rate_tandem]"]').val());
-            var mandays_subcont = get_num($('input[name="dt[' + i + '][mandays_subcont]"]').val());
-            var mandays_rate_subcont = get_num($('input[name="dt[' + i + '][price_subcont]"]').val());
-
-            var total_internal = (mandays * mandays_rate);
-            var total_tandem = (mandays_tandem * mandays_rate_tandem);
-            var total_subcont = (mandays_subcont * mandays_rate_subcont);
-
-            var grand_total = (total_internal + total_tandem + total_subcont);
-
-            ttl_grand_total += grand_total;
-
-            $('input[name="dt[' + i + '][grand_total]"]').val(number_format(grand_total, 2));
-        }
-
-        $('input[name="nilai_kontrak"]').val(number_format(ttl_grand_total, 2));
-        $('.ttl_grand_total').html(number_format(ttl_grand_total, 2));
-
-        var nilai_kontrak = ttl_grand_total;
-        var biaya_akomodasi = get_num($('input[name="biaya_akomodasi"]').val());
-        var biaya_subcont = get_num($('input[name="biaya_subcont"]').val());
-        var biaya_others = get_num($('input[name="biaya_others"]').val());
-        var biaya_tandem = get_num($('input[name="biaya_tandem"]').val());
-
-        var nilai_kontrak_bersih = (nilai_kontrak - biaya_akomodasi - biaya_subcont - biaya_others - biaya_tandem);
-
-        $('input[name="nilai_kontrak_bersih"]').val(number_format(nilai_kontrak_bersih, 2));
-    }
-
-    function hitung_subcont_af_add() {
-        var no_subcont = $('.tr_list_subcont').length;
-
-        var ttl_subcont = 0;
-        for (i = 1; i <= no_subcont; i++) {
-            var subcont_price = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
-
-            ttl_subcont += subcont_price;
-        }
-
-        $('.td_grand_total_subcont').html(number_format(ttl_subcont, 2));
-
-        hitung_total_subcont();
-    }
-
-    function hitung_subcont() {
-        var subcont_mandays = get_num($('input[name="subcont_new_mandays"]').val());
-        var subcont_rate = get_num($('input[name="subcont_new_rate"]').val());
-
-        var subcont_price = (subcont_rate * subcont_mandays);
-
-        $('input[name="subcont_new_price"]').autoNumeric('set', subcont_price);
-    }
-
-
-
-    $(document).on('change', '.edit_mandays_subcont', function() {
-        var id = $(this).data('id');
-        var mandays_subcont = parseFloat($(this).val());
-        var price_subcont = get_num($('.price_subcont_' + id).val());
-
-        var total = parseFloat(mandays_subcont * price_subcont);
-
-        $('.total_subcont_' + id).val(number_format(total, 2));
-        hitung_total_subcont();
-        hitung_mandays_subcont();
-        hitung_grand_ttl_subcont();
-    });
-
-    $(document).on('change', '.edit_price_subcont', function() {
-        var id = $(this).data('id');
-        var price_subcont = get_num($(this).val());
-        var mandays_subcont = get_num($('.mandays_subcont_' + id).val());
-
-        var total = parseFloat(mandays_subcont * price_subcont);
-
-        $('.total_subcont_' + id).val(number_format(total, 2));
-        hitung_total_subcont();
-        hitung_mandays_subcont();
-        hitung_grand_ttl_subcont();
-    });
 
     $(document).on('click', '.add_payment_term', function() {
         var hasil = '<tr class="payment_' + no_payment + '">';
@@ -1043,13 +845,7 @@ $ttl_nominal_komisi = ($list_spk_penawaran->nominal_pemberi_informasi_1_komisi +
         e.preventDefault();
     });
 
-    $(document).on('click', '.del_subcont', function() {
-        var no = $(this).data('no');
 
-        $('.tr_list_subcont_' + no).remove();
-
-        hitung_subcont_af_add();
-    });
 
     $(document).on('change', '.persen_payment', function() {
         var no = $(this).data('no');

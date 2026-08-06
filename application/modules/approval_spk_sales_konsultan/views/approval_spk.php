@@ -341,52 +341,6 @@ if ($data_user->employee_id == '168') {
     </div>
 </div>
 
-<div class="box">
-    <div class="box-header">
-        <h4 style="font-weight: 600;">Subcont</h4>
-    </div>
-    <div class="box-body">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th class="text-center" width="20">No.</th>
-                    <th class="text-center" width="200">Activity Name</th>
-                    <th class="text-center" width="150">Mandays Subcont</th>
-                    <th class="text-center" width="150">Mandays Rate Subcont</th>
-                    <th class="text-center" width="200">Price</th>
-                </tr>
-            </thead>
-            <tbody class="list_subcont">
-                <?php
-                $total_activity = 0;
-                $total_mandays_subcont = 0;
-                if (!empty($list_spk_penawaran_subcont)) {
-                    $no_subcont = 0;
-                    foreach ($list_spk_penawaran_subcont as $item) {
-                        $no_subcont++;
-                        echo '<tr class="tr_list_subcont tr_list_subcont_' . $no_subcont . '">';
-                        echo '<td class="text-center">' . $no_subcont . '</td>';
-                        echo '<td>' . $item->nm_aktifitas . '</td>';
-                        echo '<td class="text-center">' . number_format($item->mandays_subcont) . '</td>';
-                        echo '<td class="text-right">' . number_format($item->price_subcont, 2) . '</td>';
-                        echo '<td class="text-right">' . number_format($item->total_subcont, 2) . '</td>';
-                        echo '</tr>';
-
-                        $total_mandays_subcont += $item->mandays_subcont;
-                        $total_activity += $item->total_subcont;
-                    }
-                }
-                ?>
-            </tbody>
-            <tbody>
-                <tr>
-                    <td colspan="4" class="text-right">Grand Total</td>
-                    <td class="text-right td_grand_total_subcont"><?= number_format($total_activity, 2) ?></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
 
 <div class="box">
     <div class="box-header">
@@ -449,17 +403,6 @@ if ($data_user->employee_id == '168') {
                 <td class="pd-5" width="400" valign="top">
                     <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays) ?>" readonly>
                 </td>
-                <td class="pd-5 semi-bold" valign="top">Biaya Subcont</td>
-                <td class="pd-5" valign="top">
-                    <input type="text" name="biaya_subcont" id="" class="form-control form-control-sm text-right biaya_subcont" value="<?= number_format($total_activity, 2) ?>" readonly>
-                </td>
-                <td></td>
-            </tr>
-            <tr>
-                <td class="pd-5 semi-bold" valign="top">Mandays Subcont</td>
-                <td class="pd-5" width="400" valign="top">
-                    <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right total_mandays_subcont" value="<?= $total_mandays_subcont ?>" readonly>
-                </td>
                 <td class="pd-5 semi-bold" valign="top">Biaya Others</td>
                 <td class="pd-5" valign="top">
                     <input type="text" name="biaya_others" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_others, 2) ?>" readonly>
@@ -483,7 +426,7 @@ if ($data_user->employee_id == '168') {
             </tr>
             <tr>
                 <?php
-                $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity - $nilai_lab - $nilai_subcont_tenaga_ahli - $nilai_subcont_perusahaan);
+                $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $nilai_lab - $nilai_subcont_tenaga_ahli - $nilai_subcont_perusahaan);
                 ?>
                 <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                 <td class="pd-5" valign="top">

@@ -267,101 +267,7 @@ $nilai_others = $list_spk_penawaran->biaya_others;
         </div>
     </div>
 
-    <div class="box">
-        <div class="box-header">
-            <h4 style="font-weight: 600;">Subcont</h4>
-        </div>
-        <div class="box-body">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th class="text-center">No.</th>
-                        <th class="text-center">Activity Name</th>
-                        <th class="text-center">Mandays Internal</th>
-                        <th class="text-center">Mandays Rate Internal</th>
-                        <th class="text-center">Mandays Tandem</th>
-                        <th class="text-center">Mandays Rate Tandem</th>
-                        <th class="text-center">Mandays Subcont</th>
-                        <th class="text-center">Price Subcont</th>
-                        <th class="text-center">Total</th>
-                        <th class="text-center">Opsi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $no = 1;
 
-                    $total_mandays = 0;
-                    $total_mandays_rate = 0;
-                    $total_mandays_tandem = 0;
-                    $total_mandays_rate_tandem = 0;
-                    $total_mandays_subcont = 0;
-                    $total_mandays_rate_subcont = 0;
-                    $total_activity = 0;
-
-                    $nilai_tandem = 0;
-
-                    foreach ($list_spk_penawaran_subcont as $item) {
-                        echo '<tr class="subcont_' . $no . '">';
-                        echo '<td class="text-center">' . $no . '</td>';
-                        echo '<td>';
-                        echo '<select class="form-control form-control-sm chosen_select" name="dt[' . $no . '][id_aktifitas]">';
-                        foreach ($list_all_aktifitas as $item_aktifitas) {
-                            $selected = '';
-                            if ($item_aktifitas->id_aktifitas == $item->id_aktifitas) {
-                                $selected = 'selected';
-                            }
-
-                            echo '<option value="' . $item_aktifitas->id_aktifitas . '" ' . $selected . '>' . $item_aktifitas->nm_aktifitas . '</option>';
-                        }
-                        echo '</select>';
-                        echo '</td>';
-                        echo '<td class="text-center">' . $item->mandays . ' <input type="hidden" name="dt[' . $no . '][mandays]" value="' . $item->mandays . '"></td>';
-                        echo '<td class="text-center">' . number_format($item->mandays_rate, 2) . ' <input type="hidden" name="dt[' . $no . '][mandays_rate]" value="' . $item->mandays_rate . '"></td>';
-                        echo '<td class="text-center">' . $item->mandays_tandem . ' <input type="hidden" name="dt[' . $no . '][mandays_tandem]" value="' . $item->mandays_tandem . '"></td>';
-                        echo '<td class="text-center">' . number_format($item->mandays_rate_tandem, 2) . ' <input type="hidden" name="dt[' . $no . '][mandays_rate_tandem]" value="' . $item->mandays_rate_tandem . '"></td>';
-                        echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm edit_mandays_subcont mandays_subcont_' . $item->id . '" name="dt[' . $no . '][mandays_subcont]" value="' . $item->mandays_subcont . '" data-id="' . $item->id . '">';
-                        echo '</td>';
-                        echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm text-right edit_price_subcont price_subcont_' . $item->id . ' auto_num" name="dt[' . $no . '][price_subcont]" value="' . $item->price_subcont . '" data-id="' . $item->id . '">';
-                        echo '</td>';
-                        echo '<td>';
-                        echo '<input type="text" class="form-control form-control-sm total_subcont_' . $item->id . ' auto_num text-right" name="dt[' . $no . '][total_subcont]" value="' . ($item->price_subcont * $item->mandays_subcont) . '" readonly>';
-                        echo '</td>';
-                        echo '<td class="text-center">';
-                        echo '<button type="button" class="btn btn-sm btn-danger del_subcont" data-no="' . $no . '" ><i class="fa fa-trash"></i></button>';
-                        echo '</td>';
-                        echo '</tr>';
-
-                        $total_mandays += $item->mandays;
-                        $total_mandays_rate += $item->mandays_rate;
-                        $total_mandays_tandem += $item->mandays_tandem;
-                        $total_mandays_rate_tandem += $item->mandays_rate_tandem;
-                        $total_mandays_subcont += $item->mandays_subcont;
-                        $total_mandays_rate_subcont += $item->price_subcont;
-                        $total_activity += ($item->price_subcont * $item->mandays_subcont);
-
-                        $nilai_tandem += ($item->mandays_rate_tandem * $item->mandays_tandem);
-
-                        $no++;
-                    }
-                    ?>
-                </tbody>
-                <tfoot>
-                    <th> </th>
-                    <th>Total</th>
-                    <th class="text-center ttl_mandays"><?= $total_mandays ?></th>
-                    <th class="text-center ttl_mandays_rate"><?= number_format($total_mandays_rate, 2) ?></th>
-                    <th class="text-center ttl_mandays_tandem"><?= $total_mandays_tandem ?></th>
-                    <th class="text-center ttl_mandays_rate_tandem"><?= number_format($total_mandays_rate_tandem, 2) ?></th>
-                    <th class="text-center ttl_mandays_subcont"><?= $total_mandays_subcont ?></th>
-                    <th class="text-center"></th>
-                    <th class="text-center ttl_total_subcont"><?= number_format($total_activity, 2) ?></th>
-                </tfoot>
-            </table>
-        </div>
-    </div>
 
     <div class="box">
         <div class="box-header">
@@ -421,26 +327,15 @@ $nilai_others = $list_spk_penawaran->biaya_others;
                     <td class="pd-5" width="400" valign="top">
                         <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays) ?>" readonly>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Biaya Subcont</td>
-                    <td class="pd-5" valign="top">
-                        <input type="text" name="biaya_subcont" id="" class="form-control form-control-sm text-right biaya_subcont" value="<?= number_format($total_activity, 2) ?>" readonly>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="pd-5 semi-bold" valign="top">Mandays Subcont</td>
-                    <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right total_mandays_subcont" value="<?= $total_mandays_subcont ?>" readonly>
-                    </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Others</td>
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_others" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_others, 2) ?>" readonly>
                     </td>
-
                 </tr>
                 <tr>
                     <td class="pd-5 semi-bold" valign="top">Mandays Internal</td>
                     <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right total_mandays_internal" value="<?= number_format($total_mandays - $total_mandays_subcont) ?>" readonly>
+                        <input type="text" name="mandays_internal" id="" class="form-control form-control-sm text-right total_mandays_internal" value="<?= number_format($total_mandays) ?>" readonly>
                     </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Tandem</td>
                     <td class="pd-5" valign="top">
@@ -451,7 +346,7 @@ $nilai_others = $list_spk_penawaran->biaya_others;
                 </tr>
                 <tr>
                     <?php
-                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity);
+                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem);
                     ?>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                     <td class="pd-5" valign="top">
@@ -720,61 +615,9 @@ $nilai_others = $list_spk_penawaran->biaya_others;
         return s.join(dec);
     }
 
-    function hitung_mandays_subcont() {
-        var no = "<?= $no ?>";
 
-        var mandays = 0;
-        for (i = 1; i <= no; i++) {
-            var mandayss = get_num($('input[name="dt[' + i + '][mandays]"]').val());
 
-            mandays += mandayss;
-        }
 
-        $('input[name="total_mandays"]').val(mandays);
-        $('.ttl_mandays').html(mandays);
-
-        var total_mandays = get_num($('input[name="total_mandays"]').val());
-
-        var ttl_mandays_subcont = 0;
-        for (i = 1; i <= no; i++) {
-            var mandays_subcont = get_num($('input[name="dt[' + i + '][mandays_subcont]"]').val());
-
-            ttl_mandays_subcont += mandays_subcont;
-        }
-
-        $('.ttl_mandays_subcont').html(ttl_mandays_subcont);
-        $('input[name="mandays_subcont"]').val(ttl_mandays_subcont);
-
-        var mandays_internal = parseFloat(total_mandays - ttl_mandays_subcont);
-
-        $('.total_mandays_internal').val(mandays_internal);
-    }
-
-    function hitung_total_subcont() {
-        var no = "<?= $no ?>";
-
-        var nilai_kontrak = get_num($('input[name="nilai_kontrak"]').val());
-        var biaya_akomodasi = get_num($('input[name="biaya_akomodasi"]').val());
-        var biaya_others = get_num($('input[name="biaya_others"]').val());
-        var biaya_tandem = get_num($('input[name="biaya_tandem"]').val());
-        var total_mandays = "<?= $total_mandays ?>";
-
-        var ttl_subcont = 0;
-        for (i = 1; i <= no; i++) {
-            var total_subcont = get_num($('input[name="dt[' + i + '][total_subcont]"]').val());
-
-            ttl_subcont += parseFloat(total_subcont);
-        }
-
-        $('.biaya_subcont').val(number_format(ttl_subcont, 2));
-        $('.ttl_total_subcont').html(number_format(ttl_subcont, 2));
-
-        $('input[name="nilai_kontrak_bersih"]').val(number_format((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont), 2));
-
-        var mandays_rate = parseFloat((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_tandem) / total_mandays);
-
-        $('.total_mandays_rate').val(number_format(mandays_rate, 2));
-    }
 
     function persen_komisi(tipe) {
         var persentase = get_num($('input[name="persentase_' + tipe + '_komisi"]').val());
@@ -833,29 +676,9 @@ $nilai_others = $list_spk_penawaran->biaya_others;
         $('.ttl_nominal_payment').html(number_format(ttl_nominal_payment, 2));
     }
 
-    $(document).on('change', '.edit_mandays_subcont', function() {
-        var id = $(this).data('id');
-        var mandays_subcont = parseFloat($(this).val());
-        var price_subcont = get_num($('.price_subcont_' + id).val());
 
-        var total = parseFloat(mandays_subcont * price_subcont);
 
-        $('.total_subcont_' + id).val(number_format(total, 2));
-        hitung_total_subcont();
-        hitung_mandays_subcont();
-    });
 
-    $(document).on('change', '.edit_price_subcont', function() {
-        var id = $(this).data('id');
-        var price_subcont = get_num($(this).val());
-        var mandays_subcont = get_num($('.mandays_subcont_' + id).val());
-
-        var total = parseFloat(mandays_subcont * price_subcont);
-
-        $('.total_subcont_' + id).val(number_format(total, 2));
-        hitung_total_subcont();
-        hitung_mandays_subcont();
-    });
 
     $(document).on('click', '.add_payment_term', function() {
         var hasil = '<tr class="payment_' + no_payment + '">';
@@ -985,14 +808,7 @@ $nilai_others = $list_spk_penawaran->biaya_others;
 
     });
 
-    $(document).on('click', '.del_subcont', function() {
-        var no = $(this).data('no');
 
-        $('.subcont_' + no).remove();
-
-        hitung_total_subcont();
-        hitung_mandays_subcont();
-    });
 
     $(document).on('change', '.persen_payment', function() {
         var no = $(this).data('no');

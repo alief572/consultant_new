@@ -367,29 +367,6 @@ class Spk_penawaran_model extends BF_Model
             }
         }
 
-        // Insert subcont history
-        $subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
-        if (!empty($subcont)) {
-            $subcont_fields = $this->db->list_fields('kons_tr_spk_penawaran_subcont_history');
-            foreach ($subcont as $item) {
-                $item_arr = (array)$item;
-                $item_arr['id_history'] = $id_history;
-                unset($item_arr['id']);
-                
-                foreach ($item_arr as $key => $value) {
-                    if (!in_array($key, $subcont_fields)) {
-                        unset($item_arr[$key]);
-                    }
-                }
-                
-                $insert = $this->db->insert('kons_tr_spk_penawaran_subcont_history', $item_arr);
-                if (!$insert) {
-                    $this->db->trans_rollback();
-                    log_message('error', 'save_to_history: subcont insert failed for ' . $id_spk_penawaran . ' - ' . json_encode($this->db->error()));
-                    return false;
-                }
-            }
-        }
 
         // Insert payment history
         $payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
@@ -428,7 +405,7 @@ class Spk_penawaran_model extends BF_Model
     /**
      * Insert SPK penawaran with all related data (aktifitas, subcont, payment)
      */
-    public function insert_spk_penawaran($arr_insert, $data_aktifitas, $data_subcont, $data_payment, $id_quotation, $tipe_informasi_awal)
+    public function insert_spk_penawaran($arr_insert, $data_aktifitas, $data_payment, $id_quotation, $tipe_informasi_awal)
     {
         $this->db->trans_begin();
 
@@ -440,9 +417,7 @@ class Spk_penawaran_model extends BF_Model
             $this->db->insert_batch('kons_tr_spk_aktifitas', $data_aktifitas);
         }
 
-        if (!empty($data_subcont)) {
-            $this->db->insert_batch('kons_tr_spk_penawaran_subcont', $data_subcont);
-        }
+
 
         if (!empty($data_payment)) {
             $this->db->insert_batch('kons_tr_spk_penawaran_payment', $data_payment);

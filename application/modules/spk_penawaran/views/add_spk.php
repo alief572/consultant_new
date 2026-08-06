@@ -322,11 +322,8 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
                         $total_mandays += $item->mandays;
                         $total_mandays_rate += $item->mandays_rate;
-                        $total_mandays_subcont += $item->mandays_subcont;
-                        $total_mandays_rate_subcont += $item->mandays_rate_subcont;
                         $total_mandays_tandem += $item->mandays_tandem;
                         $total_mandays_rate_tandem += $item->mandays_rate_tandem;
-                        $total_activity += ($item->mandays_rate_subcont * $item->mandays_subcont);
 
                         $nilai_tandem += ($item->mandays_rate_tandem * $item->mandays_tandem);
 
@@ -350,59 +347,6 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         </div>
     </div>
 
-    <div class="box">
-        <div class="box-header">
-            <h4 style="font-weight: 600;">Subcont</h4>
-        </div>
-        <div class="box-body">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th class="text-center" width="20">No.</th>
-                        <th class="text-center" width="200">Activity Name</th>
-                        <th class="text-center" width="150">Mandays Subcont</th>
-                        <th class="text-center" width="150">Mandays Rate Subcont</th>
-                        <th class="text-center" width="200">Price</th>
-                        <th class="text-center" width="200">Description</th>
-                        <th class="text-center" width="100">Option</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <input type="text" name="subcont_new" id="" class="form-control form-control-sm">
-                        </td>
-                        <td>
-                            <input type="number" name="subcont_new_mandays" id="" class="form-control form-control-sm text-right" min="0" onchange="hitung_subcont()">
-                        </td>
-                        <td>
-                            <input type="text" name="subcont_new_rate" id="" class="form-control form-control-sm text-right auto_num" onchange="hitung_subcont()">
-                        </td>
-                        <td>
-                            <input type="text" name="subcont_new_price" id="" class="form-control form-control-sm text-right auto_num" readonly>
-                        </td>
-                        <td>
-                            <textarea class="form-control form-control-sm" name="subcont_description"></textarea>
-                        </td>
-                        <td class="text-center">
-                            <button type="button" class="btn btn-sm btn-success add_new_subcont">
-                                <i class="fa fa-plus"></i> Add
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-                <tbody class="list_subcont"></tbody>
-                <tbody>
-                    <tr>
-                        <td colspan="4" class="text-right">Grand Total</td>
-                        <td class="text-right td_grand_total_subcont">0.00</td>
-                        <td colspan="2"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
 
     <div class="box">
         <div class="box-header">
@@ -464,17 +408,6 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                     <td class="pd-5" width="400" valign="top">
                         <input type="text" name="total_mandays" id="" class="form-control form-control-sm text-right" value="<?= number_format($total_mandays, 2) ?>" readonly>
                     </td>
-                    <td class="pd-5 semi-bold" valign="top">Biaya Subcont</td>
-                    <td class="pd-5" valign="top">
-                        <input type="text" name="biaya_subcont" id="" class="form-control form-control-sm text-right biaya_subcont" value="<?= number_format($total_activity, 2) ?>" readonly>
-                    </td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="pd-5 semi-bold" valign="top">Mandays Subcont</td>
-                    <td class="pd-5" width="400" valign="top">
-                        <input type="text" name="mandays_subcont" id="" class="form-control form-control-sm text-right total_mandays_subcont" value="<?= number_format($total_mandays_subcont, 2) ?>" readonly>
-                    </td>
                     <td class="pd-5 semi-bold" valign="top">Biaya Others</td>
                     <td class="pd-5" valign="top">
                         <input type="text" name="biaya_others" id="" class="form-control form-control-sm text-right" value="<?= number_format($nilai_others, 2) ?>" readonly>
@@ -498,7 +431,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
                 </tr>
                 <tr>
                     <?php
-                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $total_activity - $nilai_lab - $nilai_subcont_tenaga_ahli - $nilai_subcont_perusahaan);
+                    $nilai_kontrak_bersih = ($nilai_project - $nilai_akomodasi - $nilai_others - $nilai_tandem - $nilai_lab - $nilai_subcont_tenaga_ahli - $nilai_subcont_perusahaan);
                     ?>
                     <td class="pd-5 semi-bold" valign="top">Mandays Rate</td>
                     <td class="pd-5" valign="top">
@@ -837,36 +770,6 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         return s.join(dec);
     }
 
-    function hitung_mandays_subcont() {
-        var no = "<?= $no ?>";
-
-        var mandays = 0;
-        for (i = 1; i <= no; i++) {
-            var mandayss = get_num($('input[name="dt[' + i + '][mandays]"]').val());
-
-            mandays += mandayss;
-        }
-
-        $('input[name="total_mandays"]').val(mandays);
-        $('.ttl_mandays').html(mandays);
-
-        var total_mandays = get_num($('input[name="total_mandays"]').val());
-
-        var ttl_mandays_subcont = 0;
-        for (i = 1; i <= no; i++) {
-            var mandays_subcont = get_num($('input[name="dt[' + i + '][mandays_subcont]"]').val());
-
-            ttl_mandays_subcont += mandays_subcont;
-        }
-
-        $('.ttl_mandays_subcont').html(ttl_mandays_subcont);
-        $('input[name="mandays_subcont"]').val(ttl_mandays_subcont);
-
-        var mandays_internal = parseFloat(total_mandays - ttl_mandays_subcont);
-
-        // $('.total_mandays_internal').val(mandays_internal);
-    }
-
     function hitung_total_subcont() {
 
         var nilai_kontrak = get_num($('input[name="nilai_kontrak"]').val());
@@ -878,25 +781,9 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         var biaya_subcont_perusahaan = get_num($('input[name="biaya_subcont_perusahaan"]').val());
         var total_mandays = get_num($('input[name="total_mandays"]').val());
 
-        var mandays_subcont = 0;
-        var ttl_subcont = 0;
+        $('input[name="nilai_kontrak_bersih"]').val(number_format((nilai_kontrak - biaya_akomodasi - biaya_others - biaya_lab - biaya_subcont_tenaga_ahli - biaya_subcont_perusahaan), 2));
 
-        var no = $('.tr_list_subcont').length;
-        for (i = 1; i <= no; i++) {
-            var total_mandayss = get_num($('input[name="subcont[' + i + '][subcont_new_mandays]"]').val());
-            var total_subcont = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
-
-            mandays_subcont += parseFloat(total_mandayss);
-            ttl_subcont += parseFloat(total_subcont);
-        }
-
-        $('.biaya_subcont').val(number_format(ttl_subcont, 2));
-        $('.total_mandays_subcont').val(number_format(mandays_subcont, 2));
-        $('.ttl_total_subcont').html(number_format(ttl_subcont, 2));
-
-        $('input[name="nilai_kontrak_bersih"]').val(number_format((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_lab - biaya_subcont_tenaga_ahli - biaya_subcont_perusahaan), 2));
-
-        var mandays_rate = parseFloat((nilai_kontrak - biaya_akomodasi - biaya_others - ttl_subcont - biaya_tandem - biaya_lab - biaya_subcont_tenaga_ahli - biaya_subcont_perusahaan) / total_mandays);
+        var mandays_rate = parseFloat((nilai_kontrak - biaya_akomodasi - biaya_others - biaya_tandem - biaya_lab - biaya_subcont_tenaga_ahli - biaya_subcont_perusahaan) / total_mandays);
 
         $('.total_mandays_rate').val(number_format(mandays_rate, 2));
     }
@@ -967,14 +854,11 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
             var mandays_rate = get_num($('input[name="dt[' + i + '][mandays_rate]"]').val());
             var mandays_tandem = get_num($('input[name="dt[' + i + '][mandays_tandem]"]').val());
             var mandays_rate_tandem = get_num($('input[name="dt[' + i + '][mandays_rate_tandem]"]').val());
-            var mandays_subcont = get_num($('input[name="dt[' + i + '][mandays_subcont]"]').val());
-            var mandays_rate_subcont = get_num($('input[name="dt[' + i + '][price_subcont]"]').val());
 
             var total_internal = (mandays * mandays_rate);
             var total_tandem = (mandays_tandem * mandays_rate_tandem);
-            var total_subcont = (mandays_subcont * mandays_rate_subcont);
 
-            var grand_total = (total_internal + total_tandem + total_subcont);
+            var grand_total = (total_internal + total_tandem);
 
             ttl_grand_total += grand_total;
 
@@ -986,150 +870,18 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
         var nilai_kontrak = ttl_grand_total;
         var biaya_akomodasi = get_num($('input[name="biaya_akomodasi"]').val());
-        var biaya_subcont = get_num($('input[name="biaya_subcont"]').val());
         var biaya_others = get_num($('input[name="biaya_others"]').val());
         var biaya_tandem = get_num($('input[name="biaya_tandem"]').val());
         var biaya_lab = get_num($('input[name="biaya_lab"]').val());
         var biaya_subcont_tenaga_ahli = get_num($('input[name="biaya_subcont_tenaga_ahli"]').val());
         var biaya_subcont_perusahaan = get_num($('input[name="biaya_subcont_perusahaan"]').val());
 
-        var nilai_kontrak_bersih = (nilai_kontrak - biaya_akomodasi - biaya_subcont - biaya_others - biaya_tandem - biaya_lab - biaya_subcont_tenaga_ahli - biaya_subcont_perusahaan);
+        var nilai_kontrak_bersih = (nilai_kontrak - biaya_akomodasi - biaya_others - biaya_tandem - biaya_lab - biaya_subcont_tenaga_ahli - biaya_subcont_perusahaan);
 
         $('input[name="nilai_kontrak_bersih"]').val(number_format(nilai_kontrak_bersih, 2));
 
         $('input[name="nilai_kontrak_bersih"]').val(number_format(nilai_kontrak_bersih, 2));
     }
-
-    function hitung_subcont() {
-        var subcont_mandays = get_num($('input[name="subcont_new_mandays"]').val());
-        var subcont_rate = get_num($('input[name="subcont_new_rate"]').val());
-
-        var subcont_price = (subcont_rate * subcont_mandays);
-
-        $('input[name="subcont_new_price"]').autoNumeric('set', subcont_price);
-    }
-
-    function hitung_subcont_af_add() {
-        var no_subcont = $('.tr_list_subcont').length;
-
-        var ttl_subcont = 0;
-        var ttl_mandays_subcont = 0;
-        for (i = 1; i <= no_subcont; i++) {
-            var subcont_mandays = get_num($('input[name="subcont[' + i + '][subcont_new_mandays]"]').val());
-            var subcont_price = get_num($('input[name="subcont[' + i + '][subcont_new_price]"]').val());
-
-            ttl_mandays_subcont += subcont_mandays;
-            ttl_subcont += subcont_price;
-        }
-
-        $('.total_mandays_subcont').val(ttl_mandays_subcont);
-        $('.td_grand_total_subcont').html(number_format(ttl_subcont, 2));
-
-        hitung_total_subcont();
-    }
-
-    $(document).on('click', '.add_new_subcont', function() {
-        var subcont_new = $('input[name="subcont_new"]').val();
-        var subcont_mandays = get_num($('input[name="subcont_new_mandays"]').val());
-        var subcont_rate = get_num($('input[name="subcont_new_rate"]').val());
-        var subcont_price = get_num($('input[name="subcont_new_price"]').val());
-        var subcont_description = $('textarea[name="subcont_description"]').val();
-
-        if (subcont_price <= 0) {
-            swal({
-                type: 'warning',
-                title: 'Warning !',
-                text: "Price Subcont can't be zero !"
-            });
-        } else if (subcont_new == '') {
-            swal({
-                type: 'warning',
-                title: 'Warning !',
-                text: "Subcont Activity must be filled first !"
-            });
-        } else {
-
-            var no_subcont = ($('.tr_list_subcont').length + 1);
-
-            var hasil = '<tr class="tr_list_subcont tr_list_subcont_' + no_subcont + '">';
-
-            hasil += '<td class="text-center">' + no_subcont + '</td>';
-
-            hasil += '<td class="text-left">';
-            hasil += subcont_new;
-            hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new]" value="' + subcont_new + '">';
-            hasil += '</td>';
-
-            hasil += '<td class="text-center">';
-            hasil += number_format(subcont_mandays);
-            hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new_mandays]" value="' + subcont_mandays + '">';
-            hasil += '</td>';
-
-            hasil += '<td class="text-right">';
-            hasil += number_format(subcont_rate, 2);
-            hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new_rate]" value="' + subcont_rate + '">';
-            hasil += '</td>';
-
-            hasil += '<td class="text-right">';
-            hasil += number_format(subcont_price, 2);
-            hasil += '<input type="hidden" name="subcont[' + no_subcont + '][subcont_new_price]" value="' + subcont_price + '">';
-            hasil += '</td>';
-
-            hasil += '<td>';
-            hasil += subcont_description;
-            hasil += '<input type="hidden" class="form-control form-control-sm" name="subcont[' + no_subcont + '][subcont_description]" value="' + subcont_description + '">';
-            hasil += '</td>';
-
-            hasil += '<td class="text-center">';
-            hasil += '<button type="button" class="btn btn-sm btn-danger del_subcont" data-no="' + no_subcont + '" title="Delete Subcont"><i class="fa fa-trash"></i></button>';
-            hasil += '</td>';
-
-            hasil += '</tr>'
-
-            $('.list_subcont').append(hasil);
-
-            $('input[name="subcont_new"]').val('');
-            $('input[name="subcont_new_mandays"]').val('');
-            $('input[name="subcont_new_rate"]').val('');
-            $('input[name="subcont_new_price"]').val('');
-
-            hitung_subcont_af_add();
-        }
-    });
-
-    $(document).on('click', '.del_subcont', function() {
-        var no = $(this).data('no');
-
-        $('.tr_list_subcont_' + no).remove();
-
-        hitung_subcont_af_add();
-    });
-
-    $(document).on('change', '.edit_mandays_subcont', function() {
-        var id = $(this).data('id');
-        var mandays_subcont = parseFloat($(this).val());
-        var price_subcont = get_num($('.price_subcont_' + id).val());
-
-        var total = parseFloat(mandays_subcont * price_subcont);
-
-        $('.total_subcont_' + id).val(number_format(total, 2));
-        hitung_total_subcont();
-        hitung_mandays_subcont();
-        hitung_grand_ttl_subcont();
-    });
-
-    $(document).on('change', '.edit_price_subcont', function() {
-        var id = $(this).data('id');
-        var price_subcont = get_num($(this).val());
-        var mandays_subcont = get_num($('.mandays_subcont_' + id).val());
-
-        var total = parseFloat(mandays_subcont * price_subcont);
-
-        $('.total_subcont_' + id).val(number_format(total, 2));
-        hitung_total_subcont();
-        hitung_mandays_subcont();
-        hitung_grand_ttl_subcont();
-    });
 
     $(document).on('click', '.add_payment_term', function() {
         var hasil = '<tr class="payment_' + no_payment + '">';
