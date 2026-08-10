@@ -369,7 +369,6 @@ class Project_budgeting extends Admin_Controller
 
         $this->db->delete('kons_tr_spk_budgeting', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
         $this->db->delete('kons_tr_spk_budgeting_akomodasi', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
-        $this->db->delete('kons_tr_spk_budgeting_aktifitas', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
         $this->db->delete('kons_tr_spk_budgeting_others', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
         $this->db->delete('kons_tr_spk_budgeting_lab', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
         $this->db->delete('kons_tr_spk_budgeting_subcont_tenaga_ahli', ['id_spk_penawaran' => $post['id_spk_penawaran']]);
@@ -399,10 +398,8 @@ class Project_budgeting extends Admin_Controller
             'total_mandays' => $post['summary_mandays'],
             'mandays_internal' => $post['summary_mandays_internal'],
             'mandays_tandem' => $post['summary_mandays_tandem'],
-            'mandays_subcont' => $post['summary_mandays_subcont'],
             'biaya_konsultasi' => $post['summary_biaya_act'],
             'biaya_tandem' => $post['summary_biaya_tandem'],
-            'biaya_subcont' => $post['summary_biaya_subcont'],
             'biaya_akomodasi' => $post['summary_biaya_akomodasi'],
             'biaya_others' => $post['summary_biaya_others'],
             'biaya_lab' => $post['summary_biaya_lab'],
@@ -412,22 +409,16 @@ class Project_budgeting extends Admin_Controller
             'mandays_rate' => $get_spk_penawaran->mandays_rate,
             'ppn' => $get_penawaran->ppn,
             'grand_total' => $get_penawaran->grand_total,
-            'mandays_subcont_before' => $post['ttl_mandays_subcont_before'],
-            'biaya_subcont_before' => $post['ttl_subcont_before'],
             'biaya_akomodasi_before' => $post['ttl_total_akomodasi_before'],
             'biaya_others_before' => $post['ttl_total_others_before'],
             'biaya_lab_before' => $post['ttl_total_lab_before'],
             'biaya_subcont_tenaga_ahli_before' => $post['ttl_total_subcont_tenaga_ahli_before'],
             'biaya_subcont_perusahaan_before' => $post['ttl_total_subcont_perusahaan_before'],
-            'mandays_subcont_after' => $post['summary_mandays_subcont'],
-            'biaya_subcont_after' => $post['summary_biaya_subcont_after'],
             'biaya_akomodasi_after' => $post['summary_biaya_akomodasi_after'],
             'biaya_others_after' => $post['summary_biaya_others_after'],
             'biaya_lab_after' => $post['summary_biaya_lab_after'],
             'biaya_subcont_tenaga_ahli_after' => $post['summary_biaya_subcont_tenaga_ahli_after'],
             'biaya_subcont_perusahaan_after' => $post['summary_biaya_subcont_perusahaan_after'],
-            'mandays_subcont_result' => $post['summary_mandays_subcont_result_value'],
-            'biaya_subcont_result' => $post['summary_biaya_subcont_result_value'],
             'biaya_akomodasi_result' => $post['summary_biaya_akomodasi_result_value'],
             'biaya_others_result' => $post['summary_biaya_others_result_value'],
             'biaya_lab_result' => $post['summary_biaya_lab_result_value'],
@@ -436,45 +427,6 @@ class Project_budgeting extends Admin_Controller
             'create_by' => $this->auth->user_id(),
             'create_date' => date('Y-m-d H:i:s')
         ];
-
-        $data_insert_konsultasi = [];
-        if (isset($post['subcont_final'])) {
-            foreach ($post['subcont_final'] as $item) {
-
-                $this->db->select('a.nm_aktifitas, a.mandays, a.mandays_rate, a.mandays_tandem, a.mandays_rate_tandem, a.mandays_subcont, a.price_subcont, a.total_subcont');
-                $this->db->from('kons_tr_spk_penawaran_subcont a');
-                $this->db->where('a.id', $item['id']);
-                $get_data_subcont = $this->db->get()->row_array();
-
-                $total_aktifitas_estimasi = $get_data_subcont['total_subcont'];
-
-                $total_aktifitas_final = (str_replace(',', '', $item['mandays_subcont']) * str_replace(',', '', $item['price_subcont']));
-
-                $data_insert_konsultasi[] = [
-                    'id_spk_budgeting' => $id_spk_budgeting,
-                    'id_spk_penawaran' => $post['id_spk_penawaran'],
-                    'id_penawaran' => $get_spk_penawaran->id_penawaran,
-                    'id_aktifitas' => $item['id'],
-                    'nm_aktifitas' => $get_data_subcont['nm_aktifitas'],
-                    'mandays_estimasi' => $get_data_subcont['mandays'],
-                    'mandays_rate_estimasi' => $get_data_subcont['mandays_rate'],
-                    'mandays_tandem_estimasi' => $get_data_subcont['mandays_tandem'],
-                    'mandays_rate_tandem_estimasi' => $get_data_subcont['mandays_rate_tandem'],
-                    'mandays_subcont_estimasi' => $get_data_subcont['mandays_subcont'],
-                    'mandays_rate_subcont_estimasi' => $get_data_subcont['price_subcont'],
-                    'total_aktifitas_estimasi' => $total_aktifitas_estimasi,
-                    'mandays_final' => $get_data_subcont['mandays'],
-                    'mandays_rate_final' => $get_data_subcont['mandays_rate'],
-                    'mandays_tandem_final' =>  $get_data_subcont['mandays_tandem'],
-                    'mandays_rate_tandem_final' => $get_data_subcont['mandays_rate_tandem'],
-                    'mandays_subcont_final' => str_replace(',', '', $item['mandays_subcont']),
-                    'mandays_rate_subcont_final' => str_replace(',', '', $item['price_subcont']),
-                    'total_aktifitas_final' => $total_aktifitas_final,
-                    'create_by' => $this->auth->user_id(),
-                    'create_date' => date('Y-m-d H:i:s')
-                ];
-            }
-        }
 
         $data_insert_akomodasi = [];
         if (isset($post['akomodasi_final'])) {
@@ -634,15 +586,6 @@ class Project_budgeting extends Admin_Controller
             print_r('Error 1 | ' . $this->db->last_query());
             $this->db->trans_rollback();
             exit;
-        }
-
-        if (!empty($data_insert_konsultasi)) {
-            $insert_spk_budgeting_aktifitas = $this->db->insert_batch('kons_tr_spk_budgeting_aktifitas', $data_insert_konsultasi);
-            if (!$insert_spk_budgeting_aktifitas) {
-                print_r('Error 2 | ' . $this->db->last_query());
-                $this->db->trans_rollback();
-                exit;
-            }
         }
 
         if (!empty($data_insert_akomodasi)) {
