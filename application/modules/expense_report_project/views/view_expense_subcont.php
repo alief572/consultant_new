@@ -103,6 +103,49 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 <input type="hidden" name="id_spk_budgeting" value="<?= $id_spk_budgeting ?>">
 <input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
 <input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
+
+<div class="box">
+    <div class="box-body" style="z-index: 1 !important;">
+        <table border="0" style="width: 100%; z-index: 1 !important;">
+            <tr>
+                <th class="pd-5 valign-top" width="150">No. SPK</th>
+                <td class="pd-5 valign-top" width="400"><?= $list_budgeting->id_spk_penawaran ?></td>
+                <th class="pd-5 valign-top" width="150">Project Leader</th>
+                <td class="pd-5 valign-top" width="400"><?= ucfirst($list_budgeting->nm_project_leader) ?></td>
+            </tr>
+            <tr>
+                <th class="pd-5 valign-top" width="150">Customer</th>
+                <td class="pd-5 valign-top" width="400"><?= $list_budgeting->nm_customer ?></td>
+                <th class="pd-5 valign-top" width="150">Sales</th>
+                <td class="pd-5 valign-top" width="400"><?= ucfirst($list_budgeting->nm_sales) ?></td>
+            </tr>
+            <tr>
+                <th class="pd-5 valign-top" width="150">Address</th>
+                <td class="pd-5 valign-top" width="400"><?= $list_budgeting->alamat ?></td>
+                <th class="pd-5 valign-top" width="150">Waktu</th>
+                <td class="pd-5 valign-top" width="400">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <input type="date" name="" id="" class="form-control form-control-sm" value="<?= $list_budgeting->waktu_from ?>" readonly>
+                        </div>
+                        <div class="form-group text-center" style="width: 50px; padding-top: 8px;">
+                            <span>-</span>
+                        </div>
+                        <div class="form-group">
+                            <input type="date" name="" id="" class="form-control form-control-sm" value="<?= $list_budgeting->waktu_to ?>" readonly>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th class="pd-5 valign-top" width="150">Project</th>
+                <td class="pd-5 valign-top" width="400"><?= $list_budgeting->nm_paket ?></td>
+                <th class="pd-5 valign-top" width="150"></th>
+                <td class="pd-5 valign-top" width="400"></td>
+            </tr>
+        </table>
+    </div>
+</div>
 <div class="box">
     <div class="box-header">
         <h3>List Item <?= $title_header ?></h3>
@@ -308,34 +351,6 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                             <th colspan="5" class="text-center">Balancing</th>
                             <th class="text-right ttl_debit">0.00</th>
                             <th class="text-right ttl_kredit">0.00</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            <div class="col-md-12 <?= $hide_jurnal_pph21 ?>">
-                <h4>Jurnal PPh 21</h4>
-                <table class="table custom-table">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Tanggal Jurnal</th>
-                            <th class="text-center">COA</th>
-                            <th class="text-center">Nama Company</th>
-                            <th class="text-center">Nama Account</th>
-                            <th class="text-center">Deskripsi</th>
-                            <th class="text-center">Debit</th>
-                            <th class="text-center">Credit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?= $list_jurnal_pph21['hasil'] ?>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="5" class="text-center">
-                                Balancing
-                            </th>
-                            <th class="text-right jurnal_pph_debit"><?= number_format(0) ?></th>
-                            <th class="text-right jurnal_pph_kredit"><?= number_format($list_jurnal_pph21['nominal_pph']) ?></th>
                         </tr>
                     </tfoot>
                 </table>
