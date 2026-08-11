@@ -138,7 +138,7 @@ endforeach;
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th class="text-center">No. Kasbon</th>
+                            <th class="text-center">No. Expense</th>
                             <th class="text-center">Request By</th>
                             <th class="text-center">Tanggal Pengajuan</th>
                             <th class="text-center">Deskripsi Pengajuan</th>
@@ -150,30 +150,28 @@ endforeach;
                     <tbody>
                         <?php
                         $ttl_expense = 0;
-                        foreach ($data as $item_expense) :
-                            if ($item_expense->tipe == 'expense') {
-                                $tipe = ucfirst($item_expense->tipe);
-                                $get_expense = $this->db->get_where('tr_expense', ['no_doc' => $item_expense->no_doc])->row_array();
+                        foreach ($data_expense as $item_expense) :
+                            $tipe = 'Expense';
+                            $deskripsi = !empty($item_expense->deskripsi) ? $item_expense->deskripsi : '-';
 
-                                echo '<tr>';
-                                echo '<td>' . $item_expense->no_doc . '</td>';
-                                echo '<td>' . $item_expense->nama . '</td>';
-                                echo '<td>' . $item_expense->tgl_doc . '</td>';
-                                echo '<td>' . $item_expense->keperluan . '</td>';
-                                echo '<td>' . $tipe . '</td>';
-                                echo '<td class="text-right">' . number_format($item_expense->jumlah) . '</td>';
-                                echo '<td>';
-                                if ($ENABLE_MANAGE) :
-                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-primary btn-sm">';
-                                    echo '<i class="fa fa-check-square-o"></i>';
-                                    echo ' Approve';
-                                    echo '</a>';
-                                endif;
-                                echo '</td>';
-                                echo '</tr>';
+                            echo '<tr>';
+                            echo '<td>' . $item_expense->id . '</td>';
+                            echo '<td>' . $item_expense->nama . '</td>';
+                            echo '<td>' . date('Y-m-d', strtotime($item_expense->created_date)) . '</td>';
+                            echo '<td>' . $deskripsi . '</td>';
+                            echo '<td>' . $tipe . '</td>';
+                            echo '<td class="text-right">' . number_format($item_expense->total_expense_report) . '</td>';
+                            echo '<td>';
+                            if ($ENABLE_MANAGE) :
+                                echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment/' . urlencode(str_replace('/', '|', $item_expense->id))) . '" class="btn btn-primary btn-sm">';
+                                echo '<i class="fa fa-check-square-o"></i>';
+                                echo ' Approve';
+                                echo '</a>';
+                            endif;
+                            echo '</td>';
+                            echo '</tr>';
 
-                                $ttl_expense += $item_expense->jumlah;
-                            }
+                            $ttl_expense += $item_expense->total_expense_report;
                         endforeach;
                         ?>
                     </tbody>
