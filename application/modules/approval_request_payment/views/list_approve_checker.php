@@ -29,6 +29,15 @@ foreach ($data as $item) :
     }
 
 endforeach;
+
+// Count expense dari data_expense (langsung dari kons_tr_expense_report_project_header)
+$count_expense = 0;
+foreach ($data_expense as $item_exp) :
+    // Hitung yang ada di request_payment dan belum di-approve checker
+    if (!is_null($item_exp->rp_status) && $item_exp->rp_status !== '2' && is_null($item_exp->rp_app_checker)) {
+        $count_expense += 1;
+    }
+endforeach;
 ?>
 <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
@@ -198,38 +207,39 @@ endforeach;
                     <tbody>
                         <?php
                         $ttl_expense = 0;
-                        foreach ($data as $item_expense) :
-                            if ($item_expense->tipe == 'expense') {
-                                $tipe = ucfirst($item_expense->tipe);
-                                $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $item_expense->no_doc])->row();
+                        foreach ($data_expense as $item_expense) :
+                            $tipe = 'Expense';
+                            $deskripsi = !empty($item_expense->deskripsi) ? $item_expense->deskripsi : '-';
 
-                                echo '<tr>';
-                                echo '<td>' . $item_expense->no_doc . '</td>';
-                                echo '<td>' . $item_expense->nama . '</td>';
-                                echo '<td>' . $item_expense->tgl_doc . '</td>';
-                                echo '<td>' . $item_expense->keperluan . '</td>';
-                                echo '<td>' . $tipe . '</td>';
-                                echo '<td class="text-right">' . number_format($item_expense->jumlah) . '</td>';
-                                echo '<td>';
-                                if ($ENABLE_MANAGE) :
-                                    if (($item_expense->status !== '2' && is_null($item_expense->app_checker))) :
-                                        echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-primary btn-sm">';
-                                        echo '<i class="fa fa-check-square-o"></i>';
-                                        echo ' Approve';
-                                        echo '</a>';
-                                    endif;
-
-                                    echo ' <a href="' . base_url('approval_request_payment/print_expense/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
-                                    echo '<i class="fa fa-print"></i>';
+                            echo '<tr>';
+                            echo '<td>' . $item_expense->id . '</td>';
+                            echo '<td>' . $item_expense->nama . '</td>';
+                            echo '<td>' . date('Y-m-d', strtotime($item_expense->created_date)) . '</td>';
+                            echo '<td>' . $deskripsi . '</td>';
+                            echo '<td>' . $tipe . '</td>';
+                            echo '<td class="text-right">' . number_format($item_expense->total_expense_report) . '</td>';
+                            echo '<td>';
+                            if ($ENABLE_MANAGE) :
+                                // Tombol approve hanya muncul jika ada record di request_payment dan belum di-approve
+                                if (!is_null($item_expense->rp_status) && $item_expense->rp_status !== '2' && is_null($item_expense->rp_app_checker)) :
+                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_expense->id))) . '" class="btn btn-primary btn-sm">';
+                                    echo '<i class="fa fa-check-square-o"></i>';
+                                    echo ' Approve';
                                     echo '</a>';
-
-                                    echo ' <a href="' . base_url('expense_report_project/view_expense_subcont/' . urlencode(str_replace('/', '|', $item_expense->no_doc))) . '" class="btn btn-sm btn-info" title="View Expense" target="_blank"><i class="fa fa-eye"></i></a>';
                                 endif;
-                                echo '</td>';
-                                echo '</tr>';
 
-                                $ttl_expense += $item_expense->jumlah;
-                            }
+                                echo ' <a href="' . base_url('approval_request_payment/print_expense/' . urlencode(str_replace('/', '|', $item_expense->id))) . '" class="btn btn-sm btn-info" title="Print PDF">';
+                                echo '<i class="fa fa-print"></i>';
+                                echo '</a>';
+
+                                if (!empty($item_expense->id_header)) :
+                                    echo ' <a href="' . base_url('expense_report_project/view_expense_subcont/' . urlencode(str_replace('/', '|', $item_expense->id_header))) . '" class="btn btn-sm btn-info" title="View Expense" target="_blank"><i class="fa fa-eye"></i></a>';
+                                endif;
+                            endif;
+                            echo '</td>';
+                            echo '</tr>';
+
+                            $ttl_expense += $item_expense->total_expense_report;
                         endforeach;
                         ?>
                     </tbody>
@@ -408,14 +418,14 @@ endforeach;
         // alert(val);
 
         var all_lists = [
-            ".list_transportasi", 
-            ".list_kasbon", 
-            ".list_expense", 
-            ".list_periodik", 
-            ".list_pembayaran_po", 
+            ".list_transportasi",
+            ".list_kasbon",
+            ".list_expense",
+            ".list_periodik",
+            ".list_pembayaran_po",
             ".list_direct_payment"
         ];
-        
+
         $.each(all_lists, function(index, item) {
             if (item !== ".list_" + val) {
                 $(item).hide();
