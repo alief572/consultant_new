@@ -608,6 +608,112 @@ class Request_payment extends Admin_Controller
 		if ($tipe == "expense") {
 			$this->db->update('tr_expense', ['sts_reject' => 0, 'sts_reject_manage' => 0], ['no_doc' => $post['id']]);
 			$this->db->update('tr_expense_detail', ['req_payment' => 1], ['id' => $post['id']]);
+
+			$check_expense_sendigs = $this->otherdb->get_where('tr_expense', array('no_doc' => $post['id']))->num_rows();
+			if ($check_expense_sendigs == 0) {
+				$get_local_expense = $this->db->get_where('tr_expense', array('no_doc' => $post['id']))->row();
+				if (!empty($get_local_expense)) {
+					$data_insert_sendigs_expense = [
+						'no_doc' => $get_local_expense->no_doc,
+						'tgl_doc' => $get_local_expense->tgl_doc,
+						'nama' => $get_local_expense->nama,
+						'jumlah' => $get_local_expense->jumlah,
+						'informasi' => (!empty($get_local_expense->informasi)) ? $get_local_expense->informasi : ($get_local_expense->keperluan ?? ''),
+						'status' => 1,
+						'created_by' => $get_local_expense->created_by,
+						'created_on' => $get_local_expense->created_date ?? date('Y-m-d H:i:s'),
+						'bank_id' => $get_local_expense->bank_id ?? '',
+						'accnumber' => $get_local_expense->accnumber ?? '',
+						'accname' => $get_local_expense->accname ?? '',
+						'project_consultant' => 1,
+						'no_expense_consultant' => $get_local_expense->no_doc
+					];
+
+					$insert_expense_sendigs = $this->otherdb->insert('tr_expense', $data_insert_sendigs_expense);
+					if (!$insert_expense_sendigs) {
+						$this->db->trans_rollback();
+						print_r($this->otherdb->last_query());
+						exit;
+					}
+
+					$get_local_expense_detail = $this->db->get_where('tr_expense_detail', array('no_doc' => $post['id']))->result();
+					if (!empty($get_local_expense_detail)) {
+						$arr_detail_sendigs = [];
+						foreach ($get_local_expense_detail as $dtl) {
+							$total_harga = isset($dtl->total_harga) ? $dtl->total_harga : (($dtl->qty ?? 1) * ($dtl->harga ?? 0));
+							$arr_detail_sendigs[] = [
+								'tanggal' => date('Y-m-d'),
+								'no_doc' => $get_local_expense->no_doc,
+								'deskripsi' => $dtl->deskripsi ?? $get_local_expense->informasi,
+								'qty' => $dtl->qty ?? 1,
+								'harga' => $dtl->harga ?? $total_harga,
+								'total_harga' => $total_harga,
+								'keterangan' => $dtl->keterangan ?? $get_local_expense->informasi,
+								'status' => 2,
+								'expense' => $total_harga,
+								'created_by' => $get_local_expense->nama,
+								'created_on' => date('Y-m-d H:i:s')
+							];
+						}
+						if (!empty($arr_detail_sendigs)) {
+							$this->otherdb->insert_batch('tr_expense_detail', $arr_detail_sendigs);
+						}
+					}
+				} else {
+					$get_project_expense = $this->db->get_where('kons_tr_expense_report_project_header', array('id' => $post['id']))->row();
+					if (!empty($get_project_expense)) {
+						$get_user = $this->db->get_where('users', array('id_user' => $get_project_expense->created_by))->row();
+						$nm_user = (!empty($get_user)) ? $get_user->nm_lengkap : '';
+						$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $get_project_expense->id_header))->row();
+						$informasi = (!empty($get_kasbon)) ? $get_kasbon->deskripsi : '';
+
+						$data_insert_sendigs_expense = [
+							'no_doc' => $get_project_expense->id,
+							'tgl_doc' => date('Y-m-d', strtotime($get_project_expense->created_date)),
+							'nama' => strtoupper($nm_user),
+							'status' => 1,
+							'created_by' => $get_project_expense->created_by,
+							'created_on' => $get_project_expense->created_date,
+							'jumlah' => ($get_project_expense->selisih * -1),
+							'informasi' => $informasi,
+							'id_kasbon' => $get_project_expense->id_header,
+							'project_consultant' => 1,
+							'no_expense_consultant' => $get_project_expense->id
+						];
+
+						$insert_expense_sendigs = $this->otherdb->insert('tr_expense', $data_insert_sendigs_expense);
+						if (!$insert_expense_sendigs) {
+							$this->db->trans_rollback();
+							print_r($this->otherdb->last_query());
+							exit;
+						}
+
+						$get_project_expense_detail = $this->db->get_where('kons_tr_expense_report_project_detail', array('id_header_expense' => $get_project_expense->id))->result();
+						if (!empty($get_project_expense_detail)) {
+							$arr_detail_sendigs = [];
+							foreach ($get_project_expense_detail as $dtl) {
+								$total_harga = ($dtl->qty_expense * $dtl->nominal_expense);
+								$arr_detail_sendigs[] = [
+									'tanggal' => date('Y-m-d'),
+									'no_doc' => $get_project_expense->id,
+									'deskripsi' => $informasi,
+									'qty' => $dtl->qty_expense,
+									'harga' => $dtl->nominal_expense,
+									'total_harga' => $total_harga,
+									'keterangan' => $informasi,
+									'status' => 2,
+									'expense' => $total_harga,
+									'created_by' => $nm_user,
+									'created_on' => date('Y-m-d H:i:s')
+								];
+							}
+							if (!empty($arr_detail_sendigs)) {
+								$this->otherdb->insert_batch('tr_expense_detail', $arr_detail_sendigs);
+							}
+						}
+					}
+				}
+			}
 		}
 		if ($tipe == "kasbon") {
 			$this->db->update('kons_tr_kasbon_project_header a', array('sts_reject' => null, 'sts_reject_manage' => null, 'reject_reason' => null), array('id' => $post['id']));
@@ -637,7 +743,7 @@ class Request_payment extends Admin_Controller
 			$no_doc = '';
 			$newcode = '';
 
-			if($get_header_kasbon->metode_pembayaran == '2') {
+			if ($get_header_kasbon->metode_pembayaran == '2') {
 				$no_doc = $post['id'];
 
 				$data_insert_direct_payment_sendigs = [
@@ -667,7 +773,7 @@ class Request_payment extends Admin_Controller
 					exit;
 				}
 			} else {
-				if(strpos($post['id'], 'REQ') !== false) {
+				if (strpos($post['id'], 'REQ') !== false) {
 					$data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => 'format_kasbon'))->row();
 					if ($data !== false) {
 						if (stripos($data->info, 'YEAR', 0) !== false) {
@@ -690,7 +796,7 @@ class Request_payment extends Admin_Controller
 							$newdata = array('info2' => $number);
 						}
 						$this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
-		
+
 						$no_doc = $newcode;
 					} else {
 						return false;
@@ -698,7 +804,7 @@ class Request_payment extends Admin_Controller
 				} else {
 					$no_doc = $post['id'];
 				}
-				
+
 				$get_user = $this->db->get_where('users', array('id_user' => $get_header_kasbon->created_by))->row();
 
 				$nm_user = (!empty($get_user)) ? $get_user->nm_lengkap : '';
