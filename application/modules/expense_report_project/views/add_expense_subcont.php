@@ -540,6 +540,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                 'id_penawaran': id_penawaran,
                 'id_bank': id_bank,
                 'id_header': id_header,
+                'id_expense': $('input[name="id_expense"]').val(),
                 'arr_total_expense': arr_total_expense
             },
             cache: false,
