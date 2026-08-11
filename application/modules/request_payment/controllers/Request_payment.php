@@ -609,12 +609,17 @@ class Request_payment extends Admin_Controller
 			$this->db->update('tr_expense', ['sts_reject' => 0, 'sts_reject_manage' => 0], ['no_doc' => $post['id']]);
 			$this->db->update('tr_expense_detail', ['req_payment' => 1], ['id' => $post['id']]);
 
-			$check_expense_sendigs = $this->otherdb->get_where('tr_expense', array('no_doc' => $post['id']))->num_rows();
+			$check_expense_sendigs = $this->otherdb->query("SELECT * FROM tr_expense WHERE no_doc = '" . $post['id'] . "' OR no_expense_consultant = '" . $post['id'] . "'")->num_rows();
 			if ($check_expense_sendigs == 0) {
 				$get_local_expense = $this->db->get_where('tr_expense', array('no_doc' => $post['id']))->row();
 				if (!empty($get_local_expense)) {
+					$no_doc_sendigs = $get_local_expense->no_doc;
+					if (strpos($get_local_expense->no_doc, 'ER-') === false) {
+						$no_doc_sendigs = $this->Request_payment_model->GetAutoGenerate_expense('format_expense');
+					}
+
 					$data_insert_sendigs_expense = [
-						'no_doc' => $get_local_expense->no_doc,
+						'no_doc' => $no_doc_sendigs,
 						'tgl_doc' => $get_local_expense->tgl_doc,
 						'nama' => $get_local_expense->nama,
 						'jumlah' => $get_local_expense->jumlah,
@@ -643,7 +648,7 @@ class Request_payment extends Admin_Controller
 							$total_harga = isset($dtl->total_harga) ? $dtl->total_harga : (($dtl->qty ?? 1) * ($dtl->harga ?? 0));
 							$arr_detail_sendigs[] = [
 								'tanggal' => date('Y-m-d'),
-								'no_doc' => $get_local_expense->no_doc,
+								'no_doc' => $no_doc_sendigs,
 								'deskripsi' => $dtl->deskripsi ?? $get_local_expense->informasi,
 								'qty' => $dtl->qty ?? 1,
 								'harga' => $dtl->harga ?? $total_harga,
@@ -662,13 +667,18 @@ class Request_payment extends Admin_Controller
 				} else {
 					$get_project_expense = $this->db->get_where('kons_tr_expense_report_project_header', array('id' => $post['id']))->row();
 					if (!empty($get_project_expense)) {
+						$no_doc_sendigs = $get_project_expense->id;
+						if (strpos($get_project_expense->id, 'ER-') === false) {
+							$no_doc_sendigs = $this->Request_payment_model->GetAutoGenerate_expense('format_expense');
+						}
+
 						$get_user = $this->db->get_where('users', array('id_user' => $get_project_expense->created_by))->row();
 						$nm_user = (!empty($get_user)) ? $get_user->nm_lengkap : '';
 						$get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $get_project_expense->id_header))->row();
 						$informasi = (!empty($get_kasbon)) ? $get_kasbon->deskripsi : '';
 
 						$data_insert_sendigs_expense = [
-							'no_doc' => $get_project_expense->id,
+							'no_doc' => $no_doc_sendigs,
 							'tgl_doc' => date('Y-m-d', strtotime($get_project_expense->created_date)),
 							'nama' => strtoupper($nm_user),
 							'status' => 1,
@@ -695,7 +705,7 @@ class Request_payment extends Admin_Controller
 								$total_harga = ($dtl->qty_expense * $dtl->nominal_expense);
 								$arr_detail_sendigs[] = [
 									'tanggal' => date('Y-m-d'),
-									'no_doc' => $get_project_expense->id,
+									'no_doc' => $no_doc_sendigs,
 									'deskripsi' => $informasi,
 									'qty' => $dtl->qty_expense,
 									'harga' => $dtl->nominal_expense,
