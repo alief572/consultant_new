@@ -215,8 +215,20 @@ class Approval_request_payment extends Admin_Controller
 			$list_no_invoice[$item_no_invoice->id] = $item_no_invoice->invoice_no;
 		}
 
+		// Ambil data expense langsung dari kons_tr_expense_report_project_header
+		$this->db->select('a.id, a.id_header, a.total_expense_report, a.selisih, a.tipe, a.created_date, a.sts, a.sts_req_payment, b.deskripsi, c.nm_lengkap as nama, r.status as rp_status, r.app_checker as rp_app_checker');
+		$this->db->from('kons_tr_expense_report_project_header a');
+		$this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+		$this->db->join('users c', 'c.id_user = a.created_by', 'left');
+		$this->db->join('request_payment r', 'r.no_doc = a.id AND r.tipe = "expense"', 'left');
+		$this->db->where('a.sts', 1);
+		$this->db->where('r.app_checker', 1);
+		$this->db->order_by('a.id', 'DESC');
+		$data_expense = $this->db->get()->result();
+
 		$this->template->set('tingkat_approval', 2);
 		$this->template->set('data', $data);
+		$this->template->set('data_expense', $data_expense);
 		$this->template->set('list_no_invoice', $list_no_invoice);
 		$this->template->title('Request Payment Approval Direktur');
 		$this->template->render('list_approve_management');
@@ -1994,21 +2006,19 @@ class Approval_request_payment extends Admin_Controller
 	{
 		$tingkat = $this->input->get('tingkat');
 
+		$this->db->select('a.id, a.id_header, a.total_expense_report, a.selisih, a.tipe, a.created_date, a.sts, a.sts_req_payment, b.deskripsi, c.nm_lengkap as nama, r.status as rp_status, r.app_checker as rp_app_checker');
+		$this->db->from('kons_tr_expense_report_project_header a');
+		$this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+		$this->db->join('users c', 'c.id_user = a.created_by', 'left');
+		$this->db->join('request_payment r', 'r.no_doc = a.id AND r.tipe = "expense"', 'left');
+		$this->db->where('a.sts', 1);
 		if ($tingkat !== '1') {
-			$data = $this->Approval_request_payment_model->GetListDataApproval('a.status <> 2 AND a.app_checker = 1');
-		} else {
-			$data = $this->Approval_request_payment_model->GetListDataApproval();
+			$this->db->where('r.app_checker', 1);
 		}
+		$this->db->order_by('a.id', 'DESC');
+		$data_expense = $this->db->get()->result();
 
-		$list_no_invoice = [];
-		$this->db->select('id, invoice_no');
-		$this->db->from('tr_invoice_po');
-		$get_invoice_no = $this->db->get()->result();
-		foreach ($get_invoice_no as $item_no_invoice) {
-			$list_no_invoice[$item_no_invoice->id] = $item_no_invoice->invoice_no;
-		}
-
-		$this->load->view('excel_expense_app', array('data' => $data, 'tingkat' => $tingkat));
+		$this->load->view('excel_expense_app', array('data' => $data_expense, 'tingkat' => $tingkat));
 	}
 
 	public function print_kasbon($id)

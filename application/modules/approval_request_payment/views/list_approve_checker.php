@@ -24,9 +24,6 @@ foreach ($data as $item) :
             }
         }
     }
-    if ($item->tipe == 'expense' && $item->status !== '2' && is_null($item->app_checker)) {
-        $count_expense += 1;
-    }
 
 endforeach;
 
@@ -34,7 +31,7 @@ endforeach;
 $count_expense = 0;
 foreach ($data_expense as $item_exp) :
     // Hitung yang ada di request_payment dan belum di-approve checker
-    if (!is_null($item_exp->rp_status) && $item_exp->rp_status !== '2' && is_null($item_exp->rp_app_checker)) {
+    if (!is_null($item_exp->rp_status) && $item_exp->rp_status !== '2' && is_null($item_exp->rp_app_checker) && $item_exp->selisih < 0) {
         $count_expense += 1;
     }
 endforeach;
@@ -221,7 +218,7 @@ endforeach;
                             echo '<td>';
                             if ($ENABLE_MANAGE) :
                                 // Tombol approve hanya muncul jika ada record di request_payment dan belum di-approve
-                                if (!is_null($item_expense->rp_status) && $item_expense->rp_status !== '2' && is_null($item_expense->rp_app_checker)) :
+                                if (!is_null($item_expense->rp_status) && $item_expense->rp_status !== '2' && is_null($item_expense->rp_app_checker) && $item_expense->selisih < 0) :
                                     echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_expense->id))) . '" class="btn btn-primary btn-sm">';
                                     echo '<i class="fa fa-check-square-o"></i>';
                                     echo ' Approve';
