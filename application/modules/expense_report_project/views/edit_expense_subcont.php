@@ -27,9 +27,9 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
 }
 
 $hide_jurnal_pph21 = 'd-none';
-if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
-    $hide_jurnal_pph21 = '';
-}
+// if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
+//     $hide_jurnal_pph21 = '';
+// }
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">

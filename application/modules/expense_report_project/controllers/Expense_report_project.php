@@ -867,7 +867,7 @@ class Expense_report_project extends Admin_Controller
         $this->sendigs->where('a.deleted', '0');
         $get_bank_acc = $this->sendigs->get()->result();
 
-        $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
+        // $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
 
         $data = [
             'datalist_item' => $datalist_item,
@@ -877,8 +877,8 @@ class Expense_report_project extends Admin_Controller
             'id_penawaran' => $get_kasbon_header->id_penawaran,
             'tipe' => $get_kasbon_header->tipe,
             'data_bank' => $get_bank,
-            'list_bank' => $get_bank_acc,
-            'list_jurnal_pph21' => $list_jurnal_pph21
+            'list_bank' => $get_bank_acc
+            // 'list_jurnal_pph21' => $list_jurnal_pph21
         ];
 
         $this->template->set($data);
@@ -1427,7 +1427,7 @@ class Expense_report_project extends Admin_Controller
             }
         }
 
-        $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
+        // $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
 
         $data = [
             'header' => $get_header,
@@ -1440,8 +1440,7 @@ class Expense_report_project extends Admin_Controller
             'id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran,
             'id_penawaran' => $get_kasbon_header->id_penawaran,
             'tipe' => $get_kasbon_header->tipe,
-            'list_bank' => $get_bank,
-            'list_jurnal_pph21' => $list_jurnal_pph21
+            'list_bank' => $get_bank
         ];
 
         $this->template->set($data);
@@ -1997,7 +1996,7 @@ class Expense_report_project extends Admin_Controller
         $this->sendigs->where('a.deleted', '0');
         $get_bank_acc = $this->sendigs->get()->result();
 
-        $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
+        // $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
 
         $data = [
             'header' => $get_header,
@@ -2011,7 +2010,6 @@ class Expense_report_project extends Admin_Controller
             'id_penawaran' => $get_kasbon_header->id_penawaran,
             'tipe' => $get_kasbon_header->tipe,
             'list_bank' => $get_bank_acc,
-            'list_jurnal_pph21' => $list_jurnal_pph21,
             'list_budgeting' => $get_spk_budgeting
         ];
 

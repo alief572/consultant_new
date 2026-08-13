@@ -2734,6 +2734,10 @@ class Approval_expense_report_project extends Admin_Controller
         $post = $this->input->post();
 
         $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $post['id_expense']])->row();
+        if (empty($get_expense) && !empty($post['id_header'])) {
+            $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', ['id_header' => $post['id_header']])->row();
+        }
+        $id_expense = (!empty($get_expense)) ? $get_expense->id : ($post['id_expense'] ?? '');
         $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $get_expense->id_header])->row();
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_kasbon->id_penawaran])->row();
         $get_company = $this->db->get_where('kons_tr_company', ['id' => $get_penawaran->company])->row();
@@ -2920,8 +2924,8 @@ class Approval_expense_report_project extends Admin_Controller
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-center">';
-                        $hasil_jurnal .= $keterangan;
-                        $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . '">';
+                        $hasil_jurnal .= $keterangan . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                        $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . (!empty($id_expense) ? ' - ' . $id_expense : '') . '">';
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-right">';
@@ -2974,8 +2978,8 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-center">';
-                    $hasil_jurnal .= $item_coa->nm_coa;
-                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= $item_coa->nm_coa . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . (!empty($id_expense) ? ' - ' . $id_expense : '') . '">';
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-right">';
@@ -3179,8 +3183,8 @@ class Approval_expense_report_project extends Admin_Controller
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-center">';
-                        $hasil_jurnal .= $keterangan;
-                        $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . '">';
+                        $hasil_jurnal .= $keterangan . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                        $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . (!empty($id_expense) ? ' - ' . $id_expense : '') . '">';
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-right">';
@@ -3236,8 +3240,8 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-center">';
-                    $hasil_jurnal .= $item_coa->nm_coa;
-                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= $item_coa->nm_coa . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . (!empty($id_expense) ? ' - ' . $id_expense : '') . '">';
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-right">';
@@ -3433,8 +3437,8 @@ class Approval_expense_report_project extends Admin_Controller
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-center">';
-                        $hasil_jurnal .= $keterangan;
-                        $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . '">';
+                        $hasil_jurnal .= $keterangan . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                        $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . (!empty($id_expense) ? ' - ' . $id_expense : '') . '">';
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-right">';
@@ -3489,8 +3493,8 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-center">';
-                    $hasil_jurnal .= $item_coa->nm_coa;
-                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= $item_coa->nm_coa . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . (!empty($id_expense) ? ' - ' . $id_expense : '') . '">';
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-right">';
