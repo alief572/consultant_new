@@ -1,23 +1,18 @@
 <?php
-$ENABLE_ADD     = has_permission('Cashflow_Project.Add');
-$ENABLE_MANAGE  = has_permission('Cashflow_Project.Manage');
-$ENABLE_VIEW    = has_permission('Cashflow_Project.View');
-$ENABLE_DELETE  = has_permission('Cashflow_Project.Delete');
-
 // Calculate grand totals across all tipes
-$grand_budget = 0;
-$grand_aktual = 0;
+$grand_budget    = 0;
+$grand_aktual    = 0;
 $grand_pengajuan = 0;
-$grand_sisa = 0;
+$grand_sisa      = 0;
 foreach ($summaries as $s) {
-    $grand_budget += $s['budget'];
-    $grand_aktual += $s['total_aktual'];
+    $grand_budget    += $s['budget'];
+    $grand_aktual    += $s['total_aktual'];
     $grand_pengajuan += $s['pengajuan_terpakai'];
-    $grand_sisa += $s['sisa_budget'];
+    $grand_sisa      += $s['sisa_budget'];
 }
 ?>
 
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="<?= base_url('assets/adminlte/plugins/datatables/dataTables.bootstrap.css') ?>">
 
 <style>
     .btn {
@@ -213,37 +208,37 @@ foreach ($summaries as $s) {
         <table border="0" style="width: 100%;">
             <tr>
                 <th class="pd-5 valign-top" width="150">No. SPK</th>
-                <td class="pd-5 valign-top" width="400"><?= $header->id_spk_penawaran ?></td>
+                <td class="pd-5 valign-top" width="400"><?= esc($header->id_spk_penawaran) ?></td>
                 <th class="pd-5 valign-top" width="150">Project Leader</th>
-                <td class="pd-5 valign-top" width="400"><?= ucfirst($header->nm_project_leader) ?></td>
+                <td class="pd-5 valign-top" width="400"><?= esc(ucfirst($header->nm_project_leader)) ?></td>
             </tr>
             <tr>
                 <th class="pd-5 valign-top" width="150">Customer</th>
-                <td class="pd-5 valign-top" width="400"><?= $header->nm_customer ?></td>
+                <td class="pd-5 valign-top" width="400"><?= esc($header->nm_customer) ?></td>
                 <th class="pd-5 valign-top" width="150">Sales</th>
-                <td class="pd-5 valign-top" width="400"><?= ucfirst($header->nm_sales) ?></td>
+                <td class="pd-5 valign-top" width="400"><?= esc(ucfirst($header->nm_sales)) ?></td>
             </tr>
             <tr>
                 <th class="pd-5 valign-top" width="150">Address</th>
-                <td class="pd-5 valign-top" width="400"><?= $header->alamat ?></td>
+                <td class="pd-5 valign-top" width="400"><?= esc($header->alamat) ?></td>
                 <th class="pd-5 valign-top" width="150">Waktu</th>
                 <td class="pd-5 valign-top" width="400">
                     <div class="form-inline">
                         <div class="form-group">
-                            <input type="date" class="form-control form-control-sm" value="<?= $header->waktu_from ?>" readonly>
+                            <input type="date" class="form-control form-control-sm" value="<?= esc($header->waktu_from) ?>" readonly>
                         </div>
                         <div class="form-group text-center" style="width: 50px; padding-top: 8px;">
                             <span>-</span>
                         </div>
                         <div class="form-group">
-                            <input type="date" class="form-control form-control-sm" value="<?= $header->waktu_to ?>" readonly>
+                            <input type="date" class="form-control form-control-sm" value="<?= esc($header->waktu_to) ?>" readonly>
                         </div>
                     </div>
                 </td>
             </tr>
             <tr>
                 <th class="pd-5 valign-top" width="150">Project</th>
-                <td class="pd-5 valign-top" width="400"><?= $header->nama_project ?></td>
+                <td class="pd-5 valign-top" width="400"><?= esc($header->nama_project) ?></td>
                 <th class="pd-5 valign-top" width="150"></th>
                 <td class="pd-5 valign-top" width="400"></td>
             </tr>
@@ -286,7 +281,7 @@ foreach ($tipe_codes as $tipe_code):
         <div class="section-header">
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div style="flex:1;">
-                    <p class="section-title"><span class="dot"></span><?= $summary['name'] ?></p>
+                    <p class="section-title"><span class="dot"></span><?= esc($summary['name']) ?></p>
                 </div>
                 <div class="section-summary">
                     <div class="sum-item">
@@ -303,18 +298,18 @@ foreach ($tipe_codes as $tipe_code):
                     </div>
                     <div class="sum-item">
                         <div class="sum-label">Sisa Budget</div>
-                        <div class="sum-value <?= $sisa_class ?>">Rp <?= number_format($summary['sisa_budget'], 0, ',', '.') ?></div>
+                        <div class="sum-value <?= esc($sisa_class) ?>">Rp <?= number_format($summary['sisa_budget'], 0, ',', '.') ?></div>
                     </div>
                 </div>
             </div>
             <div class="budget-progress">
-                <div class="bar <?= $bar_class ?>" style="width: <?= min($pct, 100) ?>%;"></div>
+                <div class="bar <?= esc($bar_class) ?>" style="width: <?= esc((string) min($pct, 100)) ?>%;"></div>
             </div>
-            <div class="progress-label"><?= $pct ?>% budget terpakai</div>
+            <div class="progress-label"><?= esc((string) $pct) ?>% budget terpakai</div>
         </div>
 
         <div class="section-body">
-            <table id="table_tipe_<?= $tipe_code ?>" class="table" style="width:100%; margin-bottom:0;">
+            <table id="table_tipe_<?= esc((string) $tipe_code) ?>" class="table" style="width:100%; margin-bottom:0;">
                 <thead>
                     <tr>
                         <th>Tanggal Transaksi</th>
@@ -331,9 +326,9 @@ foreach ($tipe_codes as $tipe_code):
     </div>
 <?php endforeach; ?>
 
-<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script src="<?= base_url('assets/adminlte/plugins/datatables/dataTables.bootstrap.js') ?>"></script>
 <script type="text/javascript">
-    var spkId = '<?= str_replace("/", "|", $id_spk_budgeting) ?>';
+    var spkId = '<?= esc(str_replace("/", "|", $id_spk_budgeting)) ?>';
 
     $(document).ready(function() {
         [2, 3, 4, 5, 6].forEach(function(tipe) {

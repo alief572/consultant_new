@@ -2,23 +2,12 @@
 
 class Cashflow_project_model extends BF_Model
 {
-
-    protected $ENABLE_ADD;
-    protected $ENABLE_MANAGE;
-    protected $ENABLE_VIEW;
-    protected $ENABLE_DELETE;
-
-    protected $gl;
     protected $sendigs;
+    protected $sendigs_db_name;
 
     public function __construct()
     {
         parent::__construct();
-
-        $this->ENABLE_ADD     = has_permission('Cashflow_Project.Add');
-        $this->ENABLE_MANAGE  = has_permission('Cashflow_Project.Manage');
-        $this->ENABLE_VIEW    = has_permission('Cashflow_Project.View');
-        $this->ENABLE_DELETE  = has_permission('Cashflow_Project.Delete');
 
         // Load sendigs_finance connection (payment_approve, ms_generate tables)
         try {
@@ -26,22 +15,15 @@ class Cashflow_project_model extends BF_Model
             if (!$this->sendigs) {
                 log_message('error', 'Cashflow_project_model: Failed to load sendigs_finance database connection.');
                 $this->sendigs = null;
+                $this->sendigs_db_name = 'db_sendigs_ss'; // fallback
+            } else {
+                // Resolve actual DB name from config — avoids hardcoding across environments
+                $this->sendigs_db_name = $this->sendigs->database;
             }
         } catch (Exception $e) {
             log_message('error', 'Cashflow_project_model: Exception loading sendigs_finance DB - ' . $e->getMessage());
             $this->sendigs = null;
-        }
-
-        // Load gl_sendigs connection (coa_master table)
-        try {
-            $this->gl = $this->load->database('gl_sendigs', true);
-            if (!$this->gl) {
-                log_message('error', 'Cashflow_project_model: Failed to load gl_sendigs database connection.');
-                $this->gl = null;
-            }
-        } catch (Exception $e) {
-            log_message('error', 'Cashflow_project_model: Exception loading gl_sendigs DB - ' . $e->getMessage());
-            $this->gl = null;
+            $this->sendigs_db_name = 'db_sendigs_ss'; // fallback
         }
     }
 
@@ -74,30 +56,33 @@ class Cashflow_project_model extends BF_Model
 
     public function get_data_spk()
     {
-        $draw = $this->input->post('draw');
-        $start = (int) $this->input->post('start');
+        $draw   = $this->input->post('draw');
+        $start  = (int) $this->input->post('start');
         $length = (int) $this->input->post('length');
         $search = $this->input->post('search');
-        $year = $this->input->post('year');
+        $year   = (int) $this->input->post('year');
 
-        // Base query - get distinct SPKs that have kasbon transactions in the selected year
-        $where_year = '';
-        if (!empty($year)) {
-            $year = (int) $year;
-            $where_year = " AND YEAR(b.created_date) = {$year}";
-        }
-
-        // Count total (without search)
+        // Count total (without search) — use query binding to prevent injection
         $count_sql = "SELECT COUNT(DISTINCT a.id_spk_budgeting) as total
             FROM kons_tr_spk_budgeting a
             INNER JOIN kons_tr_kasbon_project_header b ON b.id_spk_budgeting = a.id_spk_budgeting
-            WHERE b.tipe != 1 {$where_year}";
-        $records_total = (int) $this->db->query($count_sql)->row()->total;
+            WHERE b.tipe != 1";
+
+        $bindings = [];
+        $where_year = '';
+        if (!empty($year)) {
+            $where_year   = " AND YEAR(b.created_date) = ?";
+            $bindings[]   = $year;
+        }
+
+        $count_query  = $this->db->query($count_sql . $where_year, $bindings);
+        $records_total = ($count_query) ? (int) $count_query->row()->total : 0;
 
         // Build search condition
         $search_condition = '';
+        $search_bindings  = $bindings; // start with year binding if any
         if (!empty($search) && !empty($search['value'])) {
-            $search_val = $this->db->escape_like_str($search['value']);
+            $search_val       = $this->db->escape_like_str($search['value']);
             $search_condition = " AND (a.id_spk_budgeting LIKE '%{$search_val}%' OR a.id_spk_penawaran LIKE '%{$search_val}%' OR a.nm_customer LIKE '%{$search_val}%')";
         }
 
@@ -107,8 +92,9 @@ class Cashflow_project_model extends BF_Model
             INNER JOIN kons_tr_kasbon_project_header b ON b.id_spk_budgeting = a.id_spk_budgeting
             LEFT JOIN kons_tr_spk_penawaran c ON c.id_spk_penawaran = a.id_spk_penawaran
             LEFT JOIN kons_master_konsultasi_header d ON d.id_konsultasi_h = a.id_project
-            WHERE b.tipe != 1 {$where_year} {$search_condition}";
-        $records_filtered = (int) $this->db->query($count_filtered_sql)->row()->total;
+            WHERE b.tipe != 1" . $where_year . $search_condition;
+        $count_filtered_query = $this->db->query($count_filtered_sql, $search_bindings);
+        $records_filtered     = ($count_filtered_query) ? (int) $count_filtered_query->row()->total : 0;
 
         // Get paginated SPK data
         $data_sql = "SELECT a.id_spk_budgeting, a.nm_customer, a.nm_project_leader, a.id_spk_penawaran,
@@ -117,47 +103,53 @@ class Cashflow_project_model extends BF_Model
             INNER JOIN kons_tr_kasbon_project_header b ON b.id_spk_budgeting = a.id_spk_budgeting
             LEFT JOIN kons_tr_spk_penawaran c ON c.id_spk_penawaran = a.id_spk_penawaran
             LEFT JOIN kons_master_konsultasi_header d ON d.id_konsultasi_h = a.id_project
-            WHERE b.tipe != 1 {$where_year} {$search_condition}
+            WHERE b.tipe != 1" . $where_year . $search_condition . "
             GROUP BY a.id_spk_budgeting
             ORDER BY a.id_spk_budgeting DESC
-            LIMIT {$start}, {$length}";
+            LIMIT ?, ?";
 
-        $get_data = $this->db->query($data_sql);
+        $data_bindings   = $search_bindings;
+        $data_bindings[] = $start;
+        $data_bindings[] = $length;
+
+        $get_data = $this->db->query($data_sql, $data_bindings);
 
         $hasil = [];
-        $no = $start;
+        $no    = $start;
 
-        foreach ($get_data->result() as $item) {
-            $no++;
+        if ($get_data && $get_data->num_rows() > 0) {
+            foreach ($get_data->result() as $item) {
+                $no++;
 
-            // Get total budget for this SPK
-            $total_budget = $this->get_spk_budget($item->id_spk_budgeting);
+                // Get total budget for this SPK
+                $total_budget = $this->get_spk_budget($item->id_spk_budgeting);
 
-            // Get total actual for this SPK (all tipes, approved ER + approved DP)
-            $total_actual = $this->get_total_actual_spk($item->id_spk_budgeting);
+                // Get total actual for this SPK (all tipes, approved ER + approved DP)
+                $total_actual = $this->get_total_actual_spk($item->id_spk_budgeting);
 
-            $option = '<a href="' . base_url('cashflow_project/view_cashflow/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-view" title="View Cashflow"><i class="fa fa-eye"></i></a>';
+                $option = '<a href="' . base_url('cashflow_project/view_cashflow/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-view" title="View Cashflow"><i class="fa fa-eye"></i></a>';
 
-            $hasil[] = [
-                'no' => $no,
-                'id_spk_budgeting' => $item->id_spk_budgeting,
-                'id_spk_penawaran' => $item->id_spk_penawaran,
-                'nm_customer' => $item->nm_customer,
-                'nm_sales' => $item->nm_sales,
-                'nm_project_leader' => $item->nm_project_leader,
-                'nm_project' => $item->nama_project,
-                'total_budget' => $total_budget,
-                'total_actual' => $total_actual,
-                'option' => $option
-            ];
+                $hasil[] = [
+                    'no'                => $no,
+                    'id_spk_budgeting'  => $item->id_spk_budgeting,
+                    'id_spk_penawaran'  => $item->id_spk_penawaran,
+                    'nm_customer'       => $item->nm_customer,
+                    'nm_sales'          => $item->nm_sales,
+                    'nm_project_leader' => $item->nm_project_leader,
+                    'nm_project'        => $item->nama_project,
+                    'total_budget'      => $total_budget,
+                    'total_actual'      => $total_actual,
+                    'option'            => $option
+                ];
+            }
         }
 
-        echo json_encode([
-            'draw' => intval($draw),
-            'recordsTotal' => $records_total,
+        return [
+            'draw'            => intval($draw),
+            'recordsTotal'    => $records_total,
             'recordsFiltered' => $records_filtered,
-            'data' => $hasil
-        ]);
+            'data'            => $hasil
+        ];
     }
 
     /**
@@ -178,17 +170,19 @@ class Cashflow_project_model extends BF_Model
         $this->db->where('a.id_spk_budgeting', $id_spk);
         $this->db->where('a.tipe !=', 1);
         $this->db->where('er.sts', 1);
-        $actual_er = (float) $this->db->get()->row()->total;
+        $query_er  = $this->db->get();
+        $actual_er = ($query_er && $query_er->num_rows() > 0) ? (float) $query_er->row()->total : 0;
 
         // Approved DP amounts (Direct Payment with payment_approve.status=2)
         $this->db->select('IFNULL(SUM(a.grand_total), 0) as total', false);
         $this->db->from('kons_tr_kasbon_project_header a');
-        $this->db->join('db_sendigs_ss.payment_approve pa', 'pa.no_doc = a.id', 'inner');
+        $this->db->join($this->sendigs_db_name . '.payment_approve pa', 'pa.no_doc = a.id', 'inner');
         $this->db->where('a.metode_pembayaran', 2);
         $this->db->where('a.id_spk_budgeting', $id_spk);
         $this->db->where('a.tipe !=', 1);
         $this->db->where('pa.status', 2);
-        $actual_dp = (float) $this->db->get()->row()->total;
+        $query_dp  = $this->db->get();
+        $actual_dp = ($query_dp && $query_dp->num_rows() > 0) ? (float) $query_dp->row()->total : 0;
 
         return $actual_er + $actual_dp;
     }
@@ -212,11 +206,10 @@ class Cashflow_project_model extends BF_Model
 
         $total = 0;
         foreach ($tables as $table) {
-            $result = $this->db->select('IFNULL(SUM(total_final), 0) as budget', false)
+            $q = $this->db->select('IFNULL(SUM(total_final), 0) as budget', false)
                 ->where('id_spk_budgeting', $id_spk)
-                ->get($table)
-                ->row();
-            $total += (float) $result->budget;
+                ->get($table);
+            $total += ($q && $q->num_rows() > 0) ? (float) $q->row()->budget : 0;
         }
 
         return $total;
@@ -237,12 +230,12 @@ class Cashflow_project_model extends BF_Model
     {
         $this->db->select('a.grand_total as nominal, DATE(a.created_date) as tanggal_transaksi, a.id as no_transaksi');
         $this->db->from('kons_tr_kasbon_project_header a');
-        $this->db->join('db_sendigs_ss.payment_approve b', 'b.no_doc = a.id', 'inner');
+        $this->db->join($this->sendigs_db_name . '.payment_approve b', 'b.no_doc = a.id', 'inner');
         $this->db->where('a.metode_pembayaran', 2);
         $this->db->where('a.id_spk_budgeting', $id_spk);
         $this->db->where('a.tipe', $tipe);
         $this->db->where('b.status', 2);
-        $this->db->where('YEAR(a.created_date)', $year, false);
+        $this->db->where('YEAR(a.created_date)', (int) $year, false);
 
         $query = $this->db->get();
 
@@ -304,11 +297,10 @@ class Cashflow_project_model extends BF_Model
 
         $budget = 0;
         if (isset($budget_tables[$tipe])) {
-            $result = $this->db->select('IFNULL(SUM(total_final), 0) as budget', false)
+            $q = $this->db->select('IFNULL(SUM(total_final), 0) as budget', false)
                 ->where('id_spk_budgeting', $id_spk)
-                ->get($budget_tables[$tipe])
-                ->row();
-            $budget = (float) $result->budget;
+                ->get($budget_tables[$tipe]);
+            $budget = ($q && $q->num_rows() > 0) ? (float) $q->row()->budget : 0;
         }
 
         // 2. Calculate Total Aktual
@@ -320,18 +312,19 @@ class Cashflow_project_model extends BF_Model
         $this->db->where('a.id_spk_budgeting', $id_spk);
         $this->db->where('a.tipe', $tipe);
         $this->db->where('b.sts', 1);
-        $actual_er = (float) $this->db->get()->row()->total;
+        $query_er  = $this->db->get();
+        $actual_er = ($query_er && $query_er->num_rows() > 0) ? (float) $query_er->row()->total : 0;
 
         // Approved DP amounts (Direct Payment with payment_approve.status=2)
-        $actual_dp = 0;
         $this->db->select('IFNULL(SUM(a.grand_total), 0) as total', false);
         $this->db->from('kons_tr_kasbon_project_header a');
-        $this->db->join('db_sendigs_ss.payment_approve b', 'b.no_doc = a.id', 'inner');
+        $this->db->join($this->sendigs_db_name . '.payment_approve b', 'b.no_doc = a.id', 'inner');
         $this->db->where('a.metode_pembayaran', 2);
         $this->db->where('a.id_spk_budgeting', $id_spk);
         $this->db->where('a.tipe', $tipe);
         $this->db->where('b.status', 2);
-        $actual_dp = (float) $this->db->get()->row()->total;
+        $query_dp  = $this->db->get();
+        $actual_dp = ($query_dp && $query_dp->num_rows() > 0) ? (float) $query_dp->row()->total : 0;
 
         $total_aktual = $actual_er + $actual_dp;
 
@@ -341,7 +334,8 @@ class Cashflow_project_model extends BF_Model
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->where('a.id_spk_budgeting', $id_spk);
         $this->db->where('a.tipe', $tipe);
-        $pengajuan_terpakai = (float) $this->db->get()->row()->total;
+        $query_pt          = $this->db->get();
+        $pengajuan_terpakai = ($query_pt && $query_pt->num_rows() > 0) ? (float) $query_pt->row()->total : 0;
 
         // 4. Sisa Budget = Budget - Pengajuan Terpakai
         $sisa_budget = $budget - $pengajuan_terpakai;
@@ -392,7 +386,7 @@ class Cashflow_project_model extends BF_Model
             a.tipe,
             a.deskripsi AS item
         FROM kons_tr_kasbon_project_header a
-        INNER JOIN db_sendigs_ss.payment_approve pa ON pa.no_doc = a.id
+        INNER JOIN {$this->sendigs_db_name}.payment_approve pa ON pa.no_doc = a.id
         LEFT JOIN kons_tr_spk_budgeting s ON s.id_spk_budgeting = a.id_spk_budgeting
         WHERE a.metode_pembayaran = 2
         AND pa.status = 2
@@ -427,64 +421,68 @@ class Cashflow_project_model extends BF_Model
         }
 
         // Get total record count (without search filter)
-        $total_query = $this->db->query("SELECT COUNT(*) AS cnt FROM ({$base_sql}) AS t");
-        $records_total = (int) $total_query->row()->cnt;
+        $total_query   = $this->db->query("SELECT COUNT(*) AS cnt FROM ({$base_sql}) AS t");
+        $records_total = ($total_query) ? (int) $total_query->row()->cnt : 0;
 
         // Get filtered record count (with search filter applied)
-        $filtered_query = $this->db->query("SELECT COUNT(*) AS cnt FROM ({$base_sql}) AS t {$where_clause}");
-        $records_filtered = (int) $filtered_query->row()->cnt;
+        $filtered_query   = $this->db->query("SELECT COUNT(*) AS cnt FROM ({$base_sql}) AS t {$where_clause}");
+        $records_filtered = ($filtered_query) ? (int) $filtered_query->row()->cnt : 0;
 
         // Get paginated data ordered by SPK ascending, then tanggal ascending
-        $data_sql = "SELECT * FROM ({$base_sql}) AS t {$where_clause} ORDER BY t.id_spk_budgeting ASC, t.tanggal_transaksi ASC LIMIT {$start}, {$length}";
+        $data_sql   = "SELECT * FROM ({$base_sql}) AS t {$where_clause} ORDER BY t.id_spk_budgeting ASC, t.tanggal_transaksi ASC LIMIT {$start}, {$length}";
         $data_query = $this->db->query($data_sql);
 
-        $rows = [];
+        $rows        = [];
         $spk_budgets = [];
 
-        foreach ($data_query->result() as $row) {
-            // Map tipe to display name
-            $jenis = isset($tipe_names[$row->tipe]) ? $tipe_names[$row->tipe] : '';
+        if ($data_query && $data_query->num_rows() > 0) {
+            foreach ($data_query->result() as $row) {
+                // Map tipe to display name
+                $jenis = isset($tipe_names[$row->tipe]) ? $tipe_names[$row->tipe] : '';
 
-            // Cache budget per SPK
-            if (!isset($spk_budgets[$row->id_spk_budgeting])) {
-                $spk_budgets[$row->id_spk_budgeting] = $this->get_spk_budget($row->id_spk_budgeting);
+                // Cache budget per SPK
+                if (!isset($spk_budgets[$row->id_spk_budgeting])) {
+                    $spk_budgets[$row->id_spk_budgeting] = $this->get_spk_budget($row->id_spk_budgeting);
+                }
+
+                $rows[] = [
+                    'id_spk_budgeting'  => $row->id_spk_budgeting,
+                    'nm_customer'       => $row->nm_customer,
+                    'budget'            => $spk_budgets[$row->id_spk_budgeting],
+                    'tanggal_transaksi' => $row->tanggal_transaksi,
+                    'no_transaksi'      => $row->no_transaksi,
+                    'jenis_pengeluaran' => $jenis,
+                    'item'              => $row->item,
+                    'nominal'           => (float) $row->nominal
+                ];
             }
-
-            $rows[] = [
-                'id_spk_budgeting' => $row->id_spk_budgeting,
-                'nm_customer' => $row->nm_customer,
-                'budget' => $spk_budgets[$row->id_spk_budgeting],
-                'tanggal_transaksi' => $row->tanggal_transaksi,
-                'no_transaksi' => $row->no_transaksi,
-                'jenis_pengeluaran' => $jenis,
-                'item' => $row->item,
-                'nominal' => (float) $row->nominal
-            ];
         }
 
         // Calculate Grand Total Realisasi from ALL filtered data (not just current page)
-        $totals_sql = "SELECT IFNULL(SUM(t.nominal), 0) AS grand_realisasi FROM ({$base_sql}) AS t {$where_clause}";
-        $totals = $this->db->query($totals_sql)->row();
-        $grand_total_realisasi = (float) $totals->grand_realisasi;
+        $totals_sql    = "SELECT IFNULL(SUM(t.nominal), 0) AS grand_realisasi FROM ({$base_sql}) AS t {$where_clause}";
+        $totals_query  = $this->db->query($totals_sql);
+        $grand_total_realisasi = ($totals_query) ? (float) $totals_query->row()->grand_realisasi : 0;
 
         // Get all distinct SPKs from the filtered dataset for budget total calculation
-        $spks_sql = "SELECT DISTINCT t.id_spk_budgeting FROM ({$base_sql}) AS t {$where_clause}";
-        $spks = $this->db->query($spks_sql)->result();
+        $spks_sql           = "SELECT DISTINCT t.id_spk_budgeting FROM ({$base_sql}) AS t {$where_clause}";
+        $spks_query         = $this->db->query($spks_sql);
         $grand_total_budget = 0;
-        foreach ($spks as $spk) {
-            if (!isset($spk_budgets[$spk->id_spk_budgeting])) {
-                $spk_budgets[$spk->id_spk_budgeting] = $this->get_spk_budget($spk->id_spk_budgeting);
+        if ($spks_query && $spks_query->num_rows() > 0) {
+            foreach ($spks_query->result() as $spk) {
+                if (!isset($spk_budgets[$spk->id_spk_budgeting])) {
+                    $spk_budgets[$spk->id_spk_budgeting] = $this->get_spk_budget($spk->id_spk_budgeting);
+                }
+                $grand_total_budget += $spk_budgets[$spk->id_spk_budgeting];
             }
-            $grand_total_budget += $spk_budgets[$spk->id_spk_budgeting];
         }
 
         return [
-            'data' => $rows,
-            'recordsTotal' => $records_total,
-            'recordsFiltered' => $records_filtered,
-            'grand_total_budget' => $grand_total_budget,
+            'data'                  => $rows,
+            'recordsTotal'          => $records_total,
+            'recordsFiltered'       => $records_filtered,
+            'grand_total_budget'    => $grand_total_budget,
             'grand_total_realisasi' => $grand_total_realisasi,
-            'selisih' => $grand_total_budget - $grand_total_realisasi
+            'selisih'               => $grand_total_budget - $grand_total_realisasi
         ];
     }
 
@@ -512,16 +510,17 @@ class Cashflow_project_model extends BF_Model
         ];
 
         $year = (int) $year;
-        $where_year = !empty($year) ? " AND YEAR(b.created_date) = {$year}" : "";
 
-        // 1. Get ALL SPKs matching the index page list for this year
+        // 1. Get ALL SPKs matching the index page list for this year — use binding for $year
         $spks_sql = "SELECT a.id_spk_budgeting, a.id_spk_penawaran, a.nm_customer
             FROM kons_tr_spk_budgeting a
             INNER JOIN kons_tr_kasbon_project_header b ON b.id_spk_budgeting = a.id_spk_budgeting
-            WHERE b.tipe != 1 {$where_year}
+            WHERE b.tipe != 1
+            AND YEAR(b.created_date) = ?
             GROUP BY a.id_spk_budgeting
             ORDER BY a.id_spk_budgeting DESC";
-        $spk_list = $this->db->query($spks_sql)->result();
+        $spk_query = $this->db->query($spks_sql, [$year]);
+        $spk_list  = ($spk_query) ? $spk_query->result() : [];
 
         if (empty($spk_list)) {
             return [];
@@ -540,7 +539,7 @@ class Cashflow_project_model extends BF_Model
             a.tipe,
             a.deskripsi AS item
         FROM kons_tr_kasbon_project_header a
-        INNER JOIN db_sendigs_ss.payment_approve pa ON pa.no_doc = a.id
+        INNER JOIN {$this->sendigs_db_name}.payment_approve pa ON pa.no_doc = a.id
         LEFT JOIN kons_tr_spk_budgeting s ON s.id_spk_budgeting = a.id_spk_budgeting
         WHERE a.metode_pembayaran = 2
         AND pa.status = 2
@@ -564,8 +563,8 @@ class Cashflow_project_model extends BF_Model
         AND a.tipe != 1
         AND YEAR(b.created_date) = {$year}";
 
-        $base_sql = '(' . implode(') UNION ALL (', $sql_parts) . ')';
-        $data_sql = "SELECT * FROM ({$base_sql}) AS t ORDER BY t.id_spk_budgeting ASC, t.tanggal_transaksi ASC";
+        $base_sql   = '(' . implode(') UNION ALL (', $sql_parts) . ')';
+        $data_sql   = "SELECT * FROM ({$base_sql}) AS t ORDER BY t.id_spk_budgeting ASC, t.tanggal_transaksi ASC";
         $data_query = $this->db->query($data_sql);
 
         // Group approved transactions by SPK
@@ -712,7 +711,7 @@ class Cashflow_project_model extends BF_Model
             d.total_pengajuan AS nominal,
             'Direct Payment' AS jenis_transaksi
         FROM kons_tr_kasbon_project_header h
-        INNER JOIN db_sendigs_ss.payment_approve pa ON pa.no_doc = h.id
+        INNER JOIN {$this->sendigs_db_name}.payment_approve pa ON pa.no_doc = h.id
         INNER JOIN {$detail_table} d ON d.id_header = h.id
         LEFT JOIN {$coa_table} m ON m.id = d.id_item
         WHERE h.metode_pembayaran = 2
@@ -761,28 +760,30 @@ class Cashflow_project_model extends BF_Model
         }
 
         // Count total records (without search)
-        $count_query = $this->db->query("SELECT COUNT(*) AS cnt FROM ({$base_sql}) AS t");
-        $records_total = (int) $count_query->row()->cnt;
+        $count_query   = $this->db->query("SELECT COUNT(*) AS cnt FROM ({$base_sql}) AS t");
+        $records_total = ($count_query) ? (int) $count_query->row()->cnt : 0;
 
         // Count filtered records (with search)
         $count_filtered_query = $this->db->query("SELECT COUNT(*) AS cnt FROM ({$base_sql}) AS t {$search_where}");
-        $records_filtered = (int) $count_filtered_query->row()->cnt;
+        $records_filtered     = ($count_filtered_query) ? (int) $count_filtered_query->row()->cnt : 0;
 
         // Get paginated data, ordered by tanggal_transaksi descending
-        $data_sql = "SELECT * FROM ({$base_sql}) AS t {$search_where} ORDER BY t.tanggal_transaksi DESC LIMIT {$start}, {$length}";
+        $data_sql   = "SELECT * FROM ({$base_sql}) AS t {$search_where} ORDER BY t.tanggal_transaksi DESC LIMIT {$start}, {$length}";
         $data_query = $this->db->query($data_sql);
 
         $rows = [];
-        foreach ($data_query->result() as $row) {
-            $rows[] = [
-                'tanggal_transaksi' => $row->tanggal_transaksi,
-                'no_transaksi' => $row->no_transaksi,
-                'coa' => $row->coa,
-                'jenis_pengeluaran' => $row->jenis_pengeluaran,
-                'item' => $row->item,
-                'jenis_transaksi' => $row->jenis_transaksi,
-                'actual' => (float) $row->nominal
-            ];
+        if ($data_query && $data_query->num_rows() > 0) {
+            foreach ($data_query->result() as $row) {
+                $rows[] = [
+                    'tanggal_transaksi' => $row->tanggal_transaksi,
+                    'no_transaksi'      => $row->no_transaksi,
+                    'coa'               => $row->coa,
+                    'jenis_pengeluaran' => $row->jenis_pengeluaran,
+                    'item'              => $row->item,
+                    'jenis_transaksi'   => $row->jenis_transaksi,
+                    'actual'            => (float) $row->nominal
+                ];
+            }
         }
 
         return [
@@ -806,6 +807,7 @@ class Cashflow_project_model extends BF_Model
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk);
 
-        return $this->db->get()->row();
+        $query = $this->db->get();
+        return ($query && $query->num_rows() > 0) ? $query->row() : null;
     }
 }
