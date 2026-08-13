@@ -1,7 +1,7 @@
 <?php
-$ENABLE_VIEW = has_permission('Cashflow_Project.View');
+// $ENABLE_VIEW is intentionally not set here — permission check is handled in the controller.
 ?>
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="<?= base_url('assets/adminlte/plugins/datatables/dataTables.bootstrap.css') ?>">
 
 <style>
     .btn {
@@ -58,7 +58,7 @@ $ENABLE_VIEW = has_permission('Cashflow_Project.View');
                             <option value="">Tidak ada data</option>
                         <?php else: ?>
                             <?php foreach ($years as $year): ?>
-                                <option value="<?= $year ?>" <?= ($year == $default_year) ? 'selected' : '' ?>><?= $year ?></option>
+                                <option value="<?= esc($year) ?>" <?= ($year == $default_year) ? 'selected' : '' ?>><?= esc($year) ?></option>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </select>
@@ -93,10 +93,10 @@ $ENABLE_VIEW = has_permission('Cashflow_Project.View');
 
 <!-- Hidden form for Excel export -->
 <form id="export_form" method="POST" action="<?= base_url('cashflow_project/export_excel') ?>" style="display:none;">
-    <input type="hidden" name="year" id="export_year" value="<?= $default_year ?>">
+    <input type="hidden" name="year" id="export_year" value="<?= esc($default_year) ?>">
 </form>
 
-<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script src="<?= base_url('assets/adminlte/plugins/datatables/dataTables.bootstrap.js') ?>"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         var table = initDataTable();

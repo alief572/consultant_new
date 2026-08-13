@@ -10,7 +10,6 @@ if (!defined('BASEPATH')) {
  * This is controller for Pengajuan Rutin
  */
 
-$status = array();
 class Cashflow_project extends Admin_Controller
 {
     //Permission
@@ -109,17 +108,21 @@ class Cashflow_project extends Admin_Controller
 
     public function get_data_spk()
     {
-        $this->Cashflow_project_model->get_data_spk();
+        $this->auth->restrict($this->viewPermission);
+        $result = $this->Cashflow_project_model->get_data_spk();
+        echo json_encode($result);
     }
 
     public function get_years()
     {
+        $this->auth->restrict($this->viewPermission);
         $years = $this->Cashflow_project_model->get_available_years();
         echo json_encode(['success' => true, 'data' => $years]);
     }
 
     public function get_data_report()
     {
+        $this->auth->restrict($this->viewPermission);
         $draw = $this->input->post('draw');
         $start = $this->input->post('start');
         $length = $this->input->post('length');
@@ -145,6 +148,7 @@ class Cashflow_project extends Admin_Controller
 
     public function get_data_view_tipe()
     {
+        $this->auth->restrict($this->viewPermission);
         $draw = $this->input->post('draw');
         $start = $this->input->post('start');
         $length = $this->input->post('length');
@@ -171,6 +175,7 @@ class Cashflow_project extends Admin_Controller
 
     public function export_excel()
     {
+        $this->auth->restrict($this->viewPermission);
         try {
             $year = $this->input->post('year');
             if (empty($year)) {
