@@ -59,6 +59,7 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
                         <th align="center">No</th>
                         <th align="center">Nomor SPK</th>
                         <th align="center">Nomor Expense</th>
+                        <th align="center">Nomor Pengajuan</th>
                         <th align="center">Customer</th>
                         <th align="center">Sales</th>
                         <th align="center">Project Leader</th>
@@ -203,6 +204,9 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
                 },
                 {
                     data: 'nomor_expense'
+                },
+                {
+                    data: 'nomor_pengajuan'
                 },
                 {
                     data: 'customer'
