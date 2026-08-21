@@ -1172,6 +1172,7 @@ class Approval_expense_report_project extends Admin_Controller
             $this->db->group_start();
             $this->db->like('b.id_spk_penawaran', $search['value'], 'both');
             $this->db->or_like('a.id', $search['value'], 'both');
+            $this->db->or_like('a.id_header', $search['value'], 'both');
             $this->db->or_like('c.nm_customer', $search['value'], 'both');
             $this->db->or_like('c.nm_sales', $search['value'], 'both');
             $this->db->or_like('c.nm_project_leader', $search['value'], 'both');
@@ -1218,6 +1219,7 @@ class Approval_expense_report_project extends Admin_Controller
                 'no' => $no,
                 'nomor_spk' => $item->id_spk_penawaran,
                 'nomor_expense' => $item->id,
+                'nomor_pengajuan' => $item->id_header,
                 'customer' => $item->nm_customer,
                 'sales' => $item->nm_sales,
                 'project_leader' => $item->nm_project_leader,
