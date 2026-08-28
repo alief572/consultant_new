@@ -518,10 +518,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             </div>
 
             <div class="col-md-6">
-                <div class="row">
-                    <!-- <a href="<?= base_url('kasbon_project/add_request_budget_akomodasi/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
-                        <i class="fa fa-plus"></i> Request Overbudget
-                    </a> -->
+                <div class="panel panel-default" style="border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-color: #e3e6f0;">
+                    <div class="panel-heading" style="background-color: #f8f9fc; border-bottom: 1px solid #e3e6f0; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+                        <span><i class="fa fa-paperclip"></i> Bukti Penggunaan</span>
+                        <button type="button" class="btn btn-xs btn-primary" id="btn-pilih-bukti">
+                            <i class="fa fa-plus"></i> Upload Bukti
+                        </button>
+                    </div>
+                    <div class="panel-body" style="padding: 12px;">
+                        <input type="file" id="input-bukti-file" multiple style="display: none;">
+                        <div id="dropzone-bukti" style="border: 2px dashed #b4c6dc; border-radius: 6px; background: #fdfdfe; padding: 18px; text-align: center; cursor: pointer; transition: all 0.2s ease-in-out;">
+                            <i class="fa fa-cloud-upload" style="font-size: 28px; color: #3c8dbc; margin-bottom: 6px; display: block;"></i>
+                            <span style="font-size: 13px; color: #555;"><b>Tarik & letakkan file di sini</b> atau klik untuk memilih file</span>
+                        </div>
+                        <div id="container-bukti-list" style="margin-top: 10px;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -544,14 +555,83 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         $('.auto_num').autoNumeric();
     });
 
-    // $(document).on('change', '.qty_pengajuan', function() {
-    //     var no_urut = $(this).data('no_urut');
-    //     var price_unit = $(this).data('price_unit');
+    var selectedBuktiFiles = [];
 
-    //     $('input[name="detail_akomodasi[' + no_urut + '][nominal_pengajuan]"]').autoNumeric('set', price_unit);
+    $(document).on('click', '#btn-pilih-bukti, #dropzone-bukti', function() {
+        $('#input-bukti-file').click();
+    });
 
-    //     hitung_all_pengajuan();
-    // });
+    $(document).on('change', '#input-bukti-file', function() {
+        var files = this.files;
+        for (var i = 0; i < files.length; i++) {
+            selectedBuktiFiles.push(files[i]);
+        }
+        this.value = '';
+        renderSelectedBukti();
+    });
+
+    // Drag and drop handlers
+    $(document).on('dragover dragenter', '#dropzone-bukti', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({
+            'border-color': '#3c8dbc',
+            'background': '#eef5fb'
+        });
+    });
+
+    $(document).on('dragleave dragend drop', '#dropzone-bukti', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({
+            'border-color': '#b4c6dc',
+            'background': '#fdfdfe'
+        });
+    });
+
+    $(document).on('drop', '#dropzone-bukti', function(e) {
+        var files = e.originalEvent.dataTransfer.files;
+        if (files && files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+                selectedBuktiFiles.push(files[i]);
+            }
+            renderSelectedBukti();
+        }
+    });
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        var k = 1024;
+        var sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    function renderSelectedBukti() {
+        var html = '';
+        if (selectedBuktiFiles.length > 0) {
+            html += '<small class="text-muted" style="font-weight: bold;">File Baru Dipilih (' + selectedBuktiFiles.length + '):</small><div class="list-group" style="margin-top: 5px; margin-bottom: 0;">';
+            for (var i = 0; i < selectedBuktiFiles.length; i++) {
+                var file = selectedBuktiFiles[i];
+                html += '<div class="list-group-item" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; margin-bottom: 4px; background: #fff; border: 1px solid #e3e6f0; border-radius: 4px;">' +
+                    '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">' +
+                    '<i class="fa fa-file-text-o text-primary" style="margin-right: 8px;"></i>' +
+                    '<b>' + file.name + '</b> <small class="text-muted">(' + formatBytes(file.size) + ')</small>' +
+                    '</span>' +
+                    '<button type="button" class="btn btn-xs btn-danger btn-remove-selected-bukti" data-index="' + i + '" title="Hapus"><i class="fa fa-trash"></i></button>' +
+                    '</div>';
+            }
+            html += '</div>';
+        }
+        $('#container-bukti-list').html(html);
+    }
+
+    $(document).on('click', '.btn-remove-selected-bukti', function(e) {
+        e.stopPropagation();
+        var index = $(this).data('index');
+        selectedBuktiFiles.splice(index, 1);
+        renderSelectedBukti();
+    });
 
     function number_format(number, decimals, dec_point, thousands_sep) {
         // Strip all characters but numerical ones.
@@ -604,15 +684,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             }
 
             var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
-            // if (qty_pengajuan < 1) {
-            //     var total_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][total_pengajuan]"]').val());
-            // } else {
-                var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
-            // }
-
-            // if(i == 1) {
-            //     alert(qty_pengajuan +' - '+ nominal_pengajuan);
-            // }
+            var total_pengajuan = (nominal_pengajuan * qty_pengajuan);
 
             $('input[name="detail_akomodasi[' + i + '][total_pengajuan]"]').autoNumeric('set', total_pengajuan);
 
@@ -632,7 +704,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var qty = (pengajuan / budget);
 
-
         $('input[name="detail_akomodasi[' + no + '][qty_pengajuan]"]').val(qty);
         $('input[name="detail_akomodasi[' + no + '][total_pengajuan]"]').autoNumeric('set', pengajuan);
 
@@ -643,12 +714,10 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         e.preventDefault();
 
         var no = "<?= $no ?>";
-
         var total_sisa = $('input[name="total_sisa"]').val();
-
         var valid = 1;
-
         var ttl_propose = 0;
+
         for (i = 1; i <= no; i++) {
             var qty_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][qty_pengajuan]"]').val());
             var nominal_pengajuan = get_num($('input[name="detail_akomodasi[' + i + '][nominal_pengajuan]"]').val());
@@ -658,9 +727,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             if (qty_pengajuan > 0 && qty_pengajuan < 1) {
                 qty_pengajuan = 1;
             }
-            // if (valid == '1' && qty_pengajuan > 0 && (qty_pengajuan * nominal_pengajuan) > sisa_budget) {
-            //     valid = 0;
-            // }
 
             ttl_propose += (qty_pengajuan * nominal_pengajuan);
         }
@@ -684,32 +750,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             }, function(next) {
                 if (next) {
                     var formData = new FormData($('#frm-data')[0]);
-                    const result = {};
-
-                    for (const [name, value] of formData.entries()) {
-                        const keys = name
-                            .replace(/\]/g, '') // remove closing brackets
-                            .split(/\[/); // split by opening bracket
-
-                        let current = result;
-
-                        for (let i = 0; i < keys.length; i++) {
-                            const key = keys[i];
-
-                            if (i === keys.length - 1) {
-                                current[key] = value;
-                            } else {
-                                if (!current[key]) current[key] = {};
-                                current = current[key];
-                            }
-                        }
+                    for (var i = 0; i < selectedBuktiFiles.length; i++) {
+                        formData.append('bukti_penggunaan[]', selectedBuktiFiles[i]);
                     }
 
                     $.ajax({
                         type: 'post',
                         url: siteurl + active_controller + 'save_kasbon_akomodasi',
-                        data: JSON.stringify(result),
-                        contentType: 'application/json',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
                         cache: false,
                         dataType: 'JSON',
                         success: function(result) {
@@ -741,6 +791,5 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 }
             });
         }
-
-    })
+    });
 </script>
