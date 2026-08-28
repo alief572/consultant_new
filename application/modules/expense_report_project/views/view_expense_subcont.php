@@ -171,7 +171,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                     <th class="text-center" rowspan="2">Item</th>
                     <th class="text-center" colspan="3">Kasbon</th>
                     <th class="text-center" colspan="3">Expense Report</th>
-                    <th class="text-center" rowspan="2" colspan="2">Keterangan</th>
+                    <th class="text-center" rowspan="2" width="220">Bukti Penggunaan</th>
+                    <th class="text-center" rowspan="2" width="200">Keterangan</th>
                 </tr>
                 <tr>
                     <th class="text-center">Qty</th>
@@ -233,8 +234,24 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                     echo '<input type="text" name="detail_subcont[' . $item['no'] . '][total_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . ($nominal_expense * $qty_expense) . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
                     echo '</td>';
 
-                    echo '<td width="400" colspan="2">';
-                    echo '<textarea class="form-control form-control-sm" readonly>' . $keterangan . '</textarea>';
+                    echo '<td width="220" style="vertical-align: top;">';
+                    if (isset($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']])) {
+                        echo '<div class="list-group" style="margin-bottom: 0;">';
+                        foreach ($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']] as $bp) {
+                            echo '<div class="list-group-item" style="padding: 4px 6px; margin-bottom: 2px; background: #f8f9fa; border: 1px solid #e3e6f0; border-radius: 3px; font-size: 11px;">';
+                            echo '<a href="' . base_url($bp->upload_file) . '" target="_blank" title="' . basename($bp->upload_file) . '">';
+                            echo '<i class="fa fa-download text-primary"></i> ' . basename($bp->upload_file);
+                            echo '</a>';
+                            echo '</div>';
+                        }
+                        echo '</div>';
+                    } else {
+                        echo '<span class="text-muted" style="font-size: 11px;">-</span>';
+                    }
+                    echo '</td>';
+
+                    echo '<td width="200">';
+                    echo '<textarea class="form-control form-control-sm" readonly rows="4">' . $keterangan . '</textarea>';
                     echo '</td>';
 
                     echo '</tr>';
@@ -251,31 +268,28 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="5" class="text-right">Total Kasbon</td>
+                    <td colspan="7" class="text-right">Total Kasbon</td>
                     <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
                     <td>Kelebihan Kasbon</td>
                     <td>
                         <input type="text" name="kelebihan_kasbon" class="form-control form-control-sm text-right kelebihan_kasbon" value="<?= number_format($kelebihan_kasbon, 2) ?>" readonly>
                     </td>
-                    <td></td>
                 </tr>
                 <tr>
-                    <td colspan="5" class="text-right">Total Expense Report</td>
+                    <td colspan="7" class="text-right">Total Expense Report</td>
                     <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
                     <td>Kelebihan Expense</td>
                     <td>
                         <input type="text" name="kelebihan_expense" class="form-control form-control-sm text-right kelebihan_expense" value="<?= number_format($kelebihan_expense, 2) ?>" readonly>
                     </td>
-                    <td></td>
                 </tr>
                 <tr>
-                    <td colspan="5" class="text-right">Selisih</td>
+                    <td colspan="7" class="text-right">Selisih</td>
                     <td class="text-right col_selisih"><?= number_format($header->selisih, 2) ?></td>
                     <td>Kontrol</td>
                     <td>
                         <input type="text" name="kontrol" class="form-control form-control-sm text-right kontrol" value="<?= number_format($header->selisih, 2) ?>" readonly>
                     </td>
-                    <td></td>
                 </tr>
             </tfoot>
         </table>
@@ -292,18 +306,6 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                             if (count($list_bukti_pengembalian) > 0) {
                                 echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup">';
                                 echo '<i class="fa fa-list"></i> List Bukti Pengemblian';
-                                echo '</button>';
-                            }
-                            ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th style="padding: 5px;">Bukti Penggunaan</th>
-                        <td style="padding: 5px;">
-                            <?php
-                            if (count($list_bukti_penggunaan) > 0) {
-                                echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup2">';
-                                echo '<i class="fa fa-list"></i> List Bukti Penggunaan';
                                 echo '</button>';
                             }
                             ?>

@@ -64,6 +64,13 @@ class Approval_expense_report_project extends Admin_Controller
         $this->db->where('a.id_header_expense', $get_header->id);
         $get_bukti_penggunaan = $this->db->get()->result();
 
+        $list_bukti_penggunaan_by_detail = [];
+        if (!empty($get_bukti_penggunaan)) {
+            foreach ($get_bukti_penggunaan as $bp) {
+                $list_bukti_penggunaan_by_detail[$bp->id_detail_kasbon][] = $bp;
+            }
+        }
+
         $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header a', ['a.id' => $id_header])->row();
 
         $datalist_item = [];
@@ -629,6 +636,7 @@ class Approval_expense_report_project extends Admin_Controller
             'header' => $get_header,
             'list_bukti_pengembalian' => $get_bukti_pengembalian,
             'list_bukti_penggunaan' => $get_bukti_penggunaan,
+            'list_bukti_penggunaan_by_detail' => $list_bukti_penggunaan_by_detail,
             'datalist_item' => $datalist_item,
             'datalist_item_expense' => $datalist_item_expense,
             'id_spk_budgeting' => $get_kasbon_header->id_spk_budgeting,
