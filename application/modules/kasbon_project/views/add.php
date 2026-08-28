@@ -1193,13 +1193,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('click', '.del_kasbon_akomodasi', function() {
         var id = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_kasbon_akomodasi',
@@ -1210,28 +1213,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 DataTables_kasbon_akomodasi();
                                 hitung_all_budget_process();
                             });
                         } else {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+            icon: 'error',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1241,13 +1244,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('click', '.del_kasbon_others', function() {
         var id_kasbon_others = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_kasbon_others',
@@ -1258,28 +1264,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 DataTables_kasbon_others();
                                 hitung_all_budget_process();
                             });
                         } else {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+            icon: 'error',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1289,13 +1295,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('click', '.del_kasbon_lab', function() {
         var id_kasbon_lab = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_kasbon_lab',
@@ -1306,28 +1315,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 DataTables_kasbon_lab();
                                 hitung_all_budget_process();
                             });
                         } else {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+            icon: 'error',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1337,13 +1346,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('click', '.del_kasbon_subcont_tenaga_ahli', function() {
         var id_kasbon_subcont_tenaga_ahli = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_kasbon_subcont_tenaga_ahli',
@@ -1354,28 +1366,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 DataTables_kasbon_subcont_tenaga_ahli();
                                 hitung_all_budget_process();
                             });
                         } else {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+            icon: 'error',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1385,13 +1397,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('click', '.del_kasbon_subcont_perusahaan', function() {
         var id_kasbon_subcont_perusahaan = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_kasbon_subcont_perusahaan',
@@ -1402,28 +1417,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 DataTables_kasbon_subcont_perusahaan();
                                 hitung_all_budget_process();
                             });
                         } else {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+            icon: 'error',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1435,13 +1450,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('click', '.paid_kasbon_akomodasi', function() {
         var id_kasbon_akomodasi = $(this).data('id_kasbon_akomodasi');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure?',
             text: 'This data will be paid !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'paid_kasbon_akomodasi',
@@ -1452,28 +1470,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 DataTables_kasbon_akomodasi();
                                 hitung_all_budget_process();
                             });
                         } else {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+            icon: 'error',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1483,13 +1501,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('click', '.paid_kasbon_others', function() {
         var id_kasbon_others = $(this).data('id_kasbon_others');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure?',
             text: 'This data will be paid !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'paid_kasbon_others',
@@ -1500,28 +1521,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 DataTables_kasbon_others();
                                 hitung_all_budget_process();
                             });
                         } else {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+            icon: 'error',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1533,13 +1554,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var id_request_ovb = $(this).data('id_request_ovb');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_ovb_akomodasi',
@@ -1550,27 +1574,27 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 location.reload();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+            icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1584,13 +1608,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var id_request_ovb = $(this).data('id_request_ovb');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_ovb_lab',
@@ -1601,27 +1628,27 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 location.reload();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+            icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1633,13 +1660,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var id_request_ovb = $(this).data('id_request_ovb');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_ovb_subcont_tenaga_ahli',
@@ -1650,27 +1680,27 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 location.reload();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+            icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1682,13 +1712,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var id_request_ovb = $(this).data('id_request_ovb');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_ovb_others',
@@ -1699,27 +1732,27 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 location.reload();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+            icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1731,13 +1764,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var id_request_ovb = $(this).data('id_request_ovb');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be approved !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'approval_req_ovb',
@@ -1748,27 +1784,27 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 location.reload();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+            icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
-                        });
+        });
                     }
                 });
             }
@@ -1778,13 +1814,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('click', '.req_approve_kasbon', function() {
         var id = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data status will be changed to Waiting Approval !',
             showCancelButton: true,
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'req_approve_kasbon',
@@ -1795,28 +1834,28 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 DataTables_kasbon_akomodasi();
                                 DataTables_kasbon_others();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+            icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please, try again later !'
-                        });
+        });
                     }
                 })
             }

@@ -91,13 +91,16 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
     $(document).on('click', '.del_spk_budget', function() {
         var id = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_spk_budgeting',
@@ -108,27 +111,27 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+            icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+        }).then(() => {
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+            icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
-                            });
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later!'
-                        });
+        });
                     }
                 });
             }

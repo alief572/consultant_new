@@ -549,6 +549,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 </form>
 
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script>
     $(document).ready(function() {
@@ -736,19 +737,23 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         }
 
         if (valid == '0') {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Total pengajuan melebihi sisa budget !'
             });
         } else {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Are you sure ?',
                 text: 'This data will be saved !',
-                showCancelButton: true
-            }, function(next) {
-                if (next) {
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, save it!',
+                cancelButtonText: 'Cancel'
+            }).then((res) => {
+                if (res.isConfirmed) {
                     var formData = new FormData($('#frm-data')[0]);
                     for (var i = 0; i < selectedBuktiFiles.length; i++) {
                         formData.append('bukti_penggunaan[]', selectedBuktiFiles[i]);
@@ -764,25 +769,25 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         dataType: 'JSON',
                         success: function(result) {
                             if (result.status == '1') {
-                                swal({
-                                    type: 'success',
+                                Swal.fire({
+                                    icon: 'success',
                                     title: 'Success !',
                                     text: result.pesan,
                                     timer: 2000
-                                }, function(lanjut) {
-                                    window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>"
+                                }).then(() => {
+                                    window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>";
                                 });
                             } else {
-                                swal({
-                                    type: 'warning',
+                                Swal.fire({
+                                    icon: 'warning',
                                     title: 'Failed !',
                                     text: result.pesan
                                 });
                             }
                         },
                         error: function(result) {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+                                icon: 'error',
                                 title: 'Error !',
                                 text: 'Please try again later !'
                             });

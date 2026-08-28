@@ -1302,19 +1302,22 @@ if ($header->metode_pembayaran == '3') {
     var reject_reason = $('input[name="reject_reason"]').val();
 
     if (reject_reason == '') {
-      swal({
-        type: 'warning',
+      Swal.fire({
+            icon: 'warning',
         title: 'Warning !',
         text: 'Please fill the reject reason first !'
-      });
+        });
     } else {
-      swal({
-        type: 'warning',
+      Swal.fire({
+            icon: 'warning',
         title: 'Are you sure ?',
         text: 'This data will be rejected !',
         showCancelButton: true
-      }, function(next) {
-        if (next) {
+      ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
           $.ajax({
             type: 'post',
             url: siteurl + active_controller + 'reject_kasbon',
@@ -1329,29 +1332,29 @@ if ($header->metode_pembayaran == '3') {
             },
             success: function(result) {
               if (result.status == '1') {
-                swal({
-                  type: 'success',
+                Swal.fire({
+            icon: 'success',
                   title: 'Success !',
                   text: result.pesan
-                }, function(a) {
+        }).then(() => {
                   window.location.href = siteurl + active_controller;
                 });
               } else {
-                swal({
-                  type: 'warning',
+                Swal.fire({
+            icon: 'warning',
                   title: 'Failed !',
                   text: result.pesan
-                });
+        });
               }
             },
             error: function() {
               $('.reject_kasbon').attr('disabled', false);
 
-              swal({
-                type: 'error',
+              Swal.fire({
+            icon: 'error',
                 title: 'Error !',
                 text: 'Please try again later !'
-              });
+        });
             }
           });
         }
@@ -1364,13 +1367,16 @@ if ($header->metode_pembayaran == '3') {
 
     var id_kasbon = $('input[name="id_kasbon"]').val();
 
-    swal({
-      type: 'warning',
+    Swal.fire({
+            icon: 'warning',
       title: 'Are you sure ?',
       text: 'This data will be approved !',
       showCancelButton: true
-    }, function(next) {
-      if (next) {
+    ,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
         $.ajax({
           type: 'post',
           url: siteurl + active_controller + 'approve_kasbon',
@@ -1384,28 +1390,28 @@ if ($header->metode_pembayaran == '3') {
           },
           success: function(result) {
             if (result.status == '1') {
-              swal({
-                type: 'success',
+              Swal.fire({
+            icon: 'success',
                 title: 'Success !',
                 text: result.pesan
-              }, function(a) {
+        }).then(() => {
                 window.location.href = siteurl + active_controller;
               });
             } else {
-              swal({
-                type: 'warning',
+              Swal.fire({
+            icon: 'warning',
                 title: 'Failed !',
                 text: result.pesan
-              });
+        });
             }
           },
           error: function() {
             $('.approve_kasbon').attr('disabled', false);
-            swal({
-              type: 'error',
+            Swal.fire({
+            icon: 'error',
               title: 'Error !',
               text: 'Please try again later !'
-            });
+        });
           }
         });
       }
