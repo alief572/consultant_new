@@ -208,37 +208,37 @@ foreach ($summaries as $s) {
         <table border="0" style="width: 100%;">
             <tr>
                 <th class="pd-5 valign-top" width="150">No. SPK</th>
-                <td class="pd-5 valign-top" width="400"><?= esc($header->id_spk_penawaran) ?></td>
+                <td class="pd-5 valign-top" width="400"><?= htmlspecialchars($header->id_spk_penawaran, ENT_QUOTES, 'UTF-8') ?></td>
                 <th class="pd-5 valign-top" width="150">Project Leader</th>
-                <td class="pd-5 valign-top" width="400"><?= esc(ucfirst($header->nm_project_leader)) ?></td>
+                <td class="pd-5 valign-top" width="400"><?= htmlspecialchars(ucfirst($header->nm_project_leader), ENT_QUOTES, 'UTF-8') ?></td>
             </tr>
             <tr>
                 <th class="pd-5 valign-top" width="150">Customer</th>
-                <td class="pd-5 valign-top" width="400"><?= esc($header->nm_customer) ?></td>
+                <td class="pd-5 valign-top" width="400"><?= htmlspecialchars($header->nm_customer, ENT_QUOTES, 'UTF-8') ?></td>
                 <th class="pd-5 valign-top" width="150">Sales</th>
-                <td class="pd-5 valign-top" width="400"><?= esc(ucfirst($header->nm_sales)) ?></td>
+                <td class="pd-5 valign-top" width="400"><?= htmlspecialchars(ucfirst($header->nm_sales), ENT_QUOTES, 'UTF-8') ?></td>
             </tr>
             <tr>
                 <th class="pd-5 valign-top" width="150">Address</th>
-                <td class="pd-5 valign-top" width="400"><?= esc($header->alamat) ?></td>
+                <td class="pd-5 valign-top" width="400"><?= htmlspecialchars($header->alamat, ENT_QUOTES, 'UTF-8') ?></td>
                 <th class="pd-5 valign-top" width="150">Waktu</th>
                 <td class="pd-5 valign-top" width="400">
                     <div class="form-inline">
                         <div class="form-group">
-                            <input type="date" class="form-control form-control-sm" value="<?= esc($header->waktu_from) ?>" readonly>
+                            <input type="date" class="form-control form-control-sm" value="<?= htmlspecialchars($header->waktu_from, ENT_QUOTES, 'UTF-8') ?>" readonly>
                         </div>
                         <div class="form-group text-center" style="width: 50px; padding-top: 8px;">
                             <span>-</span>
                         </div>
                         <div class="form-group">
-                            <input type="date" class="form-control form-control-sm" value="<?= esc($header->waktu_to) ?>" readonly>
+                            <input type="date" class="form-control form-control-sm" value="<?= htmlspecialchars($header->waktu_to, ENT_QUOTES, 'UTF-8') ?>" readonly>
                         </div>
                     </div>
                 </td>
             </tr>
             <tr>
                 <th class="pd-5 valign-top" width="150">Project</th>
-                <td class="pd-5 valign-top" width="400"><?= esc($header->nama_project) ?></td>
+                <td class="pd-5 valign-top" width="400"><?= htmlspecialchars($header->nama_project, ENT_QUOTES, 'UTF-8') ?></td>
                 <th class="pd-5 valign-top" width="150"></th>
                 <td class="pd-5 valign-top" width="400"></td>
             </tr>
@@ -281,7 +281,7 @@ foreach ($tipe_codes as $tipe_code):
         <div class="section-header">
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div style="flex:1;">
-                    <p class="section-title"><span class="dot"></span><?= esc($summary['name']) ?></p>
+                    <p class="section-title"><span class="dot"></span><?= htmlspecialchars($summary['name'], ENT_QUOTES, 'UTF-8') ?></p>
                 </div>
                 <div class="section-summary">
                     <div class="sum-item">
@@ -298,18 +298,18 @@ foreach ($tipe_codes as $tipe_code):
                     </div>
                     <div class="sum-item">
                         <div class="sum-label">Sisa Budget</div>
-                        <div class="sum-value <?= esc($sisa_class) ?>">Rp <?= number_format($summary['sisa_budget'], 0, ',', '.') ?></div>
+                        <div class="sum-value <?= htmlspecialchars($sisa_class, ENT_QUOTES, 'UTF-8') ?>">Rp <?= number_format($summary['sisa_budget'], 0, ',', '.') ?></div>
                     </div>
                 </div>
             </div>
             <div class="budget-progress">
-                <div class="bar <?= esc($bar_class) ?>" style="width: <?= esc((string) min($pct, 100)) ?>%;"></div>
+                <div class="bar <?= htmlspecialchars($bar_class, ENT_QUOTES, 'UTF-8') ?>" style="width: <?= htmlspecialchars((string) min($pct, 100), ENT_QUOTES, 'UTF-8') ?>%;"></div>
             </div>
-            <div class="progress-label"><?= esc((string) $pct) ?>% budget terpakai</div>
+            <div class="progress-label"><?= htmlspecialchars((string) $pct, ENT_QUOTES, 'UTF-8') ?>% budget terpakai</div>
         </div>
 
         <div class="section-body">
-            <table id="table_tipe_<?= esc((string) $tipe_code) ?>" class="table" style="width:100%; margin-bottom:0;">
+            <table id="table_tipe_<?= htmlspecialchars((string) $tipe_code, ENT_QUOTES, 'UTF-8') ?>" class="table" style="width:100%; margin-bottom:0;">
                 <thead>
                     <tr>
                         <th>Tanggal Transaksi</th>
@@ -328,7 +328,7 @@ foreach ($tipe_codes as $tipe_code):
 
 <script src="<?= base_url('assets/adminlte/plugins/datatables/dataTables.bootstrap.js') ?>"></script>
 <script type="text/javascript">
-    var spkId = '<?= esc(str_replace("/", "|", $id_spk_budgeting)) ?>';
+    var spkId = '<?= htmlspecialchars(str_replace("/", "|", $id_spk_budgeting), ENT_QUOTES, 'UTF-8') ?>';
 
     $(document).ready(function() {
         [2, 3, 4, 5, 6].forEach(function(tipe) {

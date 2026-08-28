@@ -2,6 +2,13 @@
 
 defined('BASEPATH') || exit('No direct script access allowed');
 
+if (!function_exists('esc')) {
+  function esc($data = '')
+  {
+    return htmlspecialchars((string)$data, ENT_QUOTES, 'UTF-8');
+  }
+}
+
 function get_supplier($id = false)
 {
   $CI = &get_instance();
@@ -43,10 +50,11 @@ function get_name($table, $field, $where, $value)
   return $hasil;
 }
 
-function get_incoming_sum_material($kode_trans){
+function get_incoming_sum_material($kode_trans)
+{
   $CI = &get_instance();
 
-  $query = "SELECT IF(SUM(qty_order) IS NULL, 0, SUM(qty_order)) AS ttl_qty_order FROM tr_incoming_check_detail WHERE kode_trans = '".$kode_trans."'";
+  $query = "SELECT IF(SUM(qty_order) IS NULL, 0, SUM(qty_order)) AS ttl_qty_order FROM tr_incoming_check_detail WHERE kode_trans = '" . $kode_trans . "'";
 
   $result = $CI->db->query($query)->row();
 
@@ -1240,7 +1248,7 @@ function get_total_time_cycletime()
 
   $Arrback = [];
   foreach ($result as $key => $value) {
-    $KEY_UNIQ = $value['id_product']."-".$value['no_bom'];
+    $KEY_UNIQ = $value['id_product'] . "-" . $value['no_bom'];
 
     $Arrback[$KEY_UNIQ]['id_product'] = $value['id_product'];
     $Arrback[$KEY_UNIQ]['ct_machine'] = $value['ct_machine'];
@@ -1277,7 +1285,7 @@ function get_total_time_cycletime_bom_std()
 
   $Arrback = [];
   foreach ($result as $key => $value) {
-    $KEY_UNIQ = $value['id_product']."-".$value['no_bom'];
+    $KEY_UNIQ = $value['id_product'] . "-" . $value['no_bom'];
 
     $Arrback[$KEY_UNIQ]['id_product'] = $value['id_product'];
     $Arrback[$KEY_UNIQ]['ct_machine'] = $value['ct_machine'];
@@ -1405,7 +1413,7 @@ function get_total_time_cycletime_assembly()
 
   $Arrback = [];
   foreach ($result as $key => $value) {
-    $KEY_UNIQ = $value['id_product']."-".$value['no_bom']."-".$value['category'];
+    $KEY_UNIQ = $value['id_product'] . "-" . $value['no_bom'] . "-" . $value['category'];
 
     $Arrback[$KEY_UNIQ]['id_time']      = $value['id_time'];
     $Arrback[$KEY_UNIQ]['id_product']   = $value['id_product'];
@@ -1416,36 +1424,52 @@ function get_total_time_cycletime_assembly()
   return $Arrback;
 }
 
-function get_machine_product_assembly(){
-	$CI = &get_instance();
-	$listGetCategory = $CI->db
-		->select('a.id_product,b.machine,c.category')
-		->group_by('a.id_product,c.category')
-		->join('cycletime_custom_detail_header c', 'a.id_time=c.id_time', 'join')
-		->join('cycletime_custom_detail_detail b', 'b.id_costcenter=c.id_costcenter', 'join')
-		->get_where('cycletime_custom_header a', array('a.deleted_date' => NULL, 'b.machine !=' => NULL, 'b.machine !=' => '0'))
-		->result_array();
-	$ArrGetCategory = [];
-	foreach ($listGetCategory as $key => $value) {
-    $KEY_UNIQ = $value['id_product']."-".$value['category'];
-		$ArrGetCategory[$KEY_UNIQ] 	= $value['machine'];
-	}
-	return $ArrGetCategory;
+function get_machine_product_assembly()
+{
+  $CI = &get_instance();
+  $listGetCategory = $CI->db
+    ->select('a.id_product,b.machine,c.category')
+    ->group_by('a.id_product,c.category')
+    ->join('cycletime_custom_detail_header c', 'a.id_time=c.id_time', 'join')
+    ->join('cycletime_custom_detail_detail b', 'b.id_costcenter=c.id_costcenter', 'join')
+    ->get_where('cycletime_custom_header a', array('a.deleted_date' => NULL, 'b.machine !=' => NULL, 'b.machine !=' => '0'))
+    ->result_array();
+  $ArrGetCategory = [];
+  foreach ($listGetCategory as $key => $value) {
+    $KEY_UNIQ = $value['id_product'] . "-" . $value['category'];
+    $ArrGetCategory[$KEY_UNIQ]   = $value['machine'];
+  }
+  return $ArrGetCategory;
 }
 
-function get_mold_product_assembly(){
-	$CI = &get_instance();
-	$listGetCategory = $CI->db
-		->select('a.id_product,b.mould,c.category')
-		->group_by('a.id_product,c.category')
-		->join('cycletime_custom_detail_header c', 'a.id_time=c.id_time', 'join')
-		->join('cycletime_custom_detail_detail b', 'b.id_costcenter=c.id_costcenter', 'join')
-		->get_where('cycletime_custom_header a', array('a.deleted_date' => NULL, 'b.mould !=' => NULL, 'b.mould !=' => '0'))
-		->result_array();
-	$ArrGetCategory = [];
-	foreach ($listGetCategory as $key => $value) {
-    $KEY_UNIQ = $value['id_product']."-".$value['category'];
-		$ArrGetCategory[$KEY_UNIQ] 	= $value['mould'];
-	}
-	return $ArrGetCategory;
+function get_mold_product_assembly()
+{
+  $CI = &get_instance();
+  $listGetCategory = $CI->db
+    ->select('a.id_product,b.mould,c.category')
+    ->group_by('a.id_product,c.category')
+    ->join('cycletime_custom_detail_header c', 'a.id_time=c.id_time', 'join')
+    ->join('cycletime_custom_detail_detail b', 'b.id_costcenter=c.id_costcenter', 'join')
+    ->get_where('cycletime_custom_header a', array('a.deleted_date' => NULL, 'b.mould !=' => NULL, 'b.mould !=' => '0'))
+    ->result_array();
+  $ArrGetCategory = [];
+  foreach ($listGetCategory as $key => $value) {
+    $KEY_UNIQ = $value['id_product'] . "-" . $value['category'];
+    $ArrGetCategory[$KEY_UNIQ]   = $value['mould'];
+  }
+  return $ArrGetCategory;
+}
+
+/**
+ * Escape a string for safe HTML output (XSS prevention).
+ * Use this in views whenever printing data from the database.
+ *
+ * @param mixed $str Value to escape
+ * @return string HTML-safe string
+ */
+if (!function_exists('esc')) {
+  function esc($str)
+  {
+    return htmlspecialchars($str ?? '', ENT_QUOTES, 'UTF-8');
+  }
 }
