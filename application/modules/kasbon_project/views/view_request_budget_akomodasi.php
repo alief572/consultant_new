@@ -208,11 +208,11 @@ if ($reject_reason !== null && $reject_reason !== '') {
         e.preventDefault();
 
         Swal.fire({
+
             icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be saved !',
             showCancelButton: true
-        ,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33'
         }).then((res) => {
@@ -232,6 +232,7 @@ if ($reject_reason !== null && $reject_reason !== '') {
                     success: function(result) {
                         if (result.status == '1') {
                             Swal.fire({
+
             icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
@@ -240,6 +241,7 @@ if ($reject_reason !== null && $reject_reason !== '') {
                             });
                         } else {
                             Swal.fire({
+
             icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
@@ -248,6 +250,7 @@ if ($reject_reason !== null && $reject_reason !== '') {
                     },
                     error: function(result) {
                         Swal.fire({
+
             icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'

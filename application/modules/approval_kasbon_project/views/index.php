@@ -92,11 +92,11 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
         var id = $(this).data('id');
 
         Swal.fire({
+
             icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        ,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33'
         }).then((res) => {
@@ -112,6 +112,7 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
                     success: function(result) {
                         if (result.status == 1) {
                             Swal.fire({
+
             icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
@@ -120,6 +121,7 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
                             });
                         } else {
                             Swal.fire({
+
             icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
@@ -128,6 +130,7 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
                     },
                     error: function(result) {
                         Swal.fire({
+
             icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later!'

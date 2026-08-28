@@ -675,11 +675,11 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('click', '.btn-del-bukti', function() {
         var id = $(this).data('id');
         Swal.fire({
+
             icon: 'warning',
             title: 'Are you sure ?',
             text: 'File bukti penggunaan ini akan dihapus permanen !',
             showCancelButton: true
-        ,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33'
         }).then((res) => {
@@ -692,6 +692,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     success: function(result) {
                         if (result.status == 1) {
                             Swal.fire({
+
             icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan,
@@ -700,6 +701,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             $('#row-bukti-' + id).remove();
                         } else {
                             Swal.fire({
+
             icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
@@ -708,6 +710,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     },
                     error: function() {
                         Swal.fire({
+
             icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
@@ -822,17 +825,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         if (valid == '0') {
             Swal.fire({
+
             icon: 'warning',
                 title: 'Warning !',
                 text: 'Nominal pengajuan melebihi Sisa Budget !'
         });
         } else {
             Swal.fire({
+
             icon: 'warning',
                 title: 'Are you sure ?',
                 text: 'This data will be saved !',
                 showCancelButton: true
-            ,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33'
         }).then((res) => {
@@ -853,6 +857,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         success: function(result) {
                             if (result.status == '1') {
                                 Swal.fire({
+
             icon: 'success',
                                     title: 'Success !',
                                     text: result.pesan
@@ -861,6 +866,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                                 });
                             } else {
                                 Swal.fire({
+
             icon: 'warning',
                                     title: 'Failed !',
                                     text: result.pesan
@@ -869,6 +875,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         },
                         error: function(result) {
                             Swal.fire({
+
             icon: 'error',
                                 title: 'Error !',
                                 text: 'Please try again later !'

@@ -1303,17 +1303,18 @@ if ($header->metode_pembayaran == '3') {
 
     if (reject_reason == '') {
       Swal.fire({
+
             icon: 'warning',
         title: 'Warning !',
         text: 'Please fill the reject reason first !'
         });
     } else {
       Swal.fire({
+
             icon: 'warning',
         title: 'Are you sure ?',
         text: 'This data will be rejected !',
         showCancelButton: true
-      ,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33'
         }).then((res) => {
@@ -1333,6 +1334,7 @@ if ($header->metode_pembayaran == '3') {
             success: function(result) {
               if (result.status == '1') {
                 Swal.fire({
+
             icon: 'success',
                   title: 'Success !',
                   text: result.pesan
@@ -1341,6 +1343,7 @@ if ($header->metode_pembayaran == '3') {
                 });
               } else {
                 Swal.fire({
+
             icon: 'warning',
                   title: 'Failed !',
                   text: result.pesan
@@ -1351,6 +1354,7 @@ if ($header->metode_pembayaran == '3') {
               $('.reject_kasbon').attr('disabled', false);
 
               Swal.fire({
+
             icon: 'error',
                 title: 'Error !',
                 text: 'Please try again later !'
@@ -1368,11 +1372,11 @@ if ($header->metode_pembayaran == '3') {
     var id_kasbon = $('input[name="id_kasbon"]').val();
 
     Swal.fire({
+
             icon: 'warning',
       title: 'Are you sure ?',
       text: 'This data will be approved !',
       showCancelButton: true
-    ,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33'
         }).then((res) => {
@@ -1391,6 +1395,7 @@ if ($header->metode_pembayaran == '3') {
           success: function(result) {
             if (result.status == '1') {
               Swal.fire({
+
             icon: 'success',
                 title: 'Success !',
                 text: result.pesan
@@ -1399,6 +1404,7 @@ if ($header->metode_pembayaran == '3') {
               });
             } else {
               Swal.fire({
+
             icon: 'warning',
                 title: 'Failed !',
                 text: result.pesan
@@ -1408,6 +1414,7 @@ if ($header->metode_pembayaran == '3') {
           error: function() {
             $('.approve_kasbon').attr('disabled', false);
             Swal.fire({
+
             icon: 'error',
               title: 'Error !',
               text: 'Please try again later !'
