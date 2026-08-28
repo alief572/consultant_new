@@ -738,22 +738,20 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         if (valid == '0') {
             Swal.fire({
-
-                icon: 'warning',
-                title: 'Warning !',
-                text: 'Total pengajuan melebihi sisa budget !'
+            icon: 'warning',
+            title: 'Warning !',
+            text: 'Total pengajuan melebihi sisa budget !'
         });
         } else {
             Swal.fire({
-
-                icon: 'warning',
-                title: 'Are you sure ?',
-                text: 'This data will be saved !',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, save it!',
-                cancelButtonText: 'Cancel'
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be saved !',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, save it!',
+            cancelButtonText: 'Cancel'
         }).then((res) => {
                 if (res.isConfirmed) {
                     var formData = new FormData($('#frm-data')[0]);
@@ -772,29 +770,26 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         success: function(result) {
                             if (result.status == '1') {
                                 Swal.fire({
-
-                                    icon: 'success',
-                                    title: 'Success !',
-                                    text: result.pesan,
-                                    timer: 2000
+            icon: 'success',
+            title: 'Success !',
+            text: result.pesan,
+            timer: 2000
         }).then(() => {
                                     window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>";
                                 });
                             } else {
                                 Swal.fire({
-
-                                    icon: 'warning',
-                                    title: 'Failed !',
-                                    text: result.pesan
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
         });
                             }
                         },
                         error: function(result) {
                             Swal.fire({
-
-                                icon: 'error',
-                                title: 'Error !',
-                                text: 'Please try again later !'
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later !'
         });
                         }
                     });
