@@ -58,7 +58,7 @@
                             <option value="">Tidak ada data</option>
                         <?php else: ?>
                             <?php foreach ($years as $year): ?>
-                                <option value="<?= esc($year) ?>" <?= ($year == $default_year) ? 'selected' : '' ?>><?= esc($year) ?></option>
+                                <option value="<?= htmlspecialchars($year, ENT_QUOTES, 'UTF-8') ?>" <?= ($year == $default_year) ? 'selected' : '' ?>><?= htmlspecialchars($year, ENT_QUOTES, 'UTF-8') ?></option>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </select>
@@ -93,7 +93,7 @@
 
 <!-- Hidden form for Excel export -->
 <form id="export_form" method="POST" action="<?= base_url('cashflow_project/export_excel') ?>" style="display:none;">
-    <input type="hidden" name="year" id="export_year" value="<?= esc($default_year) ?>">
+    <input type="hidden" name="year" id="export_year" value="<?= htmlspecialchars($default_year, ENT_QUOTES, 'UTF-8') ?>">
 </form>
 
 <script src="<?= base_url('assets/adminlte/plugins/datatables/dataTables.bootstrap.js') ?>"></script>
