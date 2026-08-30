@@ -198,26 +198,37 @@ class Master_lab_model extends BF_Model
         foreach ($get_data->result() as $item) {
             $no++;
 
-            $option = '<button type="button" class="btn btn-sm btn-info view_lab" data-id="' . $item->id . '" title="View Lab"><i class="fa fa-eye"></i></button>';
-            $option .= ' <button type="button" class="btn btn-sm btn-warning edit_lab" data-id="' . $item->id . '" title="Edit Lab"><i class="fa fa-pencil"></i></button>';
-            $option .= ' <button type="button" class="btn btn-sm btn-danger del_lab" data-id="' . $item->id . '" title="Delete Lab"><i class="fa fa-trash"></i></button>';
-
-            if (!has_permission($this->ENABLE_MANAGE)) {
-                $option = '';
+            $view_btn = '';
+            if (has_permission($this->ENABLE_VIEW)) {
+                $view_btn = '<button type="button" class="btn-table-action-view view_lab" data-id="' . $item->id . '" title="Lihat Detail"><i class="fa fa-eye"></i> <span>View</span></button>';
             }
 
-            $coa = '';
-            if ($item->no_coa !== '' && $item->no_coa !== null) {
-                $coa = '(' . $item->no_coa . ') - ' . $item->nm_coa;
+            $edit_btn = '';
+            if (has_permission($this->ENABLE_MANAGE)) {
+                $edit_btn = '<button type="button" class="btn-table-action-edit edit_lab" data-id="' . $item->id . '" title="Edit Data"><i class="fa fa-pencil-square-o"></i> <span>Edit</span></button>';
             }
+
+            $del_btn = '';
+            if (has_permission($this->ENABLE_DELETE)) {
+                $del_btn = '<button type="button" class="btn-table-action-delete del_lab" data-id="' . $item->id . '" title="Hapus Data"><i class="fa fa-trash-o"></i> <span>Hapus</span></button>';
+            }
+
+            $option = '<div class="text-center" style="display: inline-flex; gap: 4px;">' . $view_btn . $edit_btn . $del_btn . '</div>';
+
+            $coa = '<span class="text-muted">-</span>';
+            if (!empty($item->no_coa)) {
+                $coa = '<span class="label label-info" style="font-size: 11px; padding: 4px 8px; border-radius: 4px; display: inline-block; background-color: #0284c7;"><i class="fa fa-book"></i> (' . htmlspecialchars($item->no_coa) . ') ' . htmlspecialchars($item->nm_coa) . '</span>';
+            }
+
+            $waktu_badge = '<span class="badge" style="background: #e0f2fe; color: #0284c7; font-weight: 600; padding: 5px 10px; border-radius: 6px; font-size: 12px;"><i class="fa fa-clock-o"></i> ' . htmlspecialchars($item->waktu) . ' Jam</span>';
 
             $hasil[] = [
-                'no' => $no,
-                'isu_lingkungan' => $item->isu_lingkungan,
-                'peraturan' => $item->peraturan,
-                'waktu' => $item->waktu . ' Jam',
-                'harga_ssc' => number_format($item->harga_ssc),
-                'harga_lab' => number_format($item->harga_lab),
+                'no' => '<span class="text-muted">' . $no . '</span>',
+                'isu_lingkungan' => '<div style="font-weight: 600; color: #1e293b;">' . htmlspecialchars($item->isu_lingkungan) . '</div>',
+                'peraturan' => '<div style="color: #475569; font-size: 12px; line-height: 1.4;">' . nl2br(htmlspecialchars($item->peraturan)) . '</div>',
+                'waktu' => $waktu_badge,
+                'harga_ssc' => '<span style="font-weight: 600; color: #0f766e;">Rp ' . number_format($item->harga_ssc, 0, ',', '.') . '</span>',
+                'harga_lab' => '<span style="font-weight: 600; color: #1e40af;">Rp ' . number_format($item->harga_lab, 0, ',', '.') . '</span>',
                 'coa' => $coa,
                 'option' => $option
             ];
