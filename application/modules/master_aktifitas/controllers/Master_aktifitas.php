@@ -66,31 +66,33 @@ class Master_aktifitas extends Admin_Controller
 
             $edit_btn = "";
             if ($this->managePermission) {
-                $edit_btn = "<a href='" . site_url('master_aktifitas/aktifitas_edit/' . $row['id_aktifitas']) . "' class='btn btn-warning btn-xs'>
-                        <i class='fa fa-edit'></i> Edit
+                $edit_btn = "<a href='" . site_url('master_aktifitas/aktifitas_edit/' . $row['id_aktifitas']) . "' class='btn-table-action-edit' title='Edit Aktifitas'>
+                        <i class='fa fa-pencil-square-o'></i> <span>Edit</span>
                     </a>";
             }
 
             $delete_btn = "";
             if ($this->deletePermission) {
                 $delete_btn = "<a href='javascript:void(0);' 
-                        class='btn btn-danger btn-xs delete_aktifitas'
-                        id='DeleteConfirm' data-id='" . $row['id_aktifitas'] . "'>
-                        <i class='fa fa-trash'></i> Delete 
+                        class='btn-table-action-delete delete_aktifitas'
+                        id='DeleteConfirm' data-id='" . $row['id_aktifitas'] . "' title='Hapus Aktifitas'>
+                        <i class='fa fa-trash-o'></i> <span>Hapus</span>
                     </a>";
             }
 
-            $total_point    = $this->db->where('id_aktifitas', $row['id_aktifitas'])->get('kons_master_check_point')->num_rows();
+            $datet_formatted = (!empty($row['datet']) && $row['datet'] != '0000-00-00') ? date('d M Y', strtotime($row['datet'])) : '-';
+            $keterangan_text = !empty($row['keterangan']) ? nl2br(htmlspecialchars($row['keterangan'])) : '<span class="text-muted">-</span>';
+
             $nestedData     = array();
-            $nestedData[]   = $row['nomor'];
-            $nestedData[]   = $row['id_aktifitas'];
-            $nestedData[]   = $row['datet'];
-            $nestedData[]   = $row['nm_aktifitas'];
-            $nestedData[]   = number_format($row['harga_aktifitas']);
-            $nestedData[]   = $row['mandays'];
-            $nestedData[]   = $row['keterangan'];
+            $nestedData[]   = "<span class='text-muted'>" . $row['nomor'] . "</span>";
+            $nestedData[]   = "<span class='label label-primary' style='font-size: 11px; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.5px;'><i class='fa fa-tag'></i> " . htmlspecialchars($row['id_aktifitas']) . "</span>";
+            $nestedData[]   = "<span class='text-muted'><i class='fa fa-calendar-o'></i> " . $datet_formatted . "</span>";
+            $nestedData[]   = "<div style='font-weight: 600; color: #333;'>" . htmlspecialchars($row['nm_aktifitas']) . "</div>";
+            $nestedData[]   = "<div style='display: flex; justify-content: space-between; align-items: center;'><span class='text-muted' style='font-size: 11px;'>Rp</span><span style='font-weight: 600; color: #2e7d32;'>" . number_format($row['harga_aktifitas'], 0, ',', '.') . "</span></div>";
+            $nestedData[]   = "<div class='text-center'><span class='label label-info' style='font-size: 11px; padding: 4px 8px; border-radius: 4px;'><i class='fa fa-clock-o'></i> " . (int)$row['mandays'] . " Hari</span></div>";
+            $nestedData[]   = "<span style='font-size: 12px; color: #555;'>" . $keterangan_text . "</span>";
             $nestedData[]   = "
-                <div class='btn-group'>
+                <div class='text-center'>
                     " . $edit_btn . "
                     " . $delete_btn . "
                 </div>
