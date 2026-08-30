@@ -47,6 +47,16 @@ class Master_subcont_perusahaan extends Admin_Controller
         $this->template->render('add');
     }
 
+    public function view()
+    {
+        $id = $this->input->post('id');
+
+        $get_biaya = $this->db->get_where('kons_master_subcont_perusahaan', ['id' => $id])->row();
+
+        $this->template->set('data_biaya', $get_biaya);
+        $this->template->render('view');
+    }
+
     public function edit()
     {
         $id = $this->input->post('id');
@@ -162,9 +172,11 @@ class Master_subcont_perusahaan extends Admin_Controller
         $this->db->select('a.id, a.nm_biaya, a.no_coa, a.nm_coa');
         $this->db->from('kons_master_subcont_perusahaan a');
         $this->db->where('a.deleted_by', null);
-        if (!empty($search)) {
+        if (!empty($search['value'])) {
             $this->db->group_start();
             $this->db->like('a.nm_biaya', $search['value'], 'both');
+            $this->db->or_like('a.no_coa', $search['value'], 'both');
+            $this->db->or_like('a.nm_coa', $search['value'], 'both');
             $this->db->group_end();
         }
 
@@ -172,38 +184,44 @@ class Master_subcont_perusahaan extends Admin_Controller
         $count_all = $db_clone->count_all_results();
 
         $this->db->order_by('a.id', 'desc');
-        $this->db->limit($length, $start);
+        if ($length != -1) {
+            $this->db->limit($length, $start);
+        }
 
         $get_data_biaya = $this->db->get();
 
         $hasil = [];
+        $no = $start + 1;
 
-        $no = 1;
         foreach ($get_data_biaya->result() as $item) {
 
-            $edit = '';
-            $delete = '';
-
-            if ($this->managePermission) {
-                $edit = '<button type="button" class="btn btn-sm btn-warning edit_biaya_modal" data-id="' . $item->id . '" title="Edit Biaya"><i class="fa fa-pencil"></i></button>';
+            $view_btn = '';
+            if (has_permission($this->viewPermission)) {
+                $view_btn = '<button type="button" class="btn-table-action-view view_biaya_modal" data-id="' . $item->id . '" title="Lihat Detail"><i class="fa fa-eye"></i> <span>View</span></button>';
             }
 
-            if ($this->deletePermission) {
-                $delete = '<button type="button" class="btn btn-sm btn-sm btn-danger del_biaya" data-id="' . $item->id . '" title="Delete Biaya"><i class="fa fa-trash"></i></button>';
+            $edit_btn = '';
+            if (has_permission($this->managePermission)) {
+                $edit_btn = '<button type="button" class="btn-table-action-edit edit_biaya_modal" data-id="' . $item->id . '" title="Edit Data"><i class="fa fa-pencil-square-o"></i> <span>Edit</span></button>';
             }
 
-            $buttons = $edit . ' ' . $delete;
+            $del_btn = '';
+            if (has_permission($this->deletePermission)) {
+                $del_btn = '<button type="button" class="btn-table-action-delete del_biaya" data-id="' . $item->id . '" title="Hapus Data"><i class="fa fa-trash-o"></i> <span>Hapus</span></button>';
+            }
 
-            $coa = '';
-            if ($item->no_coa !== null && $item->nm_coa !== null) {
-                $coa = '(' . $item->no_coa . ') - ' . $item->nm_coa;
+            $option = '<div class="text-center" style="display: inline-flex; gap: 4px;">' . $view_btn . $edit_btn . $del_btn . '</div>';
+
+            $coa = '<span class="text-muted">-</span>';
+            if (!empty($item->no_coa)) {
+                $coa = '<span class="label label-info" style="font-size: 11px; padding: 4px 8px; border-radius: 4px; display: inline-block; background-color: #0284c7;"><i class="fa fa-book"></i> (' . htmlspecialchars($item->no_coa) . ') ' . htmlspecialchars($item->nm_coa) . '</span>';
             }
 
             $hasil[] = [
-                'no' => $no,
-                'nm_biaya' => $item->nm_biaya,
+                'no' => '<span class="text-muted">' . $no . '</span>',
+                'nm_biaya' => '<div style="font-weight: 600; color: #1e293b;">' . htmlspecialchars($item->nm_biaya) . '</div>',
                 'coa' => $coa,
-                'option' => $buttons
+                'option' => $option
             ];
 
             $no++;

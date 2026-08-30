@@ -48,6 +48,16 @@ class Master_tenaga_ahli extends Admin_Controller
         $this->template->render('add');
     }
 
+    public function view()
+    {
+        $id = $this->input->post('id');
+
+        $get_biaya = $this->db->get_where('kons_master_tenaga_ahli', ['id' => $id])->row();
+
+        $this->template->set('data_biaya', $get_biaya);
+        $this->template->render('view');
+    }
+
     public function edit()
     {
         $id = $this->input->post('id');

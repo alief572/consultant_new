@@ -90,29 +90,33 @@ class Master_tenaga_ahli_model extends BF_Model
 
         foreach ($get_data_biaya->result() as $item) {
 
-            $edit = '';
-            $delete = '';
+            $view_btn = '';
+            if (has_permission($this->ENABLE_VIEW)) {
+                $view_btn = '<button type="button" class="btn-table-action-view view_biaya_modal" data-id="' . $item->id . '" title="Lihat Detail"><i class="fa fa-eye"></i> <span>View</span></button>';
+            }
 
+            $edit_btn = '';
             if (has_permission($this->ENABLE_MANAGE)) {
-                $edit = '<button type="button" class="btn btn-sm btn-warning edit_biaya_modal" data-id="' . $item->id . '" title="Edit Biaya"><i class="fa fa-pencil"></i></button>';
+                $edit_btn = '<button type="button" class="btn-table-action-edit edit_biaya_modal" data-id="' . $item->id . '" title="Edit Data"><i class="fa fa-pencil-square-o"></i> <span>Edit</span></button>';
             }
 
+            $del_btn = '';
             if (has_permission($this->ENABLE_DELETE)) {
-                $delete = '<button type="button" class="btn btn-sm btn-danger del_biaya" data-id="' . $item->id . '" title="Delete Biaya"><i class="fa fa-trash"></i></button>';
+                $del_btn = '<button type="button" class="btn-table-action-delete del_biaya" data-id="' . $item->id . '" title="Hapus Data"><i class="fa fa-trash-o"></i> <span>Hapus</span></button>';
             }
 
-            $buttons = $edit . ' ' . $delete;
+            $option = '<div class="text-center" style="display: inline-flex; gap: 4px;">' . $view_btn . $edit_btn . $del_btn . '</div>';
 
-            $coa = '';
-            if ($item->no_coa !== null && $item->nm_coa !== null) {
-                $coa = '(' . $item->no_coa . ') - ' . $item->nm_coa;
+            $coa = '<span class="text-muted">-</span>';
+            if (!empty($item->no_coa)) {
+                $coa = '<span class="label label-info" style="font-size: 11px; padding: 4px 8px; border-radius: 4px; display: inline-block; background-color: #0284c7;"><i class="fa fa-book"></i> (' . htmlspecialchars($item->no_coa) . ') ' . htmlspecialchars($item->nm_coa) . '</span>';
             }
 
             $hasil[] = [
-                'no' => $no,
-                'nm_biaya' => $item->nm_biaya,
+                'no' => '<span class="text-muted">' . $no . '</span>',
+                'nm_biaya' => '<div style="font-weight: 600; color: #1e293b;">' . htmlspecialchars($item->nm_biaya) . '</div>',
                 'coa' => $coa,
-                'option' => $buttons
+                'option' => $option
             ];
 
             $no++;
