@@ -847,7 +847,17 @@ class Master_aktifitas extends Admin_Controller
 
     function delete_aktifitas()
     {
+        $this->auth->restrict($this->deletePermission);
         $id = $this->input->post('id');
+
+        $cek = $this->db->select('nm_aktifitas')->where('id_aktifitas', $id)->get('kons_master_aktifitas')->row();
+        if (!$cek) {
+            echo json_encode([
+                'status' => 0,
+                'msg' => 'Data tidak ditemukan atau sudah dihapus!'
+            ]);
+            return;
+        }
 
         $this->db->trans_begin();
 
@@ -856,16 +866,20 @@ class Master_aktifitas extends Admin_Controller
             'deleted_date' => date('Y-m-d H:i:s')
         ];
 
-        $this->db->update('kons_master_check_point', $arr_delete, ['id_aktifitas' => $id]);
-        $this->db->update('kons_master_aktifitas', $arr_delete, ['id_aktifitas' => $id]);
+        // 1. Soft delete master aktifitas
+        $this->db->where('id_aktifitas', $id)->update('kons_master_aktifitas', $arr_delete);
+
+        // 2. Delete related check point
+        $this->db->where('id_aktifitas', $id)->delete('kons_master_check_point');
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
-            $msg = 'Sorry, data has not been deleted !';
+            $msg = 'Maaf, data gagal dihapus!';
             $valid = 0;
         } else {
             $this->db->trans_commit();
-            $msg = 'Data has been deleted successfully !';
+            H_activity_record("Master Aktifitas > Delete Aktifitas > " . $cek->nm_aktifitas);
+            $msg = 'Data berhasil dihapus!';
             $valid = 1;
         }
 
