@@ -65,42 +65,43 @@ class Master_konsultasi extends Admin_Controller
         $no = (0 + $requestData['start']);
         foreach ($query->result_array() as $row) {
             $no++;
-            $nestedData     = array();
-            $nestedData[]   = $no;
-            $nestedData[]   = $row['id_konsultasi_h'];
-            $nestedData[]   = $row['nm_paket'];
-            $nestedData[]   = $row['datetimes'];
+
+            $view_btn = "<a href='" . site_url('master_konsultasi/konsultasi_detail/' . $row['id_konsultasi_h']) . "' class='btn-table-action-view' id='ShowModal' data-header='Detail Konsultasi' data-class='modal-lg' data-type='load' title='Lihat Detail'>
+                    <i class='fa fa-eye'></i> <span>View</span>
+                </a>";
 
             $edit_btn = '';
             if ($this->managePermission) {
-                $edit_btn = "
-                    <a href='" . site_url('master_konsultasi/konsultasi_edit/' . $row['id_konsultasi_h']) . "' class='btn btn-warning btn-xs'>
-                        <i class='fa fa-refresh'></i> Update
-                    </a>
-                ";
+                $edit_btn = "<a href='" . site_url('master_konsultasi/konsultasi_edit/' . $row['id_konsultasi_h']) . "' class='btn-table-action-edit' title='Edit Konsultasi'>
+                        <i class='fa fa-pencil-square-o'></i> <span>Edit</span>
+                    </a>";
             }
 
             $delete_btn = '';
             if ($this->deletePermission) {
-                $delete_btn = "
-                    <a href='javascript:void(0);' 
-                        class='btn btn-danger btn-xs delete_konsultasi'
+                $delete_btn = "<a href='javascript:void(0);' 
+                        class='btn-table-action-delete delete_konsultasi'
                         id='DeleteConfirm'
-                        data-id='" . $row['id_konsultasi_h'] . "'>
-                        <i class='fa fa-remove'></i> Delete 
-                    </a>
-                ";
-            }
-            $print_btn = '';
-            if ($this->managePermission) {
-                $print_btn = '<a href="' . site_url('master_konsultasi/konsultasi_print/' . $row['id_konsultasi_h']) . '" class="btn btn-info btn-xs" target="_blank><i class="fa fa-file"></i> Print</a>';
+                        data-id='" . $row['id_konsultasi_h'] . "' title='Hapus Konsultasi'>
+                        <i class='fa fa-trash-o'></i> <span>Hapus</span>
+                    </a>";
             }
 
+            $print_btn = '';
+            if ($this->managePermission) {
+                $print_btn = "<a href='" . site_url('master_konsultasi/konsultasi_print/' . $row['id_konsultasi_h']) . "' class='btn-table-action-print' target='_blank' title='Cetak Data'>
+                        <i class='fa fa-print'></i> <span>Print</span>
+                    </a>";
+            }
+
+            $nestedData     = array();
+            $nestedData[]   = "<span class='text-muted'>" . $no . "</span>";
+            $nestedData[]   = "<span class='label label-primary' style='font-size: 11px; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.5px;'><i class='fa fa-briefcase'></i> " . htmlspecialchars($row['id_konsultasi_h']) . "</span>";
+            $nestedData[]   = "<div style='font-weight: 600; color: #333;'>" . htmlspecialchars($row['nm_paket']) . "</div>";
+            $nestedData[]   = "<span class='text-muted'><i class='fa fa-calendar-o'></i> " . $row['datetimes'] . "</span>";
             $nestedData[]   = "
-                <div class='btn-group'>
-                    <a href='" . site_url('master_konsultasi/konsultasi_detail/' . $row['id_konsultasi_h']) . "' class='btn btn-info btn-xs' id='ShowModal' data-header='Detail Aktifitas' data-class='modal-xxl' data-type='load'>
-                        <i class='fa fa-file-text'></i> View
-                    </a>
+                <div class='text-center'>
+                    " . $view_btn . "
                     " . $edit_btn . "
                     " . $delete_btn . "
                     " . $print_btn . "
@@ -868,29 +869,34 @@ class Master_konsultasi extends Admin_Controller
         $valid = 1;
         $msg = '';
 
-        $arr_delete = [
+        $arr_delete_header = [
+            'status' => 'inactive',
             'deleted_by' => $this->auth->user_id(),
-            'deleted_date' => date('Y-m-d H:i:s')
+            'deleted_at' => date('Y-m-d H:i:s')
         ];
 
-        $delete = $this->db->where('id_konsultasi_h', $id)->update('kons_master_konsultasi_header', $arr_delete);
+        $delete = $this->db->where('id_konsultasi_h', $id)->update('kons_master_konsultasi_header', $arr_delete_header);
 
         if ($delete) {
-            $delete_detail = $this->db->where('id_konsultasi_h', $id)->update('kons_master_konsultasi_detail', $arr_delete);
-            if (!$delete_detail) {
-                $valid = 0;
-                $msg  = "Please try again later !";
-            }
+            $arr_delete_detail = [
+                'deleted_by' => $this->auth->user_id(),
+                'deleted_date' => date('Y-m-d H:i:s')
+            ];
+            $this->db->where('id_konsultasi_h', $id)->update('kons_master_konsultasi_detail', $arr_delete_detail);
         } else {
             $valid = 0;
-            $msg = 'Please try again later !';
+            $msg = 'Gagal menghapus data paket konsultasi!';
         }
 
-        if ($valid == 1) {
-            $this->db->trans_commit();
-            $msg = 'Data successfully deleted !';
-        } else {
+        if ($this->db->trans_status() === FALSE || $valid == 0) {
             $this->db->trans_rollback();
+            $valid = 0;
+            $msg = ($msg != '') ? $msg : 'Gagal menghapus data paket konsultasi!';
+        } else {
+            $this->db->trans_commit();
+            $valid = 1;
+            $msg = 'Data paket konsultasi berhasil dihapus!';
+            H_activity_record("Master Konsultasi > Delete Konsultasi > " . $id);
         }
 
         echo json_encode([

@@ -1,35 +1,34 @@
 
 <div class="row">
-    <?php
-    $form_id = 'FormCheckPoint';
-    echo form_open(site_url('konsultasi/konsultasi-check-point/?'.$variables), array('id' => $form_id));
-    ?>
+    <div class="col-md-12">
+        <?php
+        $form_id = 'FormCheckPoint';
+        echo form_open(site_url('konsultasi/konsultasi-check-point/?' . $variables), array('id' => $form_id));
+        ?>
         <div class="table-responsive">
-            <table id="my-grid" class="table table-striped table-bordered table-hover table-condensed TableCheckPoint" width="100%">
+            <table id="my-grid" class="table table-bordered table-modern TableCheckPoint" width="100%">
                 <thead>
                     <tr>
-                        <th width="50px">#</th>
+                        <th width="40" style="text-align: center;">#</th>
                         <th>Detail Check Point</th>
-                        <th width="6%">Hapus</th>
+                        <th width="50" style="text-align: center;">Hapus</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    if($cek_point->num_rows() > 0){
+                    if ($cek_point->num_rows() > 0) {
                         $no = 1;
-                        foreach($cek_point->result() as $d){
+                        foreach ($cek_point->result() as $d) {
                             echo "
                             <tr>
+                                <td style='vertical-align:middle; text-align:center; font-weight:600; color:#64748b;'>" . $no . "</td>
                                 <td>
-                                    ".$no."
+                                    <input type='text' class='form-control form-control-modern' name='check_point[]' id='check_point' value='" . htmlspecialchars($d->nm_chk_point) . "' placeholder='Nama check point...'>
+                                    <input type='hidden' name='id_chk_point[]' value='" . $d->id_chk_point . "'>
+                                    <input type='hidden' name='unik_id[]' value='" . $d->unique_id . "'>
                                 </td>
-                                <td>
-                                    <input type='text' class='form-control' name='check_point[]' id='check_point' value='".$d->nm_chk_point."'>
-                                    <input type='hidden' name='id_chk_point[]' value='".$d->id_chk_point."'>
-                                    <input type='hidden' name='unik_id[]' value='".$d->unique_id."'>
-                                </td>
-                                <td align='center' style='padding-top:13px'>
-                                    <a href='#' id='RemoveCheck' title='Hapus Baris'><img src='".config_item('img')."trash.png'></a>
+                                <td align='center' style='vertical-align:middle;'>
+                                    <button type='button' class='btn btn-danger btn-xs' id='RemoveCheck' title='Hapus Baris' style='border-radius: 4px; padding: 4px 8px;'><i class='fa fa-trash'></i></button>
                                 </td>
                             </tr>
                             ";
@@ -40,23 +39,23 @@
                 </tbody>
             </table>
         </div>
-        <button type="button" class="btn btn-default" id="NewLine">
-            <img src="<?php echo config_item('img'); ?>add2.png" alt=""> Tambah Data
+        <button type="button" class="btn btn-success btn-sm" id="NewLine" style="border-radius: 6px; font-weight: 600;">
+            <i class="fa fa-plus"></i> Tambah Baris Point
         </button>
-        <br>
-        <br>
-        <div id="Notification_<?php echo $form_id; ?>"></div>
-    <?php echo form_close(); ?>
+        <div id="Notification_<?php echo $form_id; ?>" style="margin-top: 15px;"></div>
+        <?php echo form_close(); ?>
+    </div>
 </div>
 
 <script type="text/javascript">
-$(document).ready(function(){
-    var btnSave  = "<button type='button' class='btn btn-sm btn-accent' id='SaveFormPoint' data-form-id='<?php echo $form_id; ?>'><img src='<?php echo config_item('img'); ?>save.png' /> Simpan</button>";
-    var btnClose = "<button type='button' class='btn btn-sm btn-default' data-dismiss='modal'><i class='fa fa-remove'></i> Close</button>";
-    $('#modal-footer').html(btnSave + btnClose);
+    $(document).ready(function() {
+        var btnSave = "<button type='button' class='btn btn-primary' id='SaveFormPoint' data-form-id='<?php echo $form_id; ?>' style='border-radius: 6px; font-weight: 600;'><i class='fa fa-save'></i> Simpan</button>";
+        var btnClose = "<button type='button' class='btn btn-default' data-dismiss='modal' style='border-radius: 6px; font-weight: 600;'><i class='fa fa-times'></i> Tutup</button>";
+        $('#modal-footer').html(btnSave + btnClose);
 
-    for(i=1; i<=1; i++){
-        AppendCheckPoint();
-    }
-});
+        var JmlData = $('.TableCheckPoint tbody tr').length;
+        if (JmlData < 1) {
+            AppendCheckPoint();
+        }
+    });
 </script>
