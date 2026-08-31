@@ -507,21 +507,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             <div class="col-md-6">
                 <table style="width: 100%">
                     <tr>
-                        <th style="padding: 5px;">Bank</th>
+                        <th style="padding: 5px;">Bank <span class="text-danger">*</span></th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>">
+                            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>" required>
                         </td>
                     </tr>
                     <tr>
-                        <th style="padding: 5px;">Bank Number</th>
+                        <th style="padding: 5px;">Bank Number <span class="text-danger">*</span></th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>">
+                            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>" required>
                         </td>
                     </tr>
                     <tr>
-                        <th style="padding: 5px;">Account Name</th>
+                        <th style="padding: 5px;">Account Name <span class="text-danger">*</span></th>
                         <td style="padding: 5px;">
-                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>">
+                            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>" required>
                         </td>
                     </tr>
                 </table>
@@ -802,6 +802,36 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 icon: 'warning',
                 title: 'Warning !',
                 text: 'Deskripsi / Keterangan wajib diisi !'
+            });
+            return false;
+        }
+
+        var kasbon_bank = $('input[name="kasbon_bank"]').val().trim();
+        if (kasbon_bank == '') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning !',
+                text: 'Bank wajib diisi !'
+            });
+            return false;
+        }
+
+        var kasbon_bank_number = $('input[name="kasbon_bank_number"]').val().trim();
+        if (kasbon_bank_number == '') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning !',
+                text: 'Bank Number wajib diisi !'
+            });
+            return false;
+        }
+
+        var kasbon_bank_account = $('input[name="kasbon_bank_account"]').val().trim();
+        if (kasbon_bank_account == '') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning !',
+                text: 'Account Name wajib diisi !'
             });
             return false;
         }
