@@ -22,9 +22,9 @@ if ($tipe == '6') {
 }
 
 $hide_jurnal_pph21 = 'd-none';
-// if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
-//     $hide_jurnal_pph21 = '';
-// }
+if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
+    $hide_jurnal_pph21 = '';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -113,7 +113,8 @@ $hide_jurnal_pph21 = 'd-none';
                         <th class="text-center" rowspan="2">Item</th>
                         <th class="text-center" colspan="3">Kasbon</th>
                         <th class="text-center" colspan="3">Expense Report</th>
-                        <th class="text-center" rowspan="2" colspan="2">Keterangan</th>
+                        <th class="text-center" rowspan="2" width="220">Bukti Penggunaan</th>
+                        <th class="text-center" rowspan="2" width="200">Keterangan</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
@@ -178,8 +179,14 @@ $hide_jurnal_pph21 = 'd-none';
                         echo '<input type="text" name="detail_subcont[' . $item['no'] . '][total_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . ($item['qty_kasbon'] * $item['nominal_kasbon']) . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" readonly>';
                         echo '</td>';
 
-                        echo '<td width="50" colspan="2">';
-                        echo '<textarea class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][keterangan]"  ' . $readonly_nominal . ' rows="5"></textarea>';
+                        echo '<td width="220" style="vertical-align: top;">';
+                        echo '<input type="file" id="input-bukti-file-' . $item['no'] . '" class="input-bukti-file" data-no="' . $item['no'] . '" multiple style="display: none;">';
+                        echo '<div class="dropzone-item" id="dropzone-bukti-' . $item['no'] . '" data-no="' . $item['no'] . '" style="border: 1px dashed #b4c6dc; border-radius: 4px; background: #fdfdfe; padding: 6px; text-align: center; cursor: pointer; font-size: 11px; color: #555;"><i class="fa fa-cloud-upload text-primary"></i> Tarik file ke sini</div>';
+                        echo '<div id="container-bukti-list-' . $item['no'] . '" style="margin-top: 4px;"></div>';
+                        echo '</td>';
+
+                        echo '<td width="200">';
+                        echo '<textarea class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][keterangan]"  ' . $readonly_nominal . ' rows="4"></textarea>';
                         echo '</td>';
 
                         echo '</tr>';
@@ -225,12 +232,6 @@ $hide_jurnal_pph21 = 'd-none';
             <div class="row">
                 <div class="col-md-6">
                     <table style="width: 100%">
-                        <tr>
-                            <th style="padding: 5px;">Bukti Penggunaan</th>
-                            <td style="padding: 5px;">
-                                <input type="file" name="bukti_penggunaan[]" id="" class="form-control form-control-sm" multiple>
-                            </td>
-                        </tr>
                         <tr>
                             <th style="padding: 5px;">Bukti Pengembalian</th>
                             <td style="padding: 5px;">
@@ -358,6 +359,92 @@ $hide_jurnal_pph21 = 'd-none';
         hitung_total(1);
     });
 
+    var selectedBuktiFilesPerItem = {};
+
+    $(document).on('click', '.dropzone-item', function(e) {
+        if ($(e.target).closest('.btn-remove-selected-bukti-item').length === 0) {
+            var no = $(this).data('no');
+            $('#input-bukti-file-' + no).click();
+        }
+    });
+
+    $(document).on('change', '.input-bukti-file', function() {
+        var no = $(this).data('no');
+        if (!selectedBuktiFilesPerItem[no]) {
+            selectedBuktiFilesPerItem[no] = [];
+        }
+        var files = this.files;
+        for (var i = 0; i < files.length; i++) {
+            selectedBuktiFilesPerItem[no].push(files[i]);
+        }
+        this.value = '';
+        renderSelectedBuktiItem(no);
+    });
+
+    $(document).on('dragover dragenter', '.dropzone-item', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({'border-color': '#3c8dbc', 'background': '#eef5fb'});
+    });
+
+    $(document).on('dragleave dragend drop', '.dropzone-item', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({'border-color': '#b4c6dc', 'background': '#fdfdfe'});
+    });
+
+    $(document).on('drop', '.dropzone-item', function(e) {
+        var no = $(this).data('no');
+        var files = e.originalEvent.dataTransfer.files;
+        if (files && files.length > 0) {
+            if (!selectedBuktiFilesPerItem[no]) {
+                selectedBuktiFilesPerItem[no] = [];
+            }
+            for (var i = 0; i < files.length; i++) {
+                selectedBuktiFilesPerItem[no].push(files[i]);
+            }
+            renderSelectedBuktiItem(no);
+        }
+    });
+
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function renderSelectedBuktiItem(no) {
+        var files = selectedBuktiFilesPerItem[no] || [];
+        var html = '';
+        if (files.length > 0) {
+            html += '<div class="list-group" style="margin-bottom: 0;">';
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                html += '<div class="list-group-item" style="display: flex; justify-content: space-between; align-items: center; padding: 3px 6px; margin-bottom: 2px; background: #fff; border: 1px solid #e3e6f0; border-radius: 3px; font-size: 11px;">' +
+                    '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;" title="' + file.name + ' (' + formatBytes(file.size) + ')">' +
+                    '<i class="fa fa-file-text-o text-primary"></i> ' + file.name + ' <small class="text-muted">(' + formatBytes(file.size) + ')</small>' +
+                    '</span>' +
+                    '<button type="button" class="btn btn-xs btn-danger btn-remove-selected-bukti-item" data-no="' + no + '" data-index="' + i + '" title="Hapus"><i class="fa fa-trash"></i></button>' +
+                    '</div>';
+            }
+            html += '</div>';
+        }
+        $('#container-bukti-list-' + no).html(html);
+    }
+
+    $(document).on('click', '.btn-remove-selected-bukti-item', function(e) {
+        e.stopPropagation();
+        var no = $(this).data('no');
+        var index = $(this).data('index');
+        if (selectedBuktiFilesPerItem[no]) {
+            selectedBuktiFilesPerItem[no].splice(index, 1);
+            renderSelectedBuktiItem(no);
+        }
+    });
+
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
 
@@ -373,6 +460,13 @@ $hide_jurnal_pph21 = 'd-none';
         }, function(next) {
             if (next) {
                 var formData = new FormData($('#frm-data')[0]);
+
+                for (var no in selectedBuktiFilesPerItem) {
+                    var fileList = selectedBuktiFilesPerItem[no];
+                    for (var i = 0; i < fileList.length; i++) {
+                        formData.append('bukti_penggunaan_' + no + '[]', fileList[i]);
+                    }
+                }
 
                 $.ajax({
                     type: 'post',

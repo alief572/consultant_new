@@ -108,7 +108,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                         <th class="text-center" rowspan="2">Item</th>
                         <th class="text-center" colspan="2">Kasbon</th>
                         <th class="text-center" colspan="2">Expense Report</th>
-                        <th class="text-center" rowspan="2" colspan="2">Keterangan</th>
+                        <th class="text-center" rowspan="2" width="220">Bukti Penggunaan</th>
+                        <th class="text-center" rowspan="2" width="200">Keterangan</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
@@ -160,8 +161,24 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                         echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $nominal_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
                         echo '</td>';
 
-                        echo '<td colspan="2">';
-                        echo '<textarea class="form-control form-control-sm" readonly>' . $keterangan . '</textarea>';
+                        echo '<td width="220" style="vertical-align: top;">';
+                        if (isset($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']])) {
+                            echo '<div class="list-group" style="margin-bottom: 0;">';
+                            foreach ($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']] as $bp) {
+                                echo '<div class="list-group-item" style="padding: 4px 6px; margin-bottom: 2px; background: #f8f9fa; border: 1px solid #e3e6f0; border-radius: 3px; font-size: 11px;">';
+                                echo '<a href="' . base_url($bp->upload_file) . '" target="_blank" title="' . basename($bp->upload_file) . '">';
+                                echo '<i class="fa fa-download text-primary"></i> ' . basename($bp->upload_file);
+                                echo '</a>';
+                                echo '</div>';
+                            }
+                            echo '</div>';
+                        } else {
+                            echo '<span class="text-muted" style="font-size: 11px;">-</span>';
+                        }
+                        echo '</td>';
+
+                        echo '<td width="200">';
+                        echo '<textarea class="form-control form-control-sm" readonly rows="4">' . $keterangan . '</textarea>';
                         echo '</td>';
 
                         echo '</tr>';
@@ -216,18 +233,6 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                                 if (count($list_bukti_pengembalian) > 0) {
                                     echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup">';
                                     echo '<i class="fa fa-list"></i> List Bukti Pengemblian';
-                                    echo '</button>';
-                                }
-                                ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th style="padding: 5px;">Bukti Penggunaan</th>
-                            <td style="padding: 5px;">
-                                <?php
-                                if (count($list_bukti_penggunaan) > 0) {
-                                    echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup2">';
-                                    echo '<i class="fa fa-list"></i> List Bukti Penggunaan';
                                     echo '</button>';
                                 }
                                 ?>

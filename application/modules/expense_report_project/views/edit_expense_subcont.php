@@ -27,9 +27,9 @@ if ($header->reject_reason !== '' && $header->reject_reason !== null) {
 }
 
 $hide_jurnal_pph21 = 'd-none';
-// if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
-//     $hide_jurnal_pph21 = '';
-// }
+if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
+    $hide_jurnal_pph21 = '';
+}
 ?>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -130,7 +130,8 @@ $hide_jurnal_pph21 = 'd-none';
                         <th class="text-center" rowspan="2">Item</th>
                         <th class="text-center" colspan="3">Kasbon</th>
                         <th class="text-center" colspan="3">Expense Report</th>
-                        <th class="text-center" rowspan="2" colspan="2">Keterangan</th>
+                        <th class="text-center" rowspan="2" width="230">Bukti Penggunaan</th>
+                        <th class="text-center" rowspan="2" width="200">Keterangan</th>
                     </tr>
                     <tr>
                         <th class="text-center">Qty</th>
@@ -197,8 +198,27 @@ $hide_jurnal_pph21 = 'd-none';
                         echo '<input type="text" name="detail_subcont[' . $item['no'] . '][total_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . ($nominal_expense * $qty_expense) . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
                         echo '</td>';
 
-                        echo '<td width="400" colspan="2">';
-                        echo '<textarea class="form-control form-control-sm" readonly>' . $keterangan . '</textarea>';
+                        echo '<td width="230" style="vertical-align: top;">';
+                        echo '<input type="file" id="input-bukti-file-' . $item['no'] . '" class="input-bukti-file" data-no="' . $item['no'] . '" multiple style="display: none;">';
+                        echo '<div class="dropzone-item" id="dropzone-bukti-' . $item['no'] . '" data-no="' . $item['no'] . '" style="border: 1px dashed #b4c6dc; border-radius: 4px; background: #fdfdfe; padding: 6px; text-align: center; cursor: pointer; font-size: 11px; color: #555;"><i class="fa fa-cloud-upload text-primary"></i> Tarik file ke sini</div>';
+                        if (isset($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']])) {
+                            echo '<div class="list-group" style="margin-top: 5px; margin-bottom: 3px;">';
+                            foreach ($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']] as $bp) {
+                                echo '<div class="list-group-item" id="row-bukti-' . $bp->id . '" style="display: flex; justify-content: space-between; align-items: center; padding: 3px 6px; margin-bottom: 2px; background: #f8f9fa; border: 1px solid #e3e6f0; border-radius: 3px; font-size: 11px;">';
+                                echo '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">';
+                                echo '<i class="fa fa-file text-success"></i> ';
+                                echo '<a href="' . base_url($bp->upload_file) . '" target="_blank" title="' . basename($bp->upload_file) . '">' . basename($bp->upload_file) . '</a>';
+                                echo '</span>';
+                                echo '<button type="button" class="btn btn-xs btn-danger del_bukti_penggunaan" data-id="' . $bp->id . '" title="Hapus"><i class="fa fa-trash"></i></button>';
+                                echo '</div>';
+                            }
+                            echo '</div>';
+                        }
+                        echo '<div id="container-bukti-list-' . $item['no'] . '" style="margin-top: 4px;"></div>';
+                        echo '</td>';
+
+                        echo '<td width="200">';
+                        echo '<textarea class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][keterangan]" rows="4">' . $keterangan . '</textarea>';
                         echo '</td>';
 
                         echo '</tr>';
@@ -215,31 +235,28 @@ $hide_jurnal_pph21 = 'd-none';
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5" class="text-right">Total Kasbon</td>
+                        <td colspan="7" class="text-right">Total Kasbon</td>
                         <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
                         <td>Kelebihan Kasbon</td>
                         <td>
                             <input type="text" name="kelebihan_kasbon" class="form-control form-control-sm text-right kelebihan_kasbon" value="<?= number_format($kelebihan_kasbon, 2) ?>" readonly>
                         </td>
-                        <td></td>
                     </tr>
                     <tr>
-                        <td colspan="5" class="text-right">Total Expense Report</td>
+                        <td colspan="7" class="text-right">Total Expense Report</td>
                         <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
                         <td>Kelebihan Expense</td>
                         <td>
                             <input type="text" name="kelebihan_expense" class="form-control form-control-sm text-right kelebihan_expense" value="<?= number_format($kelebihan_expense, 2) ?>" readonly>
                         </td>
-                        <td></td>
                     </tr>
                     <tr>
-                        <td colspan="5" class="text-right">Selisih</td>
+                        <td colspan="7" class="text-right">Selisih</td>
                         <td class="text-right col_selisih"><?= number_format($header->selisih, 2) ?></td>
                         <td>Kontrol</td>
                         <td>
                             <input type="text" name="kontrol" class="form-control form-control-sm text-right kontrol" value="<?= number_format($header->selisih, 2) ?>" readonly>
                         </td>
-                        <td></td>
                     </tr>
                 </tfoot>
             </table>
@@ -249,19 +266,6 @@ $hide_jurnal_pph21 = 'd-none';
             <div class="row">
                 <div class="col-md-6">
                     <table style="width: 100%">
-                        <tr>
-                            <th style="padding: 5px;">Bukti Penggunaan</th>
-                            <td style="padding: 5px;">
-                                <input type="file" name="bukti_penggunaan[]" id="" class="form-control form-control-sm" multiple>
-                                <?php
-                                if (count($list_bukti_penggunaan) > 0) {
-                                    echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup2">';
-                                    echo '<i class="fa fa-list"></i> List Bukti Penggunaan';
-                                    echo '</button>';
-                                }
-                                ?>
-                            </td>
-                        </tr>
                         <tr>
                             <th style="padding: 5px;">Bukti Pengembalian</th>
                             <td style="padding: 5px;">
@@ -465,6 +469,92 @@ $hide_jurnal_pph21 = 'd-none';
         set_jurnal();
     });
 
+    var selectedBuktiFilesPerItem = {};
+
+    $(document).on('click', '.dropzone-item', function(e) {
+        if ($(e.target).closest('.btn-remove-selected-bukti-item').length === 0) {
+            var no = $(this).data('no');
+            $('#input-bukti-file-' + no).click();
+        }
+    });
+
+    $(document).on('change', '.input-bukti-file', function() {
+        var no = $(this).data('no');
+        if (!selectedBuktiFilesPerItem[no]) {
+            selectedBuktiFilesPerItem[no] = [];
+        }
+        var files = this.files;
+        for (var i = 0; i < files.length; i++) {
+            selectedBuktiFilesPerItem[no].push(files[i]);
+        }
+        this.value = '';
+        renderSelectedBuktiItem(no);
+    });
+
+    $(document).on('dragover dragenter', '.dropzone-item', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({'border-color': '#3c8dbc', 'background': '#eef5fb'});
+    });
+
+    $(document).on('dragleave dragend drop', '.dropzone-item', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({'border-color': '#b4c6dc', 'background': '#fdfdfe'});
+    });
+
+    $(document).on('drop', '.dropzone-item', function(e) {
+        var no = $(this).data('no');
+        var files = e.originalEvent.dataTransfer.files;
+        if (files && files.length > 0) {
+            if (!selectedBuktiFilesPerItem[no]) {
+                selectedBuktiFilesPerItem[no] = [];
+            }
+            for (var i = 0; i < files.length; i++) {
+                selectedBuktiFilesPerItem[no].push(files[i]);
+            }
+            renderSelectedBuktiItem(no);
+        }
+    });
+
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function renderSelectedBuktiItem(no) {
+        var files = selectedBuktiFilesPerItem[no] || [];
+        var html = '';
+        if (files.length > 0) {
+            html += '<div class="list-group" style="margin-bottom: 0;">';
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                html += '<div class="list-group-item" style="display: flex; justify-content: space-between; align-items: center; padding: 3px 6px; margin-bottom: 2px; background: #fff; border: 1px solid #e3e6f0; border-radius: 3px; font-size: 11px;">' +
+                    '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;" title="' + file.name + ' (' + formatBytes(file.size) + ')">' +
+                    '<i class="fa fa-file-text-o text-primary"></i> ' + file.name + ' <small class="text-muted">(' + formatBytes(file.size) + ')</small>' +
+                    '</span>' +
+                    '<button type="button" class="btn btn-xs btn-danger btn-remove-selected-bukti-item" data-no="' + no + '" data-index="' + i + '" title="Hapus"><i class="fa fa-trash"></i></button>' +
+                    '</div>';
+            }
+            html += '</div>';
+        }
+        $('#container-bukti-list-' + no).html(html);
+    }
+
+    $(document).on('click', '.btn-remove-selected-bukti-item', function(e) {
+        e.stopPropagation();
+        var no = $(this).data('no');
+        var index = $(this).data('index');
+        if (selectedBuktiFilesPerItem[no]) {
+            selectedBuktiFilesPerItem[no].splice(index, 1);
+            renderSelectedBuktiItem(no);
+        }
+    });
+
     $(document).on('click', '.del_bukti_penggunaan', function() {
         var id = $(this).data('id');
 
@@ -570,6 +660,13 @@ $hide_jurnal_pph21 = 'd-none';
         }, function(next) {
             if (next) {
                 var formData = new FormData($('#frm-data')[0]);
+
+                for (var no in selectedBuktiFilesPerItem) {
+                    var fileList = selectedBuktiFilesPerItem[no];
+                    for (var i = 0; i < fileList.length; i++) {
+                        formData.append('bukti_penggunaan_' + no + '[]', fileList[i]);
+                    }
+                }
 
                 $.ajax({
                     type: 'post',

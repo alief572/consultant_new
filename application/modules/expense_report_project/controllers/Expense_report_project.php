@@ -867,7 +867,7 @@ class Expense_report_project extends Admin_Controller
         $this->sendigs->where('a.deleted', '0');
         $get_bank_acc = $this->sendigs->get()->result();
 
-        // $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
+        $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
 
         $data = [
             'datalist_item' => $datalist_item,
@@ -877,8 +877,8 @@ class Expense_report_project extends Admin_Controller
             'id_penawaran' => $get_kasbon_header->id_penawaran,
             'tipe' => $get_kasbon_header->tipe,
             'data_bank' => $get_bank,
-            'list_bank' => $get_bank_acc
-            // 'list_jurnal_pph21' => $list_jurnal_pph21
+            'list_bank' => $get_bank_acc,
+            'list_jurnal_pph21' => $list_jurnal_pph21
         ];
 
         $this->template->set($data);
@@ -904,6 +904,13 @@ class Expense_report_project extends Admin_Controller
         $this->db->from('kons_tr_bukti_penggunaan_expense a');
         $this->db->where('a.id_header_expense', $get_header->id);
         $get_bukti_penggunaan = $this->db->get()->result();
+
+        $list_bukti_penggunaan_by_detail = [];
+        if (!empty($get_bukti_penggunaan)) {
+            foreach ($get_bukti_penggunaan as $bp) {
+                $list_bukti_penggunaan_by_detail[$bp->id_detail_kasbon][] = $bp;
+            }
+        }
 
         $this->sendigs->select('a.id, a.rekening, a.nama, a.coa_bank, b.nama_bank');
         $this->sendigs->from('ms_bank a');
@@ -1427,12 +1434,13 @@ class Expense_report_project extends Admin_Controller
             }
         }
 
-        // $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
+        $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
 
         $data = [
             'header' => $get_header,
             'list_bukti_pengembalian' => $get_bukti_pengembalian,
             'list_bukti_penggunaan' => $get_bukti_penggunaan,
+            'list_bukti_penggunaan_by_detail' => $list_bukti_penggunaan_by_detail,
             'datalist_item' => $datalist_item,
             'datalist_item_expense' => $datalist_item_expense,
             'id_spk_budgeting' => $get_kasbon_header->id_spk_budgeting,
@@ -1440,7 +1448,8 @@ class Expense_report_project extends Admin_Controller
             'id_spk_penawaran' => $get_kasbon_header->id_spk_penawaran,
             'id_penawaran' => $get_kasbon_header->id_penawaran,
             'tipe' => $get_kasbon_header->tipe,
-            'list_bank' => $get_bank
+            'list_bank' => $get_bank,
+            'list_jurnal_pph21' => $list_jurnal_pph21
         ];
 
         $this->template->set($data);
@@ -1466,6 +1475,13 @@ class Expense_report_project extends Admin_Controller
         $this->db->from('kons_tr_bukti_penggunaan_expense a');
         $this->db->where('a.id_header_expense', $get_header->id);
         $get_bukti_penggunaan = $this->db->get()->result();
+
+        $list_bukti_penggunaan_by_detail = [];
+        if (!empty($get_bukti_penggunaan)) {
+            foreach ($get_bukti_penggunaan as $bp) {
+                $list_bukti_penggunaan_by_detail[$bp->id_detail_kasbon][] = $bp;
+            }
+        }
 
         $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header a', ['a.id' => $id_header])->row();
 
@@ -1996,12 +2012,13 @@ class Expense_report_project extends Admin_Controller
         $this->sendigs->where('a.deleted', '0');
         $get_bank_acc = $this->sendigs->get()->result();
 
-        // $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
+        $list_jurnal_pph21 = $this->Expense_report_project_model->list_jurnal_pph21($id_header);
 
         $data = [
             'header' => $get_header,
             'list_bukti_pengembalian' => $get_bukti_pengembalian,
             'list_bukti_penggunaan' => $get_bukti_penggunaan,
+            'list_bukti_penggunaan_by_detail' => $list_bukti_penggunaan_by_detail,
             'datalist_item' => $datalist_item,
             'datalist_item_expense' => $datalist_item_expense,
             'id_spk_budgeting' => $get_kasbon_header->id_spk_budgeting,
@@ -2010,6 +2027,7 @@ class Expense_report_project extends Admin_Controller
             'id_penawaran' => $get_kasbon_header->id_penawaran,
             'tipe' => $get_kasbon_header->tipe,
             'list_bank' => $get_bank_acc,
+            'list_jurnal_pph21' => $list_jurnal_pph21,
             'list_budgeting' => $get_spk_budgeting
         ];
 
@@ -3309,36 +3327,49 @@ class Expense_report_project extends Admin_Controller
             }
         }
 
-        $config3['upload_path'] = './uploads/bukti_penggunaan_expense/'; //path folder
+        $upload_dir = './uploads/bukti_penggunaan_expense/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+        chmod($upload_dir, 0777);
+
+        $config3['upload_path'] = $upload_dir; //path folder
         $config3['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
         $config3['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
         $config3['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
         $config3['remove_spaces'] = TRUE; // Remove spaces from the file name.
 
-        // $this->load->library('upload', $config);
         $this->upload->initialize($config3);
 
-        $files3 = $_FILES['bukti_penggunaan'];
-        $file_count3 = count($files3['name']);
+        if (isset($post['detail_subcont'])) {
+            foreach ($post['detail_subcont'] as $no => $item) {
+                $id_detail_kasbon = $item['id_detail_kasbon'];
+                $field_name = 'bukti_penggunaan_' . $no;
+                if (isset($_FILES[$field_name]) && !empty($_FILES[$field_name]['name'])) {
+                    $files3 = $_FILES[$field_name];
+                    $file_count3 = is_array($files3['name']) ? count($files3['name']) : 0;
+                    for ($i = 0; $i < $file_count3; $i++) {
+                        if (!empty($files3['name'][$i])) {
+                            $_FILES['temp_bukti']['name'] = $files3['name'][$i];
+                            $_FILES['temp_bukti']['type'] = $files3['type'][$i];
+                            $_FILES['temp_bukti']['tmp_name'] = $files3['tmp_name'][$i];
+                            $_FILES['temp_bukti']['error'] = $files3['error'][$i];
+                            $_FILES['temp_bukti']['size'] = $files3['size'][$i];
 
-        for ($i = 0; $i < $file_count3; $i++) {
-            $_FILES['bukti_penggunaan']['name'] = $files3['name'][$i];
-            $_FILES['bukti_penggunaan']['type'] = $files3['type'][$i];
-            $_FILES['bukti_penggunaan']['tmp_name'] = $files3['tmp_name'][$i];
-            $_FILES['bukti_penggunaan']['error'] = $files3['error'][$i];
-            $_FILES['bukti_penggunaan']['size'] = $files3['size'][$i];
-
-            // Reinitialize the upload class for each file
-            if ($this->upload->do_upload('bukti_penggunaan')) {
-                // Handle success (save file information or any other action)
-                $data2 = $this->upload->data();
-
-                $data_bukti_penggunaan[] = [
-                    'id_header_expense' => $id,
-                    'upload_file' => 'uploads/bukti_penggunaan_expense/' . $data2['file_name'],
-                    'created_by' => $this->auth->user_id(),
-                    'created_date' => date('Y-m-d H:i:s')
-                ];
+                            $this->upload->initialize($config3);
+                            if ($this->upload->do_upload('temp_bukti')) {
+                                $data2 = $this->upload->data();
+                                $data_bukti_penggunaan[] = [
+                                    'id_header_expense' => $id,
+                                    'id_detail_kasbon' => $id_detail_kasbon,
+                                    'upload_file' => 'uploads/bukti_penggunaan_expense/' . $data2['file_name'],
+                                    'created_by' => $this->auth->user_id(),
+                                    'created_date' => date('Y-m-d H:i:s')
+                                ];
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -3527,10 +3558,13 @@ class Expense_report_project extends Admin_Controller
             }
         }
 
-        $files3 = $_FILES['bukti_penggunaan'];
-        $file_count3 = count($files3['name']);
+        $upload_dir = './uploads/bukti_penggunaan_expense/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+        chmod($upload_dir, 0777);
 
-        $confi3['upload_path'] = './uploads/bukti_penggunaan_expense/'; //path folder
+        $confi3['upload_path'] = $upload_dir; //path folder
         $confi3['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
         $confi3['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
         $confi3['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
@@ -3539,24 +3573,35 @@ class Expense_report_project extends Admin_Controller
         $this->load->library('upload', $confi3);
         $this->upload->initialize($confi3);
 
-        for ($i = 0; $i < $file_count3; $i++) {
-            $_FILES['bukti_penggunaan']['name'] = $files3['name'][$i];
-            $_FILES['bukti_penggunaan']['type'] = $files3['type'][$i];
-            $_FILES['bukti_penggunaan']['tmp_name'] = $files3['tmp_name'][$i];
-            $_FILES['bukti_penggunaan']['error'] = $files3['error'][$i];
-            $_FILES['bukti_penggunaan']['size'] = $files3['size'][$i];
+        if (isset($post['detail_subcont'])) {
+            foreach ($post['detail_subcont'] as $no => $item) {
+                $id_detail_kasbon = $item['id_detail_kasbon'];
+                $field_name = 'bukti_penggunaan_' . $no;
+                if (isset($_FILES[$field_name]) && !empty($_FILES[$field_name]['name'])) {
+                    $files3 = $_FILES[$field_name];
+                    $file_count3 = is_array($files3['name']) ? count($files3['name']) : 0;
+                    for ($i = 0; $i < $file_count3; $i++) {
+                        if (!empty($files3['name'][$i])) {
+                            $_FILES['temp_bukti']['name'] = $files3['name'][$i];
+                            $_FILES['temp_bukti']['type'] = $files3['type'][$i];
+                            $_FILES['temp_bukti']['tmp_name'] = $files3['tmp_name'][$i];
+                            $_FILES['temp_bukti']['error'] = $files3['error'][$i];
+                            $_FILES['temp_bukti']['size'] = $files3['size'][$i];
 
-            // Reinitialize the upload class for each file
-            if ($this->upload->do_upload('bukti_penggunaan')) {
-                // Handle success (save file information or any other action)
-                $data = $this->upload->data();
-
-                $data_bukti_penggunaan[] = [
-                    'id_header_expense' => $id,
-                    'upload_file' => 'uploads/bukti_penggunaan_expense/' . $data['file_name'],
-                    'created_by' => $this->auth->user_id(),
-                    'created_date' => date('Y-m-d H:i:s')
-                ];
+                            $this->upload->initialize($confi3);
+                            if ($this->upload->do_upload('temp_bukti')) {
+                                $data = $this->upload->data();
+                                $data_bukti_penggunaan[] = [
+                                    'id_header_expense' => $id,
+                                    'id_detail_kasbon' => $id_detail_kasbon,
+                                    'upload_file' => 'uploads/bukti_penggunaan_expense/' . $data['file_name'],
+                                    'created_by' => $this->auth->user_id(),
+                                    'created_date' => date('Y-m-d H:i:s')
+                                ];
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -3872,24 +3917,16 @@ class Expense_report_project extends Admin_Controller
     public function del_bukti_penggunaan()
     {
         $id = $this->input->post('id');
-
-        $this->db->trans_begin();
-
-        $del_bukti_penggunaan = $this->db->delete('kons_tr_bukti_penggunaan_expense', array('id' => $id));
-
-        if ($this->db->trans_status() === false) {
-            $this->db->trans_rollback();
-
-            $valid = 0;
+        $get_file = $this->db->get_where('kons_tr_bukti_penggunaan_expense', ['id' => $id])->row();
+        if (!empty($get_file)) {
+            if (!empty($get_file->upload_file) && file_exists($get_file->upload_file)) {
+                unlink($get_file->upload_file);
+            }
+            $this->db->delete('kons_tr_bukti_penggunaan_expense', ['id' => $id]);
+            echo json_encode(['status' => 1, 'pesan' => 'File bukti penggunaan berhasil dihapus']);
         } else {
-            $this->db->trans_commit();
-
-            $valid = 1;
+            echo json_encode(['status' => 0, 'pesan' => 'File bukti penggunaan tidak ditemukan']);
         }
-
-        echo json_encode([
-            'status' => $valid
-        ]);
     }
 
     public function del_bukti_pengembalian()
