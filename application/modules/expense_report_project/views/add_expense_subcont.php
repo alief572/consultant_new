@@ -224,9 +224,13 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                         echo '</td>';
 
                         echo '<td width="220" style="vertical-align: top;">';
-                        echo '<input type="file" id="input-bukti-file-' . $item['no'] . '" class="input-bukti-file" data-no="' . $item['no'] . '" multiple style="display: none;">';
-                        echo '<div class="dropzone-item" id="dropzone-bukti-' . $item['no'] . '" data-no="' . $item['no'] . '" style="border: 1px dashed #b4c6dc; border-radius: 4px; background: #fdfdfe; padding: 6px; text-align: center; cursor: pointer; font-size: 11px; color: #555;"><i class="fa fa-cloud-upload text-primary"></i> Tarik file ke sini</div>';
-                        echo '<div id="container-bukti-list-' . $item['no'] . '" style="margin-top: 4px;"></div>';
+                        if ($item['qty_kasbon'] > 0 && $item['nominal_kasbon'] > 0) {
+                            echo '<input type="file" id="input-bukti-file-' . $item['no'] . '" class="input-bukti-file" data-no="' . $item['no'] . '" multiple style="display: none;">';
+                            echo '<div class="dropzone-item" id="dropzone-bukti-' . $item['no'] . '" data-no="' . $item['no'] . '" style="border: 1px dashed #b4c6dc; border-radius: 4px; background: #fdfdfe; padding: 6px; text-align: center; cursor: pointer; font-size: 11px; color: #555;"><i class="fa fa-cloud-upload text-primary"></i> Tarik file ke sini</div>';
+                            echo '<div id="container-bukti-list-' . $item['no'] . '" style="margin-top: 4px;"></div>';
+                        } else {
+                            echo '<div class="text-center text-muted" style="font-size: 11px; padding: 5px;">-</div>';
+                        }
                         echo '</td>';
 
                         echo '<td width="200">';
@@ -496,13 +500,16 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 
         var url_dest = 'save_expense_report';
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be saved !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 var formData = new FormData($('#frm-data')[0]);
 
                 for (var no in selectedBuktiFilesPerItem) {
@@ -522,24 +529,24 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+                            }).then(() => {
                                 window.location.href = siteurl + active_controller + 'add/' + '<?= urlencode(str_replace('/', '|', $id_spk_budgeting)) ?>';
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
                         });

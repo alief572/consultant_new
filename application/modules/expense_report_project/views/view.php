@@ -616,13 +616,16 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
     $(document).on('click', '.req_approval', function() {
         var id = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data cannot be edited after this process !',
-            showCancelButton: true
-        }, function(lanjut) {
-            if (lanjut) {
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, submit!'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'req_approval',
@@ -633,24 +636,24 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+                            }).then(() => {
                                 location.reload(true);
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Warning !',
                                 text: result.pesan
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
                         });
