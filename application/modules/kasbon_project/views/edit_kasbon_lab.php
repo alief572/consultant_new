@@ -529,6 +529,48 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 </table>
             </div>
 
+            <div class="col-md-6">
+                <div class="panel panel-default" style="border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-color: #e3e6f0;">
+                    <div class="panel-heading" style="background-color: #f8f9fc; border-bottom: 1px solid #e3e6f0; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+                        <span><i class="fa fa-paperclip"></i> Bukti Penggunaan</span>
+                        <button type="button" class="btn btn-xs btn-primary" id="btn-pilih-bukti">
+                            <i class="fa fa-plus"></i> Upload Bukti
+                        </button>
+                    </div>
+                    <div class="panel-body" style="padding: 10px;">
+                        <input type="file" id="input-bukti-file" multiple style="display: none;">
+                        
+                        <?php if (!empty($list_bukti_penggunaan)) : ?>
+                            <div style="margin-bottom: 10px;">
+                                <small class="text-muted" style="font-weight: bold;">File Terupload:</small>
+                                <div class="list-group" style="margin-top: 5px; margin-bottom: 5px;">
+                                    <?php foreach ($list_bukti_penggunaan as $bp) : ?>
+                                        <div class="list-group-item" id="row-bukti-<?= $bp->id ?>" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; margin-bottom: 4px; background: #fcfcfc; border: 1px solid #e3e6f0; border-radius: 4px;">
+                                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">
+                                                <i class="fa fa-file text-success" style="margin-right: 8px;"></i>
+                                                <a href="<?= base_url($bp->upload_file) ?>" target="_blank" style="font-weight: 600;">
+                                                    <?= basename($bp->upload_file) ?>
+                                                </a>
+                                            </span>
+                                            <button type="button" class="btn btn-xs btn-danger btn-del-bukti" data-id="<?= $bp->id ?>" title="Hapus File">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <div id="dropzone-bukti" style="border: 2px dashed #b4c6dc; border-radius: 6px; background: #fdfdfe; padding: 18px; text-align: center; cursor: pointer; transition: all 0.2s ease-in-out;">
+                            <i class="fa fa-cloud-upload" style="font-size: 28px; color: #3c8dbc; margin-bottom: 6px; display: block;"></i>
+                            <span style="font-size: 13px; color: #555;"><b>Tarik & letakkan file di sini</b> atau klik untuk memilih file</span>
+                        </div>
+
+                        <div id="container-bukti-list" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-12 mt-5">
                 <a href="<?= base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
                     <i class="fa fa-arrow-left"></i> Back
@@ -546,6 +588,129 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 <script>
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
+    });
+
+    var selectedBuktiFiles = [];
+
+    $(document).on('click', '#btn-pilih-bukti, #dropzone-bukti', function() {
+        $('#input-bukti-file').click();
+    });
+
+    $(document).on('change', '#input-bukti-file', function() {
+        var files = this.files;
+        for (var i = 0; i < files.length; i++) {
+            selectedBuktiFiles.push(files[i]);
+        }
+        this.value = '';
+        renderSelectedBukti();
+    });
+
+    // Drag and drop handlers
+    $(document).on('dragover dragenter', '#dropzone-bukti', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({
+            'border-color': '#3c8dbc',
+            'background': '#eef5fb'
+        });
+    });
+
+    $(document).on('dragleave dragend drop', '#dropzone-bukti', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({
+            'border-color': '#b4c6dc',
+            'background': '#fdfdfe'
+        });
+    });
+
+    $(document).on('drop', '#dropzone-bukti', function(e) {
+        var files = e.originalEvent.dataTransfer.files;
+        if (files && files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+                selectedBuktiFiles.push(files[i]);
+            }
+            renderSelectedBukti();
+        }
+    });
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        var k = 1024;
+        var sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    function renderSelectedBukti() {
+        var html = '';
+        if (selectedBuktiFiles.length > 0) {
+            html += '<small class="text-muted" style="font-weight: bold;">File Baru Dipilih (' + selectedBuktiFiles.length + '):</small><div class="list-group" style="margin-top: 5px; margin-bottom: 0;">';
+            for (var i = 0; i < selectedBuktiFiles.length; i++) {
+                var file = selectedBuktiFiles[i];
+                html += '<div class="list-group-item" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; margin-bottom: 4px; background: #fff; border: 1px solid #e3e6f0; border-radius: 4px;">' +
+                    '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">' +
+                    '<i class="fa fa-file-text-o text-primary" style="margin-right: 8px;"></i>' +
+                    '<b>' + file.name + '</b> <small class="text-muted">(' + formatBytes(file.size) + ')</small>' +
+                    '</span>' +
+                    '<button type="button" class="btn btn-xs btn-danger btn-remove-selected-bukti" data-index="' + i + '" title="Hapus"><i class="fa fa-trash"></i></button>' +
+                    '</div>';
+            }
+            html += '</div>';
+        }
+        $('#container-bukti-list').html(html);
+    }
+
+    $(document).on('click', '.btn-remove-selected-bukti', function(e) {
+        e.stopPropagation();
+        var index = $(this).data('index');
+        selectedBuktiFiles.splice(index, 1);
+        renderSelectedBukti();
+    });
+
+    $(document).on('click', '.btn-del-bukti', function() {
+        var id = $(this).data('id');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: 'File bukti penggunaan ini akan dihapus permanen !',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_bukti_penggunaan',
+                    data: { id: id },
+                    dataType: 'JSON',
+                    success: function(result) {
+                        if (result.status == 1) {
+                            Swal.fire({
+            icon: 'success',
+            title: 'Success !',
+            text: result.pesan,
+            timer: 1500
+        });
+                            $('#row-bukti-' + id).remove();
+                        } else {
+                            Swal.fire({
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
+        });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later !'
+        });
+                    }
+                });
+            }
+        });
     });
 
     function number_format(number, decimals, dec_point, thousands_sep) {
@@ -661,20 +826,25 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         // }
 
         if (valid == '0') {
-            swal({
-                type: 'warning',
-                title: 'Warning !',
-                text: 'Nominal pengajuan melebihi Sisa Budget !'
-            });
+            Swal.fire({
+            icon: 'warning',
+            title: 'Warning !',
+            text: 'Nominal pengajuan melebihi Sisa Budget !'
+        });
         } else {
-            swal({
-                type: 'warning',
-                title: 'Are you sure ?',
-                text: 'This data will be saved !',
-                showCancelButton: true
-            }, function(next) {
-                if (next) {
+            Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be saved !',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                     var formData = new FormData($('#frm-data')[0]);
+                    for (var i = 0; i < selectedBuktiFiles.length; i++) {
+                        formData.append('bukti_penggunaan[]', selectedBuktiFiles[i]);
+                    }
 
                     $.ajax({
                         type: 'post',
@@ -686,27 +856,27 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         dataType: 'JSON',
                         success: function(result) {
                             if (result.status == '1') {
-                                swal({
-                                    type: 'success',
-                                    title: 'Success !',
-                                    text: result.pesan
-                                }, function(lanjut) {
+                                Swal.fire({
+            icon: 'success',
+            title: 'Success !',
+            text: result.pesan
+        }).then(() => {
                                     window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>"
                                 });
                             } else {
-                                swal({
-                                    type: 'warning',
-                                    title: 'Failed !',
-                                    text: result.pesan
-                                });
+                                Swal.fire({
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
+        });
                             }
                         },
                         error: function(result) {
-                            swal({
-                                type: 'error',
-                                title: 'Error !',
-                                text: 'Please try again later !'
-                            });
+                            Swal.fire({
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later !'
+        });
                         }
                     });
                 }

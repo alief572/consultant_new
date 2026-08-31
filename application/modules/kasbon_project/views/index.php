@@ -52,6 +52,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script> -->
 
 <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- page script -->
 <script type="text/javascript">
     $(document).ready(function() {
@@ -61,13 +62,17 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('click', '.del_spk_budget', function() {
         var id = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be deleted !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_spk_budgeting',
@@ -78,27 +83,27 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
-                                title: 'Success !',
-                                text: result.pesan
-                            }, function(lanjut) {
+                            Swal.fire({
+            icon: 'success',
+            title: 'Success !',
+            text: result.pesan
+        }).then(() => {
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
-                                title: 'Failed !',
-                                text: result.pesan
-                            });
+                            Swal.fire({
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
-                            title: 'Error !',
-                            text: 'Please try again later!'
-                        });
+                        Swal.fire({
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later!'
+        });
                     }
                 });
             }
@@ -110,13 +115,17 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         var id_spk_budgeting = $(this).data('id_spk_budgeting');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure to Request Approval this data?',
             text: 'This action cannot be undo !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, request approval!',
+            cancelButtonText: 'Cancel'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'req_approval_kasbon',
@@ -127,27 +136,27 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
-                                title: 'Success !',
-                                text: result.pesan
-                            }, function(lanjut) {
+                            Swal.fire({
+            icon: 'success',
+            title: 'Success !',
+            text: result.pesan
+        }).then(() => {
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
-                                title: 'Failed !',
-                                text: result.pesan
-                            });
+                            Swal.fire({
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
-                            title: 'Error !',
-                            text: 'Please try again later!'
-                        });
+                        Swal.fire({
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later!'
+        });
                     }
                 });
             }

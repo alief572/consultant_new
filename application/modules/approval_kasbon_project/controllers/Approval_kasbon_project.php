@@ -890,7 +890,8 @@ class Approval_kasbon_project extends Admin_Controller
             'data_overbudget_others' => $data_overbudget_others,
             'data_overbudget_lab' => $data_overbudget_lab,
             'data_overbudget_subcont_tenaga_ahli' => $data_overbudget_subcont_tenaga_ahli,
-            'data_overbudget_subcont_perusahaan' => $data_overbudget_subcont_perusahaan
+            'data_overbudget_subcont_perusahaan' => $data_overbudget_subcont_perusahaan,
+            'list_bukti_penggunaan' => $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_kasbon])->result()
         ];
 
         $metode_pembayaran = '';

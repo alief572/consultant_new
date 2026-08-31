@@ -392,6 +392,36 @@ if ($header->metode_pembayaran == '3') {
                 </table>
             </div>
 
+            <div class="col-md-6">
+                <div class="panel panel-default" style="border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-color: #e3e6f0;">
+                    <div class="panel-heading" style="background-color: #f8f9fc; border-bottom: 1px solid #e3e6f0; font-weight: bold;">
+                        <i class="fa fa-paperclip"></i> Bukti Penggunaan (<?= !empty($list_bukti_penggunaan) ? count($list_bukti_penggunaan) : 0 ?>)
+                    </div>
+                    <div class="panel-body" style="padding: 10px;">
+                        <?php if (!empty($list_bukti_penggunaan)) : ?>
+                            <div class="list-group" style="margin-bottom: 0;">
+                                <?php foreach ($list_bukti_penggunaan as $bp) : ?>
+                                    <div class="list-group-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; margin-bottom: 4px; background: #fff; border: 1px solid #e3e6f0; border-radius: 4px;">
+                                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75%;">
+                                            <i class="fa fa-file text-success" style="margin-right: 8px;"></i>
+                                            <b><?= basename($bp->upload_file) ?></b>
+                                        </span>
+                                        <a href="<?= base_url($bp->upload_file) ?>" target="_blank" class="btn btn-xs btn-primary">
+                                            <i class="fa fa-download"></i> Download
+                                        </a>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else : ?>
+                            <div class="text-center text-muted" style="padding: 15px; border: 1px dashed #ccc; border-radius: 4px; font-size: 13px;">
+                                <i class="fa fa-file-o" style="font-size: 24px; color: #aaa; margin-bottom: 5px; display: block;"></i>
+                                Tidak ada bukti penggunaan yang diupload
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-12 mt-5">
                 <a href="<?= base_url('kasbon_project/add_kasbon/' . urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting))) ?>" class="btn btn-sm btn-danger">
                     <i class="fa fa-arrow-left"></i> Back
@@ -497,19 +527,19 @@ if ($header->metode_pembayaran == '3') {
                     $('#dialog-history-kasbon').modal();
                     $('#historyModalBodyKasbon').html(result.result);
                 } else {
-                    swal({
-                        type: 'warning',
-                        title: 'Failed !',
-                        text: result.pesan
-                    });
+                    Swal.fire({
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
+        });
                 }
             },
             error: function(result) {
-                swal({
-                    type: 'error',
-                    title: 'Error !',
-                    text: 'Please try again later!'
-                });
+                Swal.fire({
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later!'
+        });
             }
         });
     });
@@ -532,19 +562,21 @@ if ($header->metode_pembayaran == '3') {
         }
 
         if (valid == '0') {
-            swal({
-                type: 'warning',
-                title: 'Warning !',
-                text: 'Nominal pengajuan melebihi Sisa Budget !'
-            });
+            Swal.fire({
+            icon: 'warning',
+            title: 'Warning !',
+            text: 'Nominal pengajuan melebihi Sisa Budget !'
+        });
         } else {
-            swal({
-                type: 'warning',
-                title: 'Are you sure ?',
-                text: 'This data will be saved !',
-                showCancelButton: true
-            }, function(next) {
-                if (next) {
+            Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be saved !',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                     var formData = new FormData($('#frm-data')[0]);
 
                     $.ajax({
@@ -557,27 +589,27 @@ if ($header->metode_pembayaran == '3') {
                         dataType: 'JSON',
                         success: function(result) {
                             if (result.status == '1') {
-                                swal({
-                                    type: 'success',
-                                    title: 'Success !',
-                                    text: result.pesan
-                                }, function(lanjut) {
+                                Swal.fire({
+            icon: 'success',
+            title: 'Success !',
+            text: result.pesan
+        }).then(() => {
                                     window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>"
                                 });
                             } else {
-                                swal({
-                                    type: 'warning',
-                                    title: 'Failed !',
-                                    text: result.pesan
-                                });
+                                Swal.fire({
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
+        });
                             }
                         },
                         error: function(result) {
-                            swal({
-                                type: 'error',
-                                title: 'Error !',
-                                text: 'Please try again later !'
-                            });
+                            Swal.fire({
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later !'
+        });
                         }
                     });
                 }

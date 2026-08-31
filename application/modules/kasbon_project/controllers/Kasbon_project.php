@@ -3645,6 +3645,8 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -3653,7 +3655,8 @@ class Kasbon_project extends Admin_Controller
             'list_data_kasbon_custom' => $get_kasbon_akomodasi_custom,
             'list_budget_tambahan' => $data_budget_tambahan,
             'data_list_kasbon_akomodasi' => $data_list_kasbon_akomodasi,
-            'data_list_kasbon_akomodasi_custom' => $data_list_kasbon_akomodasi_custom
+            'data_list_kasbon_akomodasi_custom' => $data_list_kasbon_akomodasi_custom,
+            'list_bukti_penggunaan' => $list_bukti_penggunaan
         ];
 
         $this->template->set($data);
@@ -3739,13 +3742,16 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_akomodasi' => $get_data_budgeting_akomodasi,
             'list_data_kasbon' => $get_data_akomodasi,
             'list_budget_tambahan' => $data_budget_tambahan,
-            'data_list_kasbon_akomodasi' => $data_list_kasbon_akomodasi
+            'data_list_kasbon_akomodasi' => $data_list_kasbon_akomodasi,
+            'list_bukti_penggunaan' => $list_bukti_penggunaan
         ];
 
         $this->template->set($data);
@@ -4094,13 +4100,16 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_data_kasbon' => $get_data_kasbon,
             'list_data_others' => $get_data_others,
             'list_data_others_custom' => $get_data_others_custom,
-            'list_arr_kasbon' => $list_arr_kasbon
+            'list_arr_kasbon' => $list_arr_kasbon,
+            'list_bukti_penggunaan' => $list_bukti_penggunaan
         ];
 
         $this->template->set($data);
@@ -4165,13 +4174,16 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_data_kasbon' => $get_data_kasbon,
             'list_data_lab' => $get_data_lab,
             'list_data_lab_custom' => $get_data_lab_custom,
-            'list_arr_kasbon' => $list_arr_kasbon
+            'list_arr_kasbon' => $list_arr_kasbon,
+            'list_bukti_penggunaan' => $list_bukti_penggunaan
         ];
 
         $this->template->set($data);
@@ -4236,13 +4248,16 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_data_kasbon' => $get_data_kasbon,
             'list_data_subcont_tenaga_ahli' => $get_data_subcont_tenaga_ahli,
             'list_data_subcont_tenaga_ahli_custom' => $get_data_subcont_tenaga_ahli_custom,
-            'list_arr_kasbon' => $list_arr_kasbon
+            'list_arr_kasbon' => $list_arr_kasbon,
+            'list_bukti_penggunaan' => $list_bukti_penggunaan
         ];
 
         $this->template->set($data);
@@ -4307,13 +4322,16 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_data_kasbon' => $get_data_kasbon,
             'list_data_subcont_perusahaan' => $get_data_subcont_perusahaan,
             'list_data_subcont_perusahaan_custom' => $get_data_subcont_perusahaan_custom,
-            'list_arr_kasbon' => $list_arr_kasbon
+            'list_arr_kasbon' => $list_arr_kasbon,
+            'list_bukti_penggunaan' => $list_bukti_penggunaan
         ];
 
         $this->template->set($data);
@@ -4379,17 +4397,20 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_data_kasbon' => $get_data_kasbon,
             'list_data_others' => $get_data_others,
             'list_data_others_custom' => $get_data_others_custom,
-            'list_arr_kasbon' => $list_arr_kasbon
+            'list_arr_kasbon' => $list_arr_kasbon,
+            'list_bukti_penggunaan' => $list_bukti_penggunaan
         ];
 
         $this->template->set($data);
-        $this->template->title('Pengajuan Lab');
+        $this->template->title('Pengajuan Others');
         $this->template->render('edit_kasbon_others');
     }
 
@@ -4451,13 +4472,16 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_data_kasbon' => $get_data_kasbon,
             'list_data_lab' => $get_data_lab,
             'list_data_lab_custom' => $get_data_lab_custom,
-            'list_arr_kasbon' => $list_arr_kasbon
+            'list_arr_kasbon' => $list_arr_kasbon,
+            'list_bukti_penggunaan' => $list_bukti_penggunaan
         ];
 
         $this->template->set($data);
@@ -4523,13 +4547,16 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_data_kasbon' => $get_data_kasbon,
             'list_data_subcont_tenaga_ahli' => $get_data_subcont_tenaga_ahli,
             'list_data_subcont_tenaga_ahli_custom' => $get_data_subcont_tenaga_ahli_custom,
-            'list_arr_kasbon' => $list_arr_kasbon
+            'list_arr_kasbon' => $list_arr_kasbon,
+            'list_bukti_penggunaan' => $list_bukti_penggunaan
         ];
 
         $this->template->set($data);
@@ -4595,13 +4622,16 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
+        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
             'list_data_kasbon' => $get_data_kasbon,
             'list_data_subcont_perusahaan' => $get_data_subcont_perusahaan,
             'list_data_subcont_perusahaan_custom' => $get_data_subcont_perusahaan_custom,
-            'list_arr_kasbon' => $list_arr_kasbon
+            'list_arr_kasbon' => $list_arr_kasbon,
+            'list_bukti_penggunaan' => $list_bukti_penggunaan
         ];
 
         $this->template->set($data);
@@ -4984,8 +5014,11 @@ class Kasbon_project extends Admin_Controller
 
     public function save_kasbon_akomodasi()
     {
-        $json = file_get_contents('php://input');
-        $post = json_decode($json, true);
+        $post = $this->input->post();
+        if (empty($post)) {
+            $json = file_get_contents('php://input');
+            $post = json_decode($json, true);
+        }
 
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
@@ -5100,6 +5133,8 @@ class Kasbon_project extends Admin_Controller
             print_r($this->db->last_query());
             exit;
         }
+
+        $this->_upload_bukti_penggunaan($id);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -5246,6 +5281,8 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
+        $this->_upload_bukti_penggunaan($post['id_header']);
+
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
@@ -5379,6 +5416,8 @@ class Kasbon_project extends Admin_Controller
             exit;
         }
 
+        $this->_upload_bukti_penggunaan($id);
+
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
@@ -5411,25 +5450,6 @@ class Kasbon_project extends Admin_Controller
         $this->upload->initialize($config);
 
         $upload_po = '';
-
-        // $files = $_FILES['kasbon_document'];
-        // $file_count = count($files['name']);
-
-        // $_FILES['kasbon_document']['name'] = $files['name'];
-        // $_FILES['kasbon_document']['type'] = $files['type'];
-        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        // $_FILES['kasbon_document']['error'] = $files['error'];
-        // $_FILES['kasbon_document']['size'] = $files['size'];
-
-        // if (!$this->upload->do_upload('kasbon_document')) {
-        //     // If upload fails, display error
-        //     $error = array('error' => $this->upload->display_errors());
-        //     // print_r($error);
-        // } else {
-        //     $data_upload_po = $this->upload->data();
-        //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
-        // }
-
 
         $this->db->trans_begin();
 
@@ -5471,6 +5491,7 @@ class Kasbon_project extends Admin_Controller
         $no = 1;
         foreach ($post['detail_lab'] as $item) {
             if (str_replace(',', '', $item['qty_pengajuan']) > 0 && str_replace(',', '', $item['nominal_pengajuan'])) {
+
                 $custom_lab = (isset($item['custom_lab'])) ? $item['custom_lab'] : 0;
 
                 $data_insert[] = [
@@ -5511,6 +5532,8 @@ class Kasbon_project extends Admin_Controller
             exit;
         }
 
+        $this->_upload_bukti_penggunaan($id);
+
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
@@ -5543,25 +5566,6 @@ class Kasbon_project extends Admin_Controller
         $this->upload->initialize($config);
 
         $upload_po = '';
-
-        // $files = $_FILES['kasbon_document'];
-        // $file_count = count($files['name']);
-
-        // $_FILES['kasbon_document']['name'] = $files['name'];
-        // $_FILES['kasbon_document']['type'] = $files['type'];
-        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        // $_FILES['kasbon_document']['error'] = $files['error'];
-        // $_FILES['kasbon_document']['size'] = $files['size'];
-
-        // if (!$this->upload->do_upload('kasbon_document')) {
-        //     // If upload fails, display error
-        //     $error = array('error' => $this->upload->display_errors());
-        //     // print_r($error);
-        // } else {
-        //     $data_upload_po = $this->upload->data();
-        //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
-        // }
-
 
         $this->db->trans_begin();
 
@@ -5644,6 +5648,8 @@ class Kasbon_project extends Admin_Controller
             exit;
         }
 
+        $this->_upload_bukti_penggunaan($id);
+
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
@@ -5676,25 +5682,6 @@ class Kasbon_project extends Admin_Controller
         $this->upload->initialize($config);
 
         $upload_po = '';
-
-        // $files = $_FILES['kasbon_document'];
-        // $file_count = count($files['name']);
-
-        // $_FILES['kasbon_document']['name'] = $files['name'];
-        // $_FILES['kasbon_document']['type'] = $files['type'];
-        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        // $_FILES['kasbon_document']['error'] = $files['error'];
-        // $_FILES['kasbon_document']['size'] = $files['size'];
-
-        // if (!$this->upload->do_upload('kasbon_document')) {
-        //     // If upload fails, display error
-        //     $error = array('error' => $this->upload->display_errors());
-        //     // print_r($error);
-        // } else {
-        //     $data_upload_po = $this->upload->data();
-        //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
-        // }
-
 
         $this->db->trans_begin();
 
@@ -5775,6 +5762,8 @@ class Kasbon_project extends Admin_Controller
             print_r($this->db->last_query());
             exit;
         }
+
+        $this->_upload_bukti_penggunaan($id);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -5912,6 +5901,8 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
+        $this->_upload_bukti_penggunaan($id);
+
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
@@ -5944,22 +5935,6 @@ class Kasbon_project extends Admin_Controller
         $this->upload->initialize($config);
 
         $upload_po = '';
-
-        // $files = $_FILES['kasbon_document'];
-        // $file_count = count($files['name']);
-
-        // $_FILES['kasbon_document']['name'] = $files['name'];
-        // $_FILES['kasbon_document']['type'] = $files['type'];
-        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        // $_FILES['kasbon_document']['error'] = $files['error'];
-        // $_FILES['kasbon_document']['size'] = $files['size'];
-
-        // if (!$this->upload->do_upload('kasbon_document')) {
-        //     $upload_po = $post['dokument_link'];
-        // } else {
-        //     $data_upload_po = $this->upload->data();
-        //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
-        // }
 
         $grand_total = 0;
         foreach ($post['detail_lab'] as $item) {
@@ -6048,6 +6023,8 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
+        $this->_upload_bukti_penggunaan($id);
+
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
@@ -6080,22 +6057,6 @@ class Kasbon_project extends Admin_Controller
         $this->upload->initialize($config);
 
         $upload_po = '';
-
-        // $files = $_FILES['kasbon_document'];
-        // $file_count = count($files['name']);
-
-        // $_FILES['kasbon_document']['name'] = $files['name'];
-        // $_FILES['kasbon_document']['type'] = $files['type'];
-        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        // $_FILES['kasbon_document']['error'] = $files['error'];
-        // $_FILES['kasbon_document']['size'] = $files['size'];
-
-        // if (!$this->upload->do_upload('kasbon_document')) {
-        //     $upload_po = $post['dokument_link'];
-        // } else {
-        //     $data_upload_po = $this->upload->data();
-        //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
-        // }
 
         $grand_total = 0;
         foreach ($post['detail_subcont_tenaga_ahli'] as $item) {
@@ -6184,6 +6145,8 @@ class Kasbon_project extends Admin_Controller
             }
         }
 
+        $this->_upload_bukti_penggunaan($id);
+
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
 
@@ -6216,22 +6179,6 @@ class Kasbon_project extends Admin_Controller
         $this->upload->initialize($config);
 
         $upload_po = '';
-
-        // $files = $_FILES['kasbon_document'];
-        // $file_count = count($files['name']);
-
-        // $_FILES['kasbon_document']['name'] = $files['name'];
-        // $_FILES['kasbon_document']['type'] = $files['type'];
-        // $_FILES['kasbon_document']['tmp_name'] = $files['tmp_name'];
-        // $_FILES['kasbon_document']['error'] = $files['error'];
-        // $_FILES['kasbon_document']['size'] = $files['size'];
-
-        // if (!$this->upload->do_upload('kasbon_document')) {
-        //     $upload_po = $post['dokument_link'];
-        // } else {
-        //     $data_upload_po = $this->upload->data();
-        //     $upload_po = 'uploads/kasbon_project/' . $data_upload_po['file_name'];
-        // }
 
         $grand_total = 0;
         foreach ($post['detail_subcont_perusahaan'] as $item) {
@@ -6319,6 +6266,8 @@ class Kasbon_project extends Admin_Controller
                 exit;
             }
         }
+
+        $this->_upload_bukti_penggunaan($id);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -8008,5 +7957,94 @@ class Kasbon_project extends Admin_Controller
             'status' => 1,
             'result' => $html
         ]);
+    }
+
+    private function _upload_bukti_penggunaan($id_header)
+    {
+        $target_dir = './uploads/kasbon_project_bukti_penggunaan/';
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0777, true);
+            chmod($target_dir, 0777);
+        }
+
+        $data_bukti = [];
+        if (isset($_FILES['bukti_penggunaan']) && !empty($_FILES['bukti_penggunaan']['name'])) {
+            $files = $_FILES['bukti_penggunaan'];
+            $file_count = is_array($files['name']) ? count($files['name']) : 1;
+
+            $config = [
+                'upload_path'   => $target_dir,
+                'allowed_types' => 'gif|jpg|png|jpeg|bmp|pdf|webp',
+                'max_size'      => 100000,
+                'encrypt_name'  => TRUE,
+                'remove_spaces' => TRUE
+            ];
+
+            $this->load->library('upload', $config);
+
+            if (is_array($files['name'])) {
+                for ($i = 0; $i < $file_count; $i++) {
+                    if (empty($files['name'][$i])) {
+                        continue;
+                    }
+
+                    $_FILES['bukti_file']['name']     = $files['name'][$i];
+                    $_FILES['bukti_file']['type']     = $files['type'][$i];
+                    $_FILES['bukti_file']['tmp_name'] = $files['tmp_name'][$i];
+                    $_FILES['bukti_file']['error']    = $files['error'][$i];
+                    $_FILES['bukti_file']['size']     = $files['size'][$i];
+
+                    $this->upload->initialize($config);
+                    if ($this->upload->do_upload('bukti_file')) {
+                        $data_upload = $this->upload->data();
+                        $data_bukti[] = [
+                            'id_header_kasbon' => $id_header,
+                            'upload_file'      => 'uploads/kasbon_project_bukti_penggunaan/' . $data_upload['file_name'],
+                            'created_by'       => $this->auth->user_id(),
+                            'created_date'     => date('Y-m-d H:i:s')
+                        ];
+                    }
+                }
+            } else {
+                if (!empty($files['name'])) {
+                    $this->upload->initialize($config);
+                    if ($this->upload->do_upload('bukti_penggunaan')) {
+                        $data_upload = $this->upload->data();
+                        $data_bukti[] = [
+                            'id_header_kasbon' => $id_header,
+                            'upload_file'      => 'uploads/kasbon_project_bukti_penggunaan/' . $data_upload['file_name'],
+                            'created_by'       => $this->auth->user_id(),
+                            'created_date'     => date('Y-m-d H:i:s')
+                        ];
+                    }
+                }
+            }
+
+            if (!empty($data_bukti)) {
+                $this->db->insert_batch('kons_tr_kasbon_project_bukti_penggunaan', $data_bukti);
+            }
+        }
+
+        return $data_bukti;
+    }
+
+    public function del_bukti_penggunaan()
+    {
+        $id = $this->input->post('id');
+
+        $get_data = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id' => $id])->row();
+        if (!empty($get_data)) {
+            if (file_exists('./' . $get_data->upload_file) && is_file('./' . $get_data->upload_file)) {
+                unlink('./' . $get_data->upload_file);
+            }
+            $del = $this->db->delete('kons_tr_kasbon_project_bukti_penggunaan', ['id' => $id]);
+            if ($del) {
+                echo json_encode(['status' => 1, 'pesan' => 'File bukti berhasil dihapus !']);
+            } else {
+                echo json_encode(['status' => 0, 'pesan' => 'Gagal menghapus file bukti !']);
+            }
+        } else {
+            echo json_encode(['status' => 0, 'pesan' => 'Data tidak ditemukan !']);
+        }
     }
 }

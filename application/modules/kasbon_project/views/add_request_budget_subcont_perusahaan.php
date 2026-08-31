@@ -244,13 +244,15 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be saved !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
                 var formData = new FormData($('#frm-data')[0]);
 
                 var id_spk_budgeting = $('input[name="id_spk_budgeting"]').val();
@@ -265,27 +267,27 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
-                                title: 'Success !',
-                                text: result.pesan
-                            }, function(lanjut) {
+                            Swal.fire({
+            icon: 'success',
+            title: 'Success !',
+            text: result.pesan
+        }).then(() => {
                                 window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>";
                             });
                         } else {
-                            swal({
-                                type: 'warning',
-                                title: 'Failed !',
-                                text: result.pesan
-                            });
+                            Swal.fire({
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
+        });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
-                            title: 'Error !',
-                            text: 'Please try again later !'
-                        });
+                        Swal.fire({
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later !'
+        });
                     }
                 });
             }

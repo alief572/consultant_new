@@ -1236,9 +1236,74 @@ if ($header->metode_pembayaran == '3') {
 <div class="box">
   <div class="box-body">
     <div class="col-md-6">
+      <table style="width: 100%; margin-bottom: 15px;">
+        <tr>
+          <th style="padding: 5px;" width="140">Document</th>
+          <td style="padding: 5px;">
+            <?php
+            if (file_exists('./' . $header->dokument_link) && $header->dokument_link !== '') {
+              echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-xs btn-primary" target="_blank">
+                      <i class="fa fa-download"></i> Download Document
+                    </a>';
+            } else {
+              echo '<span class="text-muted"><i class="fa fa-times"></i> Tidak ada dokumen</span>';
+            }
+            ?>
+          </td>
+        </tr>
+        <tr>
+          <th style="padding: 5px;" width="140">Bank</th>
+          <td style="padding: 5px;">
+            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>" readonly>
+          </td>
+        </tr>
+        <tr>
+          <th style="padding: 5px;" width="140">Bank Number</th>
+          <td style="padding: 5px;">
+            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>" readonly>
+          </td>
+        </tr>
+        <tr>
+          <th style="padding: 5px;" width="140">Account Name</th>
+          <td style="padding: 5px;">
+            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>" readonly>
+          </td>
+        </tr>
+      </table>
+
       <div class="form-group">
         <label for="">Reject Reason</label>
-        <textarea name="reject_reason" class="form-control form-control-sm" id="" cols="30" rows="5"></textarea>
+        <textarea name="reject_reason" class="form-control form-control-sm" id="" cols="30" rows="3" placeholder="Masukkan alasan reject jika pengajuan ditolak..."></textarea>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="panel panel-default" style="border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-color: #e3e6f0;">
+        <div class="panel-heading" style="background-color: #f8f9fc; border-bottom: 1px solid #e3e6f0; font-weight: bold;">
+          <i class="fa fa-paperclip"></i> Bukti Penggunaan (<?= !empty($list_bukti_penggunaan) ? count($list_bukti_penggunaan) : 0 ?>)
+        </div>
+        <div class="panel-body" style="padding: 10px;">
+          <?php if (!empty($list_bukti_penggunaan)) : ?>
+            <div class="list-group" style="margin-bottom: 0;">
+              <?php foreach ($list_bukti_penggunaan as $bp) : ?>
+                <div class="list-group-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; margin-bottom: 4px; background: #fff; border: 1px solid #e3e6f0; border-radius: 4px;">
+                  <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75%;">
+                    <i class="fa fa-file text-success" style="margin-right: 8px;"></i>
+                    <b><?= basename($bp->upload_file) ?></b>
+                  </span>
+                  <a href="<?= base_url($bp->upload_file) ?>" target="_blank" class="btn btn-xs btn-primary">
+                    <i class="fa fa-download"></i> Download
+                  </a>
+                </div>
+              <?php endforeach; ?>
+            </div>
+          <?php else : ?>
+            <div class="text-center text-muted" style="padding: 15px; border: 1px dashed #ccc; border-radius: 4px; font-size: 13px;">
+              <i class="fa fa-file-o" style="font-size: 24px; color: #aaa; margin-bottom: 5px; display: block;"></i>
+              Tidak ada bukti penggunaan yang diupload
+            </div>
+          <?php endif; ?>
+        </div>
       </div>
     </div>
 
@@ -1272,19 +1337,21 @@ if ($header->metode_pembayaran == '3') {
     var reject_reason = $('input[name="reject_reason"]').val();
 
     if (reject_reason == '') {
-      swal({
-        type: 'warning',
-        title: 'Warning !',
-        text: 'Please fill the reject reason first !'
-      });
+      Swal.fire({
+            icon: 'warning',
+            title: 'Warning !',
+            text: 'Please fill the reject reason first !'
+        });
     } else {
-      swal({
-        type: 'warning',
-        title: 'Are you sure ?',
-        text: 'This data will be rejected !',
-        showCancelButton: true
-      }, function(next) {
-        if (next) {
+      Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be rejected !',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
           $.ajax({
             type: 'post',
             url: siteurl + active_controller + 'reject_kasbon',
@@ -1299,29 +1366,29 @@ if ($header->metode_pembayaran == '3') {
             },
             success: function(result) {
               if (result.status == '1') {
-                swal({
-                  type: 'success',
-                  title: 'Success !',
-                  text: result.pesan
-                }, function(a) {
+                Swal.fire({
+            icon: 'success',
+            title: 'Success !',
+            text: result.pesan
+        }).then(() => {
                   window.location.href = siteurl + active_controller;
                 });
               } else {
-                swal({
-                  type: 'warning',
-                  title: 'Failed !',
-                  text: result.pesan
-                });
+                Swal.fire({
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
+        });
               }
             },
             error: function() {
               $('.reject_kasbon').attr('disabled', false);
 
-              swal({
-                type: 'error',
-                title: 'Error !',
-                text: 'Please try again later !'
-              });
+              Swal.fire({
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later !'
+        });
             }
           });
         }
@@ -1334,13 +1401,15 @@ if ($header->metode_pembayaran == '3') {
 
     var id_kasbon = $('input[name="id_kasbon"]').val();
 
-    swal({
-      type: 'warning',
-      title: 'Are you sure ?',
-      text: 'This data will be approved !',
-      showCancelButton: true
-    }, function(next) {
-      if (next) {
+    Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: 'This data will be approved !',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
         $.ajax({
           type: 'post',
           url: siteurl + active_controller + 'approve_kasbon',
@@ -1354,28 +1423,28 @@ if ($header->metode_pembayaran == '3') {
           },
           success: function(result) {
             if (result.status == '1') {
-              swal({
-                type: 'success',
-                title: 'Success !',
-                text: result.pesan
-              }, function(a) {
+              Swal.fire({
+            icon: 'success',
+            title: 'Success !',
+            text: result.pesan
+        }).then(() => {
                 window.location.href = siteurl + active_controller;
               });
             } else {
-              swal({
-                type: 'warning',
-                title: 'Failed !',
-                text: result.pesan
-              });
+              Swal.fire({
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
+        });
             }
           },
           error: function() {
             $('.approve_kasbon').attr('disabled', false);
-            swal({
-              type: 'error',
-              title: 'Error !',
-              text: 'Please try again later !'
-            });
+            Swal.fire({
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later !'
+        });
           }
         });
       }
