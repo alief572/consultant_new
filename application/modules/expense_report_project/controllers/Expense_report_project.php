@@ -412,6 +412,13 @@ class Expense_report_project extends Admin_Controller
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_kasbon_header->id_penawaran])->row();
         $get_company = $this->db->get_where('kons_tr_company', ['id' => $get_penawaran->company])->row();
 
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to, c.nm_paket');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
+        $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+        $get_spk_budgeting = $this->db->get()->row();
+
         $this->sendigs->select('a.id, a.rekening, a.nama, a.coa_bank, b.nama_bank');
         $this->sendigs->from('ms_bank a');
         $this->sendigs->join('list_bank b', 'b.id = a.bank');
@@ -878,7 +885,8 @@ class Expense_report_project extends Admin_Controller
             'tipe' => $get_kasbon_header->tipe,
             'data_bank' => $get_bank,
             'list_bank' => $get_bank_acc,
-            'list_jurnal_pph21' => $list_jurnal_pph21
+            'list_jurnal_pph21' => $list_jurnal_pph21,
+            'list_budgeting' => $get_spk_budgeting
         ];
 
         $this->template->set($data);
@@ -919,6 +927,13 @@ class Expense_report_project extends Admin_Controller
         $get_bank = $this->sendigs->get()->result();
 
         $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header a', ['a.id' => $id_header])->row();
+
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to, c.nm_paket');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
+        $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+        $get_spk_budgeting = $this->db->get()->row();
 
         $datalist_item = [];
         $datalist_item_expense = [];
@@ -1449,7 +1464,8 @@ class Expense_report_project extends Admin_Controller
             'id_penawaran' => $get_kasbon_header->id_penawaran,
             'tipe' => $get_kasbon_header->tipe,
             'list_bank' => $get_bank,
-            'list_jurnal_pph21' => $list_jurnal_pph21
+            'list_jurnal_pph21' => $list_jurnal_pph21,
+            'list_budgeting' => $get_spk_budgeting
         ];
 
         $this->template->set($data);
