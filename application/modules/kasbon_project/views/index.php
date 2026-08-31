@@ -26,21 +26,19 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     <!-- /.box-header -->
     <div class="box-body">
         <div class="table-responsive">
-            <table id="table_penawaran" class="table table-bordered table-striped nowrap">
+            <table id="table_penawaran" class="table table-bordered table-striped table-hover" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th align="center">No</th>
-                        <th align="center">Nomor SPK</th>
-                        <th align="center">Customer</th>
-                        <th align="center">Sales</th>
-                        <th align="center">Project Leader</th>
-                        <th align="center">Package</th>
-                        <th align="center">Status</th>
-                        <th align="center">Reject Reason</th>
-                        <th align="center">Action</th>
+                        <th class="text-center" width="5%">No</th>
+                        <th class="text-center" width="28%">Nomor SPK & Paket</th>
+                        <th class="text-center" width="22%">Customer</th>
+                        <th class="text-center" width="20%">Team / PIC</th>
+                        <th class="text-center" width="13%">Status</th>
+                        <th class="text-center" width="12%">Action</th>
                     </tr>
                 </thead>
-
+                <tbody>
+                </tbody>
             </table>
         </div>
     </div>
@@ -168,9 +166,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         // dataTables.destroy();
 
         var dataTables = $('#table_penawaran').dataTable({
-            processing: false,
+            processing: true,
             serverSide: true,
-            stateSave: true,
+            stateSave: false,
             destroy: true,
             paging: true,
             ajax: {
@@ -183,38 +181,25 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             },
             columns: [{
                     data: 'no',
+                    className: 'text-center'
                 }, {
-                    data: 'id_spk_penawaran'
+                    data: 'spk_paket'
                 },
                 {
                     data: 'nm_customer'
                 },
                 {
-                    data: 'nm_sales'
+                    data: 'pic_team'
                 },
                 {
-                    data: 'nm_project_leader'
+                    data: 'status',
+                    className: 'text-center'
                 },
                 {
-                    data: 'nm_project',
-                    render: function(data, type, row) {
-                        if (type === 'display' && data && data.length > 40) {
-                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
-                        }
-                        return data;
-                    }
-                },
-                {
-                    data: 'status'
-                },
-                {
-                    data: 'reject_reason'
-                },
-                {
-                    data: 'option'
+                    data: 'option',
+                    className: 'text-center'
                 }
             ],
-            scrollX: true,
             autoWidth: false
         });
     }

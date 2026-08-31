@@ -56,6 +56,7 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('b.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
             $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->or_like('c.nm_paket', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.create_date', 'desc');
@@ -63,9 +64,10 @@ class Kasbon_project extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*, b.nm_sales');
+        $this->db->select('a.*, b.nm_sales, c.nm_paket');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->where('a.sts', 1);
         if (!empty($search)) {
             $this->db->group_start();
@@ -75,6 +77,7 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('b.nm_sales', $search['value'], 'both');
             $this->db->or_like('a.nm_project_leader', $search['value'], 'both');
             $this->db->or_like('a.nm_project', $search['value'], 'both');
+            $this->db->or_like('c.nm_paket', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.create_date', 'desc');
@@ -542,14 +545,25 @@ class Kasbon_project extends Admin_Controller
             $option .= $btn_edit;
 
 
+            $spk_paket = '<span style="font-weight: 700; color: #333;">' . $item->id_spk_penawaran . '</span>';
+            if (!empty($item->nm_paket)) {
+                $spk_paket .= '<br><span class="text-muted" style="font-size: 12px;"><i class="fa fa-briefcase"></i> ' . $item->nm_paket . '</span>';
+            }
+
+            $pic_team = '<div><i class="fa fa-user-circle text-primary"></i> <b>PL:</b> ' . ucfirst($item->nm_project_leader) . '</div>';
+            if (!empty($item->nm_sales)) {
+                $pic_team .= '<div class="text-muted" style="font-size: 12px;"><i class="fa fa-user text-muted"></i> <b>Sales:</b> ' . ucfirst($item->nm_sales) . '</div>';
+            }
+
+            if (!empty($reject_reason)) {
+                $status .= '<br><small class="text-danger"><i class="fa fa-info-circle"></i> ' . $reject_reason . '</small>';
+            }
+
             $hasil[] = [
                 'no' => $no,
-                'id_spk_penawaran' => $item->id_spk_penawaran,
+                'spk_paket' => $spk_paket,
                 'nm_customer' => $item->nm_customer,
-                'nm_sales' => ucfirst($item->nm_sales),
-                'nm_project_leader' => ucfirst($item->nm_project_leader),
-                'nm_project' => $item->nm_paket,
-                'reject_reason' => $reject_reason,
+                'pic_team' => $pic_team,
                 'status' => $status,
                 'option' => $option
             ];
