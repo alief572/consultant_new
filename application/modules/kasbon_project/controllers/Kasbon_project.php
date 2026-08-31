@@ -896,8 +896,9 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 2);
         $this->db->where('a.deleted_at IS NULL');
@@ -907,14 +908,16 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('a.deskripsi', $search['value'], 'both');
             $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
         $this->db->limit($length, $start);
         $get_kasbon_akomodasi = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 2);
         $this->db->where('a.deleted_at IS NULL');
@@ -924,6 +927,7 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('a.deskripsi', $search['value'], 'both');
             $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
@@ -1063,6 +1067,7 @@ class Kasbon_project extends Admin_Controller
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'total' => number_format($item->grand_total, 2),
                 'tipe' => $tipe_pengajuan,
+                'nm_pembuat' => $item->nm_pembuat,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -1089,8 +1094,9 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 3);
         $this->db->where('a.deleted_at IS NULL');
@@ -1100,14 +1106,16 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('a.deskripsi', $search['value'], 'both');
             $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
         $this->db->limit($length, $start);
         $get_kasbon_others = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 3);
         $this->db->where('a.deleted_at IS NULL');
@@ -1117,6 +1125,7 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('a.deskripsi', $search['value'], 'both');
             $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
@@ -1159,7 +1168,7 @@ class Kasbon_project extends Admin_Controller
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
-                $sts = '<div class="badge bg-green">Paid</div>';
+                $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
             }
 
             $tipe_pengajuan = '';
@@ -1167,10 +1176,10 @@ class Kasbon_project extends Admin_Controller
                 $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
             }
             if ($item->metode_pembayaran == '2') {
-                $tipe_pengajuan = '<div class="badge bg-yellow">Direct Payment</div>';
+                $tipe_pengajuan = '<div class="badge bg-green">Direct Payment</div>';
             }
             if ($item->metode_pembayaran == '3') {
-                $tipe_pengajuan = '<div class="badge bg-green">PO</div>';
+                $tipe_pengajuan = '<div class="badge bg-red">PO</div>';
             }
 
             $option = '
@@ -1256,6 +1265,7 @@ class Kasbon_project extends Admin_Controller
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
                 'tipe' => $tipe_pengajuan,
+                'nm_pembuat' => $item->nm_pembuat,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -1281,8 +1291,9 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 4);
         $this->db->where('a.deleted_at IS NULL');
@@ -1292,14 +1303,16 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('a.deskripsi', $search['value'], 'both');
             $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
         $this->db->limit($length, $start);
         $get_kasbon_lab = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 4);
         $this->db->where('a.deleted_at IS NULL');
@@ -1309,6 +1322,7 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('a.deskripsi', $search['value'], 'both');
             $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
@@ -1334,24 +1348,24 @@ class Kasbon_project extends Admin_Controller
             $get_check_req_approval = $this->db->get()->result();
 
             // if (count($get_check_req_approval) > 0) {
-            $sts = '<div class="badge bg-blue">Waiting Approval<div>';
+            $sts = '<div class="badge bg-blue">Waiting Approval</div>';
             // }
 
             if ($item->sts == '1') {
-                $sts = '<div class="badge bg-green">Approved<div>';
+                $sts = '<div class="badge bg-green">Approved</div>';
             }
             if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
                 if ($item->sts_reject !== null) {
-                    $sts = '<div class="badge bg-red">Rejected by Finance<div>';
+                    $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 }
                 if ($item->sts_reject_manage !== null) {
-                    $sts = '<div class="badge bg-red">Rejected by Direktur<div>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
-                $sts = '<div class="btn btn-sm btn-success">Paid<div>';
+                $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
             }
 
             $tipe_pengajuan = '';
@@ -1359,10 +1373,10 @@ class Kasbon_project extends Admin_Controller
                 $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
             }
             if ($item->metode_pembayaran == '2') {
-                $tipe_pengajuan = '<div class="badge bg-yellow">Direct Payment</div>';
+                $tipe_pengajuan = '<div class="badge bg-green">Direct Payment</div>';
             }
             if ($item->metode_pembayaran == '3') {
-                $tipe_pengajuan = '<div class="badge bg-green">PO</div>';
+                $tipe_pengajuan = '<div class="badge bg-red">PO</div>';
             }
 
             $option = '
@@ -1448,6 +1462,7 @@ class Kasbon_project extends Admin_Controller
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
                 'tipe' => $tipe_pengajuan,
+                'nm_pembuat' => $item->nm_pembuat,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -1473,8 +1488,9 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 5);
         $this->db->where('a.deleted_at IS NULL');
@@ -1484,14 +1500,16 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('a.deskripsi', $search['value'], 'both');
             $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
         $this->db->limit($length, $start);
         $get_kasbon_subcont_tenaga_ahli = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 5);
         $this->db->where('a.deleted_at IS NULL');
@@ -1501,6 +1519,7 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('a.deskripsi', $search['value'], 'both');
             $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
@@ -1528,10 +1547,10 @@ class Kasbon_project extends Admin_Controller
             // if (count($get_check_req_approval) > 0) {
             $sts = '<div class="badge bg-blue">Waiting Approval</div>';
             // }
-
             if ($item->sts == '1') {
                 $sts = '<div class="badge bg-green">Approved</div>';
             }
+
             if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
                 if ($item->sts_reject !== null) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
@@ -1543,7 +1562,7 @@ class Kasbon_project extends Admin_Controller
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
-                $sts = '<div class="badge bg-green">Paid</div>';
+                $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
             }
 
             $tipe_pengajuan = '';
@@ -1551,10 +1570,10 @@ class Kasbon_project extends Admin_Controller
                 $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
             }
             if ($item->metode_pembayaran == '2') {
-                $tipe_pengajuan = '<div class="badge bg-yellow">Direct Payment</div>';
+                $tipe_pengajuan = '<div class="badge bg-green">Direct Payment</div>';
             }
             if ($item->metode_pembayaran == '3') {
-                $tipe_pengajuan = '<div class="badge bg-green">PO</div>';
+                $tipe_pengajuan = '<div class="badge bg-red">PO</div>';
             }
 
             $option = '
@@ -1612,21 +1631,6 @@ class Kasbon_project extends Admin_Controller
                 ';
             }
 
-            // if ($item->sts_req == '0') {
-            //     $option .= '
-            //         <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-            //             <a href="javascript:void(0);" class="btn btn-sm btn-primary req_approve_kasbon" style="color: #000000" data-id="' . $item->id . '" title="Request Approval">
-            //                 <div class="col-12 dropdown-item">
-            //                 <b>
-            //                     <i class="fa fa-arrow-up"></i>
-            //                 </b>
-            //                 </div>
-            //             </a>
-            //             <span style="font-weight: 500"> Req. Approval </span>
-            //         </div>
-            //     ';
-            // }
-
             $option .= '</div>';
 
             if ($view == 'view') {
@@ -1640,6 +1644,7 @@ class Kasbon_project extends Admin_Controller
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
                 'tipe' => $tipe_pengajuan,
+                'nm_pembuat' => $item->nm_pembuat,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -1665,8 +1670,9 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 6);
         $this->db->where('a.deleted_at IS NULL');
@@ -1676,14 +1682,16 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('a.deskripsi', $search['value'], 'both');
             $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
         $this->db->limit($length, $start);
         $get_kasbon_subcont_perusahaan = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_project_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.tipe', 6);
         $this->db->where('a.deleted_at IS NULL');
@@ -1693,6 +1701,7 @@ class Kasbon_project extends Admin_Controller
             $this->db->or_like('a.deskripsi', $search['value'], 'both');
             $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->or_like('a.grand_total', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->order_by('a.created_by', 'desc');
@@ -1709,7 +1718,7 @@ class Kasbon_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont_perusahaan->result() as $item) {
-            $sts = '<div class="badge bg-yellow">Draft</button>';
+            $sts = '<div class="badge bg-yellow">Draft</div>';
 
             $this->db->select('a.id');
             $this->db->from('kons_tr_req_kasbon_project a');
@@ -1735,7 +1744,7 @@ class Kasbon_project extends Admin_Controller
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
-                $sts = '<div class="badge bg-green">Paid</div>';
+                $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
             }
 
             $tipe_pengajuan = '';
@@ -1743,10 +1752,10 @@ class Kasbon_project extends Admin_Controller
                 $tipe_pengajuan = '<div class="badge bg-green">Kasbon</div>';
             }
             if ($item->metode_pembayaran == '2') {
-                $tipe_pengajuan = '<div class="badge bg-yellow">Direct Payment</div>';
+                $tipe_pengajuan = '<div class="badge bg-green">Direct Payment</div>';
             }
             if ($item->metode_pembayaran == '3') {
-                $tipe_pengajuan = '<div class="badge bg-green">PO</div>';
+                $tipe_pengajuan = '<div class="badge bg-red">PO</div>';
             }
 
             $option = '
@@ -1804,21 +1813,6 @@ class Kasbon_project extends Admin_Controller
                 ';
             }
 
-            // if ($item->sts_req == '0') {
-            //     $option .= '
-            //         <div class="col-12" style="margin-left: 0.5rem; padding-top: 0.5rem;">
-            //             <a href="javascript:void(0);" class="btn btn-sm btn-primary req_approve_kasbon" style="color: #000000" data-id="' . $item->id . '" title="Request Approval">
-            //                 <div class="col-12 dropdown-item">
-            //                 <b>
-            //                     <i class="fa fa-arrow-up"></i>
-            //                 </b>
-            //                 </div>
-            //             </a>
-            //             <span style="font-weight: 500"> Req. Approval </span>
-            //         </div>
-            //     ';
-            // }
-
             $option .= '</div>';
 
             if ($view == 'view') {
@@ -1832,6 +1826,7 @@ class Kasbon_project extends Admin_Controller
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
                 'tipe' => $tipe_pengajuan,
+                'nm_pembuat' => $item->nm_pembuat,
                 'status' => $sts,
                 'reject_reason' => $item->reject_reason,
                 'option' => $option
@@ -1857,13 +1852,15 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.tipe', '2');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_request_ovb');
@@ -1872,13 +1869,15 @@ class Kasbon_project extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.tipe', '2');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_request_ovb');
@@ -1958,6 +1957,7 @@ class Kasbon_project extends Admin_Controller
                 'no' => $no,
                 'id_request_ovb' => $item['id_request_ovb'],
                 'amount' => number_format($get_amount['amount'], 2),
+                'nm_pembuat' => $item['nm_pembuat'],
                 'sts' => $sts,
                 'option' => $option
             ];
@@ -1982,13 +1982,15 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_req_ovb_others_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.tipe', '3');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_request_ovb');
@@ -1997,13 +1999,15 @@ class Kasbon_project extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_req_ovb_others_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.tipe', '3');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_request_ovb');
@@ -2083,6 +2087,7 @@ class Kasbon_project extends Admin_Controller
                 'no' => $no,
                 'id_request_ovb' => $item['id_request_ovb'],
                 'amount' => number_format($get_amount['amount'], 2),
+                'nm_pembuat' => $item['nm_pembuat'],
                 'sts' => $sts,
                 'option' => $option
             ];
@@ -2107,13 +2112,15 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_req_ovb_lab_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.tipe', '4');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_request_ovb');
@@ -2122,13 +2129,15 @@ class Kasbon_project extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_req_ovb_lab_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.tipe', '4');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_request_ovb');
@@ -2208,6 +2217,7 @@ class Kasbon_project extends Admin_Controller
                 'no' => $no,
                 'id_request_ovb' => $item['id_request_ovb'],
                 'amount' => number_format($get_amount['amount'], 2),
+                'nm_pembuat' => $item['nm_pembuat'],
                 'sts' => $sts,
                 'option' => $option
             ];
@@ -2232,13 +2242,15 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.tipe', '5');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_request_ovb');
@@ -2247,13 +2259,15 @@ class Kasbon_project extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.tipe', '5');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_request_ovb');
@@ -2333,6 +2347,7 @@ class Kasbon_project extends Admin_Controller
                 'no' => $no,
                 'id_request_ovb' => $item['id_request_ovb'],
                 'amount' => number_format($get_amount['amount'], 2),
+                'nm_pembuat' => $item['nm_pembuat'],
                 'sts' => $sts,
                 'option' => $option
             ];
@@ -2357,13 +2372,15 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_req_ovb_subcont_perusahaan_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.tipe', '6');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_request_ovb');
@@ -2372,13 +2389,15 @@ class Kasbon_project extends Admin_Controller
 
         $get_data = $this->db->get();
 
-        $this->db->select('a.*');
+        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
         $this->db->from('kons_tr_kasbon_req_ovb_subcont_perusahaan_header a');
+        $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.tipe', '6');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id_request_ovb', $search['value'], 'both');
+            $this->db->or_like('b.nm_lengkap', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id_request_ovb');
@@ -2458,6 +2477,7 @@ class Kasbon_project extends Admin_Controller
                 'no' => $no,
                 'id_request_ovb' => $item['id_request_ovb'],
                 'amount' => number_format($get_amount['amount'], 2),
+                'nm_pembuat' => $item['nm_pembuat'],
                 'sts' => $sts,
                 'option' => $option
             ];
