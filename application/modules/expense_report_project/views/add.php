@@ -731,6 +731,8 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 $('.budget_akomodasi_on_process').html('Rp. ' + number_format(result.nilai_budget_akomodasi));
                 $('.budget_others_on_process').html('Rp. ' + number_format(result.nilai_budget_others));
                 $('.budget_lab_on_process').html('Rp. ' + number_format(result.nilai_budget_lab));
+                $('.budget_subcont_tenaga_ahli_on_process').html('Rp. ' + number_format(result.nilai_budget_subcont_tenaga_ahli));
+                $('.budget_subcont_perusahaan_on_process').html('Rp. ' + number_format(result.nilai_budget_subcont_perusahaan));
             },
             error: function(result) {
 
@@ -741,13 +743,16 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
     $(document).on('click', '.del_expense', function() {
         var id = $(this).data('id_kasbon');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be deleted !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_expense',
@@ -758,11 +763,11 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
-                                text: 'Data has been deleted !'
-                            }, function(lanjut) {
+                                text: result.pesan || 'Data has been deleted !'
+                            }).then(() => {
                                 hitung_all_budget_process();
                                 DataTables_kasbon_akomodasi();
                                 DataTables_kasbon_others();
@@ -772,16 +777,16 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                                 DataTables_ovb_akomodasi();
                             });
                         } else {
-                            swal({
-                                type: 'failed',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
-                                text: 'Data has not been deleted !'
+                                text: result.pesan || 'Data has not been deleted !'
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
                         });

@@ -3842,8 +3842,25 @@ class Expense_report_project extends Admin_Controller
 
         $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', array('id_header' => $id))->row();
 
+        if (!empty($get_expense)) {
+            $get_files = $this->db->get_where('kons_tr_bukti_penggunaan_expense', ['id_header_expense' => $get_expense->id])->result();
+            foreach ($get_files as $f) {
+                if (!empty($f->upload_file) && file_exists($f->upload_file)) {
+                    unlink($f->upload_file);
+                }
+            }
 
-        $this->db->delete('kons_tr_bukti_penggunaan_expense', array('id_header_expense' => $get_expense->id));
+            $get_files_kembali = $this->db->get_where('kons_tr_expense_report_bukti_pengembalian', ['id_header_expense' => $get_expense->id])->result();
+            foreach ($get_files_kembali as $fk) {
+                if (!empty($fk->upload_file) && file_exists($fk->upload_file)) {
+                    unlink($fk->upload_file);
+                }
+            }
+
+            $this->db->delete('kons_tr_bukti_penggunaan_expense', array('id_header_expense' => $get_expense->id));
+            $this->db->delete('kons_tr_expense_report_bukti_pengembalian', array('id_header_expense' => $get_expense->id));
+        }
+
         $this->db->delete('kons_tr_expense_report_project_header', array('id_header' => $id));
         $this->db->delete('kons_tr_expense_report_project_detail', array('id_header_kasbon' => $id));
 
@@ -3851,24 +3868,23 @@ class Expense_report_project extends Admin_Controller
             $this->db->trans_rollback();
 
             $valid = 0;
+            $pesan = 'Gagal menghapus data expense!';
         } else {
             $this->db->trans_commit();
 
             $valid = 1;
+            $pesan = 'Data expense berhasil dihapus!';
         }
 
         echo json_encode([
-            'status' => $valid
+            'status' => $valid,
+            'pesan' => $pesan
         ]);
     }
 
     public function hitung_all_budget_on_process()
     {
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
-
-        $nilai_budget_subcont_on_process = 0;
-        $nilai_budget_akomodasi_on_process = 0;
-        $nilai_budget_others_on_process = 0;
 
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont');
         $this->db->from('kons_tr_expense_report_project_header a');
@@ -3922,11 +3938,39 @@ class Expense_report_project extends Admin_Controller
 
         $nilai_kasbon_on_proses_lab = $get_expense_lab->ttl_expense_lab;
 
+        $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_tenaga_ahli');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('a.tipe', 5);
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->group_start();
+        $this->db->where('a.sts', null);
+        $this->db->or_where('a.sts <>', 1);
+        $this->db->group_end();
+        $get_expense_subcont_tenaga_ahli = $this->db->get()->row();
+
+        $nilai_kasbon_on_proses_subcont_tenaga_ahli = $get_expense_subcont_tenaga_ahli->ttl_expense_subcont_tenaga_ahli;
+
+        $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_perusahaan');
+        $this->db->from('kons_tr_expense_report_project_header a');
+        $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('a.tipe', 6);
+        $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
+        $this->db->group_start();
+        $this->db->where('a.sts', null);
+        $this->db->or_where('a.sts <>', 1);
+        $this->db->group_end();
+        $get_expense_subcont_perusahaan = $this->db->get()->row();
+
+        $nilai_kasbon_on_proses_subcont_perusahaan = $get_expense_subcont_perusahaan->ttl_expense_subcont_perusahaan;
+
         echo json_encode([
             'nilai_budget_subcont' => $nilai_kasbon_on_proses,
             'nilai_budget_akomodasi' => $nilai_kasbon_on_proses_akomodasi,
             'nilai_budget_others' => $nilai_kasbon_on_proses_others,
-            'nilai_budget_lab' => $nilai_kasbon_on_proses_lab
+            'nilai_budget_lab' => $nilai_kasbon_on_proses_lab,
+            'nilai_budget_subcont_tenaga_ahli' => $nilai_kasbon_on_proses_subcont_tenaga_ahli,
+            'nilai_budget_subcont_perusahaan' => $nilai_kasbon_on_proses_subcont_perusahaan
         ]);
     }
 
