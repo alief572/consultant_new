@@ -180,11 +180,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                         echo '</td>';
 
                         echo '<td width="220" style="vertical-align: top;">';
-                        echo '<div style="display: flex; gap: 5px; align-items: center;">';
-                        echo '<button type="button" class="btn btn-xs btn-primary btn-pilih-bukti" data-no="' . $item['no'] . '"><i class="fa fa-plus"></i> Upload Bukti</button>';
-                        echo '</div>';
                         echo '<input type="file" id="input-bukti-file-' . $item['no'] . '" class="input-bukti-file" data-no="' . $item['no'] . '" multiple style="display: none;">';
-                        echo '<div class="dropzone-item" id="dropzone-bukti-' . $item['no'] . '" data-no="' . $item['no'] . '" style="border: 1px dashed #b4c6dc; border-radius: 4px; background: #fdfdfe; padding: 6px; text-align: center; cursor: pointer; margin-top: 4px; font-size: 11px; color: #555;"><i class="fa fa-cloud-upload text-primary"></i> Tarik file ke sini</div>';
+                        echo '<div class="dropzone-item" id="dropzone-bukti-' . $item['no'] . '" data-no="' . $item['no'] . '" style="border: 1px dashed #b4c6dc; border-radius: 4px; background: #fdfdfe; padding: 6px; text-align: center; cursor: pointer; font-size: 11px; color: #555;"><i class="fa fa-cloud-upload text-primary"></i> Tarik file ke sini</div>';
                         echo '<div id="container-bukti-list-' . $item['no'] . '" style="margin-top: 4px;"></div>';
                         echo '</td>';
 
@@ -363,11 +360,6 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
     });
 
     var selectedBuktiFilesPerItem = {};
-
-    $(document).on('click', '.btn-pilih-bukti', function() {
-        var no = $(this).data('no');
-        $('#input-bukti-file-' + no).click();
-    });
 
     $(document).on('click', '.dropzone-item', function(e) {
         if ($(e.target).closest('.btn-remove-selected-bukti-item').length === 0) {

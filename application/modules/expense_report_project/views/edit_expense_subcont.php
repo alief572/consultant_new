@@ -199,11 +199,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                         echo '</td>';
 
                         echo '<td width="230" style="vertical-align: top;">';
-                        echo '<div style="display: flex; gap: 5px; align-items: center;">';
-                        echo '<button type="button" class="btn btn-xs btn-primary btn-pilih-bukti" data-no="' . $item['no'] . '"><i class="fa fa-plus"></i> Upload Bukti</button>';
-                        echo '</div>';
                         echo '<input type="file" id="input-bukti-file-' . $item['no'] . '" class="input-bukti-file" data-no="' . $item['no'] . '" multiple style="display: none;">';
-                        echo '<div class="dropzone-item" id="dropzone-bukti-' . $item['no'] . '" data-no="' . $item['no'] . '" style="border: 1px dashed #b4c6dc; border-radius: 4px; background: #fdfdfe; padding: 6px; text-align: center; cursor: pointer; margin-top: 4px; font-size: 11px; color: #555;"><i class="fa fa-cloud-upload text-primary"></i> Tarik file ke sini</div>';
+                        echo '<div class="dropzone-item" id="dropzone-bukti-' . $item['no'] . '" data-no="' . $item['no'] . '" style="border: 1px dashed #b4c6dc; border-radius: 4px; background: #fdfdfe; padding: 6px; text-align: center; cursor: pointer; font-size: 11px; color: #555;"><i class="fa fa-cloud-upload text-primary"></i> Tarik file ke sini</div>';
                         if (isset($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']])) {
                             echo '<div class="list-group" style="margin-top: 5px; margin-bottom: 3px;">';
                             foreach ($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']] as $bp) {
@@ -473,11 +470,6 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
     });
 
     var selectedBuktiFilesPerItem = {};
-
-    $(document).on('click', '.btn-pilih-bukti', function() {
-        var no = $(this).data('no');
-        $('#input-bukti-file-' + no).click();
-    });
 
     $(document).on('click', '.dropzone-item', function(e) {
         if ($(e.target).closest('.btn-remove-selected-bukti-item').length === 0) {
