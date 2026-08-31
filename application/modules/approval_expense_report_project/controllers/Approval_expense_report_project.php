@@ -73,6 +73,13 @@ class Approval_expense_report_project extends Admin_Controller
 
         $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header a', ['a.id' => $id_header])->row();
 
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to, c.nm_paket');
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
+        $this->db->where('a.id_spk_budgeting', $get_kasbon_header->id_spk_budgeting);
+        $get_spk_budgeting = $this->db->get()->row();
+
         $datalist_item = [];
         $datalist_item_expense = [];
 
@@ -646,7 +653,8 @@ class Approval_expense_report_project extends Admin_Controller
             'tipe' => $get_kasbon_header->tipe,
             'list_bank' => $get_bank,
             'ada_pph' => $ada_pph,
-            'list_jurnal_pph21' => $list_jurnal_pph21
+            'list_jurnal_pph21' => $list_jurnal_pph21,
+            'list_budgeting' => $get_spk_budgeting
         ];
 
         $this->template->set($data);

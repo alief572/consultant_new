@@ -90,6 +90,49 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 
 
 <div class="box">
+    <div class="box-body" style="z-index: 1 !important;">
+        <table border="0" style="width: 100%; z-index: 1 !important;">
+            <tr>
+                <th class="pd-5 valign-top" width="150">No. SPK</th>
+                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? $list_budgeting->id_spk_penawaran : '' ?></td>
+                <th class="pd-5 valign-top" width="150">Project Leader</th>
+                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? ucfirst($list_budgeting->nm_project_leader) : '' ?></td>
+            </tr>
+            <tr>
+                <th class="pd-5 valign-top" width="150">Customer</th>
+                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? $list_budgeting->nm_customer : '' ?></td>
+                <th class="pd-5 valign-top" width="150">Sales</th>
+                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? ucfirst($list_budgeting->nm_sales) : '' ?></td>
+            </tr>
+            <tr>
+                <th class="pd-5 valign-top" width="150">Address</th>
+                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? $list_budgeting->alamat : '' ?></td>
+                <th class="pd-5 valign-top" width="150">Waktu</th>
+                <td class="pd-5 valign-top" width="400">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <input type="date" name="" id="" class="form-control form-control-sm" value="<?= (isset($list_budgeting)) ? $list_budgeting->waktu_from : '' ?>" readonly>
+                        </div>
+                        <div class="form-group text-center" style="width: 50px; padding-top: 8px;">
+                            <span>-</span>
+                        </div>
+                        <div class="form-group">
+                            <input type="date" name="" id="" class="form-control form-control-sm" value="<?= (isset($list_budgeting)) ? $list_budgeting->waktu_to : '' ?>" readonly>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th class="pd-5 valign-top" width="150">Project</th>
+                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? ((!empty($list_budgeting->nm_paket)) ? $list_budgeting->nm_paket : (isset($list_budgeting->nama_project) ? $list_budgeting->nama_project : '')) : '' ?></td>
+                <th class="pd-5 valign-top" width="150"></th>
+                <td class="pd-5 valign-top" width="400"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="box">
     <div class="box-header">
         <h3>List Item <?= $title_header ?></h3>
     </div>
