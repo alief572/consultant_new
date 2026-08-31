@@ -1238,20 +1238,6 @@ if ($header->metode_pembayaran == '3') {
     <div class="col-md-6">
       <table style="width: 100%; margin-bottom: 15px;">
         <tr>
-          <th style="padding: 5px;" width="140">Document</th>
-          <td style="padding: 5px;">
-            <?php
-            if (file_exists('./' . $header->dokument_link) && $header->dokument_link !== '') {
-              echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-xs btn-primary" target="_blank">
-                      <i class="fa fa-download"></i> Download Document
-                    </a>';
-            } else {
-              echo '<span class="text-muted"><i class="fa fa-times"></i> Tidak ada dokumen</span>';
-            }
-            ?>
-          </td>
-        </tr>
-        <tr>
           <th style="padding: 5px;" width="140">Bank</th>
           <td style="padding: 5px;">
             <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>" readonly>
