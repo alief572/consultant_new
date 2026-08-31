@@ -195,11 +195,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">No</th>
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -223,6 +224,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -308,11 +310,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">No</th>
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -335,6 +338,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -420,11 +424,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">No</th>
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -447,6 +452,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -532,11 +538,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">No</th>
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -559,6 +566,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -644,11 +652,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">No</th>
                     <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
-                    <th class="text-center">Date</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Reject Reason</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -671,6 +680,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -735,9 +745,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'nm_biaya'
                 },
                 {
-                    data: 'date'
-                },
-                {
                     data: 'total'
                 },
                 {
@@ -748,6 +755,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'reject_reason'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'nm_pembuat'
                 },
                 {
                     data: 'option'
@@ -783,9 +796,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'nm_biaya'
                 },
                 {
-                    data: 'date'
-                },
-                {
                     data: 'total'
                 },
                 {
@@ -796,6 +806,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'reject_reason'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'nm_pembuat'
                 },
                 {
                     data: 'option'
@@ -831,9 +847,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'nm_biaya'
                 },
                 {
-                    data: 'date'
-                },
-                {
                     data: 'total'
                 },
                 {
@@ -844,6 +857,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'reject_reason'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'nm_pembuat'
                 },
                 {
                     data: 'option'
@@ -879,9 +898,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'nm_biaya'
                 },
                 {
-                    data: 'date'
-                },
-                {
                     data: 'total'
                 },
                 {
@@ -892,6 +908,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'reject_reason'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'nm_pembuat'
                 },
                 {
                     data: 'option'
@@ -927,9 +949,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'nm_biaya'
                 },
                 {
-                    data: 'date'
-                },
-                {
                     data: 'total'
                 },
                 {
@@ -940,6 +959,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'reject_reason'
+                },
+                {
+                    data: 'date'
+                },
+                {
+                    data: 'nm_pembuat'
                 },
                 {
                     data: 'option'
@@ -976,6 +1001,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'sts'
+                },
+                {
+                    data: 'nm_pembuat'
                 },
                 {
                     data: 'option'
@@ -1016,6 +1044,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'sts'
                 },
                 {
+                    data: 'nm_pembuat'
+                },
+                {
                     data: 'option'
                 }
             ]
@@ -1050,6 +1081,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'sts'
+                },
+                {
+                    data: 'nm_pembuat'
                 },
                 {
                     data: 'option'
@@ -1088,6 +1122,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'sts'
                 },
                 {
+                    data: 'nm_pembuat'
+                },
+                {
                     data: 'option'
                 }
             ]
@@ -1122,6 +1159,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 },
                 {
                     data: 'sts'
+                },
+                {
+                    data: 'nm_pembuat'
                 },
                 {
                     data: 'option'
