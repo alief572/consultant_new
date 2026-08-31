@@ -116,9 +116,9 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <td class="pd-5 valign-top" width="400">
                         <input type="date" name="tgl" id="" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime($header->tgl)) ?>" readonly>
                     </td>
-                    <th class="pd-5 valign-top" width="150">Description</th>
+                    <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
                     <td class="pd-5 valign-top" width="400">
-                        <textarea name="deskripsi" id="" class="form-control form-control-sm"><?= $header->deskripsi ?></textarea>
+                        <textarea name="deskripsi" id="" class="form-control form-control-sm" required placeholder="Deskripsi / Keterangan"><?= $header->deskripsi ?></textarea>
                     </td>
                 </tr>
 
@@ -618,6 +618,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
+
+        var deskripsi = $('textarea[name="deskripsi"]').val().trim();
+        if (deskripsi == '') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning !',
+                text: 'Deskripsi / Keterangan wajib diisi !'
+            });
+            return false;
+        }
 
         var no = "<?= $no ?>";
         var valid = 1;
