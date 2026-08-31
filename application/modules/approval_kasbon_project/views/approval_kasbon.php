@@ -1236,9 +1236,44 @@ if ($header->metode_pembayaran == '3') {
 <div class="box">
   <div class="box-body">
     <div class="col-md-6">
+      <table style="width: 100%; margin-bottom: 15px;">
+        <tr>
+          <th style="padding: 5px;" width="140">Document</th>
+          <td style="padding: 5px;">
+            <?php
+            if (file_exists('./' . $header->dokument_link) && $header->dokument_link !== '') {
+              echo '<a href="' . base_url($header->dokument_link) . '" class="btn btn-xs btn-primary" target="_blank">
+                      <i class="fa fa-download"></i> Download Document
+                    </a>';
+            } else {
+              echo '<span class="text-muted"><i class="fa fa-times"></i> Tidak ada dokumen</span>';
+            }
+            ?>
+          </td>
+        </tr>
+        <tr>
+          <th style="padding: 5px;" width="140">Bank</th>
+          <td style="padding: 5px;">
+            <input type="text" name="kasbon_bank" id="" class="form-control form-control-sm" placeholder="- Bank -" value="<?= $header->bank ?>" readonly>
+          </td>
+        </tr>
+        <tr>
+          <th style="padding: 5px;" width="140">Bank Number</th>
+          <td style="padding: 5px;">
+            <input type="text" name="kasbon_bank_number" id="" class="form-control form-control-sm" placeholder="- Bank Number -" value="<?= $header->bank_number ?>" readonly>
+          </td>
+        </tr>
+        <tr>
+          <th style="padding: 5px;" width="140">Account Name</th>
+          <td style="padding: 5px;">
+            <input type="text" name="kasbon_bank_account" id="" class="form-control form-control-sm" placeholder="- Account Name -" value="<?= $header->bank_account ?>" readonly>
+          </td>
+        </tr>
+      </table>
+
       <div class="form-group">
         <label for="">Reject Reason</label>
-        <textarea name="reject_reason" class="form-control form-control-sm" id="" cols="30" rows="5"></textarea>
+        <textarea name="reject_reason" class="form-control form-control-sm" id="" cols="30" rows="3" placeholder="Masukkan alasan reject jika pengajuan ditolak..."></textarea>
       </div>
     </div>
 
