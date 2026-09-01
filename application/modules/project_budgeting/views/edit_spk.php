@@ -622,8 +622,8 @@ $nilai_others = $list_spk_penawaran->biaya_others;
     function persen_komisi(tipe) {
         var persentase = get_num($('input[name="persentase_' + tipe + '_komisi"]').val());
         if (persentase > 2) {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Persen komisi tidak boleh lebih dari 2% !'
             });
@@ -730,45 +730,45 @@ $nilai_others = $list_spk_penawaran->biaya_others;
         var project_leader = $('input[name="project_leader"]').val();
 
         if (ttl_persen_komisi > 5) {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Total Persentase Komisi tidak boleh lebih dari 4% !'
             });
 
             return false;
         } else if (ttl_persentase_payment < 100 || ttl_persentase_payment > 100) {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Persentase payment harus 100% !'
             });
 
             return false;
         } else if (waktu_from == '' || waktu_to == '') {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Pastikan Kolom waktu sudah terisi !'
             });
 
             return false;
         } else if (project_leader == '') {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Project leader wajib diisi !'
             });
 
             return false;
         } else {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Are you sure ?',
                 text: 'This data will be saved !',
                 showCancelButton: true
-            }, function(next) {
-                if (next) {
+            }).then((next) => {
+                if (next.isConfirmed) {
                     var formData = $('#frm-data').serialize();
 
                     $.ajax({
@@ -779,24 +779,24 @@ $nilai_others = $list_spk_penawaran->biaya_others;
                         dataType: "JSON",
                         success: function(result) {
                             if (result.status == 1) {
-                                swal({
-                                    type: 'success',
+                                Swal.fire({
+                                    icon: 'success',
                                     title: 'Success !',
                                     text: result.msg
-                                }, function(after) {
+                                }).then((after) => {
                                     window.location.href = siteurl + active_controller;
                                 });
                             } else {
-                                swal({
-                                    type: 'warning',
+                                Swal.fire({
+                                    icon: 'warning',
                                     title: 'Failed !',
                                     text: result.msg
                                 });
                             }
                         },
                         error: function(result) {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+                                icon: 'error',
                                 title: 'Error !',
                                 text: 'Please try again later !'
                             });

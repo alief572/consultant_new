@@ -838,8 +838,8 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
     function persen_komisi(tipe) {
         var persentase = get_num($('input[name="persentase_' + tipe + '_komisi"]').val());
         if (persentase > 2) {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Persen komisi tidak boleh lebih dari 2% !'
             });
@@ -981,8 +981,8 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
         var nilai_kontrak_bersih = get_num($('.nilai_project').val());
 
         if (ttl_persen_komisi > 5) {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Total Persentase Komisi tidak boleh lebih dari 4% !'
             });
@@ -990,8 +990,8 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
             return false;
         } 
         // else if (ttl_nominal_payment != nilai_kontrak_bersih) {
-           // swal({
-               // type: 'warning',
+           // Swal.fire({
+               // icon: 'warning',
                // title: 'Warning !',
                // text: 'Persentase payment harus 100% !'
            // });
@@ -999,29 +999,29 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
             //return false;
        // } 
         else if (waktu_from == '' || waktu_to == '') {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Pastikan Kolom waktu sudah terisi !'
             });
 
             return false;
         } else if (project_leader == '') {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Project leader wajib diisi !'
             });
 
             return false;
         } else {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Are you sure ?',
                 text: 'This data will be saved !',
                 showCancelButton: true
-            }, function(next) {
-                if (next) {
+            }).then((next) => {
+                if (next.isConfirmed) {
                     var formData = $('#frm-data').serialize();
 
                     $.ajax({
@@ -1032,19 +1032,19 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                         dataType: "JSON",
                         success: function(result) {
                             if (result.status == 1) {
-                                swal({
-                                    type: 'success',
+                                Swal.fire({
+                                    icon: 'success',
                                     title: 'Success !',
                                     text: result.msg,
                                     allowOutsideClick: false,
                                     showConfirmButton: false,
                                     timer: 3000
-                                }, function(after) {
+                                }).then((after) => {
                                     window.location.href = siteurl + active_controller;
                                 });
                             } else {
-                                swal({
-                                    type: 'warning',
+                                Swal.fire({
+                                    icon: 'warning',
                                     title: 'Failed !',
                                     text: result.msg,
                                     allowOutsideClick: false,
@@ -1054,8 +1054,8 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                             }
                         },
                         error: function(result) {
-                            swal({
-                                type: 'error',
+                            Swal.fire({
+                                icon: 'error',
                                 title: 'Error !',
                                 text: 'Please try again later !',
                                 allowOutsideClick: false,
@@ -1130,8 +1130,8 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 $('#dialog-rekap').modal('show');
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });

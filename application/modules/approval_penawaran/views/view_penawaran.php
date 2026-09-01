@@ -1092,16 +1092,16 @@ if (count($list_penawaran_lab) > 0) {
                     $('.pic').val(result.contact);
                     $('.address').val(result.address).val()
                 } else {
-                    swal({
-                        type: 'warning ',
+                    Swal.fire({
+                        icon: 'warning',
                         title: 'Failed !',
                         text: 'Please try again later !'
                     });
                 }
             },
             error: function(result) {
-                swal({
-                    type: 'error ',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -1134,8 +1134,8 @@ if (count($list_penawaran_lab) > 0) {
                 hitung_summary();
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -1164,8 +1164,8 @@ if (count($list_penawaran_lab) > 0) {
                 hitung_total_activity();
             },
             else: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -1205,13 +1205,13 @@ if (count($list_penawaran_lab) > 0) {
     $(document).on('submit', '.form-data', function(e) {
         e.preventDefault();
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be saved !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        }).then((next) => {
+            if (next.isConfirmed) {
                 var formData = new FormData($('.form-data')[0]);
 
                 $.ajax({
@@ -1224,24 +1224,24 @@ if (count($list_penawaran_lab) > 0) {
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success',
                                 text: result.msg
-                            }, function(after) {
+                            }).then((after) => {
                                 window.location.href = siteurl + active_controller;
                             });
                         } else {
-                            swal({
-                                type: 'failed',
+                            Swal.fire({
+                                icon: 'error',
                                 title: 'Failed !',
                                 text: result.msg
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
                         });

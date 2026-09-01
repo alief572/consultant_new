@@ -472,13 +472,13 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be saved !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        }).then((next) => {
+            if (next.isConfirmed) {
                 var formData = new FormData($('#frm-data')[0]);
 
                 $.ajax({
@@ -491,24 +491,24 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+                            }).then((lanjut) => {
                                 window.location.href = siteurl + active_controller + 'add/' + '<?= urlencode(str_replace('/', '|', $id_spk_budgeting)) ?>';
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
                         });
@@ -586,8 +586,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
         var bank = $('select[name="bank"]').val();
 
         if (bank == '') {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Bank must be choosen !',
                 showConfirmButton: false,
@@ -598,13 +598,13 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
             return false;
         }
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be approved !',
             showCancelButton: true
-        }, function(lanjut) {
-            if (lanjut) {
+        }).then((lanjut) => {
+            if (lanjut.isConfirmed) {
                 var formdata = $('#data_form').serialize();
                 $.ajax({
                     type: 'post',
@@ -614,19 +614,19 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.msg,
                                 showConfirmButton: false,
                                 showCancelButton: false,
                                 timer: 3000
-                            }, function(next) {
+                            }).then((next) => {
                                 window.location.href = siteurl + active_controller + 'approval_expense_report_project';
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.msg,
                                 showConfirmButton: false,
@@ -636,8 +636,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !',
                             showConfirmButton: false,
@@ -657,8 +657,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
         var reject_reason = $('textarea[name="reject_reason"]').val();
 
         if (reject_reason == '') {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Reject reason must filled !',
                 showConfirmButton: false,
@@ -668,13 +668,13 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 
             return false;
         }
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be rejected !',
             showCancelButton: true
-        }, function(lanjut) {
-            if (lanjut) {
+        }).then((lanjut) => {
+            if (lanjut.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'reject_expense_report',
@@ -686,19 +686,19 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                     dataType: 'json',
                     success: function(result) {
                         if (result.status == '1') {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.msg,
                                 showConfirmButton: false,
                                 showCancelButton: false,
                                 timer: 3000
-                            }, function(next) {
+                            }).then((next) => {
                                 window.location.href = siteurl + active_controller + 'approval_expense_report_project';
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.msg,
                                 showConfirmButton: false,
@@ -708,8 +708,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !',
                             showConfirmButton: false,
