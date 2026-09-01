@@ -179,10 +179,10 @@ $ENABLE_VIEW    = has_permission('Request_Payment.View');
 				load_all_party();
 			},
 			error: function() {
-				swal({
+				Swal.fire({
 					title: 'Error !',
 					text: 'Please try again later !',
-					type: 'error'
+					icon: 'error'
 				});
 			}
 		});
@@ -223,10 +223,10 @@ $ENABLE_VIEW    = has_permission('Request_Payment.View');
 		var actived_tab = $('.actived_tab').val();
 
 		if (from_date == '' || to_date == '') {
-			swal({
+			Swal.fire({
 				title: 'Warning !',
 				text: 'Please make sure from and to date is filled !',
-				type: 'error'
+				icon: 'error'
 			});
 		} else {
 			$.ajax({
@@ -248,10 +248,10 @@ $ENABLE_VIEW    = has_permission('Request_Payment.View');
 					});
 				},
 				error: function(result) {
-					swal({
+					Swal.fire({
 						title: 'Error !',
 						text: 'Please try again later !',
-						type: 'error'
+						icon: 'error'
 					});
 				}
 			});
@@ -265,68 +265,65 @@ $ENABLE_VIEW    = has_permission('Request_Payment.View');
 
 		var checked_item = $('.dtlloop:checked').length;
 		if (errors == "" && checked_item > 0) {
-			swal({
-					title: "Anda Yakin?",
-					text: "Data Akan Disimpan!",
-					type: "info",
-					showCancelButton: true,
-					confirmButtonText: "Ya, simpan!",
-					cancelButtonText: "Tidak!",
-					closeOnConfirm: false,
-					closeOnCancel: true
-				},
-				function(isConfirm) {
-					if (isConfirm) {
-						var formdata = new FormData($('#frm_data')[0]);
-						$.ajax({
-							url: url_save,
-							dataType: "json",
-							type: 'POST',
-							data: formdata,
-							processData: false,
-							contentType: false,
-							success: function(msg) {
-								if (msg['save'] == '1') {
-									swal({
-										title: "Sukses!",
-										text: "Data Berhasil Di Update",
-										type: "success",
-										timer: 1500,
-										showConfirmButton: false
-									});
-									window.location.href = window.location.href;
-								} else {
-									swal({
-										title: "Gagal!",
-										text: "Data Gagal Di Update",
-										type: "error",
-										timer: 1500,
-										showConfirmButton: false
-									});
-								};
-								console.log(msg);
-							},
-							error: function(msg) {
-								swal({
-									title: "Gagal!",
-									text: "Ajax Data Gagal Di Proses",
-									type: "error",
+			Swal.fire({
+				title: "Anda Yakin?",
+				text: "Data Akan Disimpan!",
+				icon: "info",
+				showCancelButton: true,
+				confirmButtonText: "Ya, simpan!",
+				cancelButtonText: "Tidak!"
+			}).then((result) => {
+				if (result.isConfirmed) {
+					var formdata = new FormData($('#frm_data')[0]);
+					$.ajax({
+						url: url_save,
+						dataType: "json",
+						type: 'POST',
+						data: formdata,
+						processData: false,
+						contentType: false,
+						success: function(msg) {
+							if (msg['save'] == '1') {
+								Swal.fire({
+									title: "Sukses!",
+									text: "Data Berhasil Di Update",
+									icon: "success",
 									timer: 1500,
 									showConfirmButton: false
 								});
-								console.log(msg);
-							}
-						});
-					}
-				});
+								window.location.href = window.location.href;
+							} else {
+								Swal.fire({
+									title: "Gagal!",
+									text: "Data Gagal Di Update",
+									icon: "error",
+									timer: 1500,
+									showConfirmButton: false
+								});
+							};
+							console.log(msg);
+						},
+						error: function(msg) {
+							Swal.fire({
+								title: "Gagal!",
+								text: "Ajax Data Gagal Di Proses",
+								icon: "error",
+								timer: 1500,
+								showConfirmButton: false
+							});
+							console.log(msg);
+						}
+					});
+				}
+			});
 		} else {
 			if (checked_item < 1) {
 				errors = 'Please check at least 1 data before you update it !';
 			}
-			swal({
+			Swal.fire({
 				title: 'Error !',
 				text: errors,
-				type: 'error'
+				icon: 'error'
 			});
 			return false;
 		}

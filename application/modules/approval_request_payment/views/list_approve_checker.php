@@ -447,10 +447,10 @@ endforeach;
                 $('#modal_view_receive_invoice').modal('show');
             },
             error: function(result) {
-                swal({
+                Swal.fire({
                     title: 'Error!',
                     text: 'Please try again later!',
-                    type: 'error'
+                    icon: 'error'
                 });
             }
         });
@@ -460,18 +460,15 @@ endforeach;
         e.preventDefault();
         var errors = "";
         if (errors == "") {
-            swal({
+            Swal.fire({
                     title: "Anda Yakin?",
                     text: "Data Akan Di Setujui!",
-                    type: "info",
+                    icon: "info",
                     showCancelButton: true,
                     confirmButtonText: "Ya, Setujui!",
-                    cancelButtonText: "Tidak!",
-                    closeOnConfirm: false,
-                    closeOnCancel: true
-                },
-                function(isConfirm) {
-                    if (isConfirm) {
+                    cancelButtonText: "Tidak!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         var formdata = new FormData($('#frm_data')[0]);
                         $.ajax({
                             url: url_save,
@@ -482,19 +479,19 @@ endforeach;
                             contentType: false,
                             success: function(msg) {
                                 if (msg['save'] == '1') {
-                                    swal({
+                                    Swal.fire({
                                         title: "Sukses!",
                                         text: "Data Berhasil Di Setujui",
-                                        type: "success",
+                                        icon: "success",
                                         timer: 1500,
                                         showConfirmButton: false
                                     });
                                     window.location.href = window.location.href;
                                 } else {
-                                    swal({
+                                    Swal.fire({
                                         title: "Gagal!",
                                         text: "Data Gagal Di Setujui",
-                                        type: "error",
+                                        icon: "error",
                                         timer: 1500,
                                         showConfirmButton: false
                                     });
@@ -502,10 +499,10 @@ endforeach;
                                 console.log(msg);
                             },
                             error: function(msg) {
-                                swal({
+                                Swal.fire({
                                     title: "Gagal!",
                                     text: "Ajax Data Gagal Di Proses",
-                                    type: "error",
+                                    icon: "error",
                                     timer: 1500,
                                     showConfirmButton: false
                                 });
@@ -515,7 +512,11 @@ endforeach;
                     }
                 });
         } else {
-            swal(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: errors
+            });
             return false;
         }
     });
