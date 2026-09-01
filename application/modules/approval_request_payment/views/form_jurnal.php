@@ -103,18 +103,15 @@ $ENABLE_DELETE  = has_permission('Payment_Jurnal.Delete');
 			alert(d_error);
 		}
 		if (d_error == '') {
-			swal({
+			Swal.fire({
 					title: "Save Data?",
-					type: "warning",
+					icon: "warning",
 					showCancelButton: true,
-					confirmButtonClass: "btn-danger",
+					confirmButtonColor: "#dd6b55",
 					confirmButtonText: "Yes",
-					cancelButtonText: "No",
-					closeOnConfirm: true,
-					closeOnCancel: true
-				},
-				function(isConfirm) {
-					if (isConfirm) {
+					cancelButtonText: "No"
+				}).then((result) => {
+					if (result.isConfirmed) {
 						var formData = new FormData($('#frm_data')[0]);
 						$.ajax({
 							url: base_url + active_controller + "/jurnal_save",
@@ -126,19 +123,19 @@ $ENABLE_DELETE  = has_permission('Payment_Jurnal.Delete');
 							contentType: false,
 							success: function(msg) {
 								if (msg['save'] == '1') {
-									swal({
+									Swal.fire({
 										title: "Success!",
 										text: "Data saved",
-										type: "success",
+										icon: "success",
 										timer: 1500,
 										showConfirmButton: false
 									});
 									window.location.href = base_url + active_controller + "/payment_jurnal_list";
 								} else {
-									swal({
+									Swal.fire({
 										title: "Failed!",
 										text: "Save Error",
-										type: "error",
+										icon: "error",
 										timer: 1500,
 										showConfirmButton: false
 									});
@@ -147,10 +144,10 @@ $ENABLE_DELETE  = has_permission('Payment_Jurnal.Delete');
 							},
 							error: function(msg) {
 								$("#simpan-com").removeClass("hidden");
-								swal({
+								Swal.fire({
 									title: "Error!",
 									text: "Ajax Error",
-									type: "error",
+									icon: "error",
 									timer: 1500,
 									showConfirmButton: false
 								});

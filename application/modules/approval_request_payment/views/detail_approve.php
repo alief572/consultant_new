@@ -500,18 +500,15 @@ if ($tipe == 'Expense') {
 		var errors = "";
 		if ($("#bank_coa").val() == "0") errors = "Bank tidak boleh kosong";
 
-		swal({
+		Swal.fire({
 				title: "Anda Yakin?",
 				text: "Item Akan Di Approve!",
-				type: "info",
+				icon: "info",
 				showCancelButton: true,
 				confirmButtonText: "Ya, Approve!",
-				cancelButtonText: "Tidak!",
-				closeOnConfirm: false,
-				closeOnCancel: true
-			},
-			function(isConfirm) {
-				if (isConfirm) {
+				cancelButtonText: "Tidak!"
+			}).then((result) => {
+				if (result.isConfirmed) {
 					var id = $('input[name="id"]').val();
 					$.ajax({
 						url: url_save,
@@ -522,19 +519,19 @@ if ($tipe == 'Expense') {
 						},
 						success: function(msg) {
 							if (msg['save'] == '1') {
-								swal({
+								Swal.fire({
 									title: "Sukses!",
 									text: "Data Berhasil Di Approve",
-									type: "success",
+									icon: "success",
 									timer: 1500,
 									showConfirmButton: false
 								});
 								location.href = siteurl + active_controller + 'list_approve_management';
 							} else {
-								swal({
+								Swal.fire({
 									title: "Gagal!",
 									text: "Data Gagal Di Approve",
-									type: "error",
+									icon: "error",
 									timer: 1500,
 									showConfirmButton: false
 								});
@@ -542,10 +539,10 @@ if ($tipe == 'Expense') {
 							console.log(msg);
 						},
 						error: function(msg) {
-							swal({
+							Swal.fire({
 								title: "Gagal!",
 								text: "Ajax Data Gagal Di Proses",
-								type: "error",
+								icon: "error",
 								timer: 1500,
 								showConfirmButton: false
 							});
@@ -561,18 +558,15 @@ if ($tipe == 'Expense') {
 		var reject_reason = $('.reject_reason').val();
 
 		if (reject_reason !== '') {
-			swal({
+			Swal.fire({
 					title: "Anda Yakin?",
 					text: "Item Akan Di Reject!",
-					type: "info",
+					icon: "info",
 					showCancelButton: true,
 					confirmButtonText: "Ya, Reject!",
-					cancelButtonText: "Tidak!",
-					closeOnConfirm: false,
-					closeOnCancel: true
-				},
-				function(isConfirm) {
-					if (isConfirm) {
+					cancelButtonText: "Tidak!"
+				}).then((result) => {
+					if (result.isConfirmed) {
 						var formdata = new FormData($('#frm_data')[0]);
 						$.ajax({
 							url: url_reject,
@@ -585,19 +579,19 @@ if ($tipe == 'Expense') {
 							},
 							success: function(msg) {
 								if (msg['save'] == '1') {
-									swal({
+									Swal.fire({
 										title: "Sukses!",
 										text: "Data Berhasil Di Reject",
-										type: "success",
+										icon: "success",
 										timer: 1500,
 										showConfirmButton: false
 									});
 									location.href = siteurl + active_controller + 'list_approve_management';
 								} else {
-									swal({
+									Swal.fire({
 										title: "Gagal!",
 										text: "Data Gagal Di Reject",
-										type: "error",
+										icon: "error",
 										timer: 1500,
 										showConfirmButton: false
 									});
@@ -605,10 +599,10 @@ if ($tipe == 'Expense') {
 								console.log(msg);
 							},
 							error: function(msg) {
-								swal({
+								Swal.fire({
 									title: "Gagal!",
 									text: "Ajax Data Gagal Di Proses",
-									type: "error",
+									icon: "error",
 									timer: 1500,
 									showConfirmButton: false
 								});
@@ -618,7 +612,12 @@ if ($tipe == 'Expense') {
 					}
 				});
 		} else {
-			swal("Warning!", "Pastikan Reject Reason terisi!", "warning", 3000);
+			Swal.fire({
+				icon: 'warning',
+				title: 'Warning!',
+				text: 'Pastikan Reject Reason terisi!',
+				timer: 3000
+			});
 			return false;
 		}
 	});

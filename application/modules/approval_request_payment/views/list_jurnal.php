@@ -65,19 +65,16 @@ $(document).on('click', '.edited', function(e) {
 $(document).on('click', '.updated', function() {
     var id = $(this).data('id');
 
-    swal({
+    Swal.fire({
             title: "Are you sure?",
             text: "Update this data ?",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonClass: "btn-danger",
+            confirmButtonColor: "#dd6b55",
             confirmButtonText: "Yes, Process it!",
-            cancelButtonText: "No, cancel process!",
-            closeOnConfirm: true,
-            closeOnCancel: false
-        },
-        function(isConfirm) {
-            if (isConfirm) {
+            cancelButtonText: "No, cancel process!"
+        }).then((result) => {
+            if (result.isConfirmed) {
                 loading_spinner();
                 $.ajax({
                     url: base_url + active_controller + '/update_jurnal/' + id,
@@ -88,33 +85,37 @@ $(document).on('click', '.updated', function() {
                     contentType: false,
                     success: function(data) {
                         if (data.status == 1) {
-                            swal({
+                            Swal.fire({
                                 title: "Update Success!",
                                 text: data.pesan,
-                                type: "success",
+                                icon: "success",
                                 timer: 5000
                             });
                             window.location.href = base_url + 'ros/index_jurnal_incoming';
                         } else if (data.status == 0) {
-                            swal({
+                            Swal.fire({
                                 title: "Update Failed!",
                                 text: data.pesan,
-                                type: "warning",
+                                icon: "warning",
                                 timer: 5000
                             });
                         }
                     },
                     error: function() {
-                        swal({
+                        Swal.fire({
                             title: "Error Message !",
                             text: 'An Error Occured During Process. Please try again..',
-                            type: "warning",
+                            icon: "warning",
                             timer: 5000
                         });
                     }
                 });
             } else {
-                swal("Cancelled", "Data can be process again :)", "error");
+                Swal.fire({
+                    title: "Cancelled",
+                    text: "Data can be process again :)",
+                    icon: "error"
+                });
                 return false;
             }
         });

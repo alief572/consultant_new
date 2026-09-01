@@ -137,18 +137,15 @@ $ENABLE_DELETE  = has_permission('Payment.Delete');
 		if ($("#bank_coa").val() == "0") errors = "Bank tidak boleh kosong";
 		if (checked_checkbox < 1) errors = "Maaf, pilih terlebih dahulu payment yang akan di proses";
 		if (errors == "") {
-			swal({
+			Swal.fire({
 					title: "Anda Yakin?",
 					text: "Data Akan Di Update!",
-					type: "info",
+					icon: "info",
 					showCancelButton: true,
 					confirmButtonText: "Ya, Update!",
-					cancelButtonText: "Tidak!",
-					closeOnConfirm: false,
-					closeOnCancel: true
-				},
-				function(isConfirm) {
-					if (isConfirm) {
+					cancelButtonText: "Tidak!"
+				}).then((result) => {
+					if (result.isConfirmed) {
 						var formdata = new FormData($('#frm_data')[0]);
 						$.ajax({
 							url: url_save,
@@ -159,19 +156,19 @@ $ENABLE_DELETE  = has_permission('Payment.Delete');
 							contentType: false,
 							success: function(msg) {
 								if (msg.hasil == '1') {
-									swal({
+									Swal.fire({
 										title: "Sukses!",
 										text: "Data Berhasil Di Update",
-										type: "success",
+										icon: "success",
 										timer: 1500,
 										showConfirmButton: false
 									});
 									window.location.href = window.location.href;
 								} else {
-									swal({
+									Swal.fire({
 										title: "Gagal!",
 										text: "Data Gagal Di Update",
-										type: "error",
+										icon: "error",
 										timer: 1500,
 										showConfirmButton: false
 									});
@@ -179,10 +176,10 @@ $ENABLE_DELETE  = has_permission('Payment.Delete');
 								console.log(msg);
 							},
 							error: function(msg) {
-								swal({
+								Swal.fire({
 									title: "Gagal!",
 									text: "Ajax Data Gagal Di Proses",
-									type: "error",
+									icon: "error",
 									timer: 1500,
 									showConfirmButton: false
 								});
@@ -192,7 +189,11 @@ $ENABLE_DELETE  = has_permission('Payment.Delete');
 					}
 				});
 		} else {
-			swal(errors);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error!',
+				text: errors
+			});
 			return false;
 		}
 	});

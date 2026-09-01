@@ -174,18 +174,15 @@ $ENABLE_VIEW    = has_permission('Payment_List.View');
 		e.preventDefault();
 		var errors = "";
 		if (errors == "") {
-			swal({
+			Swal.fire({
 					title: "Anda Yakin?",
 					text: "Data Akan Disimpan!",
-					type: "info",
+					icon: "info",
 					showCancelButton: true,
 					confirmButtonText: "Ya, simpan!",
-					cancelButtonText: "Tidak!",
-					closeOnConfirm: false,
-					closeOnCancel: true
-				},
-				function(isConfirm) {
-					if (isConfirm) {
+					cancelButtonText: "Tidak!"
+				}).then((result) => {
+					if (result.isConfirmed) {
 						var formdata = new FormData($('#frm_data')[0]);
 						$.ajax({
 							url: url_save,
@@ -196,19 +193,19 @@ $ENABLE_VIEW    = has_permission('Payment_List.View');
 							contentType: false,
 							success: function(msg) {
 								if (msg['save'] == '1') {
-									swal({
+									Swal.fire({
 										title: "Sukses!",
 										text: "Data Berhasil Di Update",
-										type: "success",
+										icon: "success",
 										timer: 1500,
 										showConfirmButton: false
 									});
 									window.location.href = window.location.href;
 								} else {
-									swal({
+									Swal.fire({
 										title: "Gagal!",
 										text: "Data Gagal Di Update",
-										type: "error",
+										icon: "error",
 										timer: 1500,
 										showConfirmButton: false
 									});
@@ -216,10 +213,10 @@ $ENABLE_VIEW    = has_permission('Payment_List.View');
 								console.log(msg);
 							},
 							error: function(msg) {
-								swal({
+								Swal.fire({
 									title: "Gagal!",
 									text: "Ajax Data Gagal Di Proses",
-									type: "error",
+									icon: "error",
 									timer: 1500,
 									showConfirmButton: false
 								});
@@ -229,7 +226,11 @@ $ENABLE_VIEW    = has_permission('Payment_List.View');
 					}
 				});
 		} else {
-			swal(errors);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error!',
+				text: errors
+			});
 			return false;
 		}
 	});

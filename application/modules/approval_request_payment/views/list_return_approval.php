@@ -67,18 +67,15 @@
     $(document).on('click', '.approval', function() {
         var id = $(this).data('id');
 
-        swal({
+        Swal.fire({
                 title: "Anda Yakin?",
                 text: "Pengembalian expense akan di approve !",
-                type: "info",
+                icon: "info",
                 showCancelButton: true,
                 confirmButtonText: "Ya, Approve!",
-                cancelButtonText: "Tidak!",
-                closeOnConfirm: false,
-                closeOnCancel: true
-            },
-            function(isConfirm) {
-                if (isConfirm) {
+                cancelButtonText: "Tidak!"
+            }).then((result) => {
+                if (result.isConfirmed) {
                     $.ajax({
                         url: siteurl + active_controller + 'approve_pengembalian_expense',
                         dataType: "json",
@@ -89,29 +86,29 @@
                         cache: false,
                         success: function(msg) {
                             if (msg.status == '1') {
-                                swal({
+                                Swal.fire({
                                     title: "Sukses!",
                                     text: "Data Pengembalian berhasil di approve",
-                                    type: "success",
+                                    icon: "success",
                                     timer: 1500,
                                     showConfirmButton: false
                                 });
                                 window.location.reload();
                             } else {
-                                swal({
+                                Swal.fire({
                                     title: "Gagal!",
                                     text: "Data Pengembalian gagal Di Approve !",
-                                    type: "error",
+                                    icon: "error",
                                     timer: 1500,
                                     showConfirmButton: false
                                 });
                             };
                         },
                         error: function(msg) {
-                            swal({
+                            Swal.fire({
                                 title: "Gagal!",
                                 text: "Ajax Data Gagal Di Proses",
-                                type: "error",
+                                icon: "error",
                                 timer: 1500,
                                 showConfirmButton: false
                             });
@@ -124,18 +121,15 @@
     $(document).on('click', '.reject', function() {
         var id = $(this).data('id');
 
-        swal({
+        Swal.fire({
                 title: "Anda Yakin?",
                 text: "Pengembalian expense akan di reject !",
-                type: "info",
+                icon: "info",
                 showCancelButton: true,
                 confirmButtonText: "Ya, Reject!",
-                cancelButtonText: "Tidak!",
-                closeOnConfirm: false,
-                closeOnCancel: true
-            },
-            function(isConfirm) {
-                if (isConfirm) {
+                cancelButtonText: "Tidak!"
+            }).then((result) => {
+                if (result.isConfirmed) {
                     $.ajax({
                         url: siteurl + active_controller + 'reject_pengembalian_expense',
                         dataType: "json",
@@ -146,29 +140,29 @@
                         cache: false,
                         success: function(msg) {
                             if (msg.status == '1') {
-                                swal({
+                                Swal.fire({
                                     title: "Sukses!",
                                     text: "Data Pengembalian berhasil di reject",
-                                    type: "success",
+                                    icon: "success",
                                     timer: 1500,
                                     showConfirmButton: false
                                 });
                                 window.location.reload();
                             } else {
-                                swal({
+                                Swal.fire({
                                     title: "Gagal!",
                                     text: "Data Pengembalian gagal Di Reject !",
-                                    type: "error",
+                                    icon: "error",
                                     timer: 1500,
                                     showConfirmButton: false
                                 });
                             };
                         },
                         error: function(msg) {
-                            swal({
+                            Swal.fire({
                                 title: "Gagal!",
                                 text: "Ajax Data Gagal Di Proses",
-                                type: "error",
+                                icon: "error",
                                 timer: 1500,
                                 showConfirmButton: false
                             });
