@@ -880,8 +880,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
                 var min_mandays_rate = get_num($('input[name="dt_act[' + i + '][min_mandays_rate]"]').val());
                 if (mandays_rate < min_mandays_rate) {
-                    swal({
-                        type: 'warning',
+                    Swal.fire({
+                        icon: 'warning',
                         title: 'Warning !',
                         text: "Mandays Rate Price can't below the minimum price !"
                     });
@@ -1552,8 +1552,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 $('input[name="dt_lab[' + no + '][harga_lab_budget]"]').autoNumeric('set', result.harga_lab);
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -1623,6 +1623,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         }
     });
 
+    $(document).on('click', '.del_penawaran_file', function() {
+        var id = $(this).data('id');
+        var id_penawaran = $(this).data('id_penawaran');
+        var no = $(this).data('no');
+
+        $('.tr_file_' + no).remove();
+    });
+
     $(document).on('change', '.change_customer', function() {
         var id_customer = $(this).val();
 
@@ -1639,16 +1647,16 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     $('.pic').val(result.contact);
                     $('.address').val(result.address).val()
                 } else {
-                    swal({
-                        type: 'warning ',
+                    Swal.fire({
+                        icon: 'warning',
                         title: 'Failed !',
                         text: 'Please try again later !'
                     });
                 }
             },
             error: function(result) {
-                swal({
-                    type: 'error ',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -1687,8 +1695,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 hitung_detail_other_summary();
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -1716,9 +1724,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
                 hitung_total_activity();
             },
-            else: function(result) {
-                swal({
-                    type: 'error',
+            error: function(result) {
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -1786,8 +1794,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 $('.nm_divisi').val(result.nm_divisi);
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -1798,13 +1806,17 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     $(document).on('submit', '.form-data', function(e) {
         e.preventDefault();
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be saved !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, save it!',
+            cancelButtonText: 'Cancel'
+        }).then((next) => {
+            if (next.isConfirmed) {
 
                 var cust = $('input[name="customer"]').val();
                 var sts_cust = 0;
@@ -1871,19 +1883,19 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     processData: false,
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success',
                                 text: result.msg,
                                 allowOutsideClick: false,
                                 showConfirmButton: false,
                                 timer: 3000
-                            }, function(after) {
+                            }).then(() => {
                                 window.location.href = siteurl + active_controller;
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.msg,
                                 allowOutsideClick: false,
@@ -1893,8 +1905,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !',
                             allowOutsideClick: false,
@@ -1907,4 +1919,5 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         });
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<?= base_url('assets/js/basic.js') ?>"></script>
