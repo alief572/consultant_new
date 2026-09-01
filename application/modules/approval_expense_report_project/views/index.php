@@ -90,13 +90,13 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
     $(document).on('click', '.del_spk_budget', function() {
         var id = $(this).data('id');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be deleted !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_spk_budgeting',
@@ -107,24 +107,24 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+                            }).then((lanjut) => {
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later!'
                         });
@@ -139,13 +139,13 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
 
         var id_spk_budgeting = $(this).data('id_spk_budgeting');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This action cannot be undo !',
             showCancelButton: true
-        }, function(next) {
-            if (next) {
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'req_approval_kasbon',
@@ -156,24 +156,24 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.pesan
-                            }, function(lanjut) {
+                            }).then((lanjut) => {
                                 DataTables();
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.pesan
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later!'
                         });

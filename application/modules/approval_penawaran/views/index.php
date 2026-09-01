@@ -134,13 +134,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     $(document).on('click', '.del_penawaran', function() {
         var id_penawaran = $(this).data('id_penawaran');
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure?',
             text: 'This data will be deleted !',
-            cancelShowButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true
+        }).then((next) => {
+            if (next.isConfirmed) {
                 $.ajax({
                     type: 'post',
                     url: siteurl + active_controller + 'del_penawaran',
@@ -151,24 +151,24 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success !',
                                 text: result.msg
-                            }, function(after) {
+                            }).then((after) => {
                                 location.reload(true);
                             });
                         } else {
-                            swal({
-                                type: 'warning',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.msg
                             });
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !'
                         });

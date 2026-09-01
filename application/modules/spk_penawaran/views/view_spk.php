@@ -888,8 +888,8 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
     function persen_komisi(tipe) {
         var persentase = get_num($('input[name="persentase_' + tipe + '_komisi"]').val());
         if (persentase > 2) {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: 'Persen komisi tidak boleh lebih dari 2% !'
             });
@@ -1114,14 +1114,14 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
         var subcont_price = get_num($('input[name="subcont_new_price"]').val());
 
         if (subcont_price <= 0) {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: "Price Subcont can't be zero !"
             });
         } else if (subcont_new == '') {
-            swal({
-                type: 'warning',
+            Swal.fire({
+                icon: 'warning',
                 title: 'Warning !',
                 text: "Subcont Activity must be filled first !"
             });
@@ -1202,8 +1202,8 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
                 $('#dialog-rekap').modal('show');
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
