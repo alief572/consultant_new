@@ -1299,8 +1299,8 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
 
                 var min_mandays_rate = get_num($('input[name="dt_act[' + i + '][min_mandays_rate]"]').val());
                 if (mandays_rate < min_mandays_rate) {
-                    swal({
-                        type: 'warning',
+                    Swal.fire({
+                        icon: 'warning',
                         title: 'Warning !',
                         text: "Mandays Rate Price can't below the minimum price !"
                     });
@@ -2121,16 +2121,16 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
                     $('.pic').val(result.contact);
                     $('.address').val(result.address).val()
                 } else {
-                    swal({
-                        type: 'warning ',
+                    Swal.fire({
+                        icon: 'warning',
                         title: 'Failed !',
                         text: 'Please try again later !'
                     });
                 }
             },
             error: function(result) {
-                swal({
-                    type: 'error ',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -2169,8 +2169,8 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
                 hitung_detail_other_summary();
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -2195,8 +2195,8 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
                 $('input[name="dt_lab[' + no + '][harga_lab_budget]"]').autoNumeric('set', result.harga_lab);
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -2226,9 +2226,9 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
                 auto_num();
                 hitung_total_activity();
             },
-            else: function(result) {
-                swal({
-                    type: 'error',
+            error: function(result) {
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -2306,8 +2306,8 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
                 $('.nm_divisi').val(result.nm_divisi);
             },
             error: function(result) {
-                swal({
-                    type: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Error !',
                     text: 'Please try again later !'
                 });
@@ -2318,13 +2318,17 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
     $(document).on('submit', '.form-data', function(e) {
         e.preventDefault();
 
-        swal({
-            type: 'warning',
+        Swal.fire({
+            icon: 'warning',
             title: 'Are you sure ?',
             text: 'This data will be saved !',
-            showCancelButton: true
-        }, function(next) {
-            if (next) {
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, save it!',
+            cancelButtonText: 'Cancel'
+        }).then((next) => {
+            if (next.isConfirmed) {
 
                 var company = $('input[name="company"]').val();
                 var nm_company = '';
@@ -2356,19 +2360,19 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
                     dataType: 'JSON',
                     success: function(result) {
                         if (result.status == 1) {
-                            swal({
-                                type: 'success',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Success',
                                 text: result.msg,
                                 allowOutsideClick: false,
                                 showConfirmButton: false,
                                 timer: 3000
-                            }, function(after) {
+                            }).then(() => {
                                 window.location.href = siteurl + active_controller;
                             });
                         } else {
-                            swal({
-                                type: 'failed',
+                            Swal.fire({
+                                icon: 'warning',
                                 title: 'Failed !',
                                 text: result.msg,
                                 allowOutsideClick: false,
@@ -2378,8 +2382,8 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
                         }
                     },
                     error: function(result) {
-                        swal({
-                            type: 'error',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Error !',
                             text: 'Please try again later !',
                             allowOutsideClick: false,
@@ -2392,4 +2396,5 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
         });
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<?= base_url('assets/js/basic.js') ?>"></script>
