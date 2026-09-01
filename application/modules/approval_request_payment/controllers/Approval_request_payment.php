@@ -2219,6 +2219,19 @@ class Approval_request_payment extends Admin_Controller
 			// [END] KASBON SUBCONT PERUSAHAAN
 
 			$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
+			$tgl_approve_dir = !empty($get_request_payment->created_on) ? $get_request_payment->created_on : '';
+			$tgl_app_direktur_formatted = (!empty($tgl_approve_dir) && $tgl_approve_dir != '0000-00-00 00:00:00') ? date('d F Y', strtotime($tgl_approve_dir)) : '-';
+
+			// Resolusi nama pembuat & pengetahu (hardcode Imanuel Iman)
+			$nm_created_by = '-';
+			if (!empty($get_kasbon_header->created_by)) {
+				$user_create = $this->db->query("SELECT nm_lengkap FROM users WHERE id_user = '" . $this->db->escape_str($get_kasbon_header->created_by) . "' OR username = '" . $this->db->escape_str($get_kasbon_header->created_by) . "'")->row();
+				$nm_created_by = !empty($user_create->nm_lengkap) ? $user_create->nm_lengkap : $get_kasbon_header->created_by;
+			}
+
+			$nm_approved_by = 'Imanuel Iman';
+			$tgl_created = $tgl_app_direktur_formatted;
+			$tgl_approved = $tgl_app_direktur_formatted;
 
 			$data = [
 				'id' => $id,
@@ -2232,7 +2245,11 @@ class Approval_request_payment extends Admin_Controller
 				'data_kasbon_subcont_tenaga_ahli' => $get_kasbon_subcont_tenaga_ahli,
 				'data_kasbon_subcont_perusahaan' => $get_kasbon_subcont_perusahaan,
 				'tipe' => $tipe,
-				'tgl_approve_direktur' => $get_request_payment->created_on
+				'tgl_approve_direktur' => $tgl_approve_dir,
+				'nm_created_by' => $nm_created_by,
+				'tgl_created' => $tgl_created,
+				'nm_approved_by' => $nm_approved_by,
+				'tgl_approved' => $tgl_approved
 			];
 		} else {
 			$this->db->select('a.*, b.id_spk_penawaran');
@@ -2316,6 +2333,22 @@ class Approval_request_payment extends Admin_Controller
 			$this->db->where('b.id', $id);
 			$get_kasbon = $this->db->get()->row();
 
+			$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
+			$tgl_approve_dir = !empty($get_request_payment->created_on) ? $get_request_payment->created_on : '';
+			$tgl_app_direktur_formatted = (!empty($tgl_approve_dir) && $tgl_approve_dir != '0000-00-00 00:00:00') ? date('d F Y', strtotime($tgl_approve_dir)) : '-';
+
+			// Resolusi nama pembuat & pengetahu (hardcode Imanuel Iman)
+			$nm_created_by = '-';
+			$created_by_val = !empty($get_kasbon->created_by) ? $get_kasbon->created_by : (!empty($get_expense->created_by) ? $get_expense->created_by : '');
+			if (!empty($created_by_val)) {
+				$user_create = $this->db->query("SELECT nm_lengkap FROM users WHERE id_user = '" . $this->db->escape_str($created_by_val) . "' OR username = '" . $this->db->escape_str($created_by_val) . "'")->row();
+				$nm_created_by = !empty($user_create->nm_lengkap) ? $user_create->nm_lengkap : $created_by_val;
+			}
+
+			$nm_approved_by = 'Imanuel Iman';
+			$tgl_created = $tgl_app_direktur_formatted;
+			$tgl_approved = $tgl_app_direktur_formatted;
+
 			$data = [
 				'id' => $id,
 				'id_spk_penawaran' => $id_spk_penawaran,
@@ -2324,7 +2357,12 @@ class Approval_request_payment extends Admin_Controller
 				'data_kasbon_header' => $get_kasbon,
 				'tipe' => $tipe,
 				'title_expense' => $title_expense,
-				'list_detail_expense_detail' => $list_detail_expense_detail
+				'list_detail_expense_detail' => $list_detail_expense_detail,
+				'tgl_approve_direktur' => $tgl_approve_dir,
+				'nm_created_by' => $nm_created_by,
+				'tgl_created' => $tgl_created,
+				'nm_approved_by' => $nm_approved_by,
+				'tgl_approved' => $tgl_approved
 			];
 		}
 
@@ -2513,12 +2551,34 @@ class Approval_request_payment extends Admin_Controller
 		if (empty($get_kasbon)) {
 			$get_kasbon = (object) [
 				'deskripsi' => '-',
-				'grand_total' => 0
+				'grand_total' => 0,
+				'bank' => '-',
+				'bank_number' => '-',
+				'bank_account' => '-'
 			];
 		}
 
-		$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
+		// Resolusi nama lengkap pembuat & approver
+		$nm_created_by = '-';
+		$tgl_created = '-';
+		$nm_approved_by = '-';
+		$tgl_approved = '-';
 
+		$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
+		$tgl_approve_dir = !empty($get_request_payment->created_on) ? $get_request_payment->created_on : '';
+		$tgl_app_direktur_formatted = (!empty($tgl_approve_dir) && $tgl_approve_dir != '0000-00-00 00:00:00') ? date('d F Y', strtotime($tgl_approve_dir)) : '-';
+
+		// Resolusi nama pembuat & pengetahu (hardcode Imanuel Iman)
+		$nm_created_by = '-';
+		$created_by_val = !empty($get_kasbon->created_by) ? $get_kasbon->created_by : (!empty($get_expense->created_by) ? $get_expense->created_by : '');
+		if (!empty($created_by_val)) {
+			$user_create = $this->db->query("SELECT nm_lengkap FROM users WHERE id_user = '" . $this->db->escape_str($created_by_val) . "' OR username = '" . $this->db->escape_str($created_by_val) . "'")->row();
+			$nm_created_by = !empty($user_create->nm_lengkap) ? $user_create->nm_lengkap : $created_by_val;
+		}
+
+		$nm_approved_by = 'Imanuel Iman';
+		$tgl_created = $tgl_app_direktur_formatted;
+		$tgl_approved = $tgl_app_direktur_formatted;
 
 		if (empty($get_request_payment)) {
 			$get_bukti_penggunaan = $this->db->get_where('kons_tr_bukti_penggunaan_expense', array('id_header_expense' => $id))->result();
@@ -2532,7 +2592,12 @@ class Approval_request_payment extends Admin_Controller
 				'tipe' => $tipe,
 				'title_expense' => $title_expense,
 				'list_detail_expense_detail' => $list_detail_expense_detail,
-				'list_bukti_penggunaan' => $get_bukti_penggunaan
+				'list_bukti_penggunaan' => $get_bukti_penggunaan,
+				'tgl_approve_direktur' => $tgl_approve_dir,
+				'nm_created_by' => $nm_created_by,
+				'tgl_created' => $tgl_created,
+				'nm_approved_by' => $nm_approved_by,
+				'tgl_approved' => $tgl_approved
 			];
 		} else {
 			$data = [
@@ -2544,7 +2609,11 @@ class Approval_request_payment extends Admin_Controller
 				'tipe' => $tipe,
 				'title_expense' => $title_expense,
 				'list_detail_expense_detail' => $list_detail_expense_detail,
-				'tgl_approve_direktur' => $get_request_payment->created_on
+				'tgl_approve_direktur' => $tgl_approve_dir,
+				'nm_created_by' => $nm_created_by,
+				'tgl_created' => $tgl_created,
+				'nm_approved_by' => $nm_approved_by,
+				'tgl_approved' => $tgl_approved
 			];
 			$this->template->set('tgl_approve_direktur', $get_request_payment->created_on);
 		}
@@ -3053,6 +3122,19 @@ class Approval_request_payment extends Admin_Controller
 			// [END] KASBON SUBCONT PERUSAHAAN
 
 			$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
+			$tgl_approve_dir = !empty($get_request_payment->created_on) ? $get_request_payment->created_on : '';
+			$tgl_app_direktur_formatted = (!empty($tgl_approve_dir) && $tgl_approve_dir != '0000-00-00 00:00:00') ? date('d F Y', strtotime($tgl_approve_dir)) : '-';
+
+			// Resolusi nama pembuat & pengetahu (hardcode Imanuel Iman)
+			$nm_created_by = '-';
+			if (!empty($get_kasbon_header->created_by)) {
+				$user_create = $this->db->query("SELECT nm_lengkap FROM users WHERE id_user = '" . $this->db->escape_str($get_kasbon_header->created_by) . "' OR username = '" . $this->db->escape_str($get_kasbon_header->created_by) . "'")->row();
+				$nm_created_by = !empty($user_create->nm_lengkap) ? $user_create->nm_lengkap : $get_kasbon_header->created_by;
+			}
+
+			$nm_approved_by = 'Imanuel Iman';
+			$tgl_created = $tgl_app_direktur_formatted;
+			$tgl_approved = $tgl_app_direktur_formatted;
 
 			$data = [
 				'id' => $id,
@@ -3066,7 +3148,11 @@ class Approval_request_payment extends Admin_Controller
 				'data_kasbon_subcont_tenaga_ahli' => $get_kasbon_subcont_tenaga_ahli,
 				'data_kasbon_subcont_perusahaan' => $get_kasbon_subcont_perusahaan,
 				'tipe' => $tipe,
-				'tgl_approve_direktur' => $get_request_payment->created_on
+				'tgl_approve_direktur' => $tgl_approve_dir,
+				'nm_created_by' => $nm_created_by,
+				'tgl_created' => $tgl_created,
+				'nm_approved_by' => $nm_approved_by,
+				'tgl_approved' => $tgl_approved
 			];
 		} else {
 			$this->db->select('a.*, b.id_spk_penawaran');
@@ -3150,6 +3236,22 @@ class Approval_request_payment extends Admin_Controller
 			$this->db->where('b.id', $id);
 			$get_kasbon = $this->db->get()->row();
 
+			$get_request_payment = $this->db->get_where('request_payment', array('no_doc' => $id))->row();
+			$tgl_approve_dir = !empty($get_request_payment->created_on) ? $get_request_payment->created_on : '';
+			$tgl_app_direktur_formatted = (!empty($tgl_approve_dir) && $tgl_approve_dir != '0000-00-00 00:00:00') ? date('d F Y', strtotime($tgl_approve_dir)) : '-';
+
+			// Resolusi nama pembuat & pengetahu (hardcode Imanuel Iman)
+			$nm_created_by = '-';
+			$created_by_val = !empty($get_kasbon->created_by) ? $get_kasbon->created_by : (!empty($get_expense->created_by) ? $get_expense->created_by : '');
+			if (!empty($created_by_val)) {
+				$user_create = $this->db->query("SELECT nm_lengkap FROM users WHERE id_user = '" . $this->db->escape_str($created_by_val) . "' OR username = '" . $this->db->escape_str($created_by_val) . "'")->row();
+				$nm_created_by = !empty($user_create->nm_lengkap) ? $user_create->nm_lengkap : $created_by_val;
+			}
+
+			$nm_approved_by = 'Imanuel Iman';
+			$tgl_created = $tgl_app_direktur_formatted;
+			$tgl_approved = $tgl_app_direktur_formatted;
+
 			$data = [
 				'id' => $id,
 				'id_spk_penawaran' => $id_spk_penawaran,
@@ -3158,7 +3260,12 @@ class Approval_request_payment extends Admin_Controller
 				'data_kasbon_header' => $get_kasbon,
 				'tipe' => $tipe,
 				'title_expense' => $title_expense,
-				'list_detail_expense_detail' => $list_detail_expense_detail
+				'list_detail_expense_detail' => $list_detail_expense_detail,
+				'tgl_approve_direktur' => $tgl_approve_dir,
+				'nm_created_by' => $nm_created_by,
+				'tgl_created' => $tgl_created,
+				'nm_approved_by' => $nm_approved_by,
+				'tgl_approved' => $tgl_approved
 			];
 		}
 
