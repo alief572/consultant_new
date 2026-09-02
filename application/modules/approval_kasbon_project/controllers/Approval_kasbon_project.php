@@ -255,18 +255,19 @@ class Approval_kasbon_project extends Admin_Controller
             $prior_akomodasi_map[$p->id_akomodasi] = $p;
         }
 
-        $this->db->select('b.id_detail, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
+        $this->db->select('c.id_akomodasi, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
         $this->db->from('kons_tr_kasbon_req_ovb_akomodasi_header a');
         $this->db->join('kons_tr_kasbon_req_ovb_akomodasi_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->join('kons_tr_spk_budgeting_akomodasi c', 'c.id = b.id_detail');
         $this->db->where('a.tipe', 2);
         $this->db->where('a.sts', 1);
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $this->db->group_by('b.id_detail');
+        $this->db->group_by('c.id_akomodasi');
         $get_ovb_akomodasi_agg = $this->db->get()->result();
 
         $ovb_akomodasi_map = [];
         foreach ($get_ovb_akomodasi_agg as $o) {
-            $ovb_akomodasi_map[$o->id_detail] = $o;
+            $ovb_akomodasi_map[$o->id_akomodasi] = $o;
         }
 
         $this->db->select('a.*, b.nm_biaya');
@@ -279,7 +280,7 @@ class Approval_kasbon_project extends Admin_Controller
         $processed_akomodasi_ids = [];
 
         foreach ($get_budgeting_akomodasi as $b_item) {
-            $item_id = (string) trim($b_item->id);
+            $item_id = (string) trim($b_item->id_akomodasi);
             $processed_akomodasi_ids[$item_id] = true;
 
             if (isset($submitted_akomodasi[$item_id])) {
@@ -387,18 +388,19 @@ class Approval_kasbon_project extends Admin_Controller
             $prior_others_map[$p->id_others] = $p;
         }
 
-        $this->db->select('b.id_detail, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
+        $this->db->select('c.id_others, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
         $this->db->from('kons_tr_kasbon_req_ovb_others_header a');
         $this->db->join('kons_tr_kasbon_req_ovb_others_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->join('kons_tr_spk_budgeting_others c', 'c.id = b.id_detail');
         $this->db->where('a.tipe', 3);
         $this->db->where('a.sts', 1);
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $this->db->group_by('b.id_detail');
+        $this->db->group_by('c.id_others');
         $get_ovb_others_agg = $this->db->get()->result();
 
         $ovb_others_map = [];
         foreach ($get_ovb_others_agg as $o) {
-            $ovb_others_map[$o->id_detail] = $o;
+            $ovb_others_map[$o->id_others] = $o;
         }
 
         $this->db->select('a.*, b.nm_biaya');
@@ -411,7 +413,7 @@ class Approval_kasbon_project extends Admin_Controller
         $processed_others_ids = [];
 
         foreach ($get_budgeting_others as $b_item) {
-            $item_id = (string) trim($b_item->id);
+            $item_id = (string) trim($b_item->id_others);
             $processed_others_ids[$item_id] = true;
 
             if (isset($submitted_others[$item_id])) {
@@ -519,18 +521,19 @@ class Approval_kasbon_project extends Admin_Controller
             $prior_lab_map[$p->id_lab] = $p;
         }
 
-        $this->db->select('b.id_detail, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
+        $this->db->select('c.id_lab, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
         $this->db->from('kons_tr_kasbon_req_ovb_lab_header a');
         $this->db->join('kons_tr_kasbon_req_ovb_lab_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->join('kons_tr_spk_budgeting_lab c', 'c.id = b.id_detail');
         $this->db->where('a.tipe', 4);
         $this->db->where('a.sts', 1);
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $this->db->group_by('b.id_detail');
+        $this->db->group_by('c.id_lab');
         $get_ovb_lab_agg = $this->db->get()->result();
 
         $ovb_lab_map = [];
         foreach ($get_ovb_lab_agg as $o) {
-            $ovb_lab_map[$o->id_detail] = $o;
+            $ovb_lab_map[$o->id_lab] = $o;
         }
 
         $this->db->select('a.*, b.isu_lingkungan as nm_biaya');
@@ -543,7 +546,7 @@ class Approval_kasbon_project extends Admin_Controller
         $processed_lab_ids = [];
 
         foreach ($get_budgeting_lab as $b_item) {
-            $item_id = (string) trim($b_item->id);
+            $item_id = (string) trim($b_item->id_lab);
             $processed_lab_ids[$item_id] = true;
 
             if (isset($submitted_lab[$item_id])) {
@@ -651,18 +654,19 @@ class Approval_kasbon_project extends Admin_Controller
             $prior_subcont_tenaga_ahli_map[$p->id_subcont] = $p;
         }
 
-        $this->db->select('b.id_detail, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
+        $this->db->select('c.id_subcont, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
         $this->db->from('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_header a');
         $this->db->join('kons_tr_kasbon_req_ovb_subcont_tenaga_ahli_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->join('kons_tr_spk_budgeting_subcont_tenaga_ahli c', 'c.id = b.id_detail');
         $this->db->where('a.tipe', 5);
         $this->db->where('a.sts', 1);
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $this->db->group_by('b.id_detail');
+        $this->db->group_by('c.id_subcont');
         $get_ovb_subcont_tenaga_ahli_agg = $this->db->get()->result();
 
         $ovb_subcont_tenaga_ahli_map = [];
         foreach ($get_ovb_subcont_tenaga_ahli_agg as $o) {
-            $ovb_subcont_tenaga_ahli_map[$o->id_detail] = $o;
+            $ovb_subcont_tenaga_ahli_map[$o->id_subcont] = $o;
         }
 
         $this->db->select('a.*, b.nm_biaya');
@@ -675,7 +679,7 @@ class Approval_kasbon_project extends Admin_Controller
         $processed_subcont_tenaga_ahli_ids = [];
 
         foreach ($get_budgeting_subcont_tenaga_ahli as $b_item) {
-            $item_id = (string) trim($b_item->id);
+            $item_id = (string) trim($b_item->id_subcont);
             $processed_subcont_tenaga_ahli_ids[$item_id] = true;
 
             if (isset($submitted_subcont_tenaga_ahli[$item_id])) {
@@ -783,18 +787,19 @@ class Approval_kasbon_project extends Admin_Controller
             $prior_subcont_perusahaan_map[$p->id_subcont] = $p;
         }
 
-        $this->db->select('b.id_detail, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
+        $this->db->select('c.id_subcont, SUM(b.budget_tambahan) as total_budget_tambahan, SUM(b.qty_budget_tambahan) as ttl_qty_tambahan');
         $this->db->from('kons_tr_kasbon_req_ovb_subcont_perusahaan_header a');
         $this->db->join('kons_tr_kasbon_req_ovb_subcont_perusahaan_detail b', 'b.id_request_ovb = a.id_request_ovb');
+        $this->db->join('kons_tr_spk_budgeting_subcont_perusahaan c', 'c.id = b.id_detail');
         $this->db->where('a.tipe', 6);
         $this->db->where('a.sts', 1);
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
-        $this->db->group_by('b.id_detail');
+        $this->db->group_by('c.id_subcont');
         $get_ovb_subcont_perusahaan_agg = $this->db->get()->result();
 
         $ovb_subcont_perusahaan_map = [];
         foreach ($get_ovb_subcont_perusahaan_agg as $o) {
-            $ovb_subcont_perusahaan_map[$o->id_detail] = $o;
+            $ovb_subcont_perusahaan_map[$o->id_subcont] = $o;
         }
 
         $this->db->select('a.*, b.nm_biaya');
@@ -807,7 +812,7 @@ class Approval_kasbon_project extends Admin_Controller
         $processed_subcont_perusahaan_ids = [];
 
         foreach ($get_budgeting_subcont_perusahaan as $b_item) {
-            $item_id = (string) trim($b_item->id);
+            $item_id = (string) trim($b_item->id_subcont);
             $processed_subcont_perusahaan_ids[$item_id] = true;
 
             if (isset($submitted_subcont_perusahaan[$item_id])) {
