@@ -37,10 +37,22 @@ $is_in_team = false;
 $emp_id = !empty($employee_id) ? trim((string)$employee_id) : '';
 if (!empty($emp_id) && !empty($spk_team_info['team_employee_ids']) && in_array($emp_id, $spk_team_info['team_employee_ids'])) {
     $is_in_team = true;
-} else if (empty($emp_id) && !empty($spk_team_info['team_names'])) {
+} else if (!empty($nm_pembuat) && !empty($spk_team_info['team_names'])) {
     $pembuat_name = strtolower(trim($nm_pembuat));
-    if (in_array($pembuat_name, $spk_team_info['team_names'])) {
-        $is_in_team = true;
+    foreach ($spk_team_info['team_names'] as $tname) {
+        if ($tname === $pembuat_name || strpos($tname, $pembuat_name) !== false || strpos($pembuat_name, $tname) !== false) {
+            $is_in_team = true;
+            break;
+        }
+    }
+}
+
+$origin_spk = '';
+if (!$is_in_team) {
+    $current_spk = !empty($list_budgeting->id_spk_penawaran) ? $list_budgeting->id_spk_penawaran : (!empty($spk_team_info['id_spk_penawaran']) ? $spk_team_info['id_spk_penawaran'] : '');
+    $ci = &get_instance();
+    if (method_exists($ci, '_get_user_origin_spk')) {
+        $origin_spk = $ci->_get_user_origin_spk($emp_id, $nm_pembuat, $current_spk);
     }
 }
 ?>
@@ -113,6 +125,21 @@ if (!empty($emp_id) && !empty($spk_team_info['team_employee_ids']) && in_array($
         </div>
 
         <div class="box-body">
+            <?php if (!empty($header->sts_reject) || !empty($header->reject_reason)) : ?>
+                <?php
+                $rejecter = !empty($header->rejected_by) ? $this->db->get_where('users', ['id_user' => $header->rejected_by])->row() : null;
+                $nm_rejecter = !empty($rejecter->nm_lengkap) ? $rejecter->nm_lengkap : (!empty($header->rejected_by) ? $header->rejected_by : 'Approver');
+                $tgl_reject = !empty($header->rejected_date) ? date('d F Y', strtotime($header->rejected_date)) : '';
+                ?>
+                <div class="reject-banner" style="background:#fdeaea; border:1px solid #f6c6c6; border-radius:6px; padding:12px 16px; margin-bottom:20px;">
+                    <div class="head" style="font-size:13px; font-weight:600; color:#c62e2e; display:flex; align-items:center; gap:8px;">
+                        <i class="fa fa-times-circle" style="font-size:15px;"></i> Ditolak oleh <?= htmlspecialchars($nm_rejecter) ?><?= !empty($tgl_reject) ? ', ' . $tgl_reject : '' ?>
+                    </div>
+                    <div class="body" style="font-size:13px; color:#c62e2e; margin:4px 0 0 23px;">
+                        <?= nl2br(htmlspecialchars($header->reject_reason)) ?>
+                    </div>
+                </div>
+            <?php endif; ?>
             <table border="0" style="width: 100%;">
                 <tr>
                     <th class="pd-5 valign-top" width="150">No. SPK</th>
@@ -158,7 +185,7 @@ if (!empty($emp_id) && !empty($spk_team_info['team_employee_ids']) && in_array($
                                 <?php if (!$is_in_team) : ?>
                                     <div style="margin-top: 4px;">
                                         <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; color:#c76b00; background:#fff2df; border:1px solid #f0d3a0; padding:1px 8px; border-radius:10px;">
-                                            <i class="fa fa-exclamation-triangle"></i> Bukan tim SPK ini
+                                            <i class="fa fa-exclamation-triangle"></i> <?= htmlspecialchars($nm_pembuat) ?> bukan bagian dari tim SPK ini<?= !empty($origin_spk) ? ' (tim asal: ' . htmlspecialchars($origin_spk) . ')' : '' ?>
                                         </span>
                                     </div>
                                 <?php endif; ?>

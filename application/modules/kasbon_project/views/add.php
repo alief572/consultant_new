@@ -70,6 +70,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         margin-top: 4px;
     }
 
+    .reject-note {
+        font-size: 11px;
+        color: #e64949;
+        margin-top: 4px;
+        display: flex;
+        align-items: flex-start;
+        gap: 4px;
+        max-width: 200px;
+        text-align: left;
+        line-height: 1.3;
+    }
+
     .avatar {
         width: 26px;
         height: 26px;

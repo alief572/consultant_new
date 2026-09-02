@@ -42,31 +42,171 @@ class Approval_kasbon_project extends Admin_Controller
 
     private function _get_spk_team_data($id_spk_budgeting)
     {
-        $spk_team_data = $this->db->select('a.id_project_leader, a.nm_project_leader, b.id_sales, b.nm_sales, b.id_konsultan_1, b.nm_konsultan_1, b.id_konsultan_2, b.nm_konsultan_2')
-            ->from('kons_tr_spk_budgeting a')
-            ->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left')
-            ->where('a.id_spk_budgeting', $id_spk_budgeting)
-            ->get()->row();
+        $spk_b = $this->db->get_where('kons_tr_spk_budgeting', ['id_spk_budgeting' => $id_spk_budgeting])->row();
+
+        $spk_p = null;
+        if (!empty($spk_b) && !empty($spk_b->id_spk_penawaran)) {
+            $spk_p = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $spk_b->id_spk_penawaran])->row();
+        }
 
         $team_employee_ids = [];
         $team_names = [];
-        if (!empty($spk_team_data)) {
-            if (!empty($spk_team_data->id_project_leader)) $team_employee_ids[] = (string)$spk_team_data->id_project_leader;
-            if (!empty($spk_team_data->id_sales)) $team_employee_ids[] = (string)$spk_team_data->id_sales;
-            if (!empty($spk_team_data->id_konsultan_1)) $team_employee_ids[] = (string)$spk_team_data->id_konsultan_1;
-            if (!empty($spk_team_data->id_konsultan_2)) $team_employee_ids[] = (string)$spk_team_data->id_konsultan_2;
+        $id_spk_penawaran = !empty($spk_b->id_spk_penawaran) ? $spk_b->id_spk_penawaran : (!empty($spk_p->id_spk_penawaran) ? $spk_p->id_spk_penawaran : '');
 
-            if (!empty($spk_team_data->nm_project_leader)) $team_names[] = strtolower(trim($spk_team_data->nm_project_leader));
-            if (!empty($spk_team_data->nm_sales)) $team_names[] = strtolower(trim($spk_team_data->nm_sales));
-            if (!empty($spk_team_data->nm_konsultan_1)) $team_names[] = strtolower(trim($spk_team_data->nm_konsultan_1));
-            if (!empty($spk_team_data->nm_konsultan_2)) $team_names[] = strtolower(trim($spk_team_data->nm_konsultan_2));
+        if (!empty($spk_b)) {
+            if (!empty($spk_b->id_project_leader)) $team_employee_ids[] = trim((string)$spk_b->id_project_leader);
+            if (!empty($spk_b->id_konsultan_1)) $team_employee_ids[] = trim((string)$spk_b->id_konsultan_1);
+            if (!empty($spk_b->id_konsultan_2)) $team_employee_ids[] = trim((string)$spk_b->id_konsultan_2);
+
+            if (!empty($spk_b->nm_project_leader)) $team_names[] = strtolower(trim($spk_b->nm_project_leader));
+            if (!empty($spk_b->nm_konsultan_1)) $team_names[] = strtolower(trim($spk_b->nm_konsultan_1));
+            if (!empty($spk_b->nm_konsultan_2)) $team_names[] = strtolower(trim($spk_b->nm_konsultan_2));
         }
+
+        if (!empty($spk_p)) {
+            if (!empty($spk_p->id_sales)) $team_employee_ids[] = trim((string)$spk_p->id_sales);
+            if (!empty($spk_p->id_project_leader)) $team_employee_ids[] = trim((string)$spk_p->id_project_leader);
+            if (!empty($spk_p->id_konsultan_1)) $team_employee_ids[] = trim((string)$spk_p->id_konsultan_1);
+            if (!empty($spk_p->id_konsultan_2)) $team_employee_ids[] = trim((string)$spk_p->id_konsultan_2);
+
+            if (!empty($spk_p->nm_sales)) $team_names[] = strtolower(trim($spk_p->nm_sales));
+            if (!empty($spk_p->nm_project_leader)) $team_names[] = strtolower(trim($spk_p->nm_project_leader));
+            if (!empty($spk_p->nm_konsultan_1)) $team_names[] = strtolower(trim($spk_p->nm_konsultan_1));
+            if (!empty($spk_p->nm_konsultan_2)) $team_names[] = strtolower(trim($spk_p->nm_konsultan_2));
+        }
+
+        $team_employee_ids = array_values(array_unique(array_filter($team_employee_ids)));
+        $team_names = array_values(array_unique(array_filter($team_names)));
 
         return [
             'team_employee_ids' => $team_employee_ids,
             'team_names' => $team_names,
-            'raw' => $spk_team_data
+            'id_spk_penawaran' => $id_spk_penawaran,
+            'budgeting' => $spk_b,
+            'penawaran' => $spk_p
         ];
+    }
+
+    public function _get_user_origin_spk($employee_id, $nm_lengkap, $current_id_spk_penawaran = '')
+    {
+        $emp_id = trim((string)$employee_id);
+        $nm = strtolower(trim($nm_lengkap));
+
+        // If employee_id is empty, try to resolve it.
+        // 1) From users table by nm_lengkap/username (account name may differ from employee name).
+        if (empty($emp_id) && !empty($nm)) {
+            $user_row = $this->db->select('employee_id')
+                ->from('users')
+                ->where('TRIM(employee_id) !=', '')
+                ->where('employee_id IS NOT NULL', null, false)
+                ->group_start()
+                ->where('LOWER(TRIM(nm_lengkap))', $nm)
+                ->or_where('LOWER(TRIM(username))', $nm)
+                ->group_end()
+                ->get()->row();
+            if (!empty($user_row) && !empty($user_row->employee_id)) {
+                $emp_id = trim((string)$user_row->employee_id);
+            }
+        }
+
+        // 2) Fallback: resolve from employees_internal by name.
+        if (empty($emp_id) && !empty($nm)) {
+            $emp_row = $this->db->select('id')
+                ->from('employees_internal')
+                ->group_start()
+                ->where('LOWER(name)', $nm)
+                ->or_like('LOWER(name)', $nm)
+                ->group_end()
+                ->get()->row();
+            if (!empty($emp_row) && !empty($emp_row->id)) {
+                $emp_id = trim((string)$emp_row->id);
+            }
+        }
+
+        // 1. Search in kons_tr_spk_penawaran
+        $has_condition = false;
+        $this->db->select('id_spk_penawaran')
+            ->from('kons_tr_spk_penawaran')
+            ->where('deleted_by IS NULL')
+            ->group_start();
+
+        if (!empty($emp_id)) {
+            $this->db->where('id_sales', $emp_id)
+                ->or_where('id_konsultan_1', $emp_id)
+                ->or_where('id_konsultan_2', $emp_id)
+                ->or_where('id_project_leader', $emp_id);
+            $has_condition = true;
+        }
+        if (!empty($nm)) {
+            $this->db->or_where('LOWER(TRIM(nm_sales))', $nm)
+                ->or_like('LOWER(nm_sales)', $nm)
+                ->or_where('LOWER(TRIM(nm_konsultan_1))', $nm)
+                ->or_like('LOWER(nm_konsultan_1)', $nm)
+                ->or_where('LOWER(TRIM(nm_konsultan_2))', $nm)
+                ->or_like('LOWER(nm_konsultan_2)', $nm)
+                ->or_where('LOWER(TRIM(nm_project_leader))', $nm)
+                ->or_like('LOWER(nm_project_leader)', $nm);
+            $has_condition = true;
+        }
+
+        if ($has_condition) {
+            $this->db->group_end();
+
+            if (!empty($current_id_spk_penawaran)) {
+                $this->db->where('id_spk_penawaran !=', $current_id_spk_penawaran);
+            }
+
+            $this->db->order_by('id_spk_penawaran', 'DESC');
+            $spk = $this->db->get()->row();
+
+            if (!empty($spk) && !empty($spk->id_spk_penawaran)) {
+                return $spk->id_spk_penawaran;
+            }
+        } else {
+            $this->db->group_end();
+        }
+
+        // 2. Fallback search in kons_tr_spk_budgeting
+        $has_condition_b = false;
+        $this->db->select('id_spk_penawaran')
+            ->from('kons_tr_spk_budgeting')
+            ->where('delete_by IS NULL')
+            ->group_start();
+
+        if (!empty($emp_id)) {
+            $this->db->where('id_project_leader', $emp_id)
+                ->or_where('id_konsultan_1', $emp_id)
+                ->or_where('id_konsultan_2', $emp_id);
+            $has_condition_b = true;
+        }
+        if (!empty($nm)) {
+            $this->db->or_where('LOWER(TRIM(nm_project_leader))', $nm)
+                ->or_like('LOWER(nm_project_leader)', $nm)
+                ->or_where('LOWER(TRIM(nm_konsultan_1))', $nm)
+                ->or_like('LOWER(nm_konsultan_1)', $nm)
+                ->or_where('LOWER(TRIM(nm_konsultan_2))', $nm)
+                ->or_like('LOWER(nm_konsultan_2)', $nm);
+            $has_condition_b = true;
+        }
+
+        if ($has_condition_b) {
+            $this->db->group_end();
+
+            if (!empty($current_id_spk_penawaran)) {
+                $this->db->where('id_spk_penawaran !=', $current_id_spk_penawaran);
+            }
+
+            $this->db->order_by('id_spk_penawaran', 'DESC');
+            $spk_b = $this->db->get()->row();
+
+            if (!empty($spk_b) && !empty($spk_b->id_spk_penawaran)) {
+                return $spk_b->id_spk_penawaran;
+            }
+        } else {
+            $this->db->group_end();
+        }
+
+        return null;
     }
 
     private function _format_request_by_cell($nm_pembuat, $employee_id, $spk_team_info)
@@ -95,7 +235,15 @@ class Approval_kasbon_project extends Admin_Controller
 
         $outside_badge = '';
         if (!$is_in_team) {
-            $outside_badge = '<div style="margin-top: 4px;"><span class="tag-outside" style="display:inline-flex; align-items:center; gap:4px; font-size:11px; color:#c76b00; background:#fff2df; border:1px solid #f0d3a0; padding:1px 8px; border-radius:10px;"><i class="fa fa-exclamation-triangle"></i> Bukan tim SPK ini</span></div>';
+            $current_spk = !empty($spk_team_info['id_spk_penawaran']) ? $spk_team_info['id_spk_penawaran'] : '';
+            $origin_spk = $this->_get_user_origin_spk($emp_id, $nm_pembuat, $current_spk);
+
+            $tim_asal_text = '';
+            if (!empty($origin_spk)) {
+                $tim_asal_text = ' (tim asal: ' . htmlspecialchars($origin_spk) . ')';
+            }
+
+            $outside_badge = '<div style="margin-top: 4px;"><span class="tag-outside" style="display:inline-flex; align-items:center; gap:4px; font-size:11px; color:#c76b00; background:#fff2df; border:1px solid #f0d3a0; padding:1px 8px; border-radius:10px;"><i class="fa fa-exclamation-triangle"></i> Bukan tim SPK ini' . $tim_asal_text . '</span></div>';
         }
 
         $avatar_html = '<div class="avatar" style="width:26px; height:26px; border-radius:50%; background:#e3e6ea; color:#5c6470; font-size:11px; font-weight:600; display:inline-flex; align-items:center; justify-content:center; margin-right:8px; flex-shrink:0;">' . $initials . '</div>';

@@ -3,6 +3,32 @@ $ENABLE_ADD     = has_permission('Kasbon_Project.Add');
 $ENABLE_MANAGE  = has_permission('Kasbon_Project.Manage');
 $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
+
+$nm_pembuat = !empty($creator_user->nm_lengkap) ? $creator_user->nm_lengkap : (!empty($header->created_by) ? $header->created_by : '-');
+$employee_id = !empty($creator_user->employee_id) ? $creator_user->employee_id : '';
+
+$is_in_team = false;
+$emp_id = !empty($employee_id) ? trim((string)$employee_id) : '';
+if (!empty($emp_id) && !empty($spk_team_info['team_employee_ids']) && in_array($emp_id, $spk_team_info['team_employee_ids'])) {
+    $is_in_team = true;
+} else if (!empty($nm_pembuat) && !empty($spk_team_info['team_names'])) {
+    $pembuat_name = strtolower(trim($nm_pembuat));
+    foreach ($spk_team_info['team_names'] as $tname) {
+        if ($tname === $pembuat_name || strpos($tname, $pembuat_name) !== false || strpos($pembuat_name, $tname) !== false) {
+            $is_in_team = true;
+            break;
+        }
+    }
+}
+
+$origin_spk = '';
+if (!$is_in_team) {
+    $current_spk = !empty($list_budgeting->id_spk_penawaran) ? $list_budgeting->id_spk_penawaran : (!empty($spk_team_info['id_spk_penawaran']) ? $spk_team_info['id_spk_penawaran'] : '');
+    $ci = &get_instance();
+    if (method_exists($ci, '_get_user_origin_spk')) {
+        $origin_spk = $ci->_get_user_origin_spk($emp_id, $nm_pembuat, $current_spk);
+    }
+}
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -86,6 +112,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         </div>
 
         <div class="box-body">
+            <?php if (!empty($header->sts_reject) || !empty($header->reject_reason)) : ?>
+                <?php
+                $rejecter = !empty($header->rejected_by) ? $this->db->get_where('users', ['id_user' => $header->rejected_by])->row() : null;
+                $nm_rejecter = !empty($rejecter->nm_lengkap) ? $rejecter->nm_lengkap : (!empty($header->rejected_by) ? $header->rejected_by : 'Approver');
+                $tgl_reject = !empty($header->rejected_date) ? date('d F Y', strtotime($header->rejected_date)) : '';
+                ?>
+                <div class="reject-banner" style="background:#fdeaea; border:1px solid #f6c6c6; border-radius:6px; padding:12px 16px; margin-bottom:20px;">
+                    <div class="head" style="font-size:13px; font-weight:600; color:#c62e2e; display:flex; align-items:center; gap:8px;">
+                        <i class="fa fa-times-circle" style="font-size:15px;"></i> Ditolak oleh <?= htmlspecialchars($nm_rejecter) ?><?= !empty($tgl_reject) ? ', ' . $tgl_reject : '' ?>
+                    </div>
+                    <div class="body" style="font-size:13px; color:#c62e2e; margin:4px 0 0 23px;">
+                        <?= nl2br(htmlspecialchars($header->reject_reason)) ?>
+                    </div>
+                </div>
+            <?php endif; ?>
             <table border="0" style="width: 100%;">
                 <tr>
                     <th class="pd-5 valign-top" width="150">No. SPK</th>
@@ -127,14 +168,14 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="pd-5 valign-top" width="150">Request By</th>
                     <td class="pd-5 valign-top" width="400">
                         <input type="hidden" name="request_by" id="request_by" value="<?= $header->created_by ?? $this->auth->user_id() ?>">
-                        <input type="hidden" id="request_by_employee_id" value="<?= htmlspecialchars($creator_user->employee_id ?? '') ?>">
-                        <input type="hidden" id="request_by_name" value="<?= htmlspecialchars($creator_user->nm_lengkap ?? $header->created_by ?? '') ?>">
                         <div style="font-weight: 600; color: #333; padding-top: 5px;">
-                            <i class="fa fa-user-circle text-primary"></i> <?= htmlspecialchars($creator_user->nm_lengkap ?? $header->created_by ?? '-') ?>
+                            <i class="fa fa-user-circle text-primary"></i> <?= htmlspecialchars($nm_pembuat) ?>
                         </div>
-                        <div id="tag_outside_spk" class="tag-outside" style="display: none; margin-top: 5px;">
-                            <i class="fa fa-exclamation-triangle"></i> <span id="tag_outside_text"></span>
-                        </div>
+                        <?php if (!$is_in_team) : ?>
+                            <div class="tag-outside" style="margin-top: 5px;">
+                                <i class="fa fa-exclamation-triangle"></i> <?= htmlspecialchars($nm_pembuat) ?> bukan bagian dari tim SPK ini<?= !empty($origin_spk) ? ' (tim asal: ' . htmlspecialchars($origin_spk) . ')' : '' ?>
+                            </div>
+                        <?php endif; ?>
                     </td>
                     <th class="pd-5 valign-top" width="150">Tanggal</th>
                     <td class="pd-5 valign-top" width="400">

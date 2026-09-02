@@ -32,10 +32,22 @@ $is_in_team = false;
 $emp_id = !empty($employee_id) ? trim((string)$employee_id) : '';
 if (!empty($emp_id) && !empty($spk_team_info['team_employee_ids']) && in_array($emp_id, $spk_team_info['team_employee_ids'])) {
     $is_in_team = true;
-} else if (empty($emp_id) && !empty($spk_team_info['team_names'])) {
+} else if (!empty($nm_pembuat) && !empty($spk_team_info['team_names'])) {
     $pembuat_name = strtolower(trim($nm_pembuat));
-    if (in_array($pembuat_name, $spk_team_info['team_names'])) {
-        $is_in_team = true;
+    foreach ($spk_team_info['team_names'] as $tname) {
+        if ($tname === $pembuat_name || strpos($tname, $pembuat_name) !== false || strpos($pembuat_name, $tname) !== false) {
+            $is_in_team = true;
+            break;
+        }
+    }
+}
+
+$origin_spk = '';
+if (!$is_in_team) {
+    $current_spk = !empty($list_budgeting->id_spk_penawaran) ? $list_budgeting->id_spk_penawaran : (!empty($spk_team_info['id_spk_penawaran']) ? $spk_team_info['id_spk_penawaran'] : '');
+    $ci = &get_instance();
+    if (method_exists($ci, '_get_user_origin_spk')) {
+        $origin_spk = $ci->_get_user_origin_spk($emp_id, $nm_pembuat, $current_spk);
     }
 }
 ?>
@@ -164,7 +176,7 @@ if (!empty($emp_id) && !empty($spk_team_info['team_employee_ids']) && in_array($
               <?php if (!$is_in_team) : ?>
                 <div style="margin-top: 4px;">
                   <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; color:#c76b00; background:#fff2df; border:1px solid #f0d3a0; padding:1px 8px; border-radius:10px;">
-                    <i class="fa fa-exclamation-triangle"></i> Bukan tim SPK ini
+                    <i class="fa fa-exclamation-triangle"></i> <?= htmlspecialchars($nm_pembuat) ?> bukan bagian dari tim SPK ini<?= !empty($origin_spk) ? ' (tim asal: ' . htmlspecialchars($origin_spk) . ')' : '' ?>
                   </span>
                 </div>
               <?php endif; ?>
@@ -1360,7 +1372,7 @@ if (!empty($emp_id) && !empty($spk_team_info['team_employee_ids']) && in_array($
     e.preventDefault();
 
     var id_kasbon = $('input[name="id_kasbon"]').val();
-    var reject_reason = $('input[name="reject_reason"]').val();
+    var reject_reason = $('[name="reject_reason"]').val().trim();
 
     if (reject_reason == '') {
       Swal.fire({

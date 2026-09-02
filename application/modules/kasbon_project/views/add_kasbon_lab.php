@@ -3,6 +3,32 @@ $ENABLE_ADD     = has_permission('Kasbon_Project.Add');
 $ENABLE_MANAGE  = has_permission('Kasbon_Project.Manage');
 $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
+
+$nm_pembuat = !empty($current_user->nm_lengkap) ? $current_user->nm_lengkap : $this->auth->user_name();
+$employee_id = !empty($current_user->employee_id) ? $current_user->employee_id : '';
+
+$is_in_team = false;
+$emp_id = !empty($employee_id) ? trim((string)$employee_id) : '';
+if (!empty($emp_id) && !empty($spk_team_info['team_employee_ids']) && in_array($emp_id, $spk_team_info['team_employee_ids'])) {
+    $is_in_team = true;
+} else if (!empty($nm_pembuat) && !empty($spk_team_info['team_names'])) {
+    $pembuat_name = strtolower(trim($nm_pembuat));
+    foreach ($spk_team_info['team_names'] as $tname) {
+        if ($tname === $pembuat_name || strpos($tname, $pembuat_name) !== false || strpos($pembuat_name, $tname) !== false) {
+            $is_in_team = true;
+            break;
+        }
+    }
+}
+
+$origin_spk = '';
+if (!$is_in_team) {
+    $current_spk = !empty($list_budgeting->id_spk_penawaran) ? $list_budgeting->id_spk_penawaran : (!empty($spk_team_info['id_spk_penawaran']) ? $spk_team_info['id_spk_penawaran'] : '');
+    $ci = &get_instance();
+    if (method_exists($ci, '_get_user_origin_spk')) {
+        $origin_spk = $ci->_get_user_origin_spk($emp_id, $nm_pembuat, $current_spk);
+    }
+}
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -126,14 +152,14 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <th class="pd-5 valign-top" width="150">Request By</th>
                     <td class="pd-5 valign-top" width="400">
                         <input type="hidden" name="request_by" id="request_by" value="<?= $this->auth->user_id() ?>">
-                        <input type="hidden" id="request_by_employee_id" value="<?= htmlspecialchars($current_user->employee_id ?? '') ?>">
-                        <input type="hidden" id="request_by_name" value="<?= htmlspecialchars($current_user->nm_lengkap ?? $this->auth->user_name()) ?>">
                         <div style="font-weight: 600; color: #333; padding-top: 5px;">
-                            <i class="fa fa-user-circle text-primary"></i> <?= htmlspecialchars($current_user->nm_lengkap ?? $this->auth->user_name()) ?>
+                            <i class="fa fa-user-circle text-primary"></i> <?= htmlspecialchars($nm_pembuat) ?>
                         </div>
-                        <div id="tag_outside_spk" class="tag-outside" style="display: none; margin-top: 5px;">
-                            <i class="fa fa-exclamation-triangle"></i> <span id="tag_outside_text"></span>
-                        </div>
+                        <?php if (!$is_in_team) : ?>
+                            <div class="tag-outside" style="margin-top: 5px;">
+                                <i class="fa fa-exclamation-triangle"></i> <?= htmlspecialchars($nm_pembuat) ?> bukan bagian dari tim SPK ini<?= !empty($origin_spk) ? ' (tim asal: ' . htmlspecialchars($origin_spk) . ')' : '' ?>
+                            </div>
+                        <?php endif; ?>
                     </td>
                     <th class="pd-5 valign-top" width="150">Tgl</th>
                     <td class="pd-5 valign-top" width="400">
