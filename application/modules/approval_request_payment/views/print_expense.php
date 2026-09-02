@@ -282,26 +282,35 @@ if(empty($tgl_approve_direktur)) {
             </td>
             <!-- Spasi Pemisah -->
             <td style="width: 5%;"></td>
-            <!-- Kolom Kanan: 2 Kolom TTD -->
+            <!-- Kolom Kanan: 3 Kolom TTD -->
             <td style="width: 50%; vertical-align: top;">
                 <table style="width: 100%; font-size: 12px;" border="0" cellpadding="2" cellspacing="0">
                     <tr>
-                        <td style="width: 48%; text-align: center; font-weight: bold;">Mengajukan</td>
-                        <td style="width: 4%;"></td>
-                        <td style="width: 48%; text-align: center; font-weight: bold;">Mengetahui</td>
+                        <td style="width: 31%; text-align: center; font-weight: bold;">Mengajukan</td>
+                        <td style="width: 3%;"></td>
+                        <td style="width: 31%; text-align: center; font-weight: bold;">Mengetahui</td>
+                        <td style="width: 3%;"></td>
+                        <td style="width: 31%; text-align: center; font-weight: bold;">Mengetahui</td>
                     </tr>
                     <tr>
                         <td style="height: 70px;"></td>
                         <td></td>
                         <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td style="text-align: center; vertical-align: bottom;">
+                        <td style="text-align: center; vertical-align: bottom; white-space: nowrap;">
                             <u>&nbsp; &nbsp; <?= !empty($nm_created_by) ? $nm_created_by : '-' ?> &nbsp; &nbsp;</u><br>
                             <?= !empty($tgl_created) ? $tgl_created : '-' ?>
                         </td>
                         <td></td>
-                        <td style="text-align: center; vertical-align: bottom;">
+                        <td style="text-align: center; vertical-align: bottom; white-space: nowrap;">
+                            <u>&nbsp; &nbsp; Fikri &nbsp; &nbsp;</u><br>
+                            <?= !empty($tgl_approved) ? $tgl_approved : '-' ?>
+                        </td>
+                        <td></td>
+                        <td style="text-align: center; vertical-align: bottom; white-space: nowrap;">
                             <u>&nbsp; &nbsp; <?= !empty($nm_approved_by) ? $nm_approved_by : '-' ?> &nbsp; &nbsp;</u><br>
                             <?= !empty($tgl_approved) ? $tgl_approved : '-' ?>
                         </td>
