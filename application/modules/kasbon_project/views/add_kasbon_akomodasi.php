@@ -60,6 +60,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     .valign-middle {
         vertical-align: middle !important;
     }
+
+    .tag-outside {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        color: #c76b00;
+        background: #fff2df;
+        border: 1px solid #f0d3a0;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
 </style>
 
 <form action="" method="post" id="frm-data" enctype="multipart/form-data">
@@ -111,12 +123,30 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <td class="pd-5 valign-top" width="400"></td>
                 </tr>
                 <tr>
+                    <th class="pd-5 valign-top" width="150">Request By <span class="text-danger">*</span></th>
+                    <td class="pd-5 valign-top" width="400">
+                        <select name="request_by" id="request_by" class="form-control form-control-sm select2" required style="width: 100%;">
+                            <option value="">- Pilih Request By -</option>
+                            <?php if (!empty($list_users)) : ?>
+                                <?php foreach ($list_users as $usr) : ?>
+                                    <option value="<?= $usr->id_user ?>" data-employee_id="<?= htmlspecialchars($usr->employee_id ?? '') ?>" data-name="<?= htmlspecialchars($usr->nm_lengkap) ?>" <?= ($usr->id_user == $this->auth->user_id()) ? 'selected' : '' ?>>
+                                        <?= $usr->nm_lengkap ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                        <div id="tag_outside_spk" class="tag-outside" style="display: none; margin-top: 5px;">
+                            <i class="fa fa-exclamation-triangle"></i> <span id="tag_outside_text"></span>
+                        </div>
+                    </td>
                     <th class="pd-5 valign-top" width="150">Tgl</th>
                     <td class="pd-5 valign-top" width="400">
                         <input type="date" class="form-control form-control-sm" name="tgl" value="<?= date('Y-m-d') ?>" readonly>
                     </td>
+                </tr>
+                <tr>
                     <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
-                    <td class="pd-5 valign-top" width="400">
+                    <td class="pd-5 valign-top" width="400" colspan="3">
                         <textarea name="deskripsi" id="" class="form-control form-control-sm" required placeholder="Deskripsi / Keterangan"></textarea>
                     </td>
                 </tr>
@@ -554,6 +584,51 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 <script>
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
+        $('.select2').select2({
+            width: '100%'
+        });
+
+        var spkTeamEmployeeIds = [
+            <?= json_encode((string)($list_budgeting->id_project_leader ?? '')) ?>,
+            <?= json_encode((string)($list_budgeting->id_sales ?? '')) ?>,
+            <?= json_encode((string)($list_budgeting->id_konsultan_1 ?? '')) ?>,
+            <?= json_encode((string)($list_budgeting->id_konsultan_2 ?? '')) ?>
+        ].map(String).filter(Boolean);
+
+        var spkTeamNames = [
+            <?= json_encode(strtolower(trim($list_budgeting->nm_project_leader ?? ''))) ?>,
+            <?= json_encode(strtolower(trim($list_budgeting->nm_sales ?? ''))) ?>,
+            <?= json_encode(strtolower(trim($list_budgeting->nm_konsultan_1 ?? ''))) ?>,
+            <?= json_encode(strtolower(trim($list_budgeting->nm_konsultan_2 ?? ''))) ?>
+        ].filter(Boolean);
+
+        function checkRequestByTeam() {
+            var selectedOption = $('#request_by option:selected');
+            var selectedEmployeeId = String(selectedOption.data('employee_id') || '').trim();
+            var selectedName = (selectedOption.data('name') || selectedOption.text() || '').trim();
+            var selectedNameLower = selectedName.toLowerCase();
+
+            var isInTeam = false;
+            if (selectedEmployeeId && spkTeamEmployeeIds.includes(selectedEmployeeId)) {
+                isInTeam = true;
+            } else if (!selectedEmployeeId && spkTeamNames.includes(selectedNameLower)) {
+                // Fallback nama jika employee_id belum diisi di data user
+                isInTeam = true;
+            }
+
+            if ($('#request_by').val() && !isInTeam) {
+                $('#tag_outside_text').text(selectedName + ' bukan bagian dari tim SPK ini');
+                $('#tag_outside_spk').show();
+            } else {
+                $('#tag_outside_spk').hide();
+            }
+        }
+
+        $(document).on('change', '#request_by', function() {
+            checkRequestByTeam();
+        });
+
+        checkRequestByTeam();
     });
 
     var selectedBuktiFiles = [];
