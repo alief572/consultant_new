@@ -3751,6 +3751,9 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+        $spk_team_info = $this->_get_spk_team_data($get_header->id_spk_budgeting);
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -3760,7 +3763,9 @@ class Kasbon_project extends Admin_Controller
             'list_budget_tambahan' => $data_budget_tambahan,
             'data_list_kasbon_akomodasi' => $data_list_kasbon_akomodasi,
             'data_list_kasbon_akomodasi_custom' => $data_list_kasbon_akomodasi_custom,
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
+            'list_bukti_penggunaan' => $list_bukti_penggunaan,
+            'creator_user' => $creator_user,
+            'spk_team_info' => $spk_team_info
         ];
 
         $this->template->set($data);
@@ -4267,6 +4272,9 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+        $spk_team_info = $this->_get_spk_team_data($get_header->id_spk_budgeting);
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4274,7 +4282,9 @@ class Kasbon_project extends Admin_Controller
             'list_data_others' => $get_data_others,
             'list_data_others_custom' => $get_data_others_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
+            'list_bukti_penggunaan' => $list_bukti_penggunaan,
+            'creator_user' => $creator_user,
+            'spk_team_info' => $spk_team_info
         ];
 
         $this->template->set($data);
@@ -4341,6 +4351,9 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+        $spk_team_info = $this->_get_spk_team_data($get_header->id_spk_budgeting);
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4348,7 +4361,9 @@ class Kasbon_project extends Admin_Controller
             'list_data_lab' => $get_data_lab,
             'list_data_lab_custom' => $get_data_lab_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
+            'list_bukti_penggunaan' => $list_bukti_penggunaan,
+            'creator_user' => $creator_user,
+            'spk_team_info' => $spk_team_info
         ];
 
         $this->template->set($data);
@@ -4415,6 +4430,9 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+        $spk_team_info = $this->_get_spk_team_data($get_header->id_spk_budgeting);
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4422,7 +4440,9 @@ class Kasbon_project extends Admin_Controller
             'list_data_subcont_tenaga_ahli' => $get_data_subcont_tenaga_ahli,
             'list_data_subcont_tenaga_ahli_custom' => $get_data_subcont_tenaga_ahli_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
+            'list_bukti_penggunaan' => $list_bukti_penggunaan,
+            'creator_user' => $creator_user,
+            'spk_team_info' => $spk_team_info
         ];
 
         $this->template->set($data);
@@ -4489,6 +4509,9 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+        $spk_team_info = $this->_get_spk_team_data($get_header->id_spk_budgeting);
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4496,7 +4519,9 @@ class Kasbon_project extends Admin_Controller
             'list_data_subcont_perusahaan' => $get_data_subcont_perusahaan,
             'list_data_subcont_perusahaan_custom' => $get_data_subcont_perusahaan_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
+            'list_bukti_penggunaan' => $list_bukti_penggunaan,
+            'creator_user' => $creator_user,
+            'spk_team_info' => $spk_team_info
         ];
 
         $this->template->set($data);
