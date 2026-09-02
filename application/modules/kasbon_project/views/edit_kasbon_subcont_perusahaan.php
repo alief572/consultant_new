@@ -125,18 +125,14 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <td class="pd-5 valign-top" width="400"></td>
                 </tr>
                 <tr>
-                    <th class="pd-5 valign-top" width="150">Request By <span class="text-danger">*</span></th>
+                    <th class="pd-5 valign-top" width="150">Request By</th>
                     <td class="pd-5 valign-top" width="400">
-                        <select name="request_by" id="request_by" class="form-control form-control-sm select2" required style="width: 100%;">
-                            <option value="">- Pilih Request By -</option>
-                            <?php if (!empty($list_users)) : ?>
-                                <?php foreach ($list_users as $usr) : ?>
-                                    <option value="<?= $usr->id_user ?>" data-employee_id="<?= htmlspecialchars($usr->employee_id ?? '') ?>" data-name="<?= htmlspecialchars($usr->nm_lengkap) ?>" <?= ($usr->id_user == ($header->created_by ?? $this->auth->user_id())) ? 'selected' : '' ?>>
-                                        <?= $usr->nm_lengkap ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
+                        <input type="hidden" name="request_by" id="request_by" value="<?= $header->created_by ?? $this->auth->user_id() ?>">
+                        <input type="hidden" id="request_by_employee_id" value="<?= htmlspecialchars($creator_user->employee_id ?? '') ?>">
+                        <input type="hidden" id="request_by_name" value="<?= htmlspecialchars($creator_user->nm_lengkap ?? $header->created_by ?? '') ?>">
+                        <div style="font-weight: 600; color: #333; padding-top: 5px;">
+                            <i class="fa fa-user-circle text-primary"></i> <?= htmlspecialchars($creator_user->nm_lengkap ?? $header->created_by ?? '-') ?>
+                        </div>
                         <div id="tag_outside_spk" class="tag-outside" style="display: none; margin-top: 5px;">
                             <i class="fa fa-exclamation-triangle"></i> <span id="tag_outside_text"></span>
                         </div>
@@ -637,9 +633,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         ].filter(Boolean);
 
         function checkRequestByTeam() {
-            var selectedOption = $('#request_by option:selected');
-            var selectedEmployeeId = String(selectedOption.data('employee_id') || '').trim();
-            var selectedName = (selectedOption.data('name') || selectedOption.text() || '').trim();
+            var selectedEmployeeId = String($('#request_by_employee_id').val() || '').trim();
+            var selectedName = ($('#request_by_name').val() || '').trim();
             var selectedNameLower = selectedName.toLowerCase();
 
             var isInTeam = false;
@@ -657,10 +652,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 $('#tag_outside_spk').hide();
             }
         }
-
-        $(document).on('change', '#request_by', function() {
-            checkRequestByTeam();
-        });
 
         checkRequestByTeam();
     });

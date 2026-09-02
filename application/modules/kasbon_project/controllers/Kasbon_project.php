@@ -3632,6 +3632,8 @@ class Kasbon_project extends Admin_Controller
             ->order_by('nm_lengkap', 'asc')
             ->get()->result();
 
+        $current_user = $this->db->get_where('users', ['id_user' => $this->auth->user_id()])->row();
+
         $data = [
             'metode_pembayaran' => $metode_pembayaran,
             'id_spk_budgeting' => $id_spk_budgeting,
@@ -3640,7 +3642,8 @@ class Kasbon_project extends Admin_Controller
             'list_akomodasi_custom' => $get_data_akomodasi_custom,
             'data_kasbon_akomodasi' => $data_kasbon_akomodasi,
             'data_ovb_akomodasi' => $data_ovb_akomodasi,
-            'list_users' => $list_users
+            'list_users' => $list_users,
+            'current_user' => $current_user
         ];
 
         $this->template->set($data);
@@ -3854,6 +3857,8 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -3862,7 +3867,8 @@ class Kasbon_project extends Admin_Controller
             'list_budget_tambahan' => $data_budget_tambahan,
             'data_list_kasbon_akomodasi' => $data_list_kasbon_akomodasi,
             'list_users' => $list_users,
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
+            'list_bukti_penggunaan' => $list_bukti_penggunaan,
+            'creator_user' => $creator_user
         ];
 
         $this->template->set($data);
@@ -3933,6 +3939,8 @@ class Kasbon_project extends Admin_Controller
             ->order_by('nm_lengkap', 'asc')
             ->get()->result();
 
+        $current_user = $this->db->get_where('users', ['id_user' => $this->auth->user_id()])->row();
+
         $data = [
             'metode_pembayaran' => $metode_pembayaran,
             'id_spk_budgeting' => $id_spk_budgeting,
@@ -3941,7 +3949,8 @@ class Kasbon_project extends Admin_Controller
             'list_others_custom' => $get_data_others_custom,
             'data_kasbon_others' => $data_kasbon_others,
             'data_overbudget_others' => $data_overbudget_others,
-            'list_users' => $list_users
+            'list_users' => $list_users,
+            'current_user' => $current_user
         ];
 
         $this->template->set($data);
@@ -4012,6 +4021,8 @@ class Kasbon_project extends Admin_Controller
             ->order_by('nm_lengkap', 'asc')
             ->get()->result();
 
+        $current_user = $this->db->get_where('users', ['id_user' => $this->auth->user_id()])->row();
+
         $data = [
             'metode_pembayaran' => $metode_pembayaran,
             'id_spk_budgeting' => $id_spk_budgeting,
@@ -4020,7 +4031,8 @@ class Kasbon_project extends Admin_Controller
             'list_lab_custom' => $get_data_lab_custom,
             'data_kasbon_lab' => $data_kasbon_lab,
             'data_overbudget_lab' => $data_overbudget_lab,
-            'list_users' => $list_users
+            'list_users' => $list_users,
+            'current_user' => $current_user
         ];
 
         $this->template->set($data);
@@ -4093,6 +4105,8 @@ class Kasbon_project extends Admin_Controller
             ->order_by('nm_lengkap', 'asc')
             ->get()->result();
 
+        $current_user = $this->db->get_where('users', ['id_user' => $this->auth->user_id()])->row();
+
         $data = [
             'metode_pembayaran' => $metode_pembayaran,
             'id_spk_budgeting' => $id_spk_budgeting,
@@ -4101,7 +4115,8 @@ class Kasbon_project extends Admin_Controller
             'list_subcont_tenaga_ahli_custom' => $get_data_subcont_tenaga_ahli_custom,
             'data_kasbon_subcont_tenaga_ahli' => $data_kasbon_subcont_tenaga_ahli,
             'data_overbudget_subcont_tenaga_ahli' => $data_overbudget_subcont_tenaga_ahli,
-            'list_users' => $list_users
+            'list_users' => $list_users,
+            'current_user' => $current_user
         ];
 
         $this->template->set($data);
@@ -4174,6 +4189,8 @@ class Kasbon_project extends Admin_Controller
             ->order_by('nm_lengkap', 'asc')
             ->get()->result();
 
+        $current_user = $this->db->get_where('users', ['id_user' => $this->auth->user_id()])->row();
+
         $data = [
             'metode_pembayaran' => $metode_pembayaran,
             'id_spk_budgeting' => $id_spk_budgeting,
@@ -4182,7 +4199,8 @@ class Kasbon_project extends Admin_Controller
             'list_subcont_perusahaan_custom' => $get_data_subcont_perusahaan_custom,
             'data_kasbon_subcont_perusahaan' => $data_kasbon_subcont_perusahaan,
             'data_overbudget_subcont_perusahaan' => $data_overbudget_subcont_perusahaan,
-            'list_users' => $list_users
+            'list_users' => $list_users,
+            'current_user' => $current_user
         ];
 
         $this->template->set($data);
@@ -4555,6 +4573,8 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4563,7 +4583,8 @@ class Kasbon_project extends Admin_Controller
             'list_data_others_custom' => $get_data_others_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
             'list_users' => $list_users,
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
+            'list_bukti_penggunaan' => $list_bukti_penggunaan,
+            'creator_user' => $creator_user
         ];
 
         $this->template->set($data);
@@ -4640,6 +4661,8 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4648,7 +4671,8 @@ class Kasbon_project extends Admin_Controller
             'list_data_lab_custom' => $get_data_lab_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
             'list_users' => $list_users,
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
+            'list_bukti_penggunaan' => $list_bukti_penggunaan,
+            'creator_user' => $creator_user
         ];
 
         $this->template->set($data);
@@ -4725,6 +4749,8 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4733,7 +4759,8 @@ class Kasbon_project extends Admin_Controller
             'list_data_subcont_tenaga_ahli_custom' => $get_data_subcont_tenaga_ahli_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
             'list_users' => $list_users,
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
+            'list_bukti_penggunaan' => $list_bukti_penggunaan,
+            'creator_user' => $creator_user
         ];
 
         $this->template->set($data);
@@ -4810,6 +4837,8 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4818,7 +4847,8 @@ class Kasbon_project extends Admin_Controller
             'list_data_subcont_perusahaan_custom' => $get_data_subcont_perusahaan_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
             'list_users' => $list_users,
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
+            'list_bukti_penggunaan' => $list_bukti_penggunaan,
+            'creator_user' => $creator_user
         ];
 
         $this->template->set($data);
