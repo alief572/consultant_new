@@ -131,19 +131,41 @@ class Approval_kasbon_project extends Admin_Controller
             }
             $nominal = (!empty($get_header_kasbon)) ? $get_header_kasbon->grand_total : 0;
 
+            // ----- Compact grouped columns -----
+            // Nomor SPK & Paket (SPK number + package name stacked)
+            $spk_paket = '<span style="font-weight: 700; color: #333;">' . $item->id_spk_penawaran . '</span>';
+            if (!empty($item->nm_paket)) {
+                $spk_paket .= '<br><span class="text-muted" style="font-size: 12px;"><i class="fa fa-briefcase"></i> ' . $item->nm_paket . '</span>';
+            }
+
+            // Team / PIC (Project Leader + Sales stacked)
+            $pic_team = '<div><i class="fa fa-user-circle text-primary"></i> <b>PL:</b> ' . ucfirst($item->nm_project_leader) . '</div>';
+            if (!empty($item->nm_sales)) {
+                $pic_team .= '<div class="text-muted" style="font-size: 12px;"><i class="fa fa-user text-muted"></i> <b>Sales:</b> ' . ucfirst($item->nm_sales) . '</div>';
+            }
+
+            // Kasbon Info (Nomor Kasbon + Tipe + Tipe Pembayaran + Nominal + Keterangan stacked)
+            $keterangan_short = $keterangan;
+            if (!empty($keterangan) && mb_strlen($keterangan) > 40) {
+                $keterangan_short = '<span title="' . htmlspecialchars($keterangan, ENT_QUOTES) . '" style="cursor:help;">' . htmlspecialchars(mb_substr($keterangan, 0, 40), ENT_QUOTES) . '…</span>';
+            } else {
+                $keterangan_short = htmlspecialchars($keterangan, ENT_QUOTES);
+            }
+
+            $kasbon_info = '<div><i class="fa fa-hashtag text-muted"></i> <b>' . $item->id . '</b></div>';
+            $kasbon_info .= '<div style="margin-top: 3px;">' . $tipe . ' ' . $tipe_pengajuan . '</div>';
+            $kasbon_info .= '<div style="margin-top: 3px;"><i class="fa fa-money text-muted"></i> <b>Rp ' . number_format($nominal) . '</b></div>';
+            if (!empty($keterangan)) {
+                $kasbon_info .= '<div class="text-muted" style="font-size: 12px; margin-top: 3px;"><i class="fa fa-comment-o"></i> ' . $keterangan_short . '</div>';
+            }
 
             $hasil[] = [
                 'no' => $no,
-                'id_spk_penawaran' => $item->id_spk_penawaran,
-                'id_kasbon' => $item->id,
+                'spk_paket' => $spk_paket,
                 'nm_customer' => $item->nm_customer,
-                'nm_sales' => ucfirst($item->nm_sales),
-                'nm_project_leader' => ucfirst($item->nm_project_leader),
-                'nm_project' => $item->nm_paket,
-                'keterangan' => $keterangan,
-                'tipe' => $tipe,
-                'tipe_pembayaran' => $tipe_pengajuan,
-                'nominal' => number_format($nominal),
+                'pic_team' => $pic_team,
+                'kasbon_info' => $kasbon_info,
+                'status' => $status,
                 'option' => $option
             ];
 
@@ -205,7 +227,19 @@ class Approval_kasbon_project extends Admin_Controller
 
         $submitted_akomodasi = [];
         foreach ($get_kasbon_akomodasi_submitted as $item) {
-            $submitted_akomodasi[$item->id_akomodasi] = $item;
+            // Custom items (id_akomodasi 0/NULL) tidak mereferensi detail budgeting,
+            // simpan terpisah agar tidak saling menimpa di map.
+            if (empty($item->id_akomodasi)) {
+                continue;
+            }
+            $submitted_akomodasi[(string) trim($item->id_akomodasi)] = $item;
+        }
+
+        $submitted_akomodasi_custom = [];
+        foreach ($get_kasbon_akomodasi_submitted as $item) {
+            if (empty($item->id_akomodasi)) {
+                $submitted_akomodasi_custom[] = $item;
+            }
         }
 
         $this->db->select('a.id_akomodasi, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
@@ -245,8 +279,8 @@ class Approval_kasbon_project extends Admin_Controller
         $processed_akomodasi_ids = [];
 
         foreach ($get_budgeting_akomodasi as $b_item) {
-            $item_id = $b_item->id;
-            $processed_akomodasi_ids[] = $item_id;
+            $item_id = (string) trim($b_item->id);
+            $processed_akomodasi_ids[$item_id] = true;
 
             if (isset($submitted_akomodasi[$item_id])) {
                 $get_kasbon_akomodasi[] = $submitted_akomodasi[$item_id];
@@ -305,9 +339,14 @@ class Approval_kasbon_project extends Admin_Controller
         }
 
         foreach ($submitted_akomodasi as $item_id => $s_item) {
-            if (!in_array($item_id, $processed_akomodasi_ids)) {
+            if (!isset($processed_akomodasi_ids[$item_id])) {
                 $get_kasbon_akomodasi[] = $s_item;
             }
+        }
+
+        // Item custom (tanpa referensi detail budgeting) ditambahkan sekali.
+        foreach ($submitted_akomodasi_custom as $s_item) {
+            $get_kasbon_akomodasi[] = $s_item;
         }
 
         // ----------------------------------------------------
@@ -322,7 +361,17 @@ class Approval_kasbon_project extends Admin_Controller
 
         $submitted_others = [];
         foreach ($get_kasbon_others_submitted as $item) {
-            $submitted_others[$item->id_others] = $item;
+            if (empty($item->id_others)) {
+                continue;
+            }
+            $submitted_others[(string) trim($item->id_others)] = $item;
+        }
+
+        $submitted_others_custom = [];
+        foreach ($get_kasbon_others_submitted as $item) {
+            if (empty($item->id_others)) {
+                $submitted_others_custom[] = $item;
+            }
         }
 
         $this->db->select('a.id_others, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
@@ -362,8 +411,8 @@ class Approval_kasbon_project extends Admin_Controller
         $processed_others_ids = [];
 
         foreach ($get_budgeting_others as $b_item) {
-            $item_id = $b_item->id;
-            $processed_others_ids[] = $item_id;
+            $item_id = (string) trim($b_item->id);
+            $processed_others_ids[$item_id] = true;
 
             if (isset($submitted_others[$item_id])) {
                 $get_kasbon_others[] = $submitted_others[$item_id];
@@ -422,9 +471,14 @@ class Approval_kasbon_project extends Admin_Controller
         }
 
         foreach ($submitted_others as $item_id => $s_item) {
-            if (!in_array($item_id, $processed_others_ids)) {
+            if (!isset($processed_others_ids[$item_id])) {
                 $get_kasbon_others[] = $s_item;
             }
+        }
+
+        // Item custom (tanpa referensi detail budgeting) ditambahkan sekali.
+        foreach ($submitted_others_custom as $s_item) {
+            $get_kasbon_others[] = $s_item;
         }
 
         // ----------------------------------------------------
@@ -439,7 +493,17 @@ class Approval_kasbon_project extends Admin_Controller
 
         $submitted_lab = [];
         foreach ($get_kasbon_lab_submitted as $item) {
-            $submitted_lab[$item->id_lab] = $item;
+            if (empty($item->id_lab)) {
+                continue;
+            }
+            $submitted_lab[(string) trim($item->id_lab)] = $item;
+        }
+
+        $submitted_lab_custom = [];
+        foreach ($get_kasbon_lab_submitted as $item) {
+            if (empty($item->id_lab)) {
+                $submitted_lab_custom[] = $item;
+            }
         }
 
         $this->db->select('a.id_lab, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
@@ -479,8 +543,8 @@ class Approval_kasbon_project extends Admin_Controller
         $processed_lab_ids = [];
 
         foreach ($get_budgeting_lab as $b_item) {
-            $item_id = $b_item->id;
-            $processed_lab_ids[] = $item_id;
+            $item_id = (string) trim($b_item->id);
+            $processed_lab_ids[$item_id] = true;
 
             if (isset($submitted_lab[$item_id])) {
                 $get_kasbon_lab[] = $submitted_lab[$item_id];
@@ -539,9 +603,14 @@ class Approval_kasbon_project extends Admin_Controller
         }
 
         foreach ($submitted_lab as $item_id => $s_item) {
-            if (!in_array($item_id, $processed_lab_ids)) {
+            if (!isset($processed_lab_ids[$item_id])) {
                 $get_kasbon_lab[] = $s_item;
             }
+        }
+
+        // Item custom (tanpa referensi detail budgeting) ditambahkan sekali.
+        foreach ($submitted_lab_custom as $s_item) {
+            $get_kasbon_lab[] = $s_item;
         }
 
         // ----------------------------------------------------
@@ -556,7 +625,17 @@ class Approval_kasbon_project extends Admin_Controller
 
         $submitted_subcont_tenaga_ahli = [];
         foreach ($get_kasbon_subcont_tenaga_ahli_submitted as $item) {
-            $submitted_subcont_tenaga_ahli[$item->id_subcont] = $item;
+            if (empty($item->id_subcont)) {
+                continue;
+            }
+            $submitted_subcont_tenaga_ahli[(string) trim($item->id_subcont)] = $item;
+        }
+
+        $submitted_subcont_tenaga_ahli_custom = [];
+        foreach ($get_kasbon_subcont_tenaga_ahli_submitted as $item) {
+            if (empty($item->id_subcont)) {
+                $submitted_subcont_tenaga_ahli_custom[] = $item;
+            }
         }
 
         $this->db->select('a.id_subcont, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
@@ -596,8 +675,8 @@ class Approval_kasbon_project extends Admin_Controller
         $processed_subcont_tenaga_ahli_ids = [];
 
         foreach ($get_budgeting_subcont_tenaga_ahli as $b_item) {
-            $item_id = $b_item->id;
-            $processed_subcont_tenaga_ahli_ids[] = $item_id;
+            $item_id = (string) trim($b_item->id);
+            $processed_subcont_tenaga_ahli_ids[$item_id] = true;
 
             if (isset($submitted_subcont_tenaga_ahli[$item_id])) {
                 $get_kasbon_subcont_tenaga_ahli[] = $submitted_subcont_tenaga_ahli[$item_id];
@@ -656,9 +735,14 @@ class Approval_kasbon_project extends Admin_Controller
         }
 
         foreach ($submitted_subcont_tenaga_ahli as $item_id => $s_item) {
-            if (!in_array($item_id, $processed_subcont_tenaga_ahli_ids)) {
+            if (!isset($processed_subcont_tenaga_ahli_ids[$item_id])) {
                 $get_kasbon_subcont_tenaga_ahli[] = $s_item;
             }
+        }
+
+        // Item custom (tanpa referensi detail budgeting) ditambahkan sekali.
+        foreach ($submitted_subcont_tenaga_ahli_custom as $s_item) {
+            $get_kasbon_subcont_tenaga_ahli[] = $s_item;
         }
 
         // ----------------------------------------------------
@@ -673,7 +757,17 @@ class Approval_kasbon_project extends Admin_Controller
 
         $submitted_subcont_perusahaan = [];
         foreach ($get_kasbon_subcont_perusahaan_submitted as $item) {
-            $submitted_subcont_perusahaan[$item->id_subcont] = $item;
+            if (empty($item->id_subcont)) {
+                continue;
+            }
+            $submitted_subcont_perusahaan[(string) trim($item->id_subcont)] = $item;
+        }
+
+        $submitted_subcont_perusahaan_custom = [];
+        foreach ($get_kasbon_subcont_perusahaan_submitted as $item) {
+            if (empty($item->id_subcont)) {
+                $submitted_subcont_perusahaan_custom[] = $item;
+            }
         }
 
         $this->db->select('a.id_subcont, SUM(a.qty_pengajuan) as ttl_qty_pengajuan, SUM(a.total_pengajuan) as ttl_total_pengajuan');
@@ -713,8 +807,8 @@ class Approval_kasbon_project extends Admin_Controller
         $processed_subcont_perusahaan_ids = [];
 
         foreach ($get_budgeting_subcont_perusahaan as $b_item) {
-            $item_id = $b_item->id;
-            $processed_subcont_perusahaan_ids[] = $item_id;
+            $item_id = (string) trim($b_item->id);
+            $processed_subcont_perusahaan_ids[$item_id] = true;
 
             if (isset($submitted_subcont_perusahaan[$item_id])) {
                 $get_kasbon_subcont_perusahaan[] = $submitted_subcont_perusahaan[$item_id];
@@ -773,9 +867,14 @@ class Approval_kasbon_project extends Admin_Controller
         }
 
         foreach ($submitted_subcont_perusahaan as $item_id => $s_item) {
-            if (!in_array($item_id, $processed_subcont_perusahaan_ids)) {
+            if (!isset($processed_subcont_perusahaan_ids[$item_id])) {
                 $get_kasbon_subcont_perusahaan[] = $s_item;
             }
+        }
+
+        // Item custom (tanpa referensi detail budgeting) ditambahkan sekali.
+        foreach ($submitted_subcont_perusahaan_custom as $s_item) {
+            $get_kasbon_subcont_perusahaan[] = $s_item;
         }
 
         $this->db->select('a.*, b.nm_biaya');
