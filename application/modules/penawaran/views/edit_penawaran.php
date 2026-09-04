@@ -1657,9 +1657,13 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
         var ttl_nilai_project = 0;
         var ttl_akomodasi = 0;
         var ttl_others = 0;
+        var ttl_others_budget = 0;
         var ttl_lab = 0;
+        var ttl_lab_budget = 0;
         var ttl_subcont_tenaga_ahli = 0;
+        var ttl_subcont_tenaga_ahli_budget = 0;
         var ttl_subcont_perusahaan = 0;
+        var ttl_subcont_perusahaan_budget = 0;
         var ttl_subcont = 0;
         var ttl_tandem = 0;
 
@@ -1687,39 +1691,55 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
         var ttl_mandays_internal = (ttl_total_mandays - ttl_mandays_subcont - ttl_mandays_tandem);
 
         for (i = 1; i <= max_no_akomodasi; i++) {
-            total_akomodasi = get_num($('input[name="dt_ako[' + i + '][total_akomodasi]"]').val());
+            if ($('input[name="dt_ako[' + i + '][total_akomodasi]"]').length) {
+                total_akomodasi = get_num($('input[name="dt_ako[' + i + '][total_akomodasi]"]').val());
 
-            ttl_akomodasi += total_akomodasi;
+                ttl_akomodasi += total_akomodasi;
+            }
         }
-
-
 
         var max_no_others = get_num($('.no_others').val());
         for (i = 1; i <= max_no_others; i++) {
-            total_others = get_num($('input[name="dt_oth[' + i + '][total_others]"]').val());
+            if ($('input[name="dt_oth[' + i + '][total_others]"]').length) {
+                total_others = get_num($('input[name="dt_oth[' + i + '][total_others]"]').val());
+                total_others_budget = get_num($('input[name="dt_oth[' + i + '][total_budget_others]"]').val());
 
-            ttl_others += total_others;
+                ttl_others += total_others;
+                ttl_others_budget += total_others_budget;
+            }
         }
 
         var max_no_lab = get_num($('.no_lab').val());
         for (i = 1; i <= max_no_lab; i++) {
-            total_lab = get_num($('input[name="dt_lab[' + i + '][total_lab]"]').val());
+            if ($('input[name="dt_lab[' + i + '][total_lab]"]').length) {
+                total_lab = get_num($('input[name="dt_lab[' + i + '][total_lab]"]').val());
+                total_lab_budget = get_num($('input[name="dt_lab[' + i + '][total_lab_budget]"]').val());
 
-            ttl_lab += total_lab;
+                ttl_lab += total_lab;
+                ttl_lab_budget += total_lab_budget;
+            }
         }
 
         var max_no_subcont_tenaga_ahli = get_num($('.no_subcont_tenaga_ahli').val());
         for (i = 1; i <= max_no_subcont_tenaga_ahli; i++) {
-            total_subcont_tenaga_ahli = get_num($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli]"]').val());
+            if ($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli]"]').length) {
+                total_subcont_tenaga_ahli = get_num($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli]"]').val());
+                total_subcont_tenaga_ahli_budget = get_num($('input[name="dt_subcont_tenaga_ahli[' + i + '][total_subcont_tenaga_ahli_budget]"]').val());
 
-            ttl_subcont_tenaga_ahli += total_subcont_tenaga_ahli;
+                ttl_subcont_tenaga_ahli += total_subcont_tenaga_ahli;
+                ttl_subcont_tenaga_ahli_budget += total_subcont_tenaga_ahli_budget;
+            }
         }
 
         var max_no_subcont_perusahaan = get_num($('.no_subcont_perusahaan').val());
         for (i = 1; i <= max_no_subcont_perusahaan; i++) {
-            total_subcont_perusahaan = get_num($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan]"]').val());
+            if ($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan]"]').length) {
+                total_subcont_perusahaan = get_num($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan]"]').val());
+                total_subcont_perusahaan_budget = get_num($('input[name="dt_subcont_perusahaan[' + i + '][total_subcont_perusahaan_budget]"]').val());
 
-            ttl_subcont_perusahaan += total_subcont_perusahaan;
+                ttl_subcont_perusahaan += total_subcont_perusahaan;
+                ttl_subcont_perusahaan_budget += total_subcont_perusahaan_budget;
+            }
         }
 
         var disc_nilai = get_num($('.input_diskon_value').val());
@@ -1727,7 +1747,10 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
         var nilai_project = (ttl_nilai_project + ttl_akomodasi + ttl_others + ttl_lab + ttl_subcont_tenaga_ahli + ttl_subcont_perusahaan);
         nilai_project = (nilai_project - disc_nilai);
 
-        var mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others - ttl_lab - ttl_subcont_tenaga_ahli - ttl_subcont_perusahaan) / ttl_total_mandays);
+        var mandays_rate = 0;
+        if (ttl_total_mandays > 0) {
+            mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others_budget - ttl_lab_budget - ttl_subcont_tenaga_ahli_budget - ttl_subcont_perusahaan_budget) / ttl_total_mandays);
+        }
 
         // alert(mandays_rate);
 
