@@ -1459,7 +1459,7 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
 
         var hasil = '<tr class="tr_aktifitas_' + no_activity + '">';
 
-        hasil += '<td class="text-center">' + no_activity + '</td>';
+        hasil += '<td class="text-center tr_no">' + no_activity + '</td>';
 
         hasil += '<td class="text-left">';
 
@@ -1644,8 +1644,15 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
         $('.tr_no').each(function() {
             var value = get_num($(this).text());
 
-            max_no = value;
+            if (value > max_no) {
+                max_no = value;
+            }
         });
+
+        var no_activity = parseFloat($('.no').val());
+        if (!isNaN(no_activity) && no_activity > max_no) {
+            max_no = no_activity;
+        }
 
         var max_no_akomodasi = get_num($('.no_akomodasi').val());
 
@@ -1668,22 +1675,24 @@ if (count($list_penawaran_subcont_perusahaan) > 0) {
         var ttl_tandem = 0;
 
         for (i = 1; i <= max_no; i++) {
-            var mandays_internal = get_num($('input[name="dt_act[' + i + '][mandays]"]').val());
-            var mandays_rate_internal = get_num($('input[name="dt_act[' + i + '][mandays_rate]"]').val());
-            var mandays_subcont = get_num($('input[name="dt_act[' + i + '][mandays_subcont]"]').val());
-            var mandays_rate_subcont = get_num($('input[name="dt_act[' + i + '][mandays_rate_subcont]"]').val());
-            var mandays_tandem = get_num($('input[name="dt_act[' + i + '][mandays_tandem]"]').val());
-            var mandays_rate_tandem = get_num($('input[name="dt_act[' + i + '][mandays_rate_tandem]"]').val());
+            if ($('input[name="dt_act[' + i + '][mandays]"]').length) {
+                var mandays_internal = get_num($('input[name="dt_act[' + i + '][mandays]"]').val());
+                var mandays_rate_internal = get_num($('input[name="dt_act[' + i + '][mandays_rate]"]').val());
+                var mandays_subcont = get_num($('input[name="dt_act[' + i + '][mandays_subcont]"]').val());
+                var mandays_rate_subcont = get_num($('input[name="dt_act[' + i + '][mandays_rate_subcont]"]').val());
+                var mandays_tandem = get_num($('input[name="dt_act[' + i + '][mandays_tandem]"]').val());
+                var mandays_rate_tandem = get_num($('input[name="dt_act[' + i + '][mandays_rate_tandem]"]').val());
 
-            // ttl_total_mandays += (mandays_internal + mandays_subcont + mandays_tandem);
-            ttl_total_mandays += (mandays_internal);
-            ttl_mandays_subcont += (mandays_subcont);
-            ttl_mandays_tandem += (mandays_tandem);
+                // ttl_total_mandays += (mandays_internal + mandays_subcont + mandays_tandem);
+                ttl_total_mandays += (mandays_internal);
+                ttl_mandays_subcont += (mandays_subcont);
+                ttl_mandays_tandem += (mandays_tandem);
 
-            // ttl_nilai_project += ((mandays_internal * mandays_rate_internal) + (mandays_subcont * mandays_rate_subcont) + (mandays_tandem * mandays_rate_tandem));
-            ttl_nilai_project += ((mandays_internal * mandays_rate_internal));
-            ttl_subcont += (mandays_subcont * mandays_rate_subcont);
-            ttl_tandem += (mandays_tandem * mandays_rate_tandem);
+                // ttl_nilai_project += ((mandays_internal * mandays_rate_internal) + (mandays_subcont * mandays_rate_subcont) + (mandays_tandem * mandays_rate_tandem));
+                ttl_nilai_project += ((mandays_internal * mandays_rate_internal));
+                ttl_subcont += (mandays_subcont * mandays_rate_subcont);
+                ttl_tandem += (mandays_tandem * mandays_rate_tandem);
+            }
         }
 
 
