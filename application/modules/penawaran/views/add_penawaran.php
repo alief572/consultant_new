@@ -1568,12 +1568,12 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
         var disc_nilai = get_num($('.input_diskon_value').val());
 
-        var nilai_project = (ttl_nilai_project + ttl_akomodasi + ttl_others + ttl_lab + ttl_subcont_tenaga_ahli + ttl_subcont_perusahaan);
+        var nilai_project = (ttl_nilai_project + ttl_tandem + ttl_subcont + ttl_akomodasi + ttl_others + ttl_lab + ttl_subcont_tenaga_ahli + ttl_subcont_perusahaan);
         nilai_project = (nilai_project - disc_nilai);
 
         var mandays_rate = 0;
         if (ttl_total_mandays > 0) {
-            mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others_budget - ttl_lab_budget - ttl_subcont_tenaga_ahli_budget - ttl_subcont_perusahaan_budget) / ttl_total_mandays);
+            mandays_rate = ((nilai_project - ttl_akomodasi - ttl_others_budget - ttl_lab_budget - ttl_subcont_tenaga_ahli_budget - ttl_subcont_perusahaan_budget - ttl_subcont) / ttl_total_mandays);
         }
 
         // alert(mandays_rate);
