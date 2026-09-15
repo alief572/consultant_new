@@ -69,6 +69,18 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             </div>
         </div>
         <div id="non_konsultasi" style="display: none;">
+            <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
+                <div class="col-md-3">
+                    <label for="filter_status_non_kons">Filter Status Quotation</label>
+                    <select id="filter_status_non_kons" class="form-control">
+                        <option value="">-- All Status --</option>
+                        <option value="waiting">Waiting Approval</option>
+                        <option value="approved">Approved</option>
+                        <option value="deal">Deal</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table id="table_penawaran_non_konsultasi" class="table table-bordered table-striped nowrap">
                     <thead class="bg-primary">
@@ -126,6 +138,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <script type="text/javascript">
     $(document).ready(function() {
         DataTables();
+
+        $('#filter_status_non_kons').on('change', function() {
+            $('#table_penawaran_non_konsultasi').DataTable().ajax.reload();
+        });
     });
 
     function tab_konsultasi() {
@@ -505,7 +521,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 type: "GET",
                 dataType: "JSON",
                 data: function(d) {
-
+                    d.filter_status = $('#filter_status_non_kons').val();
                 },
                 error: function(xhr, status, error) {
                     // 1. Ambil response text dan parse ke JSON
