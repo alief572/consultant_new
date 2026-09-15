@@ -1858,10 +1858,27 @@ class Penawaran extends Admin_Controller
             $start = $this->input->get('start');
             $search = $this->input->get('search')['value'];
 
+            $filter_status = $this->input->get('filter_status');
+
             $this->db->select('a.*, b.nm_lengkap');
             $this->db->from('kons_tr_penawaran_non_konsultasi a');
             $this->db->join('users b', 'b.id_user = a.input_by', 'left');
             $this->db->where('a.deleted_by', null);
+
+            // Filter by status Quotation
+            if (!empty($filter_status)) {
+                if ($filter_status === 'waiting') {
+                    $this->db->where('a.sts_quot', '0');
+                } elseif ($filter_status === 'approved') {
+                    $this->db->where('a.sts_quot', '1');
+                    $this->db->where('a.sts_deal <>', '1');
+                } elseif ($filter_status === 'deal') {
+                    $this->db->where('a.sts_quot', '1');
+                    $this->db->where('a.sts_deal', '1');
+                } elseif ($filter_status === 'rejected') {
+                    $this->db->where('a.sts_quot', '2');
+                }
+            }
 
             $db_clone = clone $this->db;
             $count_all = $db_clone->count_all_results();
@@ -1880,6 +1897,8 @@ class Penawaran extends Admin_Controller
             $db_clone = clone $this->db;
             $count_filtered = $db_clone->count_all_results();
 
+            // Urutkan data: Waiting Approval (sts_quot = '0') diprioritaskan lebih dulu
+            $this->db->order_by("CASE WHEN a.sts_quot = '0' THEN 0 ELSE 1 END", 'asc', false);
             $this->db->order_by('a.input_date', 'desc');
             $this->db->limit($length, $start);
 
