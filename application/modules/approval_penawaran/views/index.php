@@ -128,7 +128,12 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     }
 
     $(document).ready(function() {
-        DataTables();
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('tab') === 'non_konsultasi') {
+            tab_non_konsultasi();
+        } else {
+            DataTables();
+        }
     });
 
     $(document).on('click', '.del_penawaran', function() {
