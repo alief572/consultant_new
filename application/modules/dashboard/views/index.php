@@ -84,13 +84,27 @@
 	<div class="col-md-4">
 		<div class="small-box bg-yellow">
 			<div class="inner">
-				<h3><?= $count_penawaran + $count_penawaran_non_kons ?></h3>
-				<p>Penawaran Menunggu Approval</p>
+				<h3><?= $count_penawaran ?></h3>
+				<p>Penawaran Konsultasi Menunggu Approval</p>
 			</div>
 			<div class="icon">
 				<i class="fa fa-file-text-o"></i>
 			</div>
 			<a href="<?= base_url('approval_penawaran') ?>" class="small-box-footer">
+				Lihat Detail <i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="small-box bg-orange">
+			<div class="inner">
+				<h3><?= $count_penawaran_non_kons ?></h3>
+				<p>Penawaran Non Konsultasi Menunggu Approval</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-file-text"></i>
+			</div>
+			<a href="<?= base_url('approval_penawaran?tab=non_konsultasi') ?>" class="small-box-footer">
 				Lihat Detail <i class="fa fa-arrow-circle-right"></i>
 			</a>
 		</div>
@@ -109,6 +123,8 @@
 			</a>
 		</div>
 	</div>
+</div>
+<div class="row row-equal-cards">
 	<div class="col-md-4">
 		<div class="small-box bg-aqua">
 			<div class="inner">
@@ -123,8 +139,6 @@
 			</a>
 		</div>
 	</div>
-</div>
-<div class="row row-equal-cards">
 	<div class="col-md-4">
 		<div class="small-box bg-red">
 			<div class="inner">
