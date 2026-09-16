@@ -280,11 +280,7 @@ class Approval_kasbon_project extends Admin_Controller
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
             $this->db->or_like('a.id', $search['value'], 'both');
-<<<<<<< HEAD
-            $this->db->or_like('c.id_spk_penawaran', $search['value'], 'both');
-=======
             $this->db->or_like('b.id_spk_penawaran', $search['value'], 'both');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
             $this->db->or_like('c.nm_sales', $search['value'], 'both');
             $this->db->or_like('b.nm_project_leader', $search['value'], 'both');
@@ -382,13 +378,10 @@ class Approval_kasbon_project extends Admin_Controller
             if (!empty($keterangan)) {
                 $kasbon_info .= '<div class="text-muted" style="font-size: 12px; margin-top: 3px;"><i class="fa fa-comment-o"></i> ' . $keterangan_short . '</div>';
             }
-<<<<<<< HEAD
-=======
 
             $spk_team_info = $this->_get_spk_team_data($item->id_spk_budgeting);
             $request_by_cell = $this->_format_request_by_cell($item->nm_pembuat, $item->employee_id, $spk_team_info);
             $date_cell = !empty($item->tgl) ? date('d F Y', strtotime($item->tgl)) : '-';
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
 
             $hasil[] = [
                 'no' => $no,
@@ -396,11 +389,8 @@ class Approval_kasbon_project extends Admin_Controller
                 'nm_customer' => $item->nm_customer,
                 'pic_team' => $pic_team,
                 'kasbon_info' => $kasbon_info,
-<<<<<<< HEAD
-=======
                 'request_by' => $request_by_cell,
                 'date' => $date_cell,
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                 'status' => $status,
                 'option' => $option
             ];
@@ -1234,13 +1224,9 @@ class Approval_kasbon_project extends Admin_Controller
             'data_overbudget_lab' => $data_overbudget_lab,
             'data_overbudget_subcont_tenaga_ahli' => $data_overbudget_subcont_tenaga_ahli,
             'data_overbudget_subcont_perusahaan' => $data_overbudget_subcont_perusahaan,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_kasbon])->result()
-=======
             'list_bukti_penggunaan' => $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header ?? $id_kasbon])->result(),
             'creator_user' => $creator_user,
             'spk_team_info' => $spk_team_info
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $metode_pembayaran = '';
