@@ -505,7 +505,7 @@ class Kasbon_project extends Admin_Controller
                     $status = '<span class="badge bg-green">Approved</span>';
                 }
                 if ($get_req_kasbon->sts == '2') {
-                    $status = '<span class="badge bg-red">Rejected</span>';
+                    $status = '<span class="badge bg-red">Rejected by Direktur</span>';
                 }
             }
 
@@ -899,9 +899,6 @@ class Kasbon_project extends Admin_Controller
         ]);
     }
 
-<<<<<<< HEAD
-
-=======
 
 
     private function _get_spk_team_data($id_spk_budgeting)
@@ -1154,7 +1151,6 @@ class Kasbon_project extends Admin_Controller
             . '</div>'
             . '</div>';
     }
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
 
     public function get_data_kasbon_akomodasi()
     {
@@ -1165,13 +1161,9 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-<<<<<<< HEAD
-        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
-=======
         $spk_team_info = $this->_get_spk_team_data($id_spk_budgeting);
 
         $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat, b.employee_id');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -1190,11 +1182,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->limit($length, $start);
         $get_kasbon_akomodasi = $this->db->get();
 
-<<<<<<< HEAD
-        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
-=======
         $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat, b.employee_id');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -1250,17 +1238,17 @@ class Kasbon_project extends Admin_Controller
             }
 
             if (!empty($check_req) && $check_req->sts == 2) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject_manage == 1) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject == 1) {
                 if (!empty($check_req) && $check_req->sts == 1) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
-                    $sts = '<div class="badge bg-red">Rejected</div>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             } else if (!empty($reject_reason)) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
@@ -1350,11 +1338,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_biaya' => $item->deskripsi,
                 'total' => number_format($item->grand_total, 2),
                 'tipe' => $tipe_pengajuan,
-<<<<<<< HEAD
-                'nm_pembuat' => $item->nm_pembuat,
-=======
                 'request_by' => $this->_format_request_by_cell($item->nm_pembuat, $item->employee_id, $spk_team_info),
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                 'status' => $sts,
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'option' => $option
@@ -1381,13 +1365,9 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-<<<<<<< HEAD
-        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
-=======
         $spk_team_info = $this->_get_spk_team_data($id_spk_budgeting);
 
         $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat, b.employee_id');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -1406,11 +1386,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->limit($length, $start);
         $get_kasbon_others = $this->db->get();
 
-<<<<<<< HEAD
-        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
-=======
         $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat, b.employee_id');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -1466,29 +1442,26 @@ class Kasbon_project extends Admin_Controller
             }
 
             if (!empty($check_req) && $check_req->sts == 2) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject_manage == 1) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject == 1) {
                 if (!empty($check_req) && $check_req->sts == 1) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
-                    $sts = '<div class="badge bg-red">Rejected</div>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             } else if (!empty($reject_reason)) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
-<<<<<<< HEAD
-=======
             }
 
             if (!empty($reject_reason)) {
                 $sts .= '<div class="reject-note" style="font-size:11px; color:#e64949; margin-top:4px; display:flex; align-items:flex-start; gap:4px; max-width:200px; text-align:left; line-height:1.3;"><i class="fa fa-info-circle" style="margin-top:2px; flex-shrink:0;"></i> <span title="' . htmlspecialchars($reject_reason) . '">' . htmlspecialchars($reject_reason) . '</span></div>';
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
             }
 
             $tipe_pengajuan = '';
@@ -1571,11 +1544,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_biaya' => $item->deskripsi,
                 'total' => number_format($item->grand_total, 2),
                 'tipe' => $tipe_pengajuan,
-<<<<<<< HEAD
-                'nm_pembuat' => $item->nm_pembuat,
-=======
                 'request_by' => $this->_format_request_by_cell($item->nm_pembuat, $item->employee_id, $spk_team_info),
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                 'status' => $sts,
                 'date' => date('d F Y', strtotime($item_date)),
                 'option' => $option
@@ -1601,13 +1570,9 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-<<<<<<< HEAD
-        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
-=======
         $spk_team_info = $this->_get_spk_team_data($id_spk_budgeting);
 
         $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat, b.employee_id');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -1626,11 +1591,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->limit($length, $start);
         $get_kasbon_lab = $this->db->get();
 
-<<<<<<< HEAD
-        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
-=======
         $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat, b.employee_id');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -1666,11 +1627,6 @@ class Kasbon_project extends Admin_Controller
             $this->db->where('a.id_kasbon', $item->id);
             $check_req = $this->db->get()->row();
 
-<<<<<<< HEAD
-            // if (count($get_check_req_approval) > 0) {
-            $sts = '<div class="badge bg-blue">Waiting Approval</div>';
-            // }
-=======
             $sts = '<div class="badge bg-yellow">Draft</div>';
 
             if (!empty($check_req)) {
@@ -1680,19 +1636,10 @@ class Kasbon_project extends Admin_Controller
             } else {
                 $sts = '<div class="badge bg-blue">Waiting Approval</div>';
             }
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
 
             if ($item->sts == '1') {
                 $sts = '<div class="badge bg-green">Approved</div>';
             }
-<<<<<<< HEAD
-            if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
-                if ($item->sts_reject !== null) {
-                    $sts = '<div class="badge bg-red">Rejected by Finance</div>';
-                }
-                if ($item->sts_reject_manage !== null) {
-                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
-=======
 
             $reject_reason = !empty($item->reject_reason) ? trim($item->reject_reason) : '';
             if (empty($reject_reason) && !empty($check_req->reject_reason)) {
@@ -1700,30 +1647,26 @@ class Kasbon_project extends Admin_Controller
             }
 
             if (!empty($check_req) && $check_req->sts == 2) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject_manage == 1) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject == 1) {
                 if (!empty($check_req) && $check_req->sts == 1) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
-                    $sts = '<div class="badge bg-red">Rejected</div>';
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             } else if (!empty($reject_reason)) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
-<<<<<<< HEAD
-=======
             }
 
             if (!empty($reject_reason)) {
                 $sts .= '<div class="reject-note" style="font-size:11px; color:#e64949; margin-top:4px; display:flex; align-items:flex-start; gap:4px; max-width:200px; text-align:left; line-height:1.3;"><i class="fa fa-info-circle" style="margin-top:2px; flex-shrink:0;"></i> <span title="' . htmlspecialchars($reject_reason) . '">' . htmlspecialchars($reject_reason) . '</span></div>';
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
             }
 
             $tipe_pengajuan = '';
@@ -1806,11 +1749,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_biaya' => $item->deskripsi,
                 'total' => number_format($item->grand_total, 2),
                 'tipe' => $tipe_pengajuan,
-<<<<<<< HEAD
-                'nm_pembuat' => $item->nm_pembuat,
-=======
                 'request_by' => $this->_format_request_by_cell($item->nm_pembuat, $item->employee_id, $spk_team_info),
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                 'status' => $sts,
                 'date' => date('d F Y', strtotime($item_date)),
                 'option' => $option
@@ -1836,13 +1775,9 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-<<<<<<< HEAD
-        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
-=======
         $spk_team_info = $this->_get_spk_team_data($id_spk_budgeting);
 
         $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat, b.employee_id');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -1861,11 +1796,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->limit($length, $start);
         $get_kasbon_subcont_tenaga_ahli = $this->db->get();
 
-<<<<<<< HEAD
-        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
-=======
         $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat, b.employee_id');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -1899,11 +1830,6 @@ class Kasbon_project extends Admin_Controller
             $this->db->where('a.id_kasbon', $item->id);
             $check_req = $this->db->get()->row();
 
-<<<<<<< HEAD
-            // if (count($get_check_req_approval) > 0) {
-            $sts = '<div class="badge bg-blue">Waiting Approval</div>';
-            // }
-=======
             $sts = '<div class="badge bg-yellow">Draft</div>';
 
             if (!empty($check_req)) {
@@ -1914,45 +1840,36 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<div class="badge bg-blue">Waiting Approval</div>';
             }
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
             if ($item->sts == '1') {
                 $sts = '<div class="badge bg-green">Approved</div>';
             }
 
-<<<<<<< HEAD
-            if ($item->sts_reject !== null || $item->sts_reject_manage !== null) {
-                if ($item->sts_reject !== null) {
-=======
             $reject_reason = !empty($item->reject_reason) ? trim($item->reject_reason) : '';
             if (empty($reject_reason) && !empty($check_req->reject_reason)) {
                 $reject_reason = trim($check_req->reject_reason);
             }
 
             if (!empty($check_req) && $check_req->sts == 2) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject_manage == 1) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject == 1) {
                 if (!empty($check_req) && $check_req->sts == 1) {
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
-                    $sts = '<div class="badge bg-red">Rejected</div>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             } else if (!empty($reject_reason)) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
-<<<<<<< HEAD
-=======
             }
 
             if (!empty($reject_reason)) {
                 $sts .= '<div class="reject-note" style="font-size:11px; color:#e64949; margin-top:4px; display:flex; align-items:flex-start; gap:4px; max-width:200px; text-align:left; line-height:1.3;"><i class="fa fa-info-circle" style="margin-top:2px; flex-shrink:0;"></i> <span title="' . htmlspecialchars($reject_reason) . '">' . htmlspecialchars($reject_reason) . '</span></div>';
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
             }
 
             $tipe_pengajuan = '';
@@ -2035,11 +1952,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_biaya' => $item->deskripsi,
                 'total' => number_format($item->grand_total, 2),
                 'tipe' => $tipe_pengajuan,
-<<<<<<< HEAD
-                'nm_pembuat' => $item->nm_pembuat,
-=======
                 'request_by' => $this->_format_request_by_cell($item->nm_pembuat, $item->employee_id, $spk_team_info),
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                 'status' => $sts,
                 'date' => date('d F Y', strtotime($item_date)),
                 'option' => $option
@@ -2065,13 +1978,9 @@ class Kasbon_project extends Admin_Controller
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $view = $this->input->post('view');
 
-<<<<<<< HEAD
-        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
-=======
         $spk_team_info = $this->_get_spk_team_data($id_spk_budgeting);
 
         $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat, b.employee_id');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -2090,11 +1999,7 @@ class Kasbon_project extends Admin_Controller
         $this->db->limit($length, $start);
         $get_kasbon_subcont_perusahaan = $this->db->get();
 
-<<<<<<< HEAD
-        $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat');
-=======
         $this->db->select('a.*, IF(b.nm_lengkap IS NOT NULL, b.nm_lengkap, a.created_by) as nm_pembuat, b.employee_id');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('users b', 'b.id_user = a.created_by', 'left');
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
@@ -2123,13 +2028,7 @@ class Kasbon_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont_perusahaan->result() as $item) {
-<<<<<<< HEAD
-            $sts = '<div class="badge bg-yellow">Draft</div>';
-
-            $this->db->select('a.id');
-=======
             $this->db->select('a.*');
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
             $this->db->from('kons_tr_req_kasbon_project a');
             $this->db->where('a.id_kasbon', $item->id);
             $check_req = $this->db->get()->row();
@@ -2154,29 +2053,26 @@ class Kasbon_project extends Admin_Controller
             }
 
             if (!empty($check_req) && $check_req->sts == 2) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject_manage == 1) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject == 1) {
                 if (!empty($check_req) && $check_req->sts == 1) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
-                    $sts = '<div class="badge bg-red">Rejected</div>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             } else if (!empty($reject_reason)) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
             if (!empty($check_payment)) {
                 $sts = '<button type="button" class="btn btn-sm btn-success">Paid</button>';
-<<<<<<< HEAD
-=======
             }
 
             if (!empty($reject_reason)) {
                 $sts .= '<div class="reject-note" style="font-size:11px; color:#e64949; margin-top:4px; display:flex; align-items:flex-start; gap:4px; max-width:200px; text-align:left; line-height:1.3;"><i class="fa fa-info-circle" style="margin-top:2px; flex-shrink:0;"></i> <span title="' . htmlspecialchars($reject_reason) . '">' . htmlspecialchars($reject_reason) . '</span></div>';
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
             }
 
             $tipe_pengajuan = '';
@@ -2259,11 +2155,7 @@ class Kasbon_project extends Admin_Controller
                 'nm_biaya' => $item->deskripsi,
                 'total' => number_format($item->grand_total, 2),
                 'tipe' => $tipe_pengajuan,
-<<<<<<< HEAD
-                'nm_pembuat' => $item->nm_pembuat,
-=======
                 'request_by' => $this->_format_request_by_cell($item->nm_pembuat, $item->employee_id, $spk_team_info),
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                 'status' => $sts,
                 'date' => date('d F Y', strtotime($item_date)),
                 'option' => $option
@@ -2386,7 +2278,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -2516,7 +2408,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -2646,7 +2538,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -2776,7 +2668,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -2906,7 +2798,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -3033,7 +2925,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -4118,12 +4010,9 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
-<<<<<<< HEAD
-=======
         $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
         $spk_team_info = $this->_get_spk_team_data($get_header->id_spk_budgeting);
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4133,13 +4022,9 @@ class Kasbon_project extends Admin_Controller
             'list_budget_tambahan' => $data_budget_tambahan,
             'data_list_kasbon_akomodasi' => $data_list_kasbon_akomodasi,
             'data_list_kasbon_akomodasi_custom' => $data_list_kasbon_akomodasi_custom,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
-=======
             'list_bukti_penggunaan' => $list_bukti_penggunaan,
             'creator_user' => $creator_user,
             'spk_team_info' => $spk_team_info
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $this->template->set($data);
@@ -4225,10 +4110,6 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
-<<<<<<< HEAD
-        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
-
-=======
         $list_users = $this->db->select('id_user, nm_lengkap, username, employee_id')
             ->from('users')
             ->where('st_aktif', 1)
@@ -4242,7 +4123,6 @@ class Kasbon_project extends Admin_Controller
 
         $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4250,14 +4130,10 @@ class Kasbon_project extends Admin_Controller
             'list_data_kasbon' => $get_data_akomodasi,
             'list_budget_tambahan' => $data_budget_tambahan,
             'data_list_kasbon_akomodasi' => $data_list_kasbon_akomodasi,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
-=======
             'list_users' => $list_users,
             'list_bukti_penggunaan' => $list_bukti_penggunaan,
             'creator_user' => $creator_user,
             'spk_team_info' => $this->_get_spk_team_data($get_header->id_spk_budgeting)
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $this->template->set($data);
@@ -4660,12 +4536,9 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
-<<<<<<< HEAD
-=======
         $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
         $spk_team_info = $this->_get_spk_team_data($get_header->id_spk_budgeting);
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4673,13 +4546,9 @@ class Kasbon_project extends Admin_Controller
             'list_data_others' => $get_data_others,
             'list_data_others_custom' => $get_data_others_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
-=======
             'list_bukti_penggunaan' => $list_bukti_penggunaan,
             'creator_user' => $creator_user,
             'spk_team_info' => $spk_team_info
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $this->template->set($data);
@@ -4746,12 +4615,9 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
-<<<<<<< HEAD
-=======
         $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
         $spk_team_info = $this->_get_spk_team_data($get_header->id_spk_budgeting);
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4759,13 +4625,9 @@ class Kasbon_project extends Admin_Controller
             'list_data_lab' => $get_data_lab,
             'list_data_lab_custom' => $get_data_lab_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
-=======
             'list_bukti_penggunaan' => $list_bukti_penggunaan,
             'creator_user' => $creator_user,
             'spk_team_info' => $spk_team_info
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $this->template->set($data);
@@ -4832,12 +4694,9 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
-<<<<<<< HEAD
-=======
         $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
         $spk_team_info = $this->_get_spk_team_data($get_header->id_spk_budgeting);
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4845,13 +4704,9 @@ class Kasbon_project extends Admin_Controller
             'list_data_subcont_tenaga_ahli' => $get_data_subcont_tenaga_ahli,
             'list_data_subcont_tenaga_ahli_custom' => $get_data_subcont_tenaga_ahli_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
-=======
             'list_bukti_penggunaan' => $list_bukti_penggunaan,
             'creator_user' => $creator_user,
             'spk_team_info' => $spk_team_info
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $this->template->set($data);
@@ -4918,12 +4773,9 @@ class Kasbon_project extends Admin_Controller
 
         $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
 
-<<<<<<< HEAD
-=======
         $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
         $spk_team_info = $this->_get_spk_team_data($get_header->id_spk_budgeting);
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -4931,13 +4783,9 @@ class Kasbon_project extends Admin_Controller
             'list_data_subcont_perusahaan' => $get_data_subcont_perusahaan,
             'list_data_subcont_perusahaan_custom' => $get_data_subcont_perusahaan_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
-=======
             'list_bukti_penggunaan' => $list_bukti_penggunaan,
             'creator_user' => $creator_user,
             'spk_team_info' => $spk_team_info
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $this->template->set($data);
@@ -5003,10 +4851,6 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
-<<<<<<< HEAD
-        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
-
-=======
         $list_users = $this->db->select('id_user, nm_lengkap, username, employee_id')
             ->from('users')
             ->where('st_aktif', 1)
@@ -5020,7 +4864,6 @@ class Kasbon_project extends Admin_Controller
 
         $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -5028,14 +4871,10 @@ class Kasbon_project extends Admin_Controller
             'list_data_others' => $get_data_others,
             'list_data_others_custom' => $get_data_others_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
-=======
             'list_users' => $list_users,
             'list_bukti_penggunaan' => $list_bukti_penggunaan,
             'creator_user' => $creator_user,
             'spk_team_info' => $this->_get_spk_team_data($get_header->id_spk_budgeting)
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $this->template->set($data);
@@ -5101,10 +4940,6 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
-<<<<<<< HEAD
-        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
-
-=======
         $list_users = $this->db->select('id_user, nm_lengkap, username, employee_id')
             ->from('users')
             ->where('st_aktif', 1)
@@ -5118,7 +4953,6 @@ class Kasbon_project extends Admin_Controller
 
         $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -5126,14 +4960,10 @@ class Kasbon_project extends Admin_Controller
             'list_data_lab' => $get_data_lab,
             'list_data_lab_custom' => $get_data_lab_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
-=======
             'list_users' => $list_users,
             'list_bukti_penggunaan' => $list_bukti_penggunaan,
             'creator_user' => $creator_user,
             'spk_team_info' => $this->_get_spk_team_data($get_header->id_spk_budgeting)
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $this->template->set($data);
@@ -5199,10 +5029,6 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
-<<<<<<< HEAD
-        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
-
-=======
         $list_users = $this->db->select('id_user, nm_lengkap, username, employee_id')
             ->from('users')
             ->where('st_aktif', 1)
@@ -5216,7 +5042,6 @@ class Kasbon_project extends Admin_Controller
 
         $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -5224,14 +5049,10 @@ class Kasbon_project extends Admin_Controller
             'list_data_subcont_tenaga_ahli' => $get_data_subcont_tenaga_ahli,
             'list_data_subcont_tenaga_ahli_custom' => $get_data_subcont_tenaga_ahli_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
-=======
             'list_users' => $list_users,
             'list_bukti_penggunaan' => $list_bukti_penggunaan,
             'creator_user' => $creator_user,
             'spk_team_info' => $this->_get_spk_team_data($get_header->id_spk_budgeting)
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $this->template->set($data);
@@ -5297,10 +5118,6 @@ class Kasbon_project extends Admin_Controller
             ];
         }
 
-<<<<<<< HEAD
-        $list_bukti_penggunaan = $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header])->result();
-
-=======
         $list_users = $this->db->select('id_user, nm_lengkap, username, employee_id')
             ->from('users')
             ->where('st_aktif', 1)
@@ -5314,7 +5131,6 @@ class Kasbon_project extends Admin_Controller
 
         $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         $data = [
             'header' => $get_header,
             'list_budgeting' => $get_budgeting,
@@ -5322,14 +5138,10 @@ class Kasbon_project extends Admin_Controller
             'list_data_subcont_perusahaan' => $get_data_subcont_perusahaan,
             'list_data_subcont_perusahaan_custom' => $get_data_subcont_perusahaan_custom,
             'list_arr_kasbon' => $list_arr_kasbon,
-<<<<<<< HEAD
-            'list_bukti_penggunaan' => $list_bukti_penggunaan
-=======
             'list_users' => $list_users,
             'list_bukti_penggunaan' => $list_bukti_penggunaan,
             'creator_user' => $creator_user,
             'spk_team_info' => $this->_get_spk_team_data($get_header->id_spk_budgeting)
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         ];
 
         $this->template->set($data);
@@ -8597,7 +8409,7 @@ class Kasbon_project extends Admin_Controller
             $steps[] = [
                 'icon' => 'fa-times-circle',
                 'color' => '#dc3545',
-                'title' => 'Rejected',
+                'title' => 'Rejected by Direktur',
                 'user' => ucfirst($approved_by_name),
                 'date' => !empty($get_kasbon->approved_date) ? date('d M Y, H:i', strtotime($get_kasbon->approved_date)) : '-',
                 'remark' => !empty($get_kasbon->reject_reason) ? $get_kasbon->reject_reason : '',
