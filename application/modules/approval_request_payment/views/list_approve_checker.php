@@ -155,12 +155,10 @@ endforeach;
                                 echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
                                 echo '<td>';
                                 if ($ENABLE_MANAGE) :
-                                    if (($item_kasbon->status !== '2' && is_null($item_kasbon->app_checker))) :
-                                        echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
-                                        echo '<i class="fa fa-check-square-o"></i>';
-                                        echo ' Approve';
-                                        echo '</a>';
-                                    endif;
+                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm" title="Detail">';
+                                    echo '<i class="fa fa-eye"></i>';
+                                    echo ' Detail';
+                                    echo '</a>';
 
                                     echo ' <a href="' . base_url('approval_request_payment/print_kasbon/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
                                     echo '<i class="fa fa-print"></i>';
@@ -325,13 +323,10 @@ endforeach;
                                 echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
                                 echo '<td>';
                                 if ($ENABLE_MANAGE) :
-
-                                    if (($item_kasbon->status !== '2' && is_null($item_kasbon->app_checker))) :
-                                        echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
-                                        echo '<i class="fa fa-check-square-o"></i>';
-                                        echo ' Approve';
-                                        echo '</a>';
-                                    endif;
+                                    echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm" title="Detail">';
+                                    echo '<i class="fa fa-eye"></i>';
+                                    echo ' Detail';
+                                    echo '</a>';
 
                                     echo ' <a href="' . base_url('approval_request_payment/print_direct_payment/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
                                     echo '<i class="fa fa-print"></i>';

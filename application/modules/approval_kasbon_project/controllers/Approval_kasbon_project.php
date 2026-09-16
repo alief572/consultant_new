@@ -1326,56 +1326,19 @@ class Approval_kasbon_project extends Admin_Controller
         $id_kasbon = $this->input->post('id_kasbon');
 
         $get_header_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_kasbon))->row();
+        if (empty($get_header_kasbon)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Data Kasbon tidak ditemukan!'
+            ]);
+            return;
+        }
 
         $get_user = $this->db->get_where('users', array('id_user' => $get_header_kasbon->created_by))->row();
-
         $nm_user = (!empty($get_user)) ? $get_user->nm_lengkap : '';
 
         $get_direktur_user = $this->db->get_where('users', array('id_user' => 48))->row();
-
-        $data_insert_req_payment = [
-            'no_doc' => $id_kasbon,
-            'nama' => $nm_user,
-            'tgl_doc' => date('Y-m-d'),
-            'keperluan' => $get_header_kasbon->deskripsi,
-            'tipe' => 'kasbon',
-            'jumlah' => $get_header_kasbon->grand_total,
-            'status' => 0,
-            'created_by' => $get_user->username,
-            'created_on' => date('Y-m-d H:i:s'),
-            'ids' => $id_kasbon,
-            'currency' => 'IDR'
-        ];
-
-        // $no_doc = '';
-        // $newcode = '';
-        // $data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => 'format_kasbon'))->row();
-        // if ($data !== false) {
-        //     if (stripos($data->info, 'YEAR', 0) !== false) {
-        //         if ($data->info3 != date("Y")) {
-        //             $years = date("Y");
-        //             $number = 1;
-        //             $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
-        //         } else {
-        //             $years = $data->info3;
-        //             $number = ($data->info2 + 1);
-        //             $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
-        //         }
-        //         $newcode = str_ireplace('XXXX', $newnumber, $data->info);
-        //         $newcode = str_ireplace('YEAR', $years, $newcode);
-        //         $newdata = array('info2' => $number, 'info3' => $years);
-        //     } else {
-        //         $number = ($data->info2 + 1);
-        //         $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
-        //         $newcode = str_ireplace('XXXX', $newnumber, $data->info);
-        //         $newdata = array('info2' => $number);
-        //     }
-        //     $this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
-
-        //     $no_doc = $newcode;
-        // } else {
-        //     return false;
-        // }
+        $nm_direktur = (!empty($get_direktur_user)) ? $get_direktur_user->nm_lengkap : '';
 
         $project = '';
         if ($get_header_kasbon->tipe == '1') :
@@ -1397,80 +1360,108 @@ class Approval_kasbon_project extends Admin_Controller
             $project = 'Subcont Perusahaan';
         endif;
 
-        // $data_insert_sendigs_kasbon = [
-        //     'no_doc' => $no_doc,
-        //     'tgl_doc' => date('Y-m-d'),
-        //     'departement' => '',
-        //     'nama' => $nm_user,
-        //     'jumlah_kasbon' => $get_header_kasbon->grand_total,
-        //     'keperluan' => $get_header_kasbon->deskripsi,
-        //     'doc_file' => $get_header_kasbon->dokument_link,
-        //     'status' => 1,
-        //     'created_by' => $nm_user,
-        //     'created_on' => date('Y-m-d H:i:s'),
-        //     'bank_id' => $get_header_kasbon->bank,
-        //     'accnumber' => $get_header_kasbon->bank_number,
-        //     'accname' => $get_header_kasbon->bank_account,
-        //     'project' => $project,
-        //     'approved_by' => $get_direktur_user->nm_lengkap,
-        //     'approved_on' => date('Y-m-d H:i:s'),
-        //     'keterangan' => $get_header_kasbon->deskripsi,
-        //     'metode_pembayaran' => 1,
-        //     'project_consultant' => 1,
-        //     'no_kasbon_consultant' => $id_kasbon
-        // ];
-
         $this->db->trans_begin();
 
-        // if ($get_header_kasbon->metode_pembayaran == '1') {
-        //     $insert_sendigs_kasbon = $this->otherdb->insert('tr_kasbon', $data_insert_sendigs_kasbon);
-        //     if (!$insert_sendigs_kasbon) {
-        //         $this->db->trans_rollback();
+        // 1. Integrasi ke Sendigs Finance (otherdb)
+        if ($get_header_kasbon->metode_pembayaran == '1') {
+            $no_doc = '';
+            if (strpos($id_kasbon, 'REQ') !== false) {
+                $data = $this->db->get_where(DBSF . '.ms_generate', array('tipe' => 'format_kasbon'))->row();
+                if ($data !== false) {
+                    if (stripos($data->info, 'YEAR', 0) !== false) {
+                        if ($data->info3 != date("Y")) {
+                            $years = date("Y");
+                            $number = 1;
+                            $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                        } else {
+                            $years = $data->info3;
+                            $number = ($data->info2 + 1);
+                            $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                        }
+                        $newcode = str_ireplace('XXXX', $newnumber, $data->info);
+                        $newcode = str_ireplace('YEAR', $years, $newcode);
+                        $newdata = array('info2' => $number, 'info3' => $years);
+                    } else {
+                        $number = ($data->info2 + 1);
+                        $newnumber = sprintf('%0' . $data->info4 . 'd', $number);
+                        $newcode = str_ireplace('XXXX', $newnumber, $data->info);
+                        $newdata = array('info2' => $number);
+                    }
+                    $this->db->update(DBSF . '.ms_generate', $newdata, array('tipe' => 'format_kasbon'));
+                    $no_doc = $newcode;
+                } else {
+                    $no_doc = $id_kasbon;
+                }
+            } else {
+                $no_doc = $id_kasbon;
+            }
 
-        //         print_r($this->db->last_query());
-        //         exit;
-        //     }
-        // }
+            $data_insert_sendigs_kasbon = [
+                'no_doc' => $no_doc,
+                'tgl_doc' => date('Y-m-d'),
+                'departement' => '',
+                'nama' => $nm_user,
+                'jumlah_kasbon' => $get_header_kasbon->grand_total,
+                'keperluan' => $get_header_kasbon->deskripsi,
+                'doc_file' => $get_header_kasbon->dokument_link,
+                'status' => 1,
+                'created_by' => $nm_user,
+                'created_on' => date('Y-m-d H:i:s'),
+                'bank_id' => $get_header_kasbon->bank,
+                'accnumber' => $get_header_kasbon->bank_number,
+                'accname' => $get_header_kasbon->bank_account,
+                'project' => $project,
+                'approved_by' => $nm_direktur,
+                'approved_on' => date('Y-m-d H:i:s'),
+                'keterangan' => $get_header_kasbon->deskripsi,
+                'metode_pembayaran' => 1,
+                'project_consultant' => 1,
+                'no_kasbon_consultant' => $id_kasbon
+            ];
 
-        // INSERT DIRECT PAYMENT
-        // if ($get_header_kasbon->metode_pembayaran == '2') {
+            $insert_sendigs_kasbon = $this->otherdb->insert('tr_kasbon', $data_insert_sendigs_kasbon);
+            if (!$insert_sendigs_kasbon) {
+                $this->db->trans_rollback();
+                echo json_encode([
+                    'status' => 0,
+                    'pesan' => 'Gagal insert ke Sendigs tr_kasbon!'
+                ]);
+                return;
+            }
+        }
 
-        //     $no_doc = $id_kasbon;
+        if ($get_header_kasbon->metode_pembayaran == '2') {
+            $data_insert_direct_payment_sendigs = [
+                'no_doc' => $id_kasbon,
+                'tgl_doc' => $get_header_kasbon->tgl,
+                'ids' => $id_kasbon,
+                'id_spk_budgeting' => $get_header_kasbon->id_spk_budgeting,
+                'id_spk_penawaran' => $get_header_kasbon->id_spk_penawaran,
+                'id_penawaran' => $get_header_kasbon->id_penawaran,
+                'tipe' => $get_header_kasbon->tipe,
+                'deskripsi' => $get_header_kasbon->deskripsi,
+                'grand_total' => $get_header_kasbon->grand_total,
+                'bank' => $get_header_kasbon->bank,
+                'bank_number' => $get_header_kasbon->bank_number,
+                'bank_account' => $get_header_kasbon->bank_account,
+                'metode_pembayaran' => 1,
+                'sts' => 1,
+                'created_by' => $this->auth->user_id(),
+                'created_date' => date('Y-m-d H:i:s')
+            ];
 
-        //     $data_insert_direct_payment_sendigs = [
-        //         'no_doc' => $no_doc,
-        //         'tgl_doc' => date('Y-m-d'),
-        //         'ids' => $id_kasbon,
-        //         'id_spk_budgeting' => $get_header_kasbon->id_spk_budgeting,
-        //         'id_spk_penawaran' => $get_header_kasbon->id_spk_penawaran,
-        //         'id_penawaran' => $get_header_kasbon->id_penawaran,
-        //         'tipe' => $get_header_kasbon->tipe,
-        //         'deskripsi' => $get_header_kasbon->deskripsi,
-        //         'grand_total' => $get_header_kasbon->grand_total,
-        //         'bank' => $get_header_kasbon->bank,
-        //         'bank_number' => $get_header_kasbon->bank_number,
-        //         'bank_account' => $get_header_kasbon->bank_account,
-        //         'metode_pembayaran' => 1,
-        //         'sts' => 1,
-        //         'created_by' => $this->auth->user_id(),
-        //         'created_date' => date('Y-m-d H:i:s')
-        //     ];
+            $insert_direct_payment_sendigs = $this->otherdb->insert('tr_direct_payment', $data_insert_direct_payment_sendigs);
+            if (!$insert_direct_payment_sendigs) {
+                $this->db->trans_rollback();
+                echo json_encode([
+                    'status' => 0,
+                    'pesan' => 'Gagal insert ke Sendigs tr_direct_payment!'
+                ]);
+                return;
+            }
+        }
 
-        //     $insert_direct_payment_sendigs = $this->otherdb->insert('tr_direct_payment', $data_insert_direct_payment_sendigs);
-        //     if (!$insert_direct_payment_sendigs) {
-        //         $this->db->trans_rollback();
-
-        //         print_r($this->db->last_query());
-        //         exit;
-        //     }
-        // }
-
-        // if ($get_header_kasbon->metode_pembayaran == '3') {
-        // }
-
-        $get_created_kasbon = $this->db->get_where('users', ['id_user' => $get_header_kasbon->created_by])->row();
-        $nm_user = (!empty($get_created_kasbon)) ? $get_created_kasbon->nm_lengkap : '';
-
+        // 2. Insert ke request_payment lokal (langsung status checker approved)
         $arr_insert_req_payment = [
             'no_doc' => $get_header_kasbon->id,
             'nama' => $nm_user,
@@ -1478,7 +1469,14 @@ class Approval_kasbon_project extends Admin_Controller
             'keperluan' => $get_header_kasbon->deskripsi,
             'tipe' => 'kasbon',
             'jumlah' => $get_header_kasbon->grand_total,
-            'status' => 0,
+            'status' => 2,
+            'app_checker' => 1,
+            'app_checker_by' => $this->auth->user_id(),
+            'app_checker_date' => date('Y-m-d H:i:s'),
+            'bank_id' => $get_header_kasbon->bank,
+            'accnumber' => $get_header_kasbon->bank_number,
+            'accname' => $get_header_kasbon->bank_account,
+            'bank_name' => $get_header_kasbon->bank,
             'created_by' => $nm_user,
             'created_on' => date('Y-m-d H:i:s'),
             'ids' => $get_header_kasbon->id,
@@ -1488,99 +1486,57 @@ class Approval_kasbon_project extends Admin_Controller
         $insert_request_payment = $this->db->insert('request_payment', $arr_insert_req_payment);
         if (!$insert_request_payment) {
             $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Gagal insert ke request_payment!'
+            ]);
+            return;
         }
 
-        $update_req = $this->db->update('kons_tr_kasbon_project_header', [
-            'sts' => 1,
-            'approved_by' => $this->auth->user_id(),
-            'approved_date' => date('Y-m-d H:i:s')
-        ], ['id' => $id_kasbon]);
-        if (!$update_req) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
-        }
-
-        $update_req = $this->db->update('kons_tr_req_kasbon_project', ['sts' => 1], ['id_kasbon' => $id_kasbon, 'sts' => 0]);
-        if (!$update_req) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
-        }
-
+        // 3. Update kons_tr_kasbon_project_header & reset status reject
         $update_req_header = $this->db->update('kons_tr_kasbon_project_header', [
             'sts' => 1,
+            'sts_req_payment' => 1,
             'approved_by' => $this->auth->user_id(),
-            'approved_date' => date('Y-m-d H:i:s')
+            'approved_date' => date('Y-m-d H:i:s'),
+            'sts_reject' => null,
+            'sts_reject_manage' => null,
+            'reject_reason' => null
         ], ['id' => $id_kasbon]);
         if (!$update_req_header) {
             $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Gagal update kons_tr_kasbon_project_header!'
+            ]);
+            return;
         }
 
-        $update_req_subcont = $this->db->update('kons_tr_kasbon_project_subcont', ['sts' => 1], ['id_header' => $id_kasbon]);
-        if (!$update_req_subcont) {
+        // 4. Update kons_tr_req_kasbon_project
+        $update_req = $this->db->update('kons_tr_req_kasbon_project', ['sts' => 1], ['id_kasbon' => $id_kasbon, 'sts' => 0]);
+        if (!$update_req) {
             $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Gagal update kons_tr_req_kasbon_project!'
+            ]);
+            return;
         }
 
-        $update_req_akomodasi = $this->db->update('kons_tr_kasbon_project_akomodasi', ['sts' => 1], ['id_header' => $id_kasbon]);
-        if (!$update_req_akomodasi) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
-        }
-
-        $update_req_others = $this->db->update('kons_tr_kasbon_project_others', ['sts' => 1], ['id_header' => $id_kasbon]);
-        if (!$update_req_others) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
-        }
-
-        $update_req_lab = $this->db->update('kons_tr_kasbon_project_lab', ['sts' => 1], ['id_header' => $id_kasbon]);
-        if (!$update_req_lab) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
-        }
-
-        $update_req_subcont_tenaga_ahli = $this->db->update('kons_tr_kasbon_project_subcont_tenaga_ahli', ['sts' => 1], ['id_header' => $id_kasbon]);
-        if (!$update_req_subcont_tenaga_ahli) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
-        }
-
-        $update_req_subcont_perusahaan = $this->db->update('kons_tr_kasbon_project_subcont_perusahaan', ['sts' => 1], ['id_header' => $id_kasbon]);
-        if (!$update_req_subcont_perusahaan) {
-            $this->db->trans_rollback();
-
-            print_r($this->db->last_query());
-            exit;
-        }
+        // 5. Update tabel detail kasbon
+        $this->db->update('kons_tr_kasbon_project_subcont', ['sts' => 1], ['id_header' => $id_kasbon]);
+        $this->db->update('kons_tr_kasbon_project_akomodasi', ['sts' => 1], ['id_header' => $id_kasbon]);
+        $this->db->update('kons_tr_kasbon_project_others', ['sts' => 1], ['id_header' => $id_kasbon]);
+        $this->db->update('kons_tr_kasbon_project_lab', ['sts' => 1], ['id_header' => $id_kasbon]);
+        $this->db->update('kons_tr_kasbon_project_subcont_tenaga_ahli', ['sts' => 1], ['id_header' => $id_kasbon]);
+        $this->db->update('kons_tr_kasbon_project_subcont_perusahaan', ['sts' => 1], ['id_header' => $id_kasbon]);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
-
             $valid = 0;
             $pesan = 'Please try again later !';
         } else {
             $this->db->trans_commit();
-
             $valid = 1;
             $pesan = 'Data has been approved !';
         }
