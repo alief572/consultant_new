@@ -1654,11 +1654,7 @@ class Kasbon_project extends Admin_Controller
                 if (!empty($check_req) && $check_req->sts == 1) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
-<<<<<<< HEAD
-                    $sts = '<div class="badge bg-red">Rejected</div>';
-=======
                     $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
->>>>>>> 4fbdcb5db6faf2bd99c8c6631bcdc5799bbcba90
                 }
             } else if (!empty($reject_reason)) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
