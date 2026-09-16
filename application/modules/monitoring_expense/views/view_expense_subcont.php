@@ -137,7 +137,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
                     echo '</tr>';
 
-                    $ttl_kasbon += ($item['total_kasbon']);
+                    $ttl_kasbon += ($item['qty_kasbon'] * $item['nominal_kasbon']);
                     $ttl_expense_report += ($total_expense);
 
                     $count_no++;

@@ -15,7 +15,7 @@ class Cashflow_project_model extends BF_Model
             if (!$this->sendigs) {
                 log_message('error', 'Cashflow_project_model: Failed to load sendigs_finance database connection.');
                 $this->sendigs = null;
-                $this->sendigs_db_name = 'db_sendigs_ss'; // fallback
+                $this->sendigs_db_name = 'db_sendigs_ss_dev'; // fallback
             } else {
                 // Resolve actual DB name from config — avoids hardcoding across environments
                 $this->sendigs_db_name = $this->sendigs->database;
@@ -23,7 +23,7 @@ class Cashflow_project_model extends BF_Model
         } catch (Exception $e) {
             log_message('error', 'Cashflow_project_model: Exception loading sendigs_finance DB - ' . $e->getMessage());
             $this->sendigs = null;
-            $this->sendigs_db_name = 'db_sendigs_ss'; // fallback
+            $this->sendigs_db_name = 'db_sendigs_ss_dev'; // fallback
         }
     }
 

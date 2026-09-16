@@ -5,10 +5,10 @@ $ENABLE_VIEW    = has_permission('Expense_Report_Project.View');
 $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
 $title_header = 'Subcont';
-if($tipe == '2') {
+if ($tipe == '2') {
     $title_header = 'Akomodasi';
 }
-if($tipe == '3') {
+if ($tipe == '3') {
     $title_header = 'Others';
 }
 ?>
@@ -145,13 +145,13 @@ if($tipe == '3') {
 
                         echo '<td width="200">';
                         echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $item['nominal_kasbon'] . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
-                        echo '<input type="hidden" class="form-control form-control-sm" name="detail_subcont['.$item['no'].'][total_kasbon]" value="'.$item['total_kasbon'].'">';
+                        echo '<input type="hidden" class="form-control form-control-sm" name="detail_subcont[' . $item['no'] . '][total_kasbon]" value="' . ($item['qty_kasbon'] * $item['nominal_kasbon']) . '">';
                         echo '</td>';
 
                         echo '</tr>';
 
-                        $ttl_kasbon += ($item['total_kasbon']);
-                        $ttl_expense_report += ($item['total_kasbon']);
+                        $ttl_kasbon += ($item['qty_kasbon'] * $item['nominal_kasbon']);
+                        $ttl_expense_report += ($item['qty_kasbon'] * $item['nominal_kasbon']);
 
                         $count_no++;
                     }
@@ -332,14 +332,11 @@ if($tipe == '3') {
 
         for (i = 1; i <= count_no; i++) {
             var qty_kasbon = get_num($('input[name="detail_subcont[' + i + '][qty_kasbon]"]').val());
-            if(qty_kasbon < 1) {
-                qty_kasbon = 1;
-            }
             var nominal_kasbon = get_num($('input[name="detail_subcont[' + i + '][nominal_kasbon]"]').val());
 
             var qty_expense = get_num($('input[name="detail_subcont[' + i + '][qty_expense]"]').val());
-            if(qty_expense < 1) {
-                qty_expense = 1;
+            if (qty_expense <= 0) {
+                qty_expense = 0;
             }
             var nominal_expense = get_num($('input[name="detail_subcont[' + i + '][nominal_expense]"]').val());
 

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>CONSULTANT | Login</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.6 -->
+  <link rel="stylesheet" href="http://localhost:8080/assets/adminlte/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="http://localhost:8080/assets/plugins/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="http://localhost:8080/assets/plugins/ionicons/css/ionicons.min.css">
+    <!-- Select2 -->
+  <link rel="stylesheet" href="http://localhost:8080/assets/plugins/select2/select2.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="http://localhost:8080/assets/adminlte/dist/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+        page. However, you can choose any other skin. Make sure you
+        apply the skin class to the body tag so the changes take effect.
+  -->
+  <link rel="stylesheet" href="http://localhost:8080/assets/adminlte/dist/css/skins/_all-skins.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="http://localhost:8080/assets/css/styles.css">
+  <!-- jQuery 2.2.3 -->
+  <script src="http://localhost:8080/assets/plugins/jQuery/jquery-2.2.3.min.js"></script>
+  <script src="http://localhost:8080/assets/plugins/daterangepicker/moment.min.js"></script>
+  <script src="http://localhost:8080/assets/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body class="hold-transition">
+
+<!--<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>
+<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+
+<h4>A PHP Error was encountered</h4>
+
+<p>Severity: Warning</p>
+<p>Message:  Use of undefined constant php - assumed 'php' (this will throw an Error in a future version of PHP)</p>
+<p>Filename: views/login_animate.php</p>
+<p>Line Number: 6</p>
+
+
+	<p>Backtrace:</p>
+	
+		
+	
+		
+	
+		
+			<p style="margin-left:10px">
+			File: /var/www/html/application/modules/users/views/login_animate.php<br />
+			Line: 6<br />
+			Function: _error_handler			</p>
+
+		
+	
+		
+			<p style="margin-left:10px">
+			File: /var/www/html/application/third_party/MX/Loader.php<br />
+			Line: 336<br />
+			Function: include			</p>
+
+		
+	
+		
+			<p style="margin-left:10px">
+			File: /var/www/html/application/third_party/MX/Loader.php<br />
+			Line: 286<br />
+			Function: _ci_load			</p>
+
+		
+	
+		
+			<p style="margin-left:10px">
+			File: /var/www/html/application/libraries/Template.php<br />
+			Line: 725<br />
+			Function: view			</p>
+
+		
+	
+		
+			<p style="margin-left:10px">
+			File: /var/www/html/application/libraries/Template.php<br />
+			Line: 692<br />
+			Function: _load_view			</p>
+
+		
+	
+		
+			<p style="margin-left:10px">
+			File: /var/www/html/application/libraries/Template.php<br />
+			Line: 242<br />
+			Function: _find_view			</p>
+
+		
+	
+		
+			<p style="margin-left:10px">
+			File: /var/www/html/application/modules/users/controllers/Users.php<br />
+			Line: 41<br />
+			Function: render			</p>
+
+		
+	
+		
+	
+		
+			<p style="margin-left:10px">
+			File: /var/www/html/index.php<br />
+			Line: 317<br />
+			Function: require_once			</p>
+
+		
+	
+
+</div></title>  -->
+<style>
+  /* NOTE: The styles were added inline because Prefixfree needs access to your styles and they must be inlined if they are on local disk! */
+  body {
+    font-family: "Open Sans", sans-serif;
+    height: 100vh;
+    background: url("http://localhost:8080/assets/img/wallpaper.jpg") 50% fixed;
+    background-size: cover;
+  }
+
+  @keyframes spinner {
+    0% {
+      transform: rotateZ(0deg);
+    }
+
+    100% {
+      transform: rotateZ(359deg);
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .wrapper {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-height: 100%;
+    padding: 20px;
+    background: rgba(4, 40, 68, 0.85);
+  }
+
+  .login {
+    border-radius: 2px 2px 5px 5px;
+    padding: 10px 20px 20px 20px;
+    width: 90%;
+    max-width: 320px;
+    background: #ffffff;
+    position: relative;
+    padding-bottom: 80px;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  .login.loading button {
+    max-height: 100%;
+    padding-top: 50px;
+  }
+
+  .login.loading button .spinner {
+    opacity: 1;
+    top: 40%;
+  }
+
+  .login.ok button {
+    background-color: #8bc34a;
+  }
+
+  .login.ok button .spinner {
+    border-radius: 0;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    height: 20px;
+    animation: none;
+    transform: rotateZ(-45deg);
+  }
+
+  .login input {
+    display: block;
+    padding: 15px 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    border: 1px solid #ddd;
+    transition: border-width 0.2s ease;
+    border-radius: 2px;
+    color: #ccc;
+  }
+
+  .login input+i.fa {
+    color: #fff;
+    font-size: 1em;
+    position: absolute;
+    margin-top: -47px;
+    opacity: 0;
+    left: 0;
+    transition: all 0.1s ease-in;
+  }
+
+  .login input:focus {
+    outline: none;
+    color: #444;
+    border-color: #2196F3;
+    border-left-width: 35px;
+  }
+
+  .login input:focus+i.fa {
+    opacity: 1;
+    left: 30px;
+    transition: all 0.25s ease-out;
+  }
+
+  .login a {
+    font-size: 0.8em;
+    color: #2196F3;
+    text-decoration: none;
+  }
+
+  .login .title {
+    color: #444;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 10px 0 30px 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+  }
+
+  .login button {
+    width: 100%;
+    height: 100%;
+    padding: 10px 10px;
+    background: #2196F3;
+    color: #fff;
+    display: block;
+    border: none;
+    margin-top: 20px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    max-height: 60px;
+    border: 0px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 2px 2px;
+    transform: rotateZ(0deg);
+    transition: all 0.1s ease-out;
+    border-bottom-width: 7px;
+  }
+
+  .login button .spinner {
+    display: block;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    border: 4px solid #ffffff;
+    border-top-color: rgba(255, 255, 255, 0.3);
+    border-radius: 100%;
+    left: 50%;
+    top: 0;
+    opacity: 0;
+    margin-left: -20px;
+    margin-top: -20px;
+    animation: spinner 0.6s infinite linear;
+    transition: top 0.3s 0.3s ease, opacity 0.3s 0.3s ease, border-radius 0.3s ease;
+    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.2);
+  }
+
+  .login:not(.loading) button:hover {
+    box-shadow: 0px 1px 3px #2196F3;
+  }
+
+  .login:not(.loading) button:focus {
+    border-bottom-width: 4px;
+  }
+
+  footer {
+    display: block;
+    padding-top: 50px;
+    text-align: center;
+    color: #ddd;
+    font-weight: normal;
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.2);
+    font-size: 0.8em;
+  }
+
+  .login-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 0.82em;
+    font-weight: 500;
+    animation: slideDown 0.3s ease;
+  }
+
+  .login-alert.danger {
+    background: linear-gradient(135deg, #ff4d4d22, #ff000011);
+    color: #c0392b;
+    border-left: 4px solid #e74c3c;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.15);
+  }
+
+  .login-alert.success {
+    background: linear-gradient(135deg, #2ecc7122, #27ae6011);
+    color: #1e8449;
+    border-left: 4px solid #2ecc71;
+    box-shadow: 0 2px 8px rgba(46, 204, 113, 0.15);
+  }
+
+  .login-alert.info {
+    background: linear-gradient(135deg, #3498db22, #2980b911);
+    color: #1a5276;
+    border-left: 4px solid #3498db;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
+  }
+
+  .login-alert .alert-icon {
+    font-size: 1.2em;
+    flex-shrink: 0;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+<!--</head>
+
+<body>-->
+
+<div class="wrapper">
+  <form action="http://localhost:8080/login" id="frm_login" name="frm_login" class="login" autocomplete="off" method="post" accept-charset="utf-8">
+  <p class="title">Log in</p>
+    <input type="text" name="username" placeholder="Username" value="" required autofocus>
+  <i class="fa fa-user"></i>
+  <input type="password" name="password" placeholder="Password" value="" required>
+  <i class="fa fa-key"></i>
+  <button type="submit" class="btn" name="login">Sign In</button>
+  </form>
+  <footer>
+    <font color="white">
+      <p>Copyright &copy; CONSULTANT 2026</p>
+    </font>
+  </footer>
+  </p>
+</div>
+<script src="http://localhost:8080/assets/login/js/index.js"></script>
+</body>
+
+</html>
+<!-- REQUIRED JS SCRIPTS -->
+<!-- Bootstrap 3.3.6 -->
+<script src="http://localhost:8080/assets/adminlte/bootstrap/js/bootstrap.min.js"></script>
+<!-- Select2 -->
+<script src="http://localhost:8080/assets/plugins/select2/select2.full.min.js"></script>
+<!-- AdminLTE App -->
+<script src="http://localhost:8080/assets/adminlte/dist/js/app.min.js"></script>
+
+<!-- Optionally, you can add Slimscroll and FastClick plugins.
+     Both of these plugins are recommended to enhance the
+     user experience. Slimscroll is required when using the
+     fixed layout. -->
+</body>
+</html>

@@ -62,6 +62,7 @@ class Approval_project_budgeting extends Admin_Controller
         if ($searchValue !== '') {
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $searchValue, 'both');
+            $this->db->or_like('a.id_spk_penawaran', $searchValue, 'both');
             $this->db->or_like('a.nm_customer', $searchValue, 'both');
             $this->db->or_like('b.nm_sales', $searchValue, 'both');
             $this->db->or_like('a.nm_project_leader', $searchValue, 'both');
@@ -87,24 +88,20 @@ class Approval_project_budgeting extends Admin_Controller
         $no = 1 + intval($start);
 
         foreach ($get_data->result() as $item) {
-            $status = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-            if ($item->sts == 2) {
-                $status = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-            }
-
             $option = $this->_render_buttons($item);
 
-
+            $spk_penawaran_text = !empty($item->id_spk_penawaran) ? $item->id_spk_penawaran : '-';
+            $spk_info = '<strong>' . $item->id_spk_budgeting . '</strong><br><small class="text-muted"><i class="fa fa-file-text-o"></i> ' . $spk_penawaran_text . '</small>';
 
             $hasil[] = [
                 'no' => $no,
+                'spk_info' => $spk_info,
                 'id_spk_budgeting' => $item->id_spk_budgeting,
+                'id_spk_penawaran' => $item->id_spk_penawaran,
                 'nm_customer' => $item->nm_customer,
                 'nm_sales' => ucfirst($item->nm_sales ?? ''),
                 'nm_project_leader' => ucfirst($item->nm_project_leader ?? ''),
                 'nm_project' => $item->nm_paket,
-                'reject_reason' => $item->reject_reason,
-                'status' => $status,
                 'option' => $option
             ];
 

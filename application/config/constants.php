@@ -84,9 +84,9 @@ defined('EXIT_DATABASE')       or define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      or define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      or define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
-define('DBHRIS', 'hr_ori');
+define('DBHRIS', 'hr_ori_dev');
 define('DBERP', 'origa_dev');
-define('DBACC', 'gl_origa');
+define('DBACC', 'gl_origa_dev');
 define('DBHR', 'hr_sentral');
-define('DBSF', 'db_sendigs_ss');
+define('DBSF', 'db_sendigs_ss_dev');
 define('FILE_ALLOW', 'doc|docx|xls|xlsx|ppt|pptx|7z|zip|rar|jpeg|jpg|gif|bmp|png');

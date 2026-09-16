@@ -1,89 +1,83 @@
-<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.min.css">
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+// Modul view-only: hanya menampilkan data, tanpa Add / Edit / Delete.
+?>
+<link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>">
 <div class="box box-primary">
-	<div class="box-header">
-		<h3 class="box-title"><?= $title; ?></h3>
-		<div class="box-tool pull-right">
-			
+	<div class="box-header with-border">
+		<h3 class="box-title"><i class="fa fa-sitemap"></i> <?= isset($title) ? esc($title) : 'Divisions'; ?></h3>
+		<div class="box-tools pull-right">
+			<span class="label label-info" title="Modul ini hanya untuk melihat data"><i class="fa fa-eye"></i> View Only</span>
 		</div>
 	</div>
 	<!-- /.box-header -->
 	<div class="box-body">
-		<table id="example1" class="table table-bordered table-striped">
-			<thead>
-				<tr class='bg-blue'>
-					<th class="text-center">Id</th>
-					<th class="text-center">Name</th>
-					<th class="text-center">Company</th>
-					<th class="text-center">Option</th>
-				</tr>
-			</thead>
-			<tbody>
-				
-			</tbody>
-		</table>
+		<div class="table-responsive">
+			<table id="example1" class="table table-bordered table-striped table-hover" width="100%">
+				<thead>
+					<tr>
+						<th class="text-center" width="50">No</th>
+						<th class="text-center">Id</th>
+						<th class="text-center">Name</th>
+						<th class="text-center">Company</th>
+						<th class="text-center" width="80">Option</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<p class="text-muted" style="margin-top:10px;"><i class="fa fa-info-circle"></i> Modul Divisions hanya untuk melihat data. Penambahan, perubahan, dan penghapusan data tidak tersedia.</p>
 	</div>
+	<!-- /.box-body -->
 </div>
 <!-- /.box -->
-<script src="https://cdn.datatables.net/2.2.1/js/dataTables.min.js"></script>
+<script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
+<script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script>
 <script>
 	$(document).ready(function() {
 		DataTables();
 	});
 
 	function DataTables() {
-		var DataTables = $('#example1').dataTable({
+		$('#example1').DataTable({
 			ajax: {
 				url: siteurl + active_controller + 'get_data_divisions',
-				type: "POST",
-				dataType: "JSON",
-				data: function(d) {
-
-				}
+				type: 'POST',
+				dataType: 'JSON'
 			},
-			columns: [{
-					data: 'id'
-				},
-				{
-					data: 'name'
-				},
-				{
-					data: 'company_name'
-				},
-				{
-					data: 'option'
-				}
+			columns: [
+				{ data: 'no', orderable: false, searchable: false, className: 'text-center' },
+				{ data: 'id', className: 'text-center' },
+				{ data: 'name' },
+				{ data: 'company_name' },
+				{ data: 'option', orderable: false, searchable: false, className: 'text-center' }
 			],
 			responsive: true,
 			processing: true,
 			serverSide: true,
 			stateSave: true,
 			destroy: true,
-			paging: true
-		});
-	}
-
-	function deleteData(id) {
-		swal({
-				title: "Are you sure?",
-				text: "You will not be able to process again this data!",
-				type: "warning",
-				showCancelButton: true,
-				confirmButtonClass: "btn-danger",
-				confirmButtonText: "Yes, Process it!",
-				cancelButtonText: "No, cancel process!",
-				closeOnConfirm: true,
-				closeOnCancel: false
-			},
-			function(isConfirm) {
-				if (isConfirm) {
-					loading_spinner();
-					window.location.href = base_url + 'index.php/' + active_controller + '/delete/' + id;
-
-				} else {
-					swal("Cancelled", "Data can be process again :)", "error");
-					return false;
+			paging: true,
+			searchDelay: 500,
+			autoWidth: false,
+			order: [[1, 'asc']],
+			pageLength: 10,
+			lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+			language: {
+				emptyTable: 'Belum ada data division.',
+				search: 'Cari:',
+				lengthMenu: 'Tampil _MENU_ data',
+				info: 'Menampilkan _START_ - _END_ dari _TOTAL_ data',
+				infoEmpty: 'Tidak ada data',
+				processing: 'Memuat data...',
+				paginate: {
+					first: 'Awal',
+					last: 'Akhir',
+					next: 'Lanjut',
+					previous: 'Kembali'
 				}
-			});
-
+			}
+		});
 	}
 </script>

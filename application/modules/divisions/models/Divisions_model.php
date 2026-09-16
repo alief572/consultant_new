@@ -12,45 +12,64 @@ class divisions_model extends BF_Model
 
     public function get_data_divisions()
     {
-        $draw = $this->input->post('draw');
-        $start = $this->input->post('start');
-        $length = $this->input->post('length');
+        $draw = (int) $this->input->post('draw');
+        $start = (int) $this->input->post('start');
+        $length = (int) $this->input->post('length');
         $search = $this->input->post('search');
+        $order = $this->input->post('order');
+        $search_value = is_array($search) && isset($search['value']) ? trim((string) $search['value']) : '';
 
-        $this->db->select('a.*,b.name as company_name');
+        $columns = array(
+            0 => 'no',
+            1 => 'a.id',
+            2 => 'a.name',
+            3 => 'b.name',
+            4 => 'option'
+        );
+
+        // Total tanpa filter.
+        $this->db->from('hr_sentral.divisions a');
+        $recordsTotal = $this->db->count_all_results();
+
+        // Terapkan search dengan OR agar salah satu kolom cocok sudah tampil.
         $this->db->from('hr_sentral.divisions a');
         $this->db->join('hr_sentral.companies b', 'b.id = a.company_id', 'left');
-        if (!empty($search)) {
+        if ($search_value !== '') {
             $this->db->group_start();
-            $this->db->like('a.id', $search['value'], 'both');
-            $this->db->like('a.name', $search['value'], 'both');
-            $this->db->like('b.name', $search['value'], 'both');
+            $this->db->like('a.id', $search_value);
+            $this->db->or_like('a.name', $search_value);
+            $this->db->or_like('b.name', $search_value);
             $this->db->group_end();
         }
-        $this->db->limit($length, $start);
+        $tempdb = clone $this->db;
+        $recordsFiltered = $tempdb->count_all_results('', FALSE);
+
+        // Ambil data + ordering + paging.
+        $this->db->select('a.id, a.name, a.company_id, b.name as company_name');
+        if (is_array($order) && isset($order[0]['column']) && isset($columns[$order[0]['column']])) {
+            $colIdx = (int) $order[0]['column'];
+            $dir = (isset($order[0]['dir']) && strtolower($order[0]['dir']) === 'desc') ? 'DESC' : 'ASC';
+            if ($colIdx === 1 || $colIdx === 2 || $colIdx === 3) {
+                $this->db->order_by($columns[$colIdx], $dir);
+            } else {
+                $this->db->order_by('a.id', 'ASC');
+            }
+        } else {
+            $this->db->order_by('a.id', 'ASC');
+        }
+        if ($length > 0) {
+            $this->db->limit($length, max(0, $start));
+        }
         $query = $this->db->get();
 
-        $this->db->select('a.*,b.name as company_name');
-        $this->db->from('hr_sentral.divisions a');
-        $this->db->join('hr_sentral.companies b', 'b.id = a.company_id', 'left');
-        if (!empty($search)) {
-            $this->db->group_start();
-            $this->db->like('a.id', $search['value'], 'both');
-            $this->db->like('a.name', $search['value'], 'both');
-            $this->db->like('b.name', $search['value'], 'both');
-            $this->db->group_end();
-        }
-        $query_all = $this->db->get();
-
         $hasil = [];
-
-        $int    = 0;
+        $no = max(0, $start) + 1;
         foreach ($query->result() as $datas) {
-            $int++;
-
-            $button = "<a href='" . site_url('divisions/view/' . $datas->id) . "' class='btn btn-sm btn-primary' title='View Data' data-role='qtip'><i class='fa fa-eye'></i></a>";
+            // View-only: hanya tombol detail.
+            $button = "<a href='" . site_url('divisions/view/' . rawurlencode($datas->id)) . "' class='btn btn-sm btn-warning' title='Lihat Detail'><i class='fa fa-eye'></i></a>";
 
             $hasil[] = [
+                'no' => $no++,
                 'id' => $datas->id,
                 'name' => $datas->name,
                 'company_name' => $datas->company_name,
@@ -59,9 +78,9 @@ class divisions_model extends BF_Model
         }
 
         echo json_encode([
-            'draw' => intval($draw),
-            'recordsTotal' => $query_all->num_rows(),
-            'recordsFiltered' => $query_all->num_rows(),
+            'draw' => $draw,
+            'recordsTotal' => (int) $recordsTotal,
+            'recordsFiltered' => (int) $recordsFiltered,
             'data' => $hasil
         ]);
     }

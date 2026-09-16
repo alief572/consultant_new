@@ -44,6 +44,23 @@ $ENABLE_DELETE  = has_permission('Approval_Project_Budgeting.Delete');
     .box {
         overflow: visible !important;
     }
+
+    #table_penawaran {
+        font-size: 12px;
+        width: 100% !important;
+    }
+
+    #table_penawaran th {
+        background-color: #f4f6f9;
+        font-weight: 600;
+        padding: 8px 6px !important;
+        vertical-align: middle !important;
+    }
+
+    #table_penawaran td {
+        padding: 6px 8px !important;
+        vertical-align: middle !important;
+    }
 </style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 <div class="box">
@@ -53,18 +70,16 @@ $ENABLE_DELETE  = has_permission('Approval_Project_Budgeting.Delete');
     <!-- /.box-header -->
     <div class="box-body">
         <div class="table-responsive">
-            <table id="table_penawaran" class="table table-bordered table-striped nowrap">
+            <table id="table_penawaran" class="table table-bordered table-striped table-hover table-condensed" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th align="center">No</th>
-                        <th align="center">Nomor SPK Budgeting</th>
-                        <th align="center">Customer</th>
-                        <th align="center">Sales</th>
-                        <th align="center">Project Leader</th>
-                        <th align="center">Package</th>
-                        <th align="center">Status</th>
-                        <th align="center">Reject Reason</th>
-                        <th align="center">Action</th>
+                        <th class="text-center" style="width: 4%;">No</th>
+                        <th class="text-center" style="width: 25%;">Nomor SPK</th>
+                        <th class="text-center" style="width: 20%;">Customer</th>
+                        <th class="text-center" style="width: 13%;">Sales</th>
+                        <th class="text-center" style="width: 13%;">Project Leader</th>
+                        <th class="text-center" style="width: 19%;">Package</th>
+                        <th class="text-center" style="width: 6%;">Action</th>
                     </tr>
                 </thead>
 
@@ -133,9 +148,6 @@ $ENABLE_DELETE  = has_permission('Approval_Project_Budgeting.Delete');
     });
 
     function DataTables() {
-        // var dataTables = $('#table_penawaran').dataTable();
-        // dataTables.destroy();
-
         var dataTables = $('#table_penawaran').dataTable({
             ajax: {
                 url: siteurl + active_controller + 'get_data_spk',
@@ -145,10 +157,13 @@ $ENABLE_DELETE  = has_permission('Approval_Project_Budgeting.Delete');
 
                 }
             },
-            columns: [{
+            columns: [
+                {
                     data: 'no',
-                }, {
-                    data: 'id_spk_budgeting'
+                    className: 'text-center'
+                },
+                {
+                    data: 'spk_info'
                 },
                 {
                     data: 'nm_customer'
@@ -162,29 +177,25 @@ $ENABLE_DELETE  = has_permission('Approval_Project_Budgeting.Delete');
                 {
                     data: 'nm_project',
                     render: function(data, type, row) {
-                        if (type === 'display' && data && data.length > 40) {
-                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
+                        if (type === 'display' && data && data.length > 50) {
+                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 50) + '…</span>';
                         }
                         return data;
                     }
                 },
                 {
-                    data: 'status'
-                },
-                {
-                    data: 'reject_reason'
-                },
-                {
-                    data: 'option'
+                    data: 'option',
+                    className: 'text-center'
                 }
             ],
-            responsive: true,
+            responsive: false,
+            autoWidth: false,
             processing: true,
             serverSide: true,
             stateSave: true,
             destroy: true,
             paging: true,
-            scrollX: true
+            scrollX: false
         });
     }
 </script>

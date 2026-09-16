@@ -2265,7 +2265,8 @@ class Employees_model extends BF_Model
 			$gender = ($row->genderid === 'L') ? 'Laki-laki' : (($row->genderid === 'P') ? 'Perempuan' : $row->genderid);
 			$religi = isset($religi_map[$row->relid]) ? $religi_map[$row->relid] : '-';
 
-			$button = "<a href='" . site_url('employees/view/' . $row->id) . "' class='btn btn-sm btn-info' title='View Data' data-role='qtip'><i class='fa fa-eye'></i></a>";
+			// View-only: hanya tombol detail, id di-encode untuk URL aman.
+			$button = "<a href='" . site_url('employees/view/' . rawurlencode($row->id)) . "' class='btn btn-sm btn-warning' title='Lihat Detail'><i class='fa fa-eye'></i></a>";
 
 			$hasil[] = [
 				'no' => $no++,

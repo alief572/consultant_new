@@ -1,140 +1,115 @@
 <?php
-$ENABLE_ADD     = has_permission('Master_Employee.Add');
-$ENABLE_MANAGE  = has_permission('Master_Employee.Manage');
-$ENABLE_VIEW    = has_permission('Master_Employee.View');
-$ENABLE_DELETE  = has_permission('Master_Employee.Delete');
+defined('BASEPATH') OR exit('No direct script access allowed');
+// Modul view-only: tidak ada tombol Add / Edit / Delete.
+$total = isset($result) ? count($result) : 0;
 ?>
-
 <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>">
 
-<div class="box">
-	<div class="box-header">
-    <span class="pull-left">
-			<?php if($ENABLE_ADD) : ?>
-					<a class="btn btn-success btn-sm" href="<?= base_url('master_employee/add') ?>" title="Add"> <i class="fa fa-plus">&nbsp;</i>Add</a>
-			<?php endif; ?>
-      <!-- <a class="btn btn-warning btn-sm" href="<?= base_url('master_employee/excel_download') ?>" target='_blank' title="Download Excel"> <i class="fa fa-file-excel-o">&nbsp;</i>&nbsp;Download Excel</a> -->
-
-		</span>
+<div class="box box-primary">
+	<div class="box-header with-border">
+		<h3 class="box-title"><i class="fa fa-users"></i> Employee List</h3>
+		<div class="box-tools pull-right">
+			<span class="label label-default">Total : <?= (int) $total ?></span>
+			<span class="label label-info" title="Modul ini hanya untuk melihat data"><i class="fa fa-eye"></i> View Only</span>
+		</div>
 	</div>
 	<!-- /.box-header -->
 	<div class="box-body">
-		<table id="example1" class="table table-bordered table-striped">
-      <thead>
-          <th class="text-center">#</th>
-          <th class="text-left">Employee Name</th>
-          <th class="text-left">Gender</th>
-          <th class="text-left">Department</th>
-          <th class="text-left">Telepon</th>
-          <th class="text-left">Email</th>
-          <th class="text-center">Status</th>
-          <th class="text-center">Option</th>
-      </thead>
-		  <tbody>
-      <?php 
-        $numb = 0;
-        foreach($result AS $record){ $numb++;
-			$status = 'Active';
-			$status_ = 'green';
-			if($record->status == 'N'){
-				$status = 'Non-Active';
-				$status_ = 'red';
-			}
+		<div class="table-responsive">
+			<table id="example1" class="table table-bordered table-striped table-hover">
+				<thead>
+					<tr>
+						<th class="text-center" width="40">#</th>
+						<th class="text-left">Employee Name</th>
+						<th class="text-left" width="110">Gender</th>
+						<th class="text-left">Department</th>
+						<th class="text-left" width="130">Telepon</th>
+						<th class="text-left">Email</th>
+						<th class="text-center" width="110">Status</th>
+						<th class="text-center" width="70">Option</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php if (!empty($result)) : ?>
+						<?php $numb = 0; ?>
+						<?php foreach ($result as $record) : $numb++; ?>
+							<?php
+							$is_active = (isset($record->status) && $record->status === 'Y');
+							$status_text = $is_active ? 'Active' : 'Non-Active';
+							$status_class = $is_active ? 'success' : 'danger';
 
-			$gender = 'Laki-Laki';
-			if($record->gender == 'P'){
-				$gender = 'Perempuan';
-			}
-          ?>
-          <tr>
-            <td class="text-center"><?= $numb; ?></td>
-            <td><?= ucwords(strtolower($record->nm_karyawan)) ?></td>
-            <td><?= $gender ?></td>
-            <td><?= ucwords(strtolower(get_name('ms_department','nama','id',$record->department))) ?></td>
-            <td><?= strtoupper($record->no_ponsel) ?></td>
-            <td><?= strtolower($record->email) ?></td>
-            <td class="text-center"><span class='badge bg-<?=$status_;?>'><?=$status;?></span></td>
-            <td class="text-center">
-              <a href='<?=base_url('master_employee/add/'.$record->id.'/view');?>' class="btn btn-warning btn-sm" title="Detail"><i class="fa fa-eye"></i></a>
-              <?php if($ENABLE_MANAGE) : ?>
-                <a href='<?=base_url('master_employee/add/'.$record->id);?>' class="btn btn-primary btn-sm" title="Edit"><i class="fa fa-edit"></i></a>
-              <?php endif; ?>
-              <?php if($ENABLE_DELETE) : ?>
-                <button type='button' class="btn btn-danger btn-sm delete" title="Delete" data-id="<?=$record->id?>"><i class="fa fa-trash"></i></a>
-              <?php endif; ?>
-            </td>
-          </tr>
-        <?php } ?>
-      </tbody>
-		</table>
+							$gender_text = '-';
+							if (isset($record->gender)) {
+								if ($record->gender === 'L') {
+									$gender_text = 'Laki-Laki';
+								} elseif ($record->gender === 'P') {
+									$gender_text = 'Perempuan';
+								} elseif ($record->gender !== '' && $record->gender !== '0') {
+									$gender_text = $record->gender;
+								}
+							}
+
+							// department_name sudah di-JOIN dari model, fallback ke get_name untuk data lama.
+							$dept_name = '';
+							if (isset($record->department_name) && $record->department_name !== '') {
+								$dept_name = $record->department_name;
+							} elseif (!empty($record->department)) {
+								$dept_name = get_name('ms_department', 'nama', 'id', $record->department);
+							}
+
+							$emp_name = trim((string) (isset($record->nm_karyawan) ? $record->nm_karyawan : ''));
+							$emp_name = $emp_name !== '' ? ucwords(strtolower($emp_name)) : '-';
+							$phone = !empty($record->no_ponsel) ? strtoupper($record->no_ponsel) : '-';
+							$email = !empty($record->email) ? strtolower($record->email) : '-';
+							?>
+							<tr>
+								<td class="text-center"><?= $numb; ?></td>
+								<td><?= esc($emp_name) ?></td>
+								<td><?= esc($gender_text) ?></td>
+								<td><?= $dept_name !== '' ? esc(ucwords(strtolower($dept_name))) : '<span class="text-muted">-</span>' ?></td>
+								<td><?= esc($phone) ?></td>
+								<td><?= esc($email) ?></td>
+								<td class="text-center"><span class="label label-<?= $status_class; ?>"><?= $status_text; ?></span></td>
+								<td class="text-center">
+									<a href="<?= base_url('master_employee/detail/' . (int) $record->id); ?>" class="btn btn-warning btn-sm" title="Lihat Detail"><i class="fa fa-eye"></i></a>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					<?php endif; ?>
+				</tbody>
+			</table>
+		</div>
+		<p class="text-muted" style="margin-top:10px;"><i class="fa fa-info-circle"></i> Modul Employees hanya untuk melihat data. Penambahan, perubahan, dan penghapusan data tidak tersedia.</p>
 	</div>
 	<!-- /.box-body -->
 </div>
 
 <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script>
-<style>
-  .box-primary {
-
-    border: 1px solid #ddd;
-  }
-</style>
 <script type="text/javascript">
-  $(document).ready(function() {
-      var table = $('#example1').DataTable( {
-	        orderCellsTop: true,
-	        fixedHeader: true
-	    } );
-  });
-
-  $(document).on('click', '.delete', function(e){
-		e.preventDefault()
-		var id = $(this).data('id');
-		// alert(id);
-		swal({
-		  title: "Anda Yakin?",
-		  text: "Data akan di hapus!",
-		  type: "warning",
-		  showCancelButton: true,
-		  confirmButtonClass: "btn-info",
-		  confirmButtonText: "Yes",
-		  cancelButtonText: "No",
-		  closeOnConfirm: false
-		},
-		function(){
-		  $.ajax({
-			  type:'POST',
-			  url:siteurl+active_controller+'/delete',
-			  dataType : "json",
-			  data:{'id':id},
-			  success:function(data){
-				  if(data.status == '1'){
-					 swal({
-						  title: "Sukses",
-						  text : data.pesan,
-						  type : "success"
-						},
-						function (){
-							window.location.reload(true);
-						})
-				  } else {
-					swal({
-					  title : "Error",
-					  text  : data.pesan,
-					  type  : "error"
-					})
-
-				  }
-			  },
-			  error : function(){
-				swal({
-					  title : "Error",
-					  text  : "Error proccess !",
-					  type  : "error"
-					})
-			  }
-		  })
+	$(document).ready(function() {
+		$('#example1').DataTable({
+			autoWidth: false,
+			responsive: true,
+			pageLength: 25,
+			order: [[1, 'asc']],
+			columnDefs: [
+				{ orderable: false, searchable: false, targets: [0, 7] },
+				{ className: 'text-center', targets: [0, 6, 7] }
+			],
+			language: {
+				emptyTable: 'Belum ada data employee.',
+				search: 'Cari:',
+				lengthMenu: 'Tampil _MENU_ data',
+				info: 'Menampilkan _START_ - _END_ dari _TOTAL_ data',
+				infoEmpty: 'Tidak ada data',
+				paginate: {
+					first: 'Awal',
+					last: 'Akhir',
+					next: 'Lanjut',
+					previous: 'Kembali'
+				}
+			}
 		});
-
-	})
+	});
 </script>

@@ -66,7 +66,7 @@ class Master_biaya_model extends BF_Model
         $recordsFiltered = $tempdb->count_all_results();
 
         // 4. Select and Fetch Data
-        $this->db->select('a.id, a.nm_biaya, a.no_coa, a.nm_coa, IF(a.tipe_biaya = 1, "Akomodasi", "Others") as tipe');
+        $this->db->select('a.id, a.nm_biaya, a.tipe_biaya, a.no_coa, a.nm_coa, IF(a.tipe_biaya = 1, "Akomodasi", "Others") as tipe');
 
         // Ordering
         if (isset($order[0]['column']) && isset($columns[$order[0]['column']])) {
@@ -92,30 +92,41 @@ class Master_biaya_model extends BF_Model
 
         foreach ($get_data_biaya->result() as $item) {
 
-            $edit = '';
-            $delete = '';
+            $view_btn = '';
+            if (has_permission($this->ENABLE_VIEW)) {
+                $view_btn = '<button type="button" class="btn-table-action-view view_biaya_modal" data-id="' . $item->id . '" title="Lihat Detail"><i class="fa fa-eye"></i> <span>View</span></button>';
+            }
 
+            $edit_btn = '';
             if (has_permission($this->ENABLE_MANAGE)) {
-                $edit = '<button type="button" class="btn btn-sm btn-warning edit_biaya_modal" data-id="' . $item->id . '" title="Edit Biaya"><i class="fa fa-pencil"></i></button>';
+                $edit_btn = '<button type="button" class="btn-table-action-edit edit_biaya_modal" data-id="' . $item->id . '" title="Edit Data"><i class="fa fa-pencil-square-o"></i> <span>Edit</span></button>';
             }
 
+            $del_btn = '';
             if (has_permission($this->ENABLE_DELETE)) {
-                $delete = '<button type="button" class="btn btn-sm btn-danger del_biaya" data-id="' . $item->id . '" title="Delete Biaya"><i class="fa fa-trash"></i></button>';
+                $del_btn = '<button type="button" class="btn-table-action-delete del_biaya" data-id="' . $item->id . '" title="Hapus Data"><i class="fa fa-trash-o"></i> <span>Hapus</span></button>';
             }
 
-            $buttons = $edit . ' ' . $delete;
+            $option = '<div class="text-center" style="display: inline-flex; gap: 4px;">' . $view_btn . $edit_btn . $del_btn . '</div>';
 
-            $coa = '';
-            if ($item->no_coa !== null && $item->nm_coa !== null) {
-                $coa = '(' . $item->no_coa . ') - ' . $item->nm_coa;
+            $tipe_badge = '';
+            if ($item->tipe_biaya == 1) {
+                $tipe_badge = '<span class="badge" style="background: #e0f2fe; color: #0284c7; font-weight: 600; padding: 5px 10px; border-radius: 6px; font-size: 12px;"><i class="fa fa-bed"></i> Akomodasi</span>';
+            } else {
+                $tipe_badge = '<span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 600; padding: 5px 10px; border-radius: 6px; font-size: 12px;"><i class="fa fa-cubes"></i> Others</span>';
+            }
+
+            $coa = '<span class="text-muted">-</span>';
+            if (!empty($item->no_coa)) {
+                $coa = '<span class="label label-info" style="font-size: 11px; padding: 4px 8px; border-radius: 4px; display: inline-block; background-color: #0284c7;"><i class="fa fa-book"></i> (' . htmlspecialchars($item->no_coa) . ') ' . htmlspecialchars($item->nm_coa) . '</span>';
             }
 
             $hasil[] = [
-                'no' => $no,
-                'nm_biaya' => $item->nm_biaya,
-                'tipe_biaya' => $item->tipe,
+                'no' => '<span class="text-muted">' . $no . '</span>',
+                'nm_biaya' => '<div style="font-weight: 600; color: #1e293b;">' . htmlspecialchars($item->nm_biaya) . '</div>',
+                'tipe_biaya' => $tipe_badge,
                 'coa' => $coa,
-                'option' => $buttons
+                'option' => $option
             ];
 
             $no++;
