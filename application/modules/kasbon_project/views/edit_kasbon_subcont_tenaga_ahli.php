@@ -182,15 +182,10 @@ if (!$is_in_team) {
                     <td class="pd-5 valign-top" width="400">
                         <input type="date" name="tgl" id="" class="form-control form-control-sm" value="<?= $header->tgl ?>" readonly>
                     </td>
-<<<<<<< HEAD
-                    <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
-                    <td class="pd-5 valign-top" width="400">
-=======
                 </tr>
                 <tr>
                     <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
                     <td class="pd-5 valign-top" width="400" colspan="3">
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                         <textarea name="deskripsi" id="" class="form-control form-control-sm" required placeholder="Deskripsi / Keterangan"><?= $header->deskripsi ?></textarea>
                     </td>
                 </tr>
@@ -700,133 +695,6 @@ if (!$is_in_team) {
         }
 
         checkRequestByTeam();
-    });
-
-    var selectedBuktiFiles = [];
-
-    $(document).on('click', '#btn-pilih-bukti, #dropzone-bukti', function() {
-        $('#input-bukti-file').click();
-    });
-
-    $(document).on('change', '#input-bukti-file', function() {
-        var files = this.files;
-        for (var i = 0; i < files.length; i++) {
-            selectedBuktiFiles.push(files[i]);
-        }
-        this.value = '';
-        renderSelectedBukti();
-    });
-
-    // Drag and drop handlers
-    $(document).on('dragover dragenter', '#dropzone-bukti', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        $(this).css({
-            'border-color': '#3c8dbc',
-            'background': '#eef5fb'
-        });
-    });
-
-    $(document).on('dragleave dragend drop', '#dropzone-bukti', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        $(this).css({
-            'border-color': '#b4c6dc',
-            'background': '#fdfdfe'
-        });
-    });
-
-    $(document).on('drop', '#dropzone-bukti', function(e) {
-        var files = e.originalEvent.dataTransfer.files;
-        if (files && files.length > 0) {
-            for (var i = 0; i < files.length; i++) {
-                selectedBuktiFiles.push(files[i]);
-            }
-            renderSelectedBukti();
-        }
-    });
-
-    function formatBytes(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        var k = 1024;
-        var sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        var i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-    }
-
-    function renderSelectedBukti() {
-        var html = '';
-        if (selectedBuktiFiles.length === 0) {
-            html = '<div id="empty-bukti-notice" class="text-center text-muted" style="padding: 15px; border: 1px dashed #ccc; border-radius: 4px; font-size: 13px;">' +
-                '<i class="fa fa-cloud-upload" style="font-size: 24px; color: #aaa; margin-bottom: 5px; display: block;"></i>' +
-                'Klik tombol <b>Upload Bukti</b> untuk memilih file baru</div>';
-        } else {
-            html += '<small class="text-muted" style="font-weight: bold;">File Baru Dipilih (' + selectedBuktiFiles.length + '):</small><div class="list-group" style="margin-top: 5px; margin-bottom: 0;">';
-            for (var i = 0; i < selectedBuktiFiles.length; i++) {
-                var file = selectedBuktiFiles[i];
-                html += '<div class="list-group-item" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; margin-bottom: 4px; background: #fff; border: 1px solid #e3e6f0; border-radius: 4px;">' +
-                    '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">' +
-                    '<i class="fa fa-file-text-o text-primary" style="margin-right: 8px;"></i>' +
-                    '<b>' + file.name + '</b> <small class="text-muted">(' + formatBytes(file.size) + ')</small>' +
-                    '</span>' +
-                    '<button type="button" class="btn btn-xs btn-danger btn-remove-selected-bukti" data-index="' + i + '" title="Hapus"><i class="fa fa-trash"></i></button>' +
-                    '</div>';
-            }
-            html += '</div>';
-        }
-        $('#container-bukti-list').html(html);
-    }
-
-    $(document).on('click', '.btn-remove-selected-bukti', function(e) {
-        e.stopPropagation();
-        var index = $(this).data('index');
-        selectedBuktiFiles.splice(index, 1);
-        renderSelectedBukti();
-    });
-
-    $(document).on('click', '.btn-del-bukti', function() {
-        var id = $(this).data('id');
-        Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure ?',
-            text: 'File bukti penggunaan ini akan dihapus permanen !',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33'
-        }).then((res) => {
-            if (res.isConfirmed) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'del_bukti_penggunaan',
-                    data: { id: id },
-                    dataType: 'JSON',
-                    success: function(result) {
-                        if (result.status == 1) {
-                            Swal.fire({
-            icon: 'success',
-            title: 'Success !',
-            text: result.pesan,
-            timer: 1500
-        });
-                            $('#row-bukti-' + id).remove();
-                        } else {
-                            Swal.fire({
-            icon: 'warning',
-            title: 'Failed !',
-            text: result.pesan
-        });
-                        }
-                    },
-                    error: function() {
-                        Swal.fire({
-            icon: 'error',
-            title: 'Error !',
-            text: 'Please try again later !'
-        });
-                    }
-                });
-            }
-        });
     });
 
     var selectedBuktiFiles = [];

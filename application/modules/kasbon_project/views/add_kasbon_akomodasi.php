@@ -165,15 +165,10 @@ if (!$is_in_team) {
                     <td class="pd-5 valign-top" width="400">
                         <input type="date" class="form-control form-control-sm" name="tgl" value="<?= date('Y-m-d') ?>" readonly>
                     </td>
-<<<<<<< HEAD
-                    <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
-                    <td class="pd-5 valign-top" width="400">
-=======
                 </tr>
                 <tr>
                     <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
                     <td class="pd-5 valign-top" width="400" colspan="3">
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                         <textarea name="deskripsi" id="" class="form-control form-control-sm" required placeholder="Deskripsi / Keterangan"></textarea>
                     </td>
                 </tr>
@@ -875,23 +870,6 @@ if (!$is_in_team) {
 
         if (valid == '0') {
             Swal.fire({
-<<<<<<< HEAD
-            icon: 'warning',
-            title: 'Warning !',
-            text: 'Total pengajuan melebihi sisa budget !'
-        });
-        } else {
-            Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure ?',
-            text: 'This data will be saved !',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, save it!',
-            cancelButtonText: 'Cancel'
-        }).then((res) => {
-=======
                 icon: 'warning',
                 title: 'Warning !',
                 text: 'Total pengajuan melebihi sisa budget !'
@@ -907,7 +885,6 @@ if (!$is_in_team) {
                 confirmButtonText: 'Yes, save it!',
                 cancelButtonText: 'Cancel'
             }).then((res) => {
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                 if (res.isConfirmed) {
                     var formData = new FormData($('#frm-data')[0]);
                     for (var i = 0; i < selectedBuktiFiles.length; i++) {
@@ -925,49 +902,27 @@ if (!$is_in_team) {
                         success: function(result) {
                             if (result.status == '1') {
                                 Swal.fire({
-<<<<<<< HEAD
-            icon: 'success',
-            title: 'Success !',
-            text: result.pesan,
-            timer: 2000
-        }).then(() => {
-=======
                                     icon: 'success',
                                     title: 'Success !',
                                     text: result.pesan,
                                     timer: 2000
                                 }).then(() => {
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                                     window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>";
                                 });
                             } else {
                                 Swal.fire({
-<<<<<<< HEAD
-            icon: 'warning',
-            title: 'Failed !',
-            text: result.pesan
-        });
-=======
                                     icon: 'warning',
                                     title: 'Failed !',
                                     text: result.pesan
                                 });
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                             }
                         },
                         error: function(result) {
                             Swal.fire({
-<<<<<<< HEAD
-            icon: 'error',
-            title: 'Error !',
-            text: 'Please try again later !'
-        });
-=======
                                 icon: 'error',
                                 title: 'Error !',
                                 text: 'Please try again later !'
                             });
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                         }
                     });
                 }

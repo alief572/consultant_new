@@ -25,15 +25,9 @@ class Kasbon_project_model extends BF_Model
     function generate_id_kasbon_project($tipe = null)
     {
 
-<<<<<<< HEAD
-        if($tipe == '1') {
-            $tipe_data = 'format_kasbon';
-        } else if($tipe == '2') {
-=======
         if ($tipe == '1') {
             $tipe_data = 'format_kasbon';
         } else if ($tipe == '2') {
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
             $tipe_data = 'format_direct_payment';
         } else {
             $tipe_data = 'format_po';
@@ -68,15 +62,9 @@ class Kasbon_project_model extends BF_Model
 
             $no_doc = $newcode;
         }
-<<<<<<< HEAD
-        
-        return $no_doc;
-        
-=======
 
         return $no_doc;
 
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
         // $Ym             = date('ym');
         // $srcMtr            = "SELECT MAX(id) as maxP FROM kons_tr_kasbon_project_header WHERE id LIKE '%/REQ/V/" . date('Y') . "%' ";
         // $resultMtr        = $this->db->query($srcMtr)->result_array();

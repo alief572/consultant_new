@@ -165,15 +165,10 @@ if (!$is_in_team) {
                     <td class="pd-5 valign-top" width="400">
                         <input type="date" class="form-control form-control-sm" name="tgl" value="<?= date('Y-m-d') ?>" readonly>
                     </td>
-<<<<<<< HEAD
-                    <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
-                    <td class="pd-5 valign-top" width="400">
-=======
                 </tr>
                 <tr>
                     <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
                     <td class="pd-5 valign-top" width="400" colspan="3">
->>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                         <textarea name="deskripsi" id="" class="form-control form-control-sm" required placeholder="Deskripsi / Keterangan"></textarea>
                     </td>
                 </tr>
@@ -610,84 +605,6 @@ if (!$is_in_team) {
         }
 
         checkRequestByTeam();
-    });
-
-    var selectedBuktiFiles = [];
-
-    $(document).on('click', '#btn-pilih-bukti, #dropzone-bukti', function() {
-        $('#input-bukti-file').click();
-    });
-
-    $(document).on('change', '#input-bukti-file', function() {
-        var files = this.files;
-        for (var i = 0; i < files.length; i++) {
-            selectedBuktiFiles.push(files[i]);
-        }
-        this.value = '';
-        renderSelectedBukti();
-    });
-
-    // Drag and drop handlers
-    $(document).on('dragover dragenter', '#dropzone-bukti', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        $(this).css({
-            'border-color': '#3c8dbc',
-            'background': '#eef5fb'
-        });
-    });
-
-    $(document).on('dragleave dragend drop', '#dropzone-bukti', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        $(this).css({
-            'border-color': '#b4c6dc',
-            'background': '#fdfdfe'
-        });
-    });
-
-    $(document).on('drop', '#dropzone-bukti', function(e) {
-        var files = e.originalEvent.dataTransfer.files;
-        if (files && files.length > 0) {
-            for (var i = 0; i < files.length; i++) {
-                selectedBuktiFiles.push(files[i]);
-            }
-            renderSelectedBukti();
-        }
-    });
-
-    function formatBytes(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        var k = 1024;
-        var sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        var i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-    }
-
-    function renderSelectedBukti() {
-        var html = '';
-        if (selectedBuktiFiles.length > 0) {
-            html += '<small class="text-muted" style="font-weight: bold;">File Baru Dipilih (' + selectedBuktiFiles.length + '):</small><div class="list-group" style="margin-top: 5px; margin-bottom: 0;">';
-            for (var i = 0; i < selectedBuktiFiles.length; i++) {
-                var file = selectedBuktiFiles[i];
-                html += '<div class="list-group-item" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; margin-bottom: 4px; background: #fff; border: 1px solid #e3e6f0; border-radius: 4px;">' +
-                    '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">' +
-                    '<i class="fa fa-file-text-o text-primary" style="margin-right: 8px;"></i>' +
-                    '<b>' + file.name + '</b> <small class="text-muted">(' + formatBytes(file.size) + ')</small>' +
-                    '</span>' +
-                    '<button type="button" class="btn btn-xs btn-danger btn-remove-selected-bukti" data-index="' + i + '" title="Hapus"><i class="fa fa-trash"></i></button>' +
-                    '</div>';
-            }
-            html += '</div>';
-        }
-        $('#container-bukti-list').html(html);
-    }
-
-    $(document).on('click', '.btn-remove-selected-bukti', function(e) {
-        e.stopPropagation();
-        var index = $(this).data('index');
-        selectedBuktiFiles.splice(index, 1);
-        renderSelectedBukti();
     });
 
     var selectedBuktiFiles = [];

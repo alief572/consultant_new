@@ -57,17 +57,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         margin-top: 5px;
     }
 
-    .tag-outside {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 11px;
-        color: #c76b00;
-        background: #fff2df;
-        border: 1px solid #f0d3a0;
-        padding: 1px 8px;
-        border-radius: 10px;
-        margin-top: 4px;
+    .dropdown-menu {
+
+        position: absolute;
+        top: 100%;
+        /* Position below the button */
+        right: 0;
+        /* Align with left edge */
     }
 
     .reject-note {
@@ -82,31 +78,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         line-height: 1.3;
     }
 
-    .avatar {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: #e3e6ea;
-        color: #5c6470;
-        font-size: 11px;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 8px;
-        flex-shrink: 0;
-    }
-
-    .dropdown-menu {
-
-        position: absolute;
-        top: 100%;
-        /* Position below the button */
-        right: 0;
-        /* Align with left edge */
-    }
-
-    .btn {
+    .button {
         font-weight: bold;
     }
 </style>
@@ -165,7 +137,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <table border="0" style="width: 100%;">
             <tr>
                 <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Pengajuan Akomodasi</h4>
+                    <h4 style="font-weight: 800;">Akomodasi</h4>
                 </th>
                 <th class="pd-5">
                     <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
@@ -188,12 +160,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>Aktual</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_akomodasi_aktual">Rp. <?= number_format($nilai_kasbon_aktual_akomodasi) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_akomodasi_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_akomodasi) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -209,7 +181,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_akomodasi_sisa">Rp. <?= number_format($budget_akomodasi - $nilai_kasbon_aktual_akomodasi) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_akomodasi_on_process">Rp. <?= number_format($budget_akomodasi - $nilai_kasbon_on_proses_akomodasi) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -220,27 +192,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body" style="overflow: visible !important;">
-        <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
-        </a>
-        <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
-            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
-        </a>
-        <a href="<?= base_url('kasbon_project/add_kasbon_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
-            <i class="fa fa-plus"></i> Add Pengajuan PO
-        </a>
         <table class="table table-striped mt-5" id="table_kasbon_akomodasi" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Req Number</th>
+                    <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
-                    <th class="text-center">Request By</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
                     <th class="text-center">Date</th>
-                    <th class="text-center">Option</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                 </tr>
             </thead>
             <tbody>
@@ -250,21 +213,14 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         <br><br>
 
-        <h4 style="font-weight: 800;">
-            Overbudget Akomodasi
-        </h4>
-        <a href="<?= base_url('kasbon_project/add_request_budget_akomodasi/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Overbudget
-        </a>
+        <h4 style="font-weight: 800;">Overbudget Akomodasi</h4>
         <table class="table table-striped mt-5" id="table_ovb_akomodasi" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
-                    <th class="text-center">Status</th>
                     <th class="text-center">Pembuat Pengajuan</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -279,7 +235,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         <table border="0" style="width: 100%;">
             <tr>
                 <th class="pd-5" width="700">
-                    <h4 style="font-weight: 800;">Pengajuan Others</h4>
+                    <h4 style="font-weight: 800;">Others</h4>
                 </th>
                 <th class="pd-5">
                     <div class="col-md-12" style="border: 1px solid #ccc; border-radius: 10px;">
@@ -302,12 +258,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>Aktual</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_others_aktual">Rp. <?= number_format($nilai_kasbon_aktual_others) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_others_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_others) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -323,7 +279,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_others_sisa">Rp. <?= number_format($budget_others - $nilai_kasbon_aktual_others) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_others_on_process">Rp. <?= number_format($budget_others - $nilai_kasbon_on_proses_others) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -334,50 +290,35 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <a href="<?= base_url('kasbon_project/add_kasbon_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
-        </a>
-        <a href="<?= base_url('kasbon_project/add_kasbon_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
-            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
-        </a>
-        <a href="<?= base_url('kasbon_project/add_kasbon_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
-            <i class="fa fa-plus"></i> Add Pengajuan PO
-        </a>
         <table class="table table-striped mt-5" id="table_kasbon_others" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Req Number</th>
+                    <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
-                    <th class="text-center">Request By</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
                     <th class="text-center">Date</th>
-                    <th class="text-center">Option</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                 </tr>
             </thead>
             <tbody>
 
             </tbody>
         </table>
+
         <br><br>
 
-        <h4 style="font-weight: 800;">
-            Overbudget Others
-        </h4>
-        <a href="<?= base_url('kasbon_project/add_request_budget_others/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Overbudget
-        </a>
+        <h4 style="font-weight: 800;">Overbudget Others</h4>
         <table class="table table-striped mt-5" id="table_ovb_others" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
-                    <th class="text-center">Status</th>
                     <th class="text-center">Pembuat Pengajuan</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -415,12 +356,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>Aktual</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_lab_aktual">Rp. <?= number_format($nilai_kasbon_aktual_lab) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_lab_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_lab) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -436,7 +377,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_lab_sisa">Rp. <?= number_format($budget_lab - $nilai_kasbon_aktual_lab) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_lab_on_process">Rp. <?= number_format($budget_lab - $nilai_kasbon_on_proses_lab) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -447,50 +388,35 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <a href="<?= base_url('kasbon_project/add_kasbon_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
-        </a>
-        <a href="<?= base_url('kasbon_project/add_kasbon_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
-            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
-        </a>
-        <a href="<?= base_url('kasbon_project/add_kasbon_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
-            <i class="fa fa-plus"></i> Add Pengajuan PO
-        </a>
         <table class="table table-striped mt-5" id="table_kasbon_lab" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Req Number</th>
+                    <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
-                    <th class="text-center">Request By</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
                     <th class="text-center">Date</th>
-                    <th class="text-center">Option</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                 </tr>
             </thead>
             <tbody>
 
             </tbody>
         </table>
+
         <br><br>
 
-        <h4 style="font-weight: 800;">
-            Overbudget Lab
-        </h4>
-        <a href="<?= base_url('kasbon_project/add_request_budget_lab/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Overbudget
-        </a>
+        <h4 style="font-weight: 800;">Overbudget Others</h4>
         <table class="table table-striped mt-5" id="table_ovb_lab" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
-                    <th class="text-center">Status</th>
                     <th class="text-center">Pembuat Pengajuan</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -528,12 +454,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>Aktual</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_subcont_tenaga_ahli_aktual">Rp. <?= number_format($nilai_kasbon_aktual_subcont_tenaga_ahli) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_subcont_tenaga_ahli_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_subcont_tenaga_ahli) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -549,7 +475,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_subcont_tenaga_ahli_sisa">Rp. <?= number_format($budget_subcont_tenaga_ahli - $nilai_kasbon_aktual_subcont_tenaga_ahli) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_subcont_tenaga_ahli_on_process">Rp. <?= number_format($budget_subcont_tenaga_ahli - $nilai_kasbon_on_proses_subcont_tenaga_ahli) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -560,50 +486,35 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
-        </a>
-        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
-            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
-        </a>
-        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
-            <i class="fa fa-plus"></i> Add Pengajuan PO
-        </a>
         <table class="table table-striped mt-5" id="table_kasbon_subcont_tenaga_ahli" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Req Number</th>
+                    <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
-                    <th class="text-center">Request By</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
                     <th class="text-center">Date</th>
-                    <th class="text-center">Option</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                 </tr>
             </thead>
             <tbody>
 
             </tbody>
         </table>
+
         <br><br>
 
-        <h4 style="font-weight: 800;">
-            Overbudget Subcont Tenaga Ahli
-        </h4>
-        <a href="<?= base_url('kasbon_project/add_request_budget_subcont_tenaga_ahli/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Overbudget
-        </a>
+        <h4 style="font-weight: 800;">Overbudget Subcont Tenaga Ahli</h4>
         <table class="table table-striped mt-5" id="table_ovb_subcont_tenaga_ahli" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
-                    <th class="text-center">Status</th>
                     <th class="text-center">Pembuat Pengajuan</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
@@ -641,12 +552,12 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         <table border="0" style="width: 100%;">
                             <tr>
                                 <th class="">
-                                    <h4>Aktual</h4>
+                                    <h4>Actual</h4>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_subcont_perusahaan_aktual">Rp. <?= number_format($nilai_kasbon_aktual_subcont_perusahaan) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_subcont_perusahaan_on_process">Rp. <?= number_format($nilai_kasbon_on_proses_subcont_perusahaan) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -662,7 +573,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                             </tr>
                             <tr>
                                 <th class="">
-                                    <h3 style="font-weight: 800;" class="budget_subcont_perusahaan_sisa">Rp. <?= number_format($budget_subcont_perusahaan - $nilai_kasbon_aktual_subcont_perusahaan) ?></h3>
+                                    <h3 style="font-weight: 800;" class="budget_subcont_perusahaan_on_process">Rp. <?= number_format($budget_subcont_perusahaan - $nilai_kasbon_on_proses_subcont_perusahaan) ?></h3>
                                 </th>
                             </tr>
                         </table>
@@ -673,56 +584,43 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     </div>
 
     <div class="box-body">
-        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/1' ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Pengajuan Kasbon
-        </a>
-        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/2' ?>" class="btn btn-sm btn-warning">
-            <i class="fa fa-plus"></i> Add Pengajuan Direct Payment
-        </a>
-        <a href="<?= base_url('kasbon_project/add_kasbon_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) . '/3' ?>" class="btn btn-sm btn-danger">
-            <i class="fa fa-plus"></i> Add Pengajuan PO
-        </a>
         <table class="table table-striped mt-5" id="table_kasbon_subcont_perusahaan" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Req Number</th>
+                    <th class="text-center">Req. Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
-                    <th class="text-center">Request By</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Reject Reason</th>
                     <th class="text-center">Date</th>
-                    <th class="text-center">Option</th>
+                    <th class="text-center">Pembuat Pengajuan</th>
                 </tr>
             </thead>
             <tbody>
 
             </tbody>
         </table>
+
         <br><br>
 
-        <h4 style="font-weight: 800;">
-            Overbudget Subcont Perusahaan
-        </h4>
-        <a href="<?= base_url('kasbon_project/add_request_budget_subcont_perusahaan/' . urlencode(str_replace('/', '|', $id_spk_budgeting))) ?>" class="btn btn-sm btn-success">
-            <i class="fa fa-plus"></i> Add Overbudget
-        </a>
+        <h4 style="font-weight: 800;">Overbudget Subcont Perusahaan</h4>
         <table class="table table-striped mt-5" id="table_ovb_subcont_perusahaan" style="overflow: visible !important;">
             <thead>
                 <tr>
                     <th class="text-center">No</th>
                     <th class="text-center">ID Request</th>
                     <th class="text-center">Amount</th>
-                    <th class="text-center">Status</th>
                     <th class="text-center">Pembuat Pengajuan</th>
-                    <th class="text-center">Option</th>
                 </tr>
             </thead>
             <tbody>
 
             </tbody>
         </table>
+
+        <br><br>
 
         <a href="<?= base_url('kasbon_project') ?>" class="btn btn-sm btn-danger">
             <i class="fa fa-arrow-left"></i> Back
@@ -732,23 +630,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
 
 
-
-
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 
 <script>
     $(document).ready(function() {
-        DataTables_kasbon_akomodasi();
-        DataTables_kasbon_others();
-        DataTables_kasbon_lab();
-        DataTables_kasbon_subcont_tenaga_ahli();
-        DataTables_kasbon_subcont_perusahaan();
-        DataTables_ovb_akomodasi();
-        DataTables_ovb_others();
-        DataTables_ovb_lab();
-        DataTables_ovb_subcont_tenaga_ahli();
-        DataTables_ovb_subcont_perusahaan();
+        DataTables_kasbon_akomodasi('view');
+        DataTables_kasbon_others('view');
+        DataTables_kasbon_lab('view');
+        DataTables_kasbon_subcont_tenaga_ahli('view');
+        DataTables_kasbon_subcont_perusahaan('view');
+        DataTables_ovb_akomodasi('view');
+        DataTables_ovb_others('view');
+        DataTables_ovb_lab('view');
+        DataTables_ovb_subcont_tenaga_ahli('view');
+        DataTables_ovb_subcont_perusahaan('view');
     });
 
 
@@ -786,16 +682,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'tipe'
                 },
                 {
-                    data: 'request_by'
+                    data: 'status'
                 },
                 {
-                    data: 'status'
+                    data: 'reject_reason'
                 },
                 {
                     data: 'date'
                 },
                 {
-                    data: 'option'
+                    data: 'nm_pembuat'
                 }
             ]
         });
@@ -834,16 +730,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'tipe'
                 },
                 {
-                    data: 'request_by'
+                    data: 'status'
                 },
                 {
-                    data: 'status'
+                    data: 'reject_reason'
                 },
                 {
                     data: 'date'
                 },
                 {
-                    data: 'option'
+                    data: 'nm_pembuat'
                 }
             ]
         });
@@ -882,16 +778,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'tipe'
                 },
                 {
-                    data: 'request_by'
+                    data: 'status'
                 },
                 {
-                    data: 'status'
+                    data: 'reject_reason'
                 },
                 {
                     data: 'date'
                 },
                 {
-                    data: 'option'
+                    data: 'nm_pembuat'
                 }
             ]
         });
@@ -930,16 +826,16 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'tipe'
                 },
                 {
-                    data: 'request_by'
+                    data: 'status'
                 },
                 {
-                    data: 'status'
+                    data: 'reject_reason'
                 },
                 {
                     data: 'date'
                 },
                 {
-                    data: 'option'
+                    data: 'nm_pembuat'
                 }
             ]
         });
@@ -978,20 +874,22 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'tipe'
                 },
                 {
-                    data: 'request_by'
+                    data: 'status'
                 },
                 {
-                    data: 'status'
+                    data: 'reject_reason'
                 },
                 {
                     data: 'date'
                 },
                 {
-                    data: 'option'
+                    data: 'nm_pembuat'
                 }
             ]
         });
     }
+
+
 
     function DataTables_ovb_akomodasi(view = null) {
         var dataTables_ovb_akomodasi = $('#table_ovb_akomodasi').DataTable();
@@ -1007,7 +905,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 dataType: "JSON",
                 data: function(d) {
                     d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
+                    d.view = null
                 }
             },
             columns: [{
@@ -1020,26 +918,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'amount'
                 },
                 {
-                    data: 'sts'
-                },
-                {
                     data: 'nm_pembuat'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
     }
 
-
-
     function DataTables_ovb_others(view = null) {
-        var dataTables_ovb_akomodasi = $('#table_ovb_others').DataTable();
+        var dataTables_ovb_others = $('#table_ovb_others').DataTable();
 
         // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_ovb_akomodasi.destroy();
-        dataTables_ovb_akomodasi = $('#table_ovb_others').dataTable({
+        dataTables_ovb_others.destroy();
+        dataTables_ovb_others = $('#table_ovb_others').dataTable({
             processing: true,
             serverSide: true,
             ajax: {
@@ -1048,7 +938,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 dataType: "JSON",
                 data: function(d) {
                     d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
+                    d.view = null
                 }
             },
             columns: [{
@@ -1061,24 +951,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'amount'
                 },
                 {
-                    data: 'sts'
-                },
-                {
                     data: 'nm_pembuat'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
     }
 
     function DataTables_ovb_lab(view = null) {
-        var dataTables_ovb_akomodasi = $('#table_ovb_lab').DataTable();
+        var dataTables_ovb_lab = $('#table_ovb_lab').DataTable();
 
         // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_ovb_akomodasi.destroy();
-        dataTables_ovb_akomodasi = $('#table_ovb_lab').dataTable({
+        dataTables_ovb_lab.destroy();
+        dataTables_ovb_lab = $('#table_ovb_lab').dataTable({
             processing: true,
             serverSide: true,
             ajax: {
@@ -1087,7 +971,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 dataType: "JSON",
                 data: function(d) {
                     d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
+                    d.view = null
                 }
             },
             columns: [{
@@ -1100,24 +984,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'amount'
                 },
                 {
-                    data: 'sts'
-                },
-                {
                     data: 'nm_pembuat'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
     }
 
     function DataTables_ovb_subcont_tenaga_ahli(view = null) {
-        var dataTables_ovb_akomodasi = $('#table_ovb_subcont_tenaga_ahli').DataTable();
+        var dataTables_ovb_subcont_tenaga_ahli = $('#table_ovb_subcont_tenaga_ahli').DataTable();
 
         // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_ovb_akomodasi.destroy();
-        dataTables_ovb_akomodasi = $('#table_ovb_subcont_tenaga_ahli').dataTable({
+        dataTables_ovb_subcont_tenaga_ahli.destroy();
+        dataTables_ovb_subcont_tenaga_ahli = $('#table_ovb_subcont_tenaga_ahli').dataTable({
             processing: true,
             serverSide: true,
             ajax: {
@@ -1126,7 +1004,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 dataType: "JSON",
                 data: function(d) {
                     d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
+                    d.view = null
                 }
             },
             columns: [{
@@ -1139,24 +1017,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'amount'
                 },
                 {
-                    data: 'sts'
-                },
-                {
                     data: 'nm_pembuat'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
     }
 
     function DataTables_ovb_subcont_perusahaan(view = null) {
-        var dataTables_ovb_akomodasi = $('#table_ovb_subcont_perusahaan').DataTable();
+        var dataTables_ovb_subcont_perusahaan = $('#table_ovb_subcont_perusahaan').DataTable();
 
         // Destroying and Reinitializing (Make sure to destroy before reinitialize)
-        dataTables_ovb_akomodasi.destroy();
-        dataTables_ovb_akomodasi = $('#table_ovb_subcont_perusahaan').dataTable({
+        dataTables_ovb_subcont_perusahaan.destroy();
+        dataTables_ovb_subcont_perusahaan = $('#table_ovb_subcont_perusahaan').dataTable({
             processing: true,
             serverSide: true,
             ajax: {
@@ -1165,7 +1037,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 dataType: "JSON",
                 data: function(d) {
                     d.id_spk_budgeting = "<?= $list_budgeting->id_spk_budgeting ?>"
-                    d.view = view
+                    d.view = null
                 }
             },
             columns: [{
@@ -1178,13 +1050,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'amount'
                 },
                 {
-                    data: 'sts'
-                },
-                {
                     data: 'nm_pembuat'
-                },
-                {
-                    data: 'option'
                 }
             ]
         });
@@ -1226,21 +1092,8 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             cache: false,
             dataType: 'json',
             success: function(result) {
-
-                $('.budget_akomodasi_aktual').html('Rp. ' + number_format(result.nilai_budget_akomodasi_aktual));
-                $('.budget_akomodasi_sisa').html('Rp. ' + number_format(result.nilai_budget_akomodasi - result.nilai_budget_akomodasi_aktual));
-
-                $('.budget_others_aktual').html('Rp. ' + number_format(result.nilai_budget_others_aktual));
-                $('.budget_others_sisa').html('Rp. ' + number_format(result.nilai_budget_others - result.nilai_budget_others_aktual));
-
-                $('.budget_lab_aktual').html('Rp. ' + number_format(result.nilai_budget_lab_aktual));
-                $('.budget_lab_sisa').html('Rp. ' + number_format(result.nilai_budget_lab));
-
-                $('.budget_subcont_tenaga_ahli_aktual').html('Rp. ' + number_format(result.nilai_budget_subcont_tenaga_ahli_aktual));
-                $('.budget_subcont_tenaga_ahli_sisa').html('Rp. ' + number_format(result.nilai_budget_subcont_tenaga_ahli));
-
-                $('.budget_subcont_perusahaan_aktual').html('Rp. ' + number_format(result.nilai_budget_subcont_perusahaan_aktual));
-                $('.budget_subcont_perusahaan_sisa').html('Rp. ' + number_format(result.nilai_budget_subcont_perusahaan));
+                $('.budget_akomodasi_on_process').html(number_format(result.nilai_budget_akomodasi));
+                $('.budget_others_on_process').html('Rp. ' + number_format(result.nilai_budget_others));
             },
             error: function(result) {
 
@@ -1251,7 +1104,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
 
     $(document).on('click', '.del_kasbon_akomodasi', function() {
-        var id = $(this).data('id');
+        var id_kasbon_akomodasi = $(this).data('id_kasbon_akomodasi');
 
         Swal.fire({
             icon: 'warning',
@@ -1266,7 +1119,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     type: 'post',
                     url: siteurl + active_controller + 'del_kasbon_akomodasi',
                     data: {
-                        'id': id
+                        'id_kasbon_akomodasi': id_kasbon_akomodasi
                     },
                     cache: false,
                     dataType: 'json',
@@ -1301,7 +1154,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     });
 
     $(document).on('click', '.del_kasbon_others', function() {
-        var id_kasbon_others = $(this).data('id');
+        var id_kasbon_others = $(this).data('id_kasbon_others');
 
         Swal.fire({
             icon: 'warning',
@@ -1328,156 +1181,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             text: result.pesan
         }).then(() => {
                                 DataTables_kasbon_others();
-                                hitung_all_budget_process();
-                            });
-                        } else {
-                            Swal.fire({
-            icon: 'error',
-            title: 'Failed !',
-            text: result.pesan
-        });
-                        }
-                    },
-                    error: function(result) {
-                        Swal.fire({
-            icon: 'error',
-            title: 'Error !',
-            text: 'Please try again later !'
-        });
-                    }
-                });
-            }
-        });
-    });
-
-    $(document).on('click', '.del_kasbon_lab', function() {
-        var id_kasbon_lab = $(this).data('id');
-
-        Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure?',
-            text: 'This data will be deleted !',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33'
-        }).then((res) => {
-            if (res.isConfirmed) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'del_kasbon_lab',
-                    data: {
-                        'id_kasbon_lab': id_kasbon_lab
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    success: function(result) {
-                        if (result.status == '1') {
-                            Swal.fire({
-            icon: 'success',
-            title: 'Success !',
-            text: result.pesan
-        }).then(() => {
-                                DataTables_kasbon_lab();
-                                hitung_all_budget_process();
-                            });
-                        } else {
-                            Swal.fire({
-            icon: 'error',
-            title: 'Failed !',
-            text: result.pesan
-        });
-                        }
-                    },
-                    error: function(result) {
-                        Swal.fire({
-            icon: 'error',
-            title: 'Error !',
-            text: 'Please try again later !'
-        });
-                    }
-                });
-            }
-        });
-    });
-
-    $(document).on('click', '.del_kasbon_subcont_tenaga_ahli', function() {
-        var id_kasbon_subcont_tenaga_ahli = $(this).data('id');
-
-        Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure?',
-            text: 'This data will be deleted !',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33'
-        }).then((res) => {
-            if (res.isConfirmed) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'del_kasbon_subcont_tenaga_ahli',
-                    data: {
-                        'id_kasbon_subcont_tenaga_ahli': id_kasbon_subcont_tenaga_ahli
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    success: function(result) {
-                        if (result.status == '1') {
-                            Swal.fire({
-            icon: 'success',
-            title: 'Success !',
-            text: result.pesan
-        }).then(() => {
-                                DataTables_kasbon_subcont_tenaga_ahli();
-                                hitung_all_budget_process();
-                            });
-                        } else {
-                            Swal.fire({
-            icon: 'error',
-            title: 'Failed !',
-            text: result.pesan
-        });
-                        }
-                    },
-                    error: function(result) {
-                        Swal.fire({
-            icon: 'error',
-            title: 'Error !',
-            text: 'Please try again later !'
-        });
-                    }
-                });
-            }
-        });
-    });
-
-    $(document).on('click', '.del_kasbon_subcont_perusahaan', function() {
-        var id_kasbon_subcont_perusahaan = $(this).data('id');
-
-        Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure?',
-            text: 'This data will be deleted !',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33'
-        }).then((res) => {
-            if (res.isConfirmed) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'del_kasbon_subcont_perusahaan',
-                    data: {
-                        'id_kasbon_subcont_perusahaan': id_kasbon_subcont_perusahaan
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    success: function(result) {
-                        if (result.status == '1') {
-                            Swal.fire({
-            icon: 'success',
-            title: 'Success !',
-            text: result.pesan
-        }).then(() => {
-                                DataTables_kasbon_subcont_perusahaan();
                                 hitung_all_budget_process();
                             });
                         } else {
@@ -1653,161 +1356,6 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         });
     });
 
-
-
-    $(document).on('click', '.del_ovb_lab', function(e) {
-        e.preventDefault();
-
-        var id_request_ovb = $(this).data('id_request_ovb');
-
-        Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure ?',
-            text: 'This data will be deleted !',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33'
-        }).then((res) => {
-            if (res.isConfirmed) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'del_ovb_lab',
-                    data: {
-                        'id_request_ovb': id_request_ovb
-                    },
-                    cache: false,
-                    dataType: 'JSON',
-                    success: function(result) {
-                        if (result.status == 1) {
-                            Swal.fire({
-            icon: 'success',
-            title: 'Success !',
-            text: result.pesan
-        }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-            icon: 'warning',
-            title: 'Failed !',
-            text: result.pesan
-        });
-                        }
-                    },
-                    error: function(result) {
-                        Swal.fire({
-            icon: 'error',
-            title: 'Error !',
-            text: 'Please try again later !'
-        });
-                    }
-                });
-            }
-        });
-    });
-
-    $(document).on('click', '.del_ovb_subcont_tenaga_ahli', function(e) {
-        e.preventDefault();
-
-        var id_request_ovb = $(this).data('id_request_ovb');
-
-        Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure ?',
-            text: 'This data will be deleted !',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33'
-        }).then((res) => {
-            if (res.isConfirmed) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'del_ovb_subcont_tenaga_ahli',
-                    data: {
-                        'id_request_ovb': id_request_ovb
-                    },
-                    cache: false,
-                    dataType: 'JSON',
-                    success: function(result) {
-                        if (result.status == 1) {
-                            Swal.fire({
-            icon: 'success',
-            title: 'Success !',
-            text: result.pesan
-        }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-            icon: 'warning',
-            title: 'Failed !',
-            text: result.pesan
-        });
-                        }
-                    },
-                    error: function(result) {
-                        Swal.fire({
-            icon: 'error',
-            title: 'Error !',
-            text: 'Please try again later !'
-        });
-                    }
-                });
-            }
-        });
-    });
-
-    $(document).on('click', '.del_ovb_others', function(e) {
-        e.preventDefault();
-
-        var id_request_ovb = $(this).data('id_request_ovb');
-
-        Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure ?',
-            text: 'This data will be deleted !',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33'
-        }).then((res) => {
-            if (res.isConfirmed) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'del_ovb_others',
-                    data: {
-                        'id_request_ovb': id_request_ovb
-                    },
-                    cache: false,
-                    dataType: 'JSON',
-                    success: function(result) {
-                        if (result.status == 1) {
-                            Swal.fire({
-            icon: 'success',
-            title: 'Success !',
-            text: result.pesan
-        }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-            icon: 'warning',
-            title: 'Failed !',
-            text: result.pesan
-        });
-                        }
-                    },
-                    error: function(result) {
-                        Swal.fire({
-            icon: 'error',
-            title: 'Error !',
-            text: 'Please try again later !'
-        });
-                    }
-                });
-            }
-        });
-    });
-
     $(document).on('click', '.approval_req_ovb', function(e) {
         e.preventDefault();
 
@@ -1857,55 +1405,5 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                 });
             }
         });
-    });
-
-    $(document).on('click', '.req_approve_kasbon', function() {
-        var id = $(this).data('id');
-
-        Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure ?',
-            text: 'This data status will be changed to Waiting Approval !',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33'
-        }).then((res) => {
-            if (res.isConfirmed) {
-                $.ajax({
-                    type: 'post',
-                    url: siteurl + active_controller + 'req_approve_kasbon',
-                    data: {
-                        'id': id
-                    },
-                    cache: false,
-                    dataType: 'json',
-                    success: function(result) {
-                        if (result.status == '1') {
-                            Swal.fire({
-            icon: 'success',
-            title: 'Success !',
-            text: result.pesan
-        }).then(() => {
-                                DataTables_kasbon_akomodasi();
-                                DataTables_kasbon_others();
-                            });
-                        } else {
-                            Swal.fire({
-            icon: 'warning',
-            title: 'Failed !',
-            text: result.pesan
-        });
-                        }
-                    },
-                    error: function(result) {
-                        Swal.fire({
-            icon: 'error',
-            title: 'Error !',
-            text: 'Please, try again later !'
-        });
-                    }
-                })
-            }
-        })
     });
 </script>
