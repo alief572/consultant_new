@@ -3,6 +3,32 @@ $ENABLE_ADD     = has_permission('Kasbon_Project.Add');
 $ENABLE_MANAGE  = has_permission('Kasbon_Project.Manage');
 $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
+
+$nm_pembuat = !empty($current_user->nm_lengkap) ? $current_user->nm_lengkap : $this->auth->user_name();
+$employee_id = !empty($current_user->employee_id) ? $current_user->employee_id : '';
+
+$is_in_team = false;
+$emp_id = !empty($employee_id) ? trim((string)$employee_id) : '';
+if (!empty($emp_id) && !empty($spk_team_info['team_employee_ids']) && in_array($emp_id, $spk_team_info['team_employee_ids'])) {
+    $is_in_team = true;
+} else if (!empty($nm_pembuat) && !empty($spk_team_info['team_names'])) {
+    $pembuat_name = strtolower(trim($nm_pembuat));
+    foreach ($spk_team_info['team_names'] as $tname) {
+        if ($tname === $pembuat_name || strpos($tname, $pembuat_name) !== false || strpos($pembuat_name, $tname) !== false) {
+            $is_in_team = true;
+            break;
+        }
+    }
+}
+
+$origin_spk = '';
+if (!$is_in_team) {
+    $current_spk = !empty($list_budgeting->id_spk_penawaran) ? $list_budgeting->id_spk_penawaran : (!empty($spk_team_info['id_spk_penawaran']) ? $spk_team_info['id_spk_penawaran'] : '');
+    $ci = &get_instance();
+    if (method_exists($ci, '_get_user_origin_spk')) {
+        $origin_spk = $ci->_get_user_origin_spk($emp_id, $nm_pembuat, $current_spk);
+    }
+}
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -60,6 +86,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     .valign-middle {
         vertical-align: middle !important;
     }
+
+    .tag-outside {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        color: #c76b00;
+        background: #fff2df;
+        border: 1px solid #f0d3a0;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
 </style>
 
 <form action="" method="post" id="frm-data" enctype="multipart/form-data">
@@ -111,12 +149,31 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <td class="pd-5 valign-top" width="400"></td>
                 </tr>
                 <tr>
+                    <th class="pd-5 valign-top" width="150">Request By</th>
+                    <td class="pd-5 valign-top" width="400">
+                        <input type="hidden" name="request_by" id="request_by" value="<?= $this->auth->user_id() ?>">
+                        <div style="font-weight: 600; color: #333; padding-top: 5px;">
+                            <i class="fa fa-user-circle text-primary"></i> <?= htmlspecialchars($nm_pembuat) ?>
+                        </div>
+                        <?php if (!$is_in_team) : ?>
+                            <div class="tag-outside" style="margin-top: 5px;">
+                                <i class="fa fa-exclamation-triangle"></i> <?= htmlspecialchars($nm_pembuat) ?> bukan bagian dari tim SPK ini<?= !empty($origin_spk) ? ' (tim asal: ' . htmlspecialchars($origin_spk) . ')' : '' ?>
+                            </div>
+                        <?php endif; ?>
+                    </td>
                     <th class="pd-5 valign-top" width="150">Tgl</th>
                     <td class="pd-5 valign-top" width="400">
                         <input type="date" class="form-control form-control-sm" name="tgl" value="<?= date('Y-m-d') ?>" readonly>
                     </td>
+<<<<<<< HEAD
                     <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
                     <td class="pd-5 valign-top" width="400">
+=======
+                </tr>
+                <tr>
+                    <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
+                    <td class="pd-5 valign-top" width="400" colspan="3">
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                         <textarea name="deskripsi" id="" class="form-control form-control-sm" required placeholder="Deskripsi / Keterangan"></textarea>
                     </td>
                 </tr>
@@ -554,6 +611,46 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 <script>
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
+        $('.select2').select2({
+            width: '100%'
+        });
+
+        var spkTeamEmployeeIds = [
+            <?= json_encode((string)($list_budgeting->id_project_leader ?? '')) ?>,
+            <?= json_encode((string)($list_budgeting->id_sales ?? '')) ?>,
+            <?= json_encode((string)($list_budgeting->id_konsultan_1 ?? '')) ?>,
+            <?= json_encode((string)($list_budgeting->id_konsultan_2 ?? '')) ?>
+        ].map(String).filter(Boolean);
+
+        var spkTeamNames = [
+            <?= json_encode(strtolower(trim($list_budgeting->nm_project_leader ?? ''))) ?>,
+            <?= json_encode(strtolower(trim($list_budgeting->nm_sales ?? ''))) ?>,
+            <?= json_encode(strtolower(trim($list_budgeting->nm_konsultan_1 ?? ''))) ?>,
+            <?= json_encode(strtolower(trim($list_budgeting->nm_konsultan_2 ?? ''))) ?>
+        ].filter(Boolean);
+
+        function checkRequestByTeam() {
+            var selectedEmployeeId = String($('#request_by_employee_id').val() || '').trim();
+            var selectedName = ($('#request_by_name').val() || '').trim();
+            var selectedNameLower = selectedName.toLowerCase();
+
+            var isInTeam = false;
+            if (selectedEmployeeId && spkTeamEmployeeIds.includes(selectedEmployeeId)) {
+                isInTeam = true;
+            } else if (!selectedEmployeeId && spkTeamNames.includes(selectedNameLower)) {
+                // Fallback nama jika employee_id belum diisi di data user
+                isInTeam = true;
+            }
+
+            if ($('#request_by').val() && !isInTeam) {
+                $('#tag_outside_text').text(selectedName + ' bukan bagian dari tim SPK ini');
+                $('#tag_outside_spk').show();
+            } else {
+                $('#tag_outside_spk').hide();
+            }
+        }
+
+        checkRequestByTeam();
     });
 
     var selectedBuktiFiles = [];
@@ -778,6 +875,7 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 
         if (valid == '0') {
             Swal.fire({
+<<<<<<< HEAD
             icon: 'warning',
             title: 'Warning !',
             text: 'Total pengajuan melebihi sisa budget !'
@@ -793,6 +891,23 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             confirmButtonText: 'Yes, save it!',
             cancelButtonText: 'Cancel'
         }).then((res) => {
+=======
+                icon: 'warning',
+                title: 'Warning !',
+                text: 'Total pengajuan melebihi sisa budget !'
+            });
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Are you sure ?',
+                text: 'This data will be saved !',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, save it!',
+                cancelButtonText: 'Cancel'
+            }).then((res) => {
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                 if (res.isConfirmed) {
                     var formData = new FormData($('#frm-data')[0]);
                     for (var i = 0; i < selectedBuktiFiles.length; i++) {
@@ -810,27 +925,49 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                         success: function(result) {
                             if (result.status == '1') {
                                 Swal.fire({
+<<<<<<< HEAD
             icon: 'success',
             title: 'Success !',
             text: result.pesan,
             timer: 2000
         }).then(() => {
+=======
+                                    icon: 'success',
+                                    title: 'Success !',
+                                    text: result.pesan,
+                                    timer: 2000
+                                }).then(() => {
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                                     window.location.href = siteurl + active_controller + "add_kasbon/<?= urlencode(str_replace('/', '|', $list_budgeting->id_spk_budgeting)) ?>";
                                 });
                             } else {
                                 Swal.fire({
+<<<<<<< HEAD
             icon: 'warning',
             title: 'Failed !',
             text: result.pesan
         });
+=======
+                                    icon: 'warning',
+                                    title: 'Failed !',
+                                    text: result.pesan
+                                });
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                             }
                         },
                         error: function(result) {
                             Swal.fire({
+<<<<<<< HEAD
             icon: 'error',
             title: 'Error !',
             text: 'Please try again later !'
         });
+=======
+                                icon: 'error',
+                                title: 'Error !',
+                                text: 'Please try again later !'
+                            });
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                         }
                     });
                 }

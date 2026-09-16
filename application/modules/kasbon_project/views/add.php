@@ -57,6 +57,46 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         margin-top: 5px;
     }
 
+    .tag-outside {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        color: #c76b00;
+        background: #fff2df;
+        border: 1px solid #f0d3a0;
+        padding: 1px 8px;
+        border-radius: 10px;
+        margin-top: 4px;
+    }
+
+    .reject-note {
+        font-size: 11px;
+        color: #e64949;
+        margin-top: 4px;
+        display: flex;
+        align-items: flex-start;
+        gap: 4px;
+        max-width: 200px;
+        text-align: left;
+        line-height: 1.3;
+    }
+
+    .avatar {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #e3e6ea;
+        color: #5c6470;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+
     .dropdown-menu {
 
         position: absolute;
@@ -193,14 +233,19 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             <thead>
                 <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Req Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
+                    <th class="text-center">Request By</th>
                     <th class="text-center">Status</th>
+<<<<<<< HEAD
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Pembuat Pengajuan</th>
+=======
+                    <th class="text-center">Date</th>
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -308,14 +353,19 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             <thead>
                 <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Req Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
+                    <th class="text-center">Request By</th>
                     <th class="text-center">Status</th>
+<<<<<<< HEAD
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Pembuat Pengajuan</th>
+=======
+                    <th class="text-center">Date</th>
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -422,14 +472,19 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             <thead>
                 <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Req Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
+                    <th class="text-center">Request By</th>
                     <th class="text-center">Status</th>
+<<<<<<< HEAD
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Pembuat Pengajuan</th>
+=======
+                    <th class="text-center">Date</th>
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -536,14 +591,19 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             <thead>
                 <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Req Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
+                    <th class="text-center">Request By</th>
                     <th class="text-center">Status</th>
+<<<<<<< HEAD
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Pembuat Pengajuan</th>
+=======
+                    <th class="text-center">Date</th>
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -650,14 +710,19 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
             <thead>
                 <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Req. Number</th>
+                    <th class="text-center">Req Number</th>
                     <th class="text-center">Description</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Tipe</th>
+                    <th class="text-center">Request By</th>
                     <th class="text-center">Status</th>
+<<<<<<< HEAD
                     <th class="text-center">Reject Reason</th>
                     <th class="text-center">Date</th>
                     <th class="text-center">Pembuat Pengajuan</th>
+=======
+                    <th class="text-center">Date</th>
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                     <th class="text-center">Option</th>
                 </tr>
             </thead>
@@ -751,10 +816,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'tipe'
                 },
                 {
+                    data: 'request_by'
+                },
+                {
                     data: 'status'
                 },
                 {
-                    data: 'reject_reason'
+                    data: 'date'
                 },
                 {
                     data: 'date'
@@ -802,10 +870,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'tipe'
                 },
                 {
+                    data: 'request_by'
+                },
+                {
                     data: 'status'
                 },
                 {
-                    data: 'reject_reason'
+                    data: 'date'
                 },
                 {
                     data: 'date'
@@ -853,10 +924,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'tipe'
                 },
                 {
+                    data: 'request_by'
+                },
+                {
                     data: 'status'
                 },
                 {
-                    data: 'reject_reason'
+                    data: 'date'
                 },
                 {
                     data: 'date'
@@ -904,10 +978,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'tipe'
                 },
                 {
+                    data: 'request_by'
+                },
+                {
                     data: 'status'
                 },
                 {
-                    data: 'reject_reason'
+                    data: 'date'
                 },
                 {
                     data: 'date'
@@ -955,10 +1032,13 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     data: 'tipe'
                 },
                 {
+                    data: 'request_by'
+                },
+                {
                     data: 'status'
                 },
                 {
-                    data: 'reject_reason'
+                    data: 'date'
                 },
                 {
                     data: 'date'

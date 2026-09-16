@@ -3,6 +3,32 @@ $ENABLE_ADD     = has_permission('Kasbon_Project.Add');
 $ENABLE_MANAGE  = has_permission('Kasbon_Project.Manage');
 $ENABLE_VIEW    = has_permission('Kasbon_Project.View');
 $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
+
+$nm_pembuat = !empty($creator_user->nm_lengkap) ? $creator_user->nm_lengkap : (!empty($header->created_by) ? $header->created_by : '-');
+$employee_id = !empty($creator_user->employee_id) ? $creator_user->employee_id : '';
+
+$is_in_team = false;
+$emp_id = !empty($employee_id) ? trim((string)$employee_id) : '';
+if (!empty($emp_id) && !empty($spk_team_info['team_employee_ids']) && in_array($emp_id, $spk_team_info['team_employee_ids'])) {
+    $is_in_team = true;
+} else if (!empty($nm_pembuat) && !empty($spk_team_info['team_names'])) {
+    $pembuat_name = strtolower(trim($nm_pembuat));
+    foreach ($spk_team_info['team_names'] as $tname) {
+        if ($tname === $pembuat_name || strpos($tname, $pembuat_name) !== false || strpos($pembuat_name, $tname) !== false) {
+            $is_in_team = true;
+            break;
+        }
+    }
+}
+
+$origin_spk = '';
+if (!$is_in_team) {
+    $current_spk = !empty($list_budgeting->id_spk_penawaran) ? $list_budgeting->id_spk_penawaran : (!empty($spk_team_info['id_spk_penawaran']) ? $spk_team_info['id_spk_penawaran'] : '');
+    $ci = &get_instance();
+    if (method_exists($ci, '_get_user_origin_spk')) {
+        $origin_spk = $ci->_get_user_origin_spk($emp_id, $nm_pembuat, $current_spk);
+    }
+}
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
@@ -60,6 +86,18 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
     .valign-middle {
         vertical-align: middle !important;
     }
+
+    .tag-outside {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        color: #c76b00;
+        background: #fff2df;
+        border: 1px solid #f0d3a0;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
 </style>
 
 <form action="" method="post" id="frm-data" enctype="multipart/form-data">
@@ -74,6 +112,21 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
         </div>
 
         <div class="box-body">
+            <?php if (!empty($header->sts_reject) || !empty($header->reject_reason)) : ?>
+                <?php
+                $rejecter = !empty($header->rejected_by) ? $this->db->get_where('users', ['id_user' => $header->rejected_by])->row() : null;
+                $nm_rejecter = !empty($rejecter->nm_lengkap) ? $rejecter->nm_lengkap : (!empty($header->rejected_by) ? $header->rejected_by : 'Approver');
+                $tgl_reject = !empty($header->rejected_date) ? date('d F Y', strtotime($header->rejected_date)) : '';
+                ?>
+                <div class="reject-banner" style="background:#fdeaea; border:1px solid #f6c6c6; border-radius:6px; padding:12px 16px; margin-bottom:20px;">
+                    <div class="head" style="font-size:13px; font-weight:600; color:#c62e2e; display:flex; align-items:center; gap:8px;">
+                        <i class="fa fa-times-circle" style="font-size:15px;"></i> Ditolak oleh <?= htmlspecialchars($nm_rejecter) ?><?= !empty($tgl_reject) ? ', ' . $tgl_reject : '' ?>
+                    </div>
+                    <div class="body" style="font-size:13px; color:#c62e2e; margin:4px 0 0 23px;">
+                        <?= nl2br(htmlspecialchars($header->reject_reason)) ?>
+                    </div>
+                </div>
+            <?php endif; ?>
             <table border="0" style="width: 100%;">
                 <tr>
                     <th class="pd-5 valign-top" width="150">No. SPK</th>
@@ -112,12 +165,31 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
                     <td class="pd-5 valign-top" width="400"></td>
                 </tr>
                 <tr>
+                    <th class="pd-5 valign-top" width="150">Request By</th>
+                    <td class="pd-5 valign-top" width="400">
+                        <input type="hidden" name="request_by" id="request_by" value="<?= $header->created_by ?? $this->auth->user_id() ?>">
+                        <div style="font-weight: 600; color: #333; padding-top: 5px;">
+                            <i class="fa fa-user-circle text-primary"></i> <?= htmlspecialchars($nm_pembuat) ?>
+                        </div>
+                        <?php if (!$is_in_team) : ?>
+                            <div class="tag-outside" style="margin-top: 5px;">
+                                <i class="fa fa-exclamation-triangle"></i> <?= htmlspecialchars($nm_pembuat) ?> bukan bagian dari tim SPK ini<?= !empty($origin_spk) ? ' (tim asal: ' . htmlspecialchars($origin_spk) . ')' : '' ?>
+                            </div>
+                        <?php endif; ?>
+                    </td>
                     <th class="pd-5 valign-top" width="150">Tanggal</th>
                     <td class="pd-5 valign-top" width="400">
                         <input type="date" name="tgl" id="" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime($header->tgl)) ?>" readonly>
                     </td>
+<<<<<<< HEAD
                     <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
                     <td class="pd-5 valign-top" width="400">
+=======
+                </tr>
+                <tr>
+                    <th class="pd-5 valign-top" width="150">Deskripsi / Keterangan <span class="text-danger">*</span></th>
+                    <td class="pd-5 valign-top" width="400" colspan="3">
+>>>>>>> e50ceedbab8f89c7dbe760ae844103fa74c7d609
                         <textarea name="deskripsi" id="" class="form-control form-control-sm" required placeholder="Deskripsi / Keterangan"><?= $header->deskripsi ?></textarea>
                     </td>
                 </tr>
@@ -414,6 +486,169 @@ $ENABLE_DELETE  = has_permission('Kasbon_Project.Delete');
 <script>
     $(document).ready(function() {
         $('.auto_num').autoNumeric();
+        $('.select2').select2({
+            width: '100%'
+        });
+
+        var spkTeamEmployeeIds = [
+            <?= json_encode((string)($list_budgeting->id_project_leader ?? '')) ?>,
+            <?= json_encode((string)($list_budgeting->id_sales ?? '')) ?>,
+            <?= json_encode((string)($list_budgeting->id_konsultan_1 ?? '')) ?>,
+            <?= json_encode((string)($list_budgeting->id_konsultan_2 ?? '')) ?>
+        ].map(String).filter(Boolean);
+
+        var spkTeamNames = [
+            <?= json_encode(strtolower(trim($list_budgeting->nm_project_leader ?? ''))) ?>,
+            <?= json_encode(strtolower(trim($list_budgeting->nm_sales ?? ''))) ?>,
+            <?= json_encode(strtolower(trim($list_budgeting->nm_konsultan_1 ?? ''))) ?>,
+            <?= json_encode(strtolower(trim($list_budgeting->nm_konsultan_2 ?? ''))) ?>
+        ].filter(Boolean);
+
+        function checkRequestByTeam() {
+            var selectedEmployeeId = String($('#request_by_employee_id').val() || '').trim();
+            var selectedName = ($('#request_by_name').val() || '').trim();
+            var selectedNameLower = selectedName.toLowerCase();
+
+            var isInTeam = false;
+            if (selectedEmployeeId && spkTeamEmployeeIds.includes(selectedEmployeeId)) {
+                isInTeam = true;
+            } else if (!selectedEmployeeId && spkTeamNames.includes(selectedNameLower)) {
+                // Fallback nama jika employee_id belum diisi di data user
+                isInTeam = true;
+            }
+
+            if ($('#request_by').val() && !isInTeam) {
+                $('#tag_outside_text').text(selectedName + ' bukan bagian dari tim SPK ini');
+                $('#tag_outside_spk').show();
+            } else {
+                $('#tag_outside_spk').hide();
+            }
+        }
+
+        checkRequestByTeam();
+    });
+
+    var selectedBuktiFiles = [];
+
+    $(document).on('click', '#btn-pilih-bukti, #dropzone-bukti', function() {
+        $('#input-bukti-file').click();
+    });
+
+    $(document).on('change', '#input-bukti-file', function() {
+        var files = this.files;
+        for (var i = 0; i < files.length; i++) {
+            selectedBuktiFiles.push(files[i]);
+        }
+        this.value = '';
+        renderSelectedBukti();
+    });
+
+    // Drag and drop handlers
+    $(document).on('dragover dragenter', '#dropzone-bukti', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({
+            'border-color': '#3c8dbc',
+            'background': '#eef5fb'
+        });
+    });
+
+    $(document).on('dragleave dragend drop', '#dropzone-bukti', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css({
+            'border-color': '#b4c6dc',
+            'background': '#fdfdfe'
+        });
+    });
+
+    $(document).on('drop', '#dropzone-bukti', function(e) {
+        var files = e.originalEvent.dataTransfer.files;
+        if (files && files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+                selectedBuktiFiles.push(files[i]);
+            }
+            renderSelectedBukti();
+        }
+    });
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        var k = 1024;
+        var sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    function renderSelectedBukti() {
+        var html = '';
+        if (selectedBuktiFiles.length > 0) {
+            html += '<small class="text-muted" style="font-weight: bold;">File Baru Dipilih (' + selectedBuktiFiles.length + '):</small><div class="list-group" style="margin-top: 5px; margin-bottom: 0;">';
+            for (var i = 0; i < selectedBuktiFiles.length; i++) {
+                var file = selectedBuktiFiles[i];
+                html += '<div class="list-group-item" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; margin-bottom: 4px; background: #fff; border: 1px solid #e3e6f0; border-radius: 4px;">' +
+                    '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">' +
+                    '<i class="fa fa-file-text-o text-primary" style="margin-right: 8px;"></i>' +
+                    '<b>' + file.name + '</b> <small class="text-muted">(' + formatBytes(file.size) + ')</small>' +
+                    '</span>' +
+                    '<button type="button" class="btn btn-xs btn-danger btn-remove-selected-bukti" data-index="' + i + '" title="Hapus"><i class="fa fa-trash"></i></button>' +
+                    '</div>';
+            }
+            html += '</div>';
+        }
+        $('#container-bukti-list').html(html);
+    }
+
+    $(document).on('click', '.btn-remove-selected-bukti', function(e) {
+        e.stopPropagation();
+        var index = $(this).data('index');
+        selectedBuktiFiles.splice(index, 1);
+        renderSelectedBukti();
+    });
+
+    $(document).on('click', '.btn-del-bukti', function() {
+        var id = $(this).data('id');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure ?',
+            text: 'File bukti penggunaan ini akan dihapus permanen !',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((res) => {
+            if (res.isConfirmed) {
+                $.ajax({
+                    type: 'post',
+                    url: siteurl + active_controller + 'del_bukti_penggunaan',
+                    data: { id: id },
+                    dataType: 'JSON',
+                    success: function(result) {
+                        if (result.status == 1) {
+                            Swal.fire({
+            icon: 'success',
+            title: 'Success !',
+            text: result.pesan,
+            timer: 1500
+        });
+                            $('#row-bukti-' + id).remove();
+                        } else {
+                            Swal.fire({
+            icon: 'warning',
+            title: 'Failed !',
+            text: result.pesan
+        });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+            icon: 'error',
+            title: 'Error !',
+            text: 'Please try again later !'
+        });
+                    }
+                });
+            }
+        });
     });
 
     var selectedBuktiFiles = [];
