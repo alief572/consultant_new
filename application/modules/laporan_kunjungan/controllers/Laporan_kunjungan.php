@@ -940,7 +940,8 @@ class Laporan_kunjungan extends Admin_Controller
             echo json_encode([
                 'status'    => 1,
                 'pesan'     => 'Laporan kunjungan berhasil disimpan.',
-                'report_id' => $report_id
+                'report_id' => $report_id,
+                'header_id' => $header_id
             ]);
 
         } catch (Exception $e) {
