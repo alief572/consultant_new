@@ -40,6 +40,223 @@ class Approval_kasbon_project extends Admin_Controller
         $this->template->render('index');
     }
 
+    private function _get_spk_team_data($id_spk_budgeting)
+    {
+        $spk_b = $this->db->get_where('kons_tr_spk_budgeting', ['id_spk_budgeting' => $id_spk_budgeting])->row();
+
+        $spk_p = null;
+        if (!empty($spk_b) && !empty($spk_b->id_spk_penawaran)) {
+            $spk_p = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $spk_b->id_spk_penawaran])->row();
+        }
+
+        $team_employee_ids = [];
+        $team_names = [];
+        $id_spk_penawaran = !empty($spk_b->id_spk_penawaran) ? $spk_b->id_spk_penawaran : (!empty($spk_p->id_spk_penawaran) ? $spk_p->id_spk_penawaran : '');
+
+        if (!empty($spk_b)) {
+            if (!empty($spk_b->id_project_leader)) $team_employee_ids[] = trim((string)$spk_b->id_project_leader);
+            if (!empty($spk_b->id_konsultan_1)) $team_employee_ids[] = trim((string)$spk_b->id_konsultan_1);
+            if (!empty($spk_b->id_konsultan_2)) $team_employee_ids[] = trim((string)$spk_b->id_konsultan_2);
+
+            if (!empty($spk_b->nm_project_leader)) $team_names[] = strtolower(trim($spk_b->nm_project_leader));
+            if (!empty($spk_b->nm_konsultan_1)) $team_names[] = strtolower(trim($spk_b->nm_konsultan_1));
+            if (!empty($spk_b->nm_konsultan_2)) $team_names[] = strtolower(trim($spk_b->nm_konsultan_2));
+        }
+
+        if (!empty($spk_p)) {
+            if (!empty($spk_p->id_sales)) $team_employee_ids[] = trim((string)$spk_p->id_sales);
+            if (!empty($spk_p->id_project_leader)) $team_employee_ids[] = trim((string)$spk_p->id_project_leader);
+            if (!empty($spk_p->id_konsultan_1)) $team_employee_ids[] = trim((string)$spk_p->id_konsultan_1);
+            if (!empty($spk_p->id_konsultan_2)) $team_employee_ids[] = trim((string)$spk_p->id_konsultan_2);
+
+            if (!empty($spk_p->nm_sales)) $team_names[] = strtolower(trim($spk_p->nm_sales));
+            if (!empty($spk_p->nm_project_leader)) $team_names[] = strtolower(trim($spk_p->nm_project_leader));
+            if (!empty($spk_p->nm_konsultan_1)) $team_names[] = strtolower(trim($spk_p->nm_konsultan_1));
+            if (!empty($spk_p->nm_konsultan_2)) $team_names[] = strtolower(trim($spk_p->nm_konsultan_2));
+        }
+
+        $team_employee_ids = array_values(array_unique(array_filter($team_employee_ids)));
+        $team_names = array_values(array_unique(array_filter($team_names)));
+
+        return [
+            'team_employee_ids' => $team_employee_ids,
+            'team_names' => $team_names,
+            'id_spk_penawaran' => $id_spk_penawaran,
+            'budgeting' => $spk_b,
+            'penawaran' => $spk_p
+        ];
+    }
+
+    public function _get_user_origin_spk($employee_id, $nm_lengkap, $current_id_spk_penawaran = '')
+    {
+        $emp_id = trim((string)$employee_id);
+        $nm = strtolower(trim($nm_lengkap));
+
+        // If employee_id is empty, try to resolve it.
+        // 1) From users table by nm_lengkap/username (account name may differ from employee name).
+        if (empty($emp_id) && !empty($nm)) {
+            $user_row = $this->db->select('employee_id')
+                ->from('users')
+                ->where('TRIM(employee_id) !=', '')
+                ->where('employee_id IS NOT NULL', null, false)
+                ->group_start()
+                ->where('LOWER(TRIM(nm_lengkap))', $nm)
+                ->or_where('LOWER(TRIM(username))', $nm)
+                ->group_end()
+                ->get()->row();
+            if (!empty($user_row) && !empty($user_row->employee_id)) {
+                $emp_id = trim((string)$user_row->employee_id);
+            }
+        }
+
+        // 2) Fallback: resolve from employees_internal by name.
+        if (empty($emp_id) && !empty($nm)) {
+            $emp_row = $this->db->select('id')
+                ->from('employees_internal')
+                ->group_start()
+                ->where('LOWER(name)', $nm)
+                ->or_like('LOWER(name)', $nm)
+                ->group_end()
+                ->get()->row();
+            if (!empty($emp_row) && !empty($emp_row->id)) {
+                $emp_id = trim((string)$emp_row->id);
+            }
+        }
+
+        // 1. Search in kons_tr_spk_penawaran
+        $has_condition = false;
+        $this->db->select('id_spk_penawaran')
+            ->from('kons_tr_spk_penawaran')
+            ->where('deleted_by IS NULL')
+            ->group_start();
+
+        if (!empty($emp_id)) {
+            $this->db->where('id_sales', $emp_id)
+                ->or_where('id_konsultan_1', $emp_id)
+                ->or_where('id_konsultan_2', $emp_id)
+                ->or_where('id_project_leader', $emp_id);
+            $has_condition = true;
+        }
+        if (!empty($nm)) {
+            $this->db->or_where('LOWER(TRIM(nm_sales))', $nm)
+                ->or_like('LOWER(nm_sales)', $nm)
+                ->or_where('LOWER(TRIM(nm_konsultan_1))', $nm)
+                ->or_like('LOWER(nm_konsultan_1)', $nm)
+                ->or_where('LOWER(TRIM(nm_konsultan_2))', $nm)
+                ->or_like('LOWER(nm_konsultan_2)', $nm)
+                ->or_where('LOWER(TRIM(nm_project_leader))', $nm)
+                ->or_like('LOWER(nm_project_leader)', $nm);
+            $has_condition = true;
+        }
+
+        if ($has_condition) {
+            $this->db->group_end();
+
+            if (!empty($current_id_spk_penawaran)) {
+                $this->db->where('id_spk_penawaran !=', $current_id_spk_penawaran);
+            }
+
+            $this->db->order_by('id_spk_penawaran', 'DESC');
+            $spk = $this->db->get()->row();
+
+            if (!empty($spk) && !empty($spk->id_spk_penawaran)) {
+                return $spk->id_spk_penawaran;
+            }
+        } else {
+            $this->db->group_end();
+        }
+
+        // 2. Fallback search in kons_tr_spk_budgeting
+        $has_condition_b = false;
+        $this->db->select('id_spk_penawaran')
+            ->from('kons_tr_spk_budgeting')
+            ->where('delete_by IS NULL')
+            ->group_start();
+
+        if (!empty($emp_id)) {
+            $this->db->where('id_project_leader', $emp_id)
+                ->or_where('id_konsultan_1', $emp_id)
+                ->or_where('id_konsultan_2', $emp_id);
+            $has_condition_b = true;
+        }
+        if (!empty($nm)) {
+            $this->db->or_where('LOWER(TRIM(nm_project_leader))', $nm)
+                ->or_like('LOWER(nm_project_leader)', $nm)
+                ->or_where('LOWER(TRIM(nm_konsultan_1))', $nm)
+                ->or_like('LOWER(nm_konsultan_1)', $nm)
+                ->or_where('LOWER(TRIM(nm_konsultan_2))', $nm)
+                ->or_like('LOWER(nm_konsultan_2)', $nm);
+            $has_condition_b = true;
+        }
+
+        if ($has_condition_b) {
+            $this->db->group_end();
+
+            if (!empty($current_id_spk_penawaran)) {
+                $this->db->where('id_spk_penawaran !=', $current_id_spk_penawaran);
+            }
+
+            $this->db->order_by('id_spk_penawaran', 'DESC');
+            $spk_b = $this->db->get()->row();
+
+            if (!empty($spk_b) && !empty($spk_b->id_spk_penawaran)) {
+                return $spk_b->id_spk_penawaran;
+            }
+        } else {
+            $this->db->group_end();
+        }
+
+        return null;
+    }
+
+    private function _format_request_by_cell($nm_pembuat, $employee_id, $spk_team_info)
+    {
+        $words = explode(' ', trim($nm_pembuat));
+        $initials = '';
+        if (count($words) >= 2) {
+            $initials = strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1));
+        } else if (count($words) == 1 && strlen($words[0]) > 0) {
+            $initials = strtoupper(substr($words[0], 0, 2));
+        } else {
+            $initials = '??';
+        }
+
+        $is_in_team = false;
+        $emp_id = !empty($employee_id) ? trim((string)$employee_id) : '';
+        if (!empty($emp_id) && in_array($emp_id, $spk_team_info['team_employee_ids'])) {
+            $is_in_team = true;
+        } else if (empty($emp_id)) {
+            // Fallback nama jika user belum dihubungkan ke employee_id
+            $pembuat_name = strtolower(trim($nm_pembuat));
+            if (in_array($pembuat_name, $spk_team_info['team_names'])) {
+                $is_in_team = true;
+            }
+        }
+
+        $outside_badge = '';
+        if (!$is_in_team) {
+            $current_spk = !empty($spk_team_info['id_spk_penawaran']) ? $spk_team_info['id_spk_penawaran'] : '';
+            $origin_spk = $this->_get_user_origin_spk($emp_id, $nm_pembuat, $current_spk);
+
+            $tim_asal_text = '';
+            if (!empty($origin_spk)) {
+                $tim_asal_text = ' (tim asal: ' . htmlspecialchars($origin_spk) . ')';
+            }
+
+            $outside_badge = '<div style="margin-top: 4px;"><span class="tag-outside" style="display:inline-flex; align-items:center; gap:4px; font-size:11px; color:#c76b00; background:#fff2df; border:1px solid #f0d3a0; padding:1px 8px; border-radius:10px;"><i class="fa fa-exclamation-triangle"></i> Bukan tim SPK ini' . $tim_asal_text . '</span></div>';
+        }
+
+        $avatar_html = '<div class="avatar" style="width:26px; height:26px; border-radius:50%; background:#e3e6ea; color:#5c6470; font-size:11px; font-weight:600; display:inline-flex; align-items:center; justify-content:center; margin-right:8px; flex-shrink:0;">' . $initials . '</div>';
+
+        return '<div class="d-flex align-items-center" style="display:flex; align-items:flex-start;">'
+            . $avatar_html
+            . '<div>'
+            . '<div>' . htmlspecialchars($nm_pembuat) . '</div>'
+            . $outside_badge
+            . '</div>'
+            . '</div>';
+    }
+
     public function get_data_spk()
     {
         $draw = $this->input->post('draw');
@@ -47,11 +264,12 @@ class Approval_kasbon_project extends Admin_Controller
         $length = $this->input->post('length');
         $search = $this->input->post('search');
 
-        $this->db->select('b.*, a.id, c.nm_sales, d.nm_paket');
+        $this->db->select('a.id, a.id_spk_budgeting, a.tgl, a.sts, a.created_by, b.id_spk_penawaran, b.nm_customer, b.nm_project_leader, b.nm_project, c.nm_sales, d.nm_paket, IF(u.nm_lengkap IS NOT NULL, u.nm_lengkap, a.created_by) as nm_pembuat, u.employee_id');
         $this->db->from('kons_tr_kasbon_project_header a');
         $this->db->join('kons_tr_spk_budgeting b', 'b.id_spk_budgeting = a.id_spk_budgeting', 'left');
         $this->db->join('kons_tr_spk_penawaran c', 'c.id_spk_penawaran = b.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header d', 'd.id_konsultasi_h = c.id_project', 'left');
+        $this->db->join('users u', 'u.id_user = a.created_by', 'left');
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.sts_reject IS NULL');
         $this->db->group_start();
@@ -62,11 +280,13 @@ class Approval_kasbon_project extends Admin_Controller
             $this->db->group_start();
             $this->db->like('a.id_spk_budgeting', $search['value'], 'both');
             $this->db->or_like('a.id', $search['value'], 'both');
-            $this->db->or_like('c.id_spk_penawaran', $search['value'], 'both');
+            $this->db->or_like('b.id_spk_penawaran', $search['value'], 'both');
             $this->db->or_like('b.nm_customer', $search['value'], 'both');
             $this->db->or_like('c.nm_sales', $search['value'], 'both');
             $this->db->or_like('b.nm_project_leader', $search['value'], 'both');
             $this->db->or_like('b.nm_project', $search['value'], 'both');
+            $this->db->or_like('u.nm_lengkap', $search['value'], 'both');
+            $this->db->or_like('a.tgl', $search['value'], 'both');
             $this->db->group_end();
         }
         $this->db->group_by('a.id');
@@ -159,12 +379,18 @@ class Approval_kasbon_project extends Admin_Controller
                 $kasbon_info .= '<div class="text-muted" style="font-size: 12px; margin-top: 3px;"><i class="fa fa-comment-o"></i> ' . $keterangan_short . '</div>';
             }
 
+            $spk_team_info = $this->_get_spk_team_data($item->id_spk_budgeting);
+            $request_by_cell = $this->_format_request_by_cell($item->nm_pembuat, $item->employee_id, $spk_team_info);
+            $date_cell = !empty($item->tgl) ? date('d F Y', strtotime($item->tgl)) : '-';
+
             $hasil[] = [
                 'no' => $no,
                 'spk_paket' => $spk_paket,
                 'nm_customer' => $item->nm_customer,
                 'pic_team' => $pic_team,
                 'kasbon_info' => $kasbon_info,
+                'request_by' => $request_by_cell,
+                'date' => $date_cell,
                 'status' => $status,
                 'option' => $option
             ];
@@ -976,6 +1202,9 @@ class Approval_kasbon_project extends Admin_Controller
 
         $get_header = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $id_kasbon, 'deleted_at' => NULL])->row();
 
+        $creator_user = $this->db->get_where('users', ['id_user' => $get_header->created_by])->row();
+        $spk_team_info = $this->_get_spk_team_data($id_spk_budgeting);
+
         $data = [
             'id_kasbon' => $id_kasbon,
             'id_spk_budgeting' => $id_spk_budgeting,
@@ -995,7 +1224,9 @@ class Approval_kasbon_project extends Admin_Controller
             'data_overbudget_lab' => $data_overbudget_lab,
             'data_overbudget_subcont_tenaga_ahli' => $data_overbudget_subcont_tenaga_ahli,
             'data_overbudget_subcont_perusahaan' => $data_overbudget_subcont_perusahaan,
-            'list_bukti_penggunaan' => $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_kasbon])->result()
+            'list_bukti_penggunaan' => $this->db->get_where('kons_tr_kasbon_project_bukti_penggunaan', ['id_header_kasbon' => $id_header ?? $id_kasbon])->result(),
+            'creator_user' => $creator_user,
+            'spk_team_info' => $spk_team_info
         ];
 
         $metode_pembayaran = '';

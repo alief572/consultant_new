@@ -23,13 +23,15 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
             <table id="table_penawaran" class="table table-bordered table-striped table-hover" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th class="text-center" width="5%">No</th>
-                        <th class="text-center" width="24%">Nomor SPK &amp; Paket</th>
-                        <th class="text-center" width="16%">Customer</th>
-                        <th class="text-center" width="17%">Team / PIC</th>
-                        <th class="text-center" width="22%">Kasbon Info</th>
-                        <th class="text-center" width="8%">Status</th>
-                        <th class="text-center" width="8%">Action</th>
+                        <th class="text-center" width="4%">No</th>
+                        <th class="text-center" width="18%">Nomor SPK &amp; Paket</th>
+                        <th class="text-center" width="13%">Customer</th>
+                        <th class="text-center" width="13%">Team / PIC</th>
+                        <th class="text-center" width="18%">Kasbon Info</th>
+                        <th class="text-center" width="13%">Request By</th>
+                        <th class="text-center" width="9%">Date</th>
+                        <th class="text-center" width="6%">Status</th>
+                        <th class="text-center" width="6%">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -129,6 +131,13 @@ $ENABLE_DELETE  = has_permission('Approval_Kasbon_Project.Delete');
                 },
                 {
                     data: 'kasbon_info'
+                },
+                {
+                    data: 'request_by'
+                },
+                {
+                    data: 'date',
+                    className: 'text-center'
                 },
                 {
                     data: 'status',
