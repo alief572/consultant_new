@@ -671,8 +671,12 @@ $(document).ready(function() {
                         var idSpkForUrl = '<?= str_replace("/", "_SLASH_", $spk_info->id_spk_penawaran) ?>';
                         window.location.href = siteurl + 'laporan_kunjungan/view/' + idSpkForUrl;
                     } else {
-                        // Save Draft → go back to SPK list
-                        window.location.href = siteurl + 'laporan_kunjungan';
+                        // Save Draft → stay on edit page for this report
+                        if (response.header_id) {
+                            window.location.href = siteurl + 'laporan_kunjungan/edit/' + response.header_id;
+                        } else {
+                            window.location.href = siteurl + 'laporan_kunjungan';
+                        }
                     }
                 } else {
                     // Show validation errors
