@@ -505,7 +505,7 @@ class Kasbon_project extends Admin_Controller
                     $status = '<span class="badge bg-green">Approved</span>';
                 }
                 if ($get_req_kasbon->sts == '2') {
-                    $status = '<span class="badge bg-red">Rejected</span>';
+                    $status = '<span class="badge bg-red">Rejected by Direktur</span>';
                 }
             }
 
@@ -1238,17 +1238,17 @@ class Kasbon_project extends Admin_Controller
             }
 
             if (!empty($check_req) && $check_req->sts == 2) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject_manage == 1) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject == 1) {
                 if (!empty($check_req) && $check_req->sts == 1) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
-                    $sts = '<div class="badge bg-red">Rejected</div>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             } else if (!empty($reject_reason)) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
@@ -1442,17 +1442,17 @@ class Kasbon_project extends Admin_Controller
             }
 
             if (!empty($check_req) && $check_req->sts == 2) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject_manage == 1) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject == 1) {
                 if (!empty($check_req) && $check_req->sts == 1) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
-                    $sts = '<div class="badge bg-red">Rejected</div>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             } else if (!empty($reject_reason)) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
@@ -1647,17 +1647,21 @@ class Kasbon_project extends Admin_Controller
             }
 
             if (!empty($check_req) && $check_req->sts == 2) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject_manage == 1) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject == 1) {
                 if (!empty($check_req) && $check_req->sts == 1) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
+<<<<<<< HEAD
                     $sts = '<div class="badge bg-red">Rejected</div>';
+=======
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
+>>>>>>> 4fbdcb5db6faf2bd99c8c6631bcdc5799bbcba90
                 }
             } else if (!empty($reject_reason)) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
@@ -1850,17 +1854,17 @@ class Kasbon_project extends Admin_Controller
             }
 
             if (!empty($check_req) && $check_req->sts == 2) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject_manage == 1) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject == 1) {
                 if (!empty($check_req) && $check_req->sts == 1) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
-                    $sts = '<div class="badge bg-red">Rejected</div>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             } else if (!empty($reject_reason)) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
@@ -2053,17 +2057,17 @@ class Kasbon_project extends Admin_Controller
             }
 
             if (!empty($check_req) && $check_req->sts == 2) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject_manage == 1) {
                 $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             } else if ($item->sts_reject == 1) {
                 if (!empty($check_req) && $check_req->sts == 1) {
                     $sts = '<div class="badge bg-red">Rejected by Finance</div>';
                 } else {
-                    $sts = '<div class="badge bg-red">Rejected</div>';
+                    $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
                 }
             } else if (!empty($reject_reason)) {
-                $sts = '<div class="badge bg-red">Rejected</div>';
+                $sts = '<div class="badge bg-red">Rejected by Direktur</div>';
             }
 
             $check_payment = $this->db->get_where('payment_approve', array('no_doc' => $item->id, 'status' => 2))->row();
@@ -2278,7 +2282,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -2408,7 +2412,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -2538,7 +2542,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -2668,7 +2672,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -2798,7 +2802,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -2925,7 +2929,7 @@ class Kasbon_project extends Admin_Controller
                 $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
             }
             if ($item['sts'] == '2') {
-                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
+                $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected by Direktur</button>';
             }
 
 
@@ -8409,7 +8413,7 @@ class Kasbon_project extends Admin_Controller
             $steps[] = [
                 'icon' => 'fa-times-circle',
                 'color' => '#dc3545',
-                'title' => 'Rejected',
+                'title' => 'Rejected by Direktur',
                 'user' => ucfirst($approved_by_name),
                 'date' => !empty($get_kasbon->approved_date) ? date('d M Y, H:i', strtotime($get_kasbon->approved_date)) : '-',
                 'remark' => !empty($get_kasbon->reject_reason) ? $get_kasbon->reject_reason : '',
