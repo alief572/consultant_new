@@ -5175,9 +5175,55 @@ class Kasbon_project extends Admin_Controller
         $this->template->render('add_request_budget_akomodasi');
     }
 
+    private function _validate_mandatory_kasbon($post, $items_key = 'dt')
+    {
+        $empty_fields = [];
+        $deskripsi = isset($post['deskripsi']) ? trim($post['deskripsi']) : '';
+        $kasbon_bank = isset($post['kasbon_bank']) ? trim($post['kasbon_bank']) : '';
+        $kasbon_bank_number = isset($post['kasbon_bank_number']) ? trim($post['kasbon_bank_number']) : '';
+        $kasbon_bank_account = isset($post['kasbon_bank_account']) ? trim($post['kasbon_bank_account']) : '';
+
+        if (empty($deskripsi)) {
+            $empty_fields[] = 'Deskripsi / Keterangan';
+        }
+        if (empty($kasbon_bank)) {
+            $empty_fields[] = 'Bank';
+        }
+        if (empty($kasbon_bank_number)) {
+            $empty_fields[] = 'Bank Number (Nomor Rekening)';
+        }
+        if (empty($kasbon_bank_account)) {
+            $empty_fields[] = 'Account Name (Nama Pemilik Rekening)';
+        }
+
+        $grand_total = 0;
+        if (!empty($post[$items_key]) && is_array($post[$items_key])) {
+            foreach ($post[$items_key] as $item) {
+                if (isset($item['total_pengajuan'])) {
+                    $grand_total += (float)(str_replace(',', '', $item['total_pengajuan']));
+                }
+            }
+        }
+
+        if ($grand_total <= 0) {
+            $empty_fields[] = 'Item Pengajuan (minimal 1 item harus diisi nominal > 0)';
+        }
+
+        return $empty_fields;
+    }
+
     public function save_kasbon_subcont()
     {
         $post = $this->input->post();
+
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_subcont');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
 
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
@@ -5347,6 +5393,15 @@ class Kasbon_project extends Admin_Controller
     public function update_kasbon_subcont()
     {
         $post = $this->input->post();
+
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_subcont');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
 
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
@@ -5530,6 +5585,15 @@ class Kasbon_project extends Admin_Controller
             $post = json_decode($json, true);
         }
 
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_akomodasi');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
+
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
@@ -5669,6 +5733,15 @@ class Kasbon_project extends Admin_Controller
     public function update_kasbon_akomodasi()
     {
         $post = $this->input->post();
+
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'dt');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
 
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
@@ -5824,6 +5897,15 @@ class Kasbon_project extends Admin_Controller
     {
         $post = $this->input->post();
 
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_others');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
+
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
@@ -5961,6 +6043,15 @@ class Kasbon_project extends Admin_Controller
     {
         $post = $this->input->post();
 
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_lab');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
+
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
@@ -6078,6 +6169,15 @@ class Kasbon_project extends Admin_Controller
     public function save_kasbon_subcont_tenaga_ahli()
     {
         $post = $this->input->post();
+
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_subcont_tenaga_ahli');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
 
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
@@ -6197,6 +6297,15 @@ class Kasbon_project extends Admin_Controller
     {
         $post = $this->input->post();
 
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_subcont_perusahaan');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
+
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
@@ -6313,6 +6422,15 @@ class Kasbon_project extends Admin_Controller
     public function update_kasbon_others()
     {
         $post = $this->input->post();
+
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_others');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
 
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
@@ -6456,6 +6574,15 @@ class Kasbon_project extends Admin_Controller
     {
         $post = $this->input->post();
 
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_lab');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
+
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
@@ -6582,6 +6709,15 @@ class Kasbon_project extends Admin_Controller
     {
         $post = $this->input->post();
 
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_subcont_tenaga_ahli');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
+
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = 100000000; // Maximum file size in kilobytes (2MB).
@@ -6707,6 +6843,15 @@ class Kasbon_project extends Admin_Controller
     public function update_kasbon_subcont_perusahaan()
     {
         $post = $this->input->post();
+
+        $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_subcont_perusahaan');
+        if (!empty($validation_errors)) {
+            echo json_encode([
+                'status' => 0,
+                'pesan' => 'Inputan mandatory belum lengkap: ' . implode(', ', $validation_errors)
+            ]);
+            return;
+        }
 
         $config['upload_path'] = './uploads/kasbon_project/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|webp'; //type yang dapat diakses bisa anda sesuaikan

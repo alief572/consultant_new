@@ -98,9 +98,14 @@ if (!$is_in_team) {
         padding: 2px 8px;
         border-radius: 10px;
     }
+
+    .input-error {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    }
 </style>
 
-<form action="" method="post" id="frm-data" enctype="multipart/form-data">
+<form action="" method="post" id="frm-data" enctype="multipart/form-data" novalidate>
     <input type="hidden" name="id_spk_budgeting" value="<?= $list_budgeting->id_spk_budgeting ?>">
     <input type="hidden" name="id_spk_penawaran" value="<?= $list_budgeting->id_spk_penawaran ?>">
     <input type="hidden" name="id_penawaran" value="<?= $list_budgeting->id_penawaran ?>">
@@ -895,71 +900,47 @@ if (!$is_in_team) {
         hitung_all_pengajuan();
     });
 
+    $(document).on('input change', '.input-error', function() {
+        if ($(this).val().trim() !== '') {
+            $(this).removeClass('input-error');
+        }
+    });
+
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
 
-        var deskripsi = $('textarea[name="deskripsi"]').val().trim();
-        if (deskripsi == '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Warning !',
-                text: 'Deskripsi / Keterangan wajib diisi !'
-            });
-            return false;
+        $('.input-error').removeClass('input-error');
+        var errors = [];
+
+        var elDeskripsi = $('textarea[name="deskripsi"]');
+        if (elDeskripsi.val().trim() === '') {
+            errors.push({ name: 'Deskripsi / Keterangan', el: elDeskripsi });
+            elDeskripsi.addClass('input-error');
         }
 
-        var kasbon_bank = $('input[name="kasbon_bank"]').val().trim();
-        if (kasbon_bank == '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Warning !',
-                text: 'Bank wajib diisi !'
-            });
-            return false;
+        var elBank = $('input[name="kasbon_bank"]');
+        if (elBank.val().trim() === '') {
+            errors.push({ name: 'Bank', el: elBank });
+            elBank.addClass('input-error');
         }
 
-        var kasbon_bank_number = $('input[name="kasbon_bank_number"]').val().trim();
-        if (kasbon_bank_number == '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Warning !',
-                text: 'Bank Number wajib diisi !'
-            });
-            return false;
+        var elBankNumber = $('input[name="kasbon_bank_number"]');
+        if (elBankNumber.val().trim() === '') {
+            errors.push({ name: 'Bank Number (Nomor Rekening)', el: elBankNumber });
+            elBankNumber.addClass('input-error');
         }
 
-        var kasbon_bank_account = $('input[name="kasbon_bank_account"]').val().trim();
-        if (kasbon_bank_account == '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Warning !',
-                text: 'Account Name wajib diisi !'
-            });
-            return false;
+        var elBankAccount = $('input[name="kasbon_bank_account"]');
+        if (elBankAccount.val().trim() === '') {
+            errors.push({ name: 'Account Name (Nama Pemilik Rekening)', el: elBankAccount });
+            elBankAccount.addClass('input-error');
         }
 
         var no = "<?= $no ?>";
-
-        var valid = 1;
-
-        // for (i = 1; i <= no; i++) {
-        //     var qty_pengajuan = get_num($('input[name="detail_others[' + i + '][qty_pengajuan]"]').val());
-        //     var qty_estimasi = get_num($('input[name="detail_others[' + i + '][qty_estimasi]"]').val());
-        //     var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
-        //     var price_unit_estimasi = get_num($('input[name="detail_others[' + i + '][price_unit_estimasi]"]').val());
-        //     var sisa_budget = get_num($('input[name="detail_others[' + i + '][sisa_budget]"]').val());
-
-        //     if (qty_pengajuan > 0 && qty_pengajuan < 1) {
-        //         qty_pengajuan = 1;
-        //     }
-        //     // if (valid == '1' && qty_pengajuan > 0 && (nominal_pengajuan * qty_pengajuan) > sisa_budget) {
-        //     //     valid = 0;
-        //     // }
-        // }
-
         var total_sisa = get_num($('input[name="total_sisa"]').val());
-
+        var valid = 1;
         var ttl_propose = 0;
+
         for (i = 1; i <= no; i++) {
             var qty_pengajuan = get_num($('input[name="detail_others[' + i + '][qty_pengajuan]"]').val());
             var nominal_pengajuan = get_num($('input[name="detail_others[' + i + '][nominal_pengajuan]"]').val());
@@ -970,16 +951,47 @@ if (!$is_in_team) {
             ttl_propose += (qty_pengajuan * nominal_pengajuan);
         }
 
+        if (ttl_propose <= 0) {
+            errors.push({ name: 'Item Pengajuan (minimal 1 item harus diajukan dengan nominal > 0)', el: $('.qty_pengajuan:first') });
+            $('.qty_pengajuan:first').addClass('input-error');
+        }
+
+        if (errors.length > 0) {
+            var htmlMsg = '<div style="text-align: left; padding: 0 10px;">' +
+                '<p style="margin-bottom: 8px; font-weight: 600;">Masih ada inputan mandatory yang belum diisi:</p>' +
+                '<ul style="margin-bottom: 0; padding-left: 20px; color: #d9534f;">';
+            errors.forEach(function(item) {
+                htmlMsg += '<li style="margin-bottom: 4px;"><b>' + item.name + '</b></li>';
+            });
+            htmlMsg += '</ul></div>';
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Input Mandatory Belum Lengkap',
+                html: htmlMsg,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            }).then(function() {
+                if (errors[0].el && errors[0].el.length) {
+                    errors[0].el.focus();
+                    $('html, body').animate({
+                        scrollTop: errors[0].el.offset().top - 100
+                    }, 300);
+                }
+            });
+            return false;
+        }
+
         if (valid == '1' && ttl_propose > total_sisa) {
             valid = 0;
         }
 
         if (valid == '0') {
             Swal.fire({
-            icon: 'warning',
-            title: 'Warning !',
-            text: 'Total pengajuan melebihi sisa budget !'
-        });
+                icon: 'warning',
+                title: 'Warning !',
+                text: 'Total pengajuan melebihi sisa budget !'
+            });
         } else {
             Swal.fire({
             icon: 'warning',
