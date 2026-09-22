@@ -375,7 +375,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
             <div class="col-md-6"></div>
 
             <div class="col-md-12">
-                <a href="<?= base_url('approval_penawaran/') ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
+                <a href="<?= base_url('approval_penawaran?tab=non_konsultasi') ?>" class="btn btn-sm btn-danger"><i class="fa fa-arrow-left"></i> Back</a>
                 <button type="button" class="btn btn-sm btn-danger reject" title="Reject Penawaran Non Konsultasi"><i class="fa fa-close"></i> Reject</button>
                 <button type="button" class="btn btn-sm btn-success approve" title="Approve Penawaran Non Konsultasi"><i class="fa fa-check"></i> Approve</button>
             </div>
@@ -489,7 +489,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                             allowOutsideClick: false,
                             timer: 3000
                         }).then(() => {
-                            window.location.href = siteurl + active_controller + 'approval_penawaran';
+                            window.location.href = siteurl + active_controller + '?tab=non_konsultasi';
                         });
                     },
                     error: function(xhr, status, error) {
@@ -546,7 +546,7 @@ $grand_total = (!empty($data_penawaran->grand_total)) ? $data_penawaran->grand_t
                             allowOutsideClick: false,
                             timer: 3000
                         }).then(() => {
-                            window.location.href = siteurl + active_controller + 'approval_penawaran';
+                            window.location.href = siteurl + active_controller + '?tab=non_konsultasi';
                         });
                     },
                     error: function(xhr, status, error) {
