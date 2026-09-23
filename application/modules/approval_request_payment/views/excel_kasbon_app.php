@@ -63,13 +63,16 @@ header("Content-Disposition: attachment; filename=Approval Request Payment Kasbo
                         }
                     }
 
+                    $nm_customer = (!empty($get_spk_penawaran)) ? $get_spk_penawaran->nm_customer : '';
+                    $keperluan_spk = array_filter([$nm_customer, $get_kasbon_header->id_spk_penawaran]);
+
                     echo '<tr>';
                     echo '<td>' . $item_kasbon->no_doc . '</td>';
                     echo '<td>' . $item_kasbon->nama . '</td>';
                     echo '<td>' . $item_kasbon->tgl_doc . '</td>';
                     echo '<td>' . $item_kasbon->keperluan . '</td>';
                     echo '<td>' . $tipe . '</td>';
-                    echo '<td>' . $get_spk_penawaran->nm_customer . ', ' . $get_kasbon_header->id_spk_penawaran . ', ' . $tipe . '</td>';
+                    echo '<td>' . implode(', ', $keperluan_spk) . '</td>';
                     echo '<td align="right">' . number_format($item_kasbon->jumlah) . '</td>';
                     echo '</tr>';
 
@@ -80,7 +83,7 @@ header("Content-Disposition: attachment; filename=Approval Request Payment Kasbo
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="5" align="right">Grand Total</th>
+                <th colspan="6" align="right">Grand Total</th>
                 <th align="right"><?= number_format($ttl_kasbon) ?></th>
             </tr>
         </tfoot>
