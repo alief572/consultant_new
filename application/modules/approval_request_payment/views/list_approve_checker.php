@@ -12,7 +12,7 @@ $count_pembayaran_po = 0;
 $count_direct_payment = 0;
 
 foreach ($data as $item) :
-    if ($item->tipe == 'kasbon' && $item->status !== '2' && is_null($item->app_checker)) {
+    if ($item->tipe == 'kasbon') {
         $get_kasbon_header = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $item->no_doc))->row();
 
         if (!empty($get_kasbon_header)) {
@@ -24,17 +24,9 @@ foreach ($data as $item) :
             }
         }
     }
-
 endforeach;
 
-// Count expense dari data_expense (langsung dari kons_tr_expense_report_project_header)
-$count_expense = 0;
-foreach ($data_expense as $item_exp) :
-    // Hitung yang ada di request_payment dan belum di-approve checker
-    if (!is_null($item_exp->rp_status) && $item_exp->rp_status !== '2' && is_null($item_exp->rp_app_checker) && $item_exp->selisih < 0) {
-        $count_expense += 1;
-    }
-endforeach;
+$count_expense = count($data_expense);
 ?>
 <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
@@ -155,17 +147,9 @@ endforeach;
                                 echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
                                 echo '<td>';
                                 if ($ENABLE_MANAGE) :
-                                    if (($item_kasbon->status !== '2' && is_null($item_kasbon->app_checker))) :
-                                        echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
-                                        echo '<i class="fa fa-check-square-o"></i>';
-                                        echo ' Approve';
-                                        echo '</a>';
-                                    endif;
-
-                                    echo ' <a href="' . base_url('approval_request_payment/print_kasbon/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
+                                    echo '<a href="' . base_url('approval_request_payment/print_kasbon/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
                                     echo '<i class="fa fa-print"></i>';
                                     echo '</a>';
-
 
                                     echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Kasbon" target="_blank"><i class="fa fa-eye"></i></a>';
                                 endif;
@@ -325,18 +309,9 @@ endforeach;
                                 echo '<td class="text-right">' . number_format($item_kasbon->jumlah) . '</td>';
                                 echo '<td>';
                                 if ($ENABLE_MANAGE) :
-
-                                    if (($item_kasbon->status !== '2' && is_null($item_kasbon->app_checker))) :
-                                        echo '<a href="' . base_url($this->uri->segment(1) . '/approval_payment_checker/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-primary btn-sm">';
-                                        echo '<i class="fa fa-check-square-o"></i>';
-                                        echo ' Approve';
-                                        echo '</a>';
-                                    endif;
-
-                                    echo ' <a href="' . base_url('approval_request_payment/print_direct_payment/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
+                                    echo '<a href="' . base_url('approval_request_payment/print_direct_payment/' . urlencode(str_replace('/', '|', $item_kasbon->no_doc))) . '" class="btn btn-sm btn-info" title="Print PDF">';
                                     echo '<i class="fa fa-print"></i>';
                                     echo '</a>';
-
 
                                     echo ' <a href="' . $link_view . '" class="btn btn-sm btn-info" title="View Direct Payment" target="_blank"><i class="fa fa-eye"></i></a>';
                                 endif;
