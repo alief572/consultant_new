@@ -695,7 +695,6 @@ if ($tipe == 'Expense') {
 
 <div class="box">
 	<div class="box-body">
-		<?php if ($tipe2 !== 'Kasbon') : ?>
 		<div class="row">
 			<div class="col-md-12">
 				<h4 style="font-weight: 800;">Reject Reason</h4>
@@ -703,7 +702,6 @@ if ($tipe == 'Expense') {
 			</div>
 		</div>
 		<br>
-		<?php endif; ?>
 		<div class="row">
 			<div class="col-md-6">
 				<table class="table">
@@ -724,14 +722,12 @@ if ($tipe == 'Expense') {
 	<a href="<?= base_url('approval_request_payment/list_approve_checker') ?>" class="btn btn-sm btn-info">
 		<i class="fa fa-arrow-left"></i> Back
 	</a>
-	<?php if ($tipe2 !== 'Kasbon') : ?>
 	<button type="button" class="btn btn-sm btn-danger" id="reject">
 		<i class="fa fa-close"></i> Reject
 	</button>
 	<button type="button" class="btn btn-sm btn-success" id="approve">
 		<i class="fa fa-check"></i> Approve
 	</button>
-	<?php endif; ?>
 </div>
 
 <script src="<?= base_url('assets/js/number-divider.min.js') ?>"></script>
