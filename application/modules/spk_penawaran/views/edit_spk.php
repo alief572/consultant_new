@@ -837,17 +837,17 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
 
     function persen_komisi(tipe) {
         var persentase = get_num($('input[name="persentase_' + tipe + '_komisi"]').val());
-        if (persentase > 2) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Warning !',
-                text: 'Persen komisi tidak boleh lebih dari 2% !'
-            });
+        // if (persentase > 2) {
+        //     Swal.fire({
+        //         icon: 'warning',
+        //         title: 'Warning !',
+        //         text: 'Persen komisi tidak boleh lebih dari 2% !'
+        //     });
 
-            persentase = 2;
+        //     persentase = 2;
 
-            $('input[name="persentase_' + tipe + '_komisi"]').val(persentase);
-        }
+        //     $('input[name="persentase_' + tipe + '_komisi"]').val(persentase);
+        // }
         var nilai_internal = get_num($('.total_nilai_kontrak_bersih').val());
 
         var nilai_komisi = parseFloat(nilai_internal * persentase / 100);
@@ -980,15 +980,15 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
         var ttl_nominal_payment = get_num($('.ttl_nominal_payment').text());
         var nilai_kontrak_bersih = get_num($('.nilai_project').val());
 
-        if (ttl_persen_komisi > 5) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Warning !',
-                text: 'Total Persentase Komisi tidak boleh lebih dari 4% !'
-            });
+        // if (ttl_persen_komisi > 5) {
+        //     Swal.fire({
+        //         icon: 'warning',
+        //         title: 'Warning !',
+        //         text: 'Total Persentase Komisi tidak boleh lebih dari 4% !'
+        //     });
 
-            return false;
-        } 
+        //     return false;
+        // } 
         // else if (ttl_nominal_payment != nilai_kontrak_bersih) {
            // Swal.fire({
                // icon: 'warning',
@@ -998,7 +998,7 @@ if ($list_spk_penawaran->reject_level2_by !== null) {
 
             //return false;
        // } 
-        else if (waktu_from == '' || waktu_to == '') {
+        if (waktu_from == '' || waktu_to == '') {
             Swal.fire({
                 icon: 'warning',
                 title: 'Warning !',

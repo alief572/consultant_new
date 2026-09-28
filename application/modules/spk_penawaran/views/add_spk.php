@@ -935,15 +935,15 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
         var ttl_nominal_payment = get_num($('.ttl_nominal_payment').text());
         var nilai_kontrak_bersih = get_num($('.nilai_project').val());
 
-        if (ttl_persen_komisi > 5) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Warning !',
-                text: 'Total Persentase Komisi tidak boleh lebih dari 4%'
-            });
+        // if (ttl_persen_komisi > 5) {
+        //     Swal.fire({
+        //         icon: 'warning',
+        //         title: 'Warning !',
+        //         text: 'Total Persentase Komisi tidak boleh lebih dari 4%'
+        //     });
 
-            return false;
-        }
+        //     return false;
+        // }
         // else if (ttl_nominal_payment != nilai_kontrak_bersih) {
         // Swal.fire({
         // icon: 'warning',
@@ -953,7 +953,7 @@ $ENABLE_DELETE  = has_permission('SPK.Delete');
 
         // return false;
         //} 
-        else if (waktu_from == '' || waktu_to == '') {
+        if (waktu_from == '' || waktu_to == '') {
             Swal.fire({
                 icon: 'warning',
                 title: 'Warning !',
