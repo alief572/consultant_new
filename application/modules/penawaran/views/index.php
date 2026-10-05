@@ -47,24 +47,20 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         </ul>
         <div id="konsultasi">
             <div class="table-responsive">
-                <table id="table_penawaran" class="table table-striped nowrap">
+                <table id="table_penawaran" class="table table-bordered table-striped table-hover" style="width: 100%;">
                     <thead class="bg-primary">
                         <tr>
-                            <th align="center">No</th>
-                            <th align="center">ID Quotation</th>
-                            <th align="center">Date</th>
-                            <th align="center">Marketing</th>
-                            <th align="center">Package</th>
-                            <th align="center">Customer</th>
-                            <th align="center">Grand Total</th>
-                            <th align="center">Revisi</th>
-                            <th align="center">Created By</th>
-                            <th align="center">Created Date</th>
-                            <th align="center">Status Cust</th>
-                            <th align="center">Status Quot</th>
-                            <th align="center">Action</th>
+                            <th class="text-center" width="4%">No</th>
+                            <th class="text-center" width="26%">Quotation & Paket</th>
+                            <th class="text-center" width="20%">Customer</th>
+                            <th class="text-center" width="18%">Marketing & Creator</th>
+                            <th class="text-center" width="13%">Grand Total</th>
+                            <th class="text-center" width="11%">Status</th>
+                            <th class="text-center" width="8%">Action</th>
                         </tr>
                     </thead>
+                    <tbody>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -82,22 +78,20 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 </div>
             </div>
             <div class="table-responsive">
-                <table id="table_penawaran_non_konsultasi" class="table table-bordered table-striped nowrap">
+                <table id="table_penawaran_non_konsultasi" class="table table-bordered table-striped table-hover" style="width: 100%;">
                     <thead class="bg-primary">
                         <tr>
-                            <th align="center">No</th>
-                            <th align="center">ID Quotation</th>
-                            <th align="center">Date</th>
-                            <th align="center">Admin Sales</th>
-                            <th align="center">Penawaran</th>
-                            <th align="center">Customer</th>
-                            <th align="center">Grand Total</th>
-                            <th align="center">Created By</th>
-                            <th align="center">Created Date</th>
-                            <th align="center">Status Quotation</th>
-                            <th align="center">Action</th>
+                            <th class="text-center" width="4%">No</th>
+                            <th class="text-center" width="26%">Quotation & Penawaran</th>
+                            <th class="text-center" width="20%">Customer</th>
+                            <th class="text-center" width="18%">Admin Sales & Creator</th>
+                            <th class="text-center" width="13%">Grand Total</th>
+                            <th class="text-center" width="11%">Status</th>
+                            <th class="text-center" width="8%">Action</th>
                         </tr>
                     </thead>
+                    <tbody>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -443,79 +437,59 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     });
 
     function DataTables() {
-        // var dataTables = $('#table_penawaran').dataTable();
-        // dataTables.destroy();
-
         var dataTables = $('#table_penawaran').dataTable({
+            processing: true,
+            serverSide: true,
+            stateSave: false,
+            destroy: true,
+            paging: true,
+            autoWidth: false,
             ajax: {
                 url: siteurl + active_controller + 'get_data_penawaran',
                 type: "POST",
                 dataType: "JSON",
-                data: function(d) {
-
-                }
+                data: function(d) {}
             },
             language: {
                 loadingRecords: 'Please wait - Loading ...'
             },
-            stateSave: false,
-            autoWidth: true,
             columns: [{
                     data: 'no',
-                }, {
-                    data: 'id_quotation'
+                    className: 'text-center'
                 },
                 {
-                    data: 'tgl_quotation'
+                    data: 'quotation_paket'
                 },
                 {
-                    data: 'nm_marketing'
+                    data: 'customer_info'
                 },
                 {
-                    data: 'nm_paket',
-                    render: function(data, type, row) {
-                        if (type === 'display' && data && data.length > 40) {
-                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
-                        }
-                        return data;
-                    }
+                    data: 'marketing_creator'
                 },
                 {
-                    data: 'nm_customer'
+                    data: 'grand_total',
+                    className: 'text-right'
                 },
                 {
-                    data: 'grand_total'
+                    data: 'status_quot',
+                    className: 'text-center'
                 },
                 {
-                    data: 'revisi'
-                },
-                {
-                    data: 'created_by'
-                },
-                {
-                    data: 'created_date'
-                },
-                {
-                    data: 'status_cust'
-                },
-                {
-                    data: 'status_quot'
-                },
-                {
-                    data: 'option'
+                    data: 'option',
+                    className: 'text-center'
                 }
-            ],
-            responsive: true,
-            processing: false,
-            serverSide: true,
-            destroy: true,
-            paging: true,
-            scrollX: true
+            ]
         });
     }
 
     function DataTablesNon() {
         var dataTables = $('#table_penawaran_non_konsultasi').dataTable({
+            processing: true,
+            serverSide: true,
+            stateSave: false,
+            destroy: true,
+            paging: true,
+            autoWidth: false,
             ajax: {
                 url: siteurl + active_controller + 'get_data_penawaran_non',
                 type: "GET",
@@ -524,7 +498,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     d.filter_status = $('#filter_status_non_kons').val();
                 },
                 error: function(xhr, status, error) {
-                    // 1. Ambil response text dan parse ke JSON
                     let response = {};
                     try {
                         response = JSON.parse(xhr.responseText);
@@ -534,11 +507,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         };
                     }
 
-                    // 2. Tampilkan pesan 'msg' dari JSON
                     Swal.fire({
                         icon: 'error',
                         title: 'Error !',
-                        text: response.msg, // <--- Ini yang bakal nampilin isi pesan lu
+                        text: response.msg,
                         showConfirmButton: false,
                         timer: 3000
                     });
@@ -547,48 +519,32 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             language: {
                 loadingRecords: 'Please wait - Loading ...'
             },
-            stateSave: false,
-            autoWidth: true,
             columns: [{
-                    data: 'no'
+                    data: 'no',
+                    className: 'text-center'
                 },
                 {
-                    data: 'id_quotation'
+                    data: 'quotation_penawaran'
                 },
                 {
-                    data: 'date'
+                    data: 'customer_info'
                 },
                 {
-                    data: 'pic_penawaran'
+                    data: 'sales_creator'
                 },
                 {
-                    data: 'penawaran'
+                    data: 'grand_total',
+                    className: 'text-right'
                 },
                 {
-                    data: 'customer'
+                    data: 'status_quot',
+                    className: 'text-center'
                 },
                 {
-                    data: 'grand_total'
-                },
-                {
-                    data: 'created_by'
-                },
-                {
-                    data: 'created_date'
-                },
-                {
-                    data: 'status_quot'
-                },
-                {
-                    data: 'action'
+                    data: 'action',
+                    className: 'text-center'
                 }
-            ],
-            responsive: true,
-            processing: false,
-            serverSide: true,
-            destroy: true,
-            paging: true,
-            scrollX: true
+            ]
         });
     }
 </script>

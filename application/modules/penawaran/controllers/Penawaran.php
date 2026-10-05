@@ -315,134 +315,6 @@ class Penawaran extends Admin_Controller
         $no = ($start + 1);
         foreach ($get_data->result() as $item) {
 
-            if ($item->sts_cust == 0) {
-                $status_cust = '
-                    <span class="btn btn-sm btn-warning" style="width: 100% !important;">
-                        <b>New</b>
-                    </span>
-                ';
-            } else {
-                $status_cust = '
-                    <span class="btn btn-sm btn-info" style="width: 100% !important;">
-                        <b>Repeat</b>
-                    </span>
-                ';
-            }
-
-            if ($item->sts_quot == 1) {
-                $status_quot = '
-                    <span class="btn btn-sm btn-primary" style="width: 100% !important;">
-                        <b>Waiting Approval</b>
-                    </span>
-                ';
-            }
-            if ($item->sts_quot == 2) {
-                $status_quot = '
-                    <span class="btn btn-sm btn-success" style="width: 100% !important;">
-                        <b>Approved</b>
-                    </span>
-                ';
-            }
-            if ($item->sts_quot == 0) {
-                $status_quot = '
-                    <span class="btn btn-sm btn-danger" style="width: 100% !important;">
-                        <b>Rejected</b>
-                    </span>
-                ';
-            }
-
-            $option = '
-            <div class="btn-group">
-                <button
-                    type="button"
-                    class="btn btn-sm btn-accent text-primary dropdown-toggle"
-                    title="Actions"
-                    data-toggle="dropdown"
-                    id="dropdownMenu' . $no . '"
-                    aria-expanded="false">
-                    <i class="fa fa-cogs"></i> <span class="caret"></span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-            ';
-
-            if ($this->viewPermission) {
-                $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('penawaran/view_penawaran/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '" class="btn btn-sm btn-info" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-file"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> View </span>
-                    </div>
-                ';
-            }
-
-            if ($this->managePermission && ($item->sts_deal == null || $item->sts_deal == '')) {
-                $option .= '
-                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('penawaran/edit_penawaran/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '" class="btn btn-sm btn-success" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-edit"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Revisi </span>
-                    </div>
-                ';
-            }
-
-            if ($this->deletePermission && ($item->sts_deal == null || $item->sts_deal == '')) {
-                $option .= '
-                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-danger del_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-trash"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Delete </span>
-                    </div>
-                ';
-            }
-
-            if ($this->managePermission && $item->sts_quot == '2' && ($item->sts_deal == null || $item->sts_deal == '') && ($this->auth->user_id() == '92' || $this->is_admin)) {
-                $option .= '
-                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-warning deal_penawaran" style="color: #000000" data-id_penawaran="' . $item->id_quotation . '">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-check"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Deal </span>
-                    </div>
-                ';
-            }
-
-            $option .= '
-                <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                    <a
-                        href="javascript:void(0);"
-                        class="btn btn-sm"
-                        style="background-color: #ff0066; color: #000000">
-                        <div class="col-12 dropdown-item">
-                        <b>
-                            <i class="fa fa-print"></i>
-                        </b>
-                        </div>
-                    </a>
-                    <span style="font-weight: 500"> Print </span>
-                </div>
-            ';
-            $option .= '</div>';
-
-
             $get_marketing = $this->dbhr->get_where('employees', ['id' => $item->id_marketing])->row();
             $nm_marketing = (!empty($get_marketing)) ? $get_marketing->name : '';
 
@@ -456,21 +328,122 @@ class Penawaran extends Admin_Controller
             $get_customers = $this->db->get_where('customer', ['id_customer' => $item->id_customer])->row();
             $nm_customer = (!empty($get_customers)) ? $get_customers->nm_customer : '';
 
+            // Quotation & Paket
+            $quotation_paket = '<span style="font-weight: 700; color: #333;">' . $item->id_quotation . '</span>';
+            if ($item->revisi > 0) {
+                $quotation_paket .= ' <span class="badge bg-purple" style="font-size: 10px;">Rev ' . $item->revisi . '</span>';
+            }
+            if (!empty($item->tgl_quotation)) {
+                $quotation_paket .= '<br><span class="text-muted" style="font-size: 11px;"><i class="fa fa-calendar"></i> ' . date('d F Y', strtotime($item->tgl_quotation)) . '</span>';
+            }
+            if (!empty($nm_paket)) {
+                $quotation_paket .= '<br><span class="text-muted" style="font-size: 12px;"><i class="fa fa-briefcase"></i> ' . $nm_paket . '</span>';
+            }
+
+            // Customer
+            $customer_info = '<span style="font-weight: 600; color: #333;">' . $nm_customer . '</span>';
+            if ($item->sts_cust == 0) {
+                $customer_info .= '<br><span class="label label-warning" style="font-size: 10px;">New</span>';
+            } else {
+                $customer_info .= '<br><span class="label label-info" style="font-size: 10px;">Repeat</span>';
+            }
+
+            // Marketing & Creator
+            $marketing_creator = '';
+            if (!empty($nm_marketing)) {
+                $marketing_creator .= '<div><i class="fa fa-user-circle text-primary"></i> <b>Marketing:</b> ' . ucfirst($nm_marketing) . '</div>';
+            }
+            if (!empty($item->nm_lengkap)) {
+                $marketing_creator .= '<div class="text-muted" style="font-size: 11px;"><i class="fa fa-user text-muted"></i> <b>Created:</b> ' . ucfirst($item->nm_lengkap) . ' (' . date('d/m/Y H:i', strtotime($item->input_date)) . ')</div>';
+            }
+
+            // Grand Total
+            $grand_total = '<span style="font-weight: 700;">Rp ' . number_format($item->grand_total) . '</span>';
+
+            // Status
+            if ($item->sts_deal == '1') {
+                $status_quot = '<span class="badge bg-green">Deal</span>';
+            } elseif ($item->sts_quot == 1) {
+                $status_quot = '<span class="badge bg-blue">Waiting Approval</span>';
+            } elseif ($item->sts_quot == 2) {
+                $status_quot = '<span class="badge bg-green">Approved</span>';
+            } elseif ($item->sts_quot == 0) {
+                $status_quot = '<span class="badge bg-red">Rejected</span>';
+            } else {
+                $status_quot = '-';
+            }
+
+            // Option / Action Dropdown
+            $option = '
+            <div class="btn-group">
+                <button
+                    type="button"
+                    class="btn btn-sm btn-primary dropdown-toggle"
+                    title="Actions"
+                    data-toggle="dropdown"
+                    aria-expanded="false">
+                    <i class="fa fa-cogs"></i> Action <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+            ';
+
+            if ($this->viewPermission) {
+                $option .= '
+                    <li>
+                        <a href="' . base_url('penawaran/view_penawaran/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '">
+                            <i class="fa fa-eye text-info"></i> View
+                        </a>
+                    </li>
+                ';
+            }
+
+            if ($this->managePermission && ($item->sts_deal == null || $item->sts_deal == '')) {
+                $option .= '
+                    <li>
+                        <a href="' . base_url('penawaran/edit_penawaran/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '">
+                            <i class="fa fa-pencil text-warning"></i> Revisi
+                        </a>
+                    </li>
+                ';
+            }
+
+            if ($this->deletePermission && ($item->sts_deal == null || $item->sts_deal == '')) {
+                $option .= '
+                    <li>
+                        <a href="javascript:void(0);" class="del_penawaran" data-id_penawaran="' . $item->id_quotation . '">
+                            <i class="fa fa-trash text-danger"></i> Delete
+                        </a>
+                    </li>
+                ';
+            }
+
+            if ($this->managePermission && $item->sts_quot == '2' && ($item->sts_deal == null || $item->sts_deal == '') && ($this->auth->user_id() == '92' || $this->is_admin)) {
+                $option .= '
+                    <li>
+                        <a href="javascript:void(0);" class="deal_penawaran" data-id_penawaran="' . $item->id_quotation . '">
+                            <i class="fa fa-check text-success"></i> Deal
+                        </a>
+                    </li>
+                ';
+            }
+
+            $option .= '
+                    <li>
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-print text-primary"></i> Print
+                        </a>
+                    </li>
+            ';
+            $option .= '</ul></div>';
+
             $hasil[] = [
                 'no' => $no,
-                'id_quotation' => $item->id_quotation,
-                'tgl_quotation' => $item->tgl_quotation,
-                'nm_marketing' => ucfirst($nm_marketing),
-                'nm_paket' => $nm_paket,
-                'nm_customer' => $nm_customer,
-                'grand_total' => number_format($item->grand_total),
-                'revisi' => $item->revisi,
-                'created_by' => $item->nm_lengkap,
-                'created_date' => date('d F Y H:i:s', strtotime($item->input_date)),
-                'status_cust' => $status_cust,
+                'quotation_paket' => $quotation_paket,
+                'customer_info' => $customer_info,
+                'marketing_creator' => $marketing_creator,
+                'grand_total' => $grand_total,
                 'status_quot' => $status_quot,
                 'option' => $option
-
             ];
 
             $no++;
@@ -1678,39 +1651,77 @@ class Penawaran extends Admin_Controller
 
     private function render_action_non_kons($item)
     {
-        $view_btn = '';
-        $print_btn = '';
+        $action = '
+        <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="Actions">
+                <i class="fa fa-cogs"></i> Action <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+        ';
+
         if (has_permission($this->viewPermission)) {
-            $view_btn = '<a href="' . base_url('penawaran/view_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-info" title="View Penawaran"><i class="fa fa-eye"></i></a>';
+            $action .= '
+                <li>
+                    <a href="' . base_url('penawaran/view_non_kons/' . $item->id_penawaran) . '">
+                        <i class="fa fa-eye text-info"></i> View
+                    </a>
+                </li>
+            ';
 
             if ($item->sts_quot == '1') {
-                $print_btn = '<a href="javascript:void(0);" class="btn btn-sm btn-primary" title="Print Penawaran"><i class="fa fa-print"></i></a>';
+                $action .= '
+                    <li>
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-print text-primary"></i> Print
+                        </a>
+                    </li>
+                ';
             }
         }
 
-        $edit_btn = '';
-        $deal_btn = '';
         if (has_permission($this->managePermission)) {
             if ($item->sts_quot !== '1') {
-                $edit_btn = '<a href="' . base_url('penawaran/edit_non_kons/' . $item->id_penawaran) . '" class="btn btn-sm btn-warning" title="Revisi Penawaran"><i class="fa fa-pencil"></i></a>';
+                $action .= '
+                    <li>
+                        <a href="' . base_url('penawaran/edit_non_kons/' . $item->id_penawaran) . '">
+                            <i class="fa fa-pencil text-warning"></i> Revisi
+                        </a>
+                    </li>
+                ';
             }
 
             if ($item->sts_deal !== '1' && $item->sts_quot == '1') {
-                $deal_btn = '<button type="button" class="btn btn-sm btn-success btn_deal_penawaran" data-toggle="modal" data-target="#modal_deal_penawaran" data-id_penawaran="' . $item->id_penawaran . '" title="Deal Penawaran"><i class="fa fa-check"></i></button>';
+                $action .= '
+                    <li>
+                        <a href="javascript:void(0);" class="btn_deal_penawaran" data-toggle="modal" data-target="#modal_deal_penawaran" data-id_penawaran="' . $item->id_penawaran . '">
+                            <i class="fa fa-check text-success"></i> Deal
+                        </a>
+                    </li>
+                ';
             }
         }
 
-        $delete_btn = '';
         if (has_permission($this->deletePermission) && $item->sts_quot !== '1') {
-            $delete_btn = '<button type="button" class="btn btn-sm btn-danger del_penawaran_non_kons" data-id_penawaran="' . $item->id_penawaran . '" title="Delete Penawaran"><i class="fa fa-trash"></i></button>';
+            $action .= '
+                <li>
+                    <a href="javascript:void(0);" class="del_penawaran_non_kons" data-id_penawaran="' . $item->id_penawaran . '">
+                        <i class="fa fa-trash text-danger"></i> Delete
+                    </a>
+                </li>
+            ';
         }
 
-        $btn_download = '';
         if (!empty($item->dokumen_pendukung)) {
-            $btn_download = '<a href="' . base_url('uploads/penawaran_non_konsultasi/' . $item->dokumen_pendukung) . '" class="btn btn-sm btn-info" title="Download Dokumen Pendukung" target="_blank"><i class="fa fa-download"></i></a>';
+            $action .= '
+                <li>
+                    <a href="' . base_url('uploads/penawaran_non_konsultasi/' . $item->dokumen_pendukung) . '" target="_blank">
+                        <i class="fa fa-download text-info"></i> Dokumen Pendukung
+                    </a>
+                </li>
+            ';
         }
 
-        $action = $view_btn . ' ' . $print_btn . ' ' . $edit_btn . ' ' . $delete_btn . ' ' . $deal_btn . ' ' . $btn_download;
+        $action .= '</ul></div>';
 
         return $action;
     }
@@ -1913,16 +1924,32 @@ class Penawaran extends Admin_Controller
 
                 $action = $this->render_action_non_kons($item);
 
+                $quotation_penawaran = '<span style="font-weight: 700; color: #333;">' . $item->id_penawaran . '</span>';
+                if (!empty($item->tgl_quotation)) {
+                    $quotation_penawaran .= '<br><span class="text-muted" style="font-size: 11px;"><i class="fa fa-calendar"></i> ' . date('d F Y', strtotime($item->tgl_quotation)) . '</span>';
+                }
+                if (!empty($item->keterangan_penawaran)) {
+                    $quotation_penawaran .= '<br><span class="text-muted" style="font-size: 12px;"><i class="fa fa-file-text-o"></i> ' . $item->keterangan_penawaran . '</span>';
+                }
+
+                $customer_info = '<span style="font-weight: 600; color: #333;">' . $item->nm_customer . '</span>';
+
+                $sales_creator = '';
+                if (!empty($item->nm_pic_penawaran)) {
+                    $sales_creator .= '<div><i class="fa fa-user-circle text-primary"></i> <b>PIC:</b> ' . ucfirst($item->nm_pic_penawaran) . '</div>';
+                }
+                if (!empty($item->nm_lengkap)) {
+                    $sales_creator .= '<div class="text-muted" style="font-size: 11px;"><i class="fa fa-user text-muted"></i> <b>Created:</b> ' . ucfirst($item->nm_lengkap) . ' (' . date('d/m/Y H:i', strtotime($item->input_date)) . ')</div>';
+                }
+
+                $grand_total = '<span style="font-weight: 700;">Rp ' . number_format($item->grand_total) . '</span>';
+
                 $hasil[] = [
                     'no' => $no,
-                    'id_quotation' => $item->id_penawaran,
-                    'date' => $item->tgl_quotation,
-                    'pic_penawaran' => $item->nm_pic_penawaran,
-                    'penawaran' => $item->keterangan_penawaran,
-                    'customer' => $item->nm_customer,
-                    'grand_total' => number_format($item->grand_total),
-                    'created_by' => $item->nm_lengkap,
-                    'created_date' => date('d F Y H:i:s', strtotime($item->input_date)),
+                    'quotation_penawaran' => $quotation_penawaran,
+                    'customer_info' => $customer_info,
+                    'sales_creator' => $sales_creator,
+                    'grand_total' => $grand_total,
                     'status_quot' => $status,
                     'action' => $action
                 ];
