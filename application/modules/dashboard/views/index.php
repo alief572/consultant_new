@@ -169,7 +169,122 @@
 	</div>
 </div>
 
+<?php if ($can_view_project_budgeting): ?>
+<div class="row row-equal-cards">
+	<div class="col-md-4 col-xs-12">
+		<a href="<?= base_url('approval_project_budgeting') ?>" class="small-box dashboard-budgeting-card">
+			<div class="dashboard-budgeting-card__core">
+				<div class="inner">
+					<h3><?= number_format($count_project_budgeting) ?></h3>
+					<p>Project Budgeting Menunggu Approval</p>
+				</div>
+				<div class="dashboard-budgeting-card__icon" aria-hidden="true">
+					<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+						<path d="M14 6h25l11 11v41H14zM39 6v12h11M22 25h20M22 33h12M22 41h10M22 49h8" />
+						<circle cx="43" cy="44" r="13" />
+						<path d="M38 44l3 3 7-7" />
+					</svg>
+				</div>
+				<span class="small-box-footer dashboard-budgeting-card__footer">
+					Lihat Detail <span class="dashboard-budgeting-card__arrow" aria-hidden="true">&rarr;</span>
+				</span>
+			</div>
+		</a>
+	</div>
+</div>
+<?php endif; ?>
+
 <style>
+	.small-box.dashboard-budgeting-card {
+		padding: 3px;
+		border-radius: 8px;
+		background: #086a62;
+		color: #fff;
+		text-decoration: none;
+		box-shadow: 0 4px 14px rgba(8, 106, 98, 0.09);
+		transition: transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
+	}
+
+	.dashboard-budgeting-card__core {
+		position: relative;
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		overflow: hidden;
+		border-radius: 5px;
+		background: #087f75;
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+	}
+
+	.dashboard-budgeting-card .inner {
+		position: relative;
+		z-index: 1;
+		padding: 10px 90px 10px 10px;
+	}
+
+	.dashboard-budgeting-card__icon {
+		position: absolute;
+		top: 10px;
+		right: 12px;
+		width: 76px;
+		color: rgba(255, 255, 255, 0.28);
+		pointer-events: none;
+	}
+
+	.dashboard-budgeting-card__icon svg {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	.dashboard-budgeting-card__footer {
+		display: flex;
+		padding: 3px 0;
+		color: rgba(255, 255, 255, 0.9);
+		background: rgba(0, 0, 0, 0.1);
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+	}
+
+	.dashboard-budgeting-card__arrow {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.14);
+		transition: transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
+	}
+
+	.small-box.dashboard-budgeting-card:hover {
+		color: #fff;
+		transform: translateY(-2px);
+	}
+
+	.dashboard-budgeting-card:hover .dashboard-budgeting-card__arrow {
+		transform: translateX(2px);
+	}
+
+	.small-box.dashboard-budgeting-card:focus {
+		outline: 3px solid #085950;
+		outline-offset: 3px;
+		color: #fff;
+	}
+
+	.small-box.dashboard-budgeting-card:active {
+		transform: scale(0.99);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.small-box.dashboard-budgeting-card,
+		.dashboard-budgeting-card__arrow {
+			transition: none;
+			transform: none !important;
+		}
+	}
+
 	.row-equal-cards {
 		display: flex;
 		flex-wrap: wrap;

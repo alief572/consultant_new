@@ -216,6 +216,18 @@ class Dashboard_model extends BF_Model
         return 0;
     }
 
+    public function count_project_budgeting_waiting_approval()
+    {
+        // Match the existing waiting filter: exclude approved, rejected and NULL statuses.
+        $leader_scope = get_project_budgeting_leader_scope();
+        $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        apply_project_budgeting_leader_scope($this->db, 'b', $leader_scope);
+        $this->db->where('a.sts <>', 1);
+        $this->db->where('a.sts <>', 2);
+        return (int) $this->db->count_all_results();
+    }
+
     public function count_spk_direktur_waiting()
     {
         $sql = "SELECT COUNT(*) as total FROM kons_tr_spk_penawaran
