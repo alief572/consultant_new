@@ -375,23 +375,23 @@ class Penawaran extends Admin_Controller
 
             // Option / Action Dropdown
             $option = '
-            <div class="btn-group">
+            <div class="btn-group penawaran-actions">
                 <button
                     type="button"
-                    class="btn btn-sm btn-primary dropdown-toggle"
-                    title="Actions"
+                    class="penawaran-action-toggle dropdown-toggle"
+                    title="Aksi Penawaran" aria-label="Aksi Penawaran" aria-haspopup="true"
                     data-toggle="dropdown"
                     aria-expanded="false">
-                    <i class="fa fa-cogs"></i> Action <span class="caret"></span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg> <span>Aksi</span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <ul class="dropdown-menu dropdown-menu-right penawaran-action-menu" role="menu">
             ';
 
             if ($this->viewPermission) {
                 $option .= '
                     <li>
                         <a href="' . base_url('penawaran/view_penawaran/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '">
-                            <i class="fa fa-eye text-info"></i> View
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> View
                         </a>
                     </li>
                 ';
@@ -401,7 +401,7 @@ class Penawaran extends Admin_Controller
                 $option .= '
                     <li>
                         <a href="' . base_url('penawaran/edit_penawaran/' . urlencode(str_replace('/', '|', $item->id_quotation))) . '">
-                            <i class="fa fa-pencil text-warning"></i> Revisi
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 5l5 5M4 20l4-1L20 7a3 3 0 0 0-4-4L4 15z"/></svg> Revisi
                         </a>
                     </li>
                 ';
@@ -410,8 +410,8 @@ class Penawaran extends Admin_Controller
             if ($this->deletePermission && ($item->sts_deal == null || $item->sts_deal == '')) {
                 $option .= '
                     <li>
-                        <a href="javascript:void(0);" class="del_penawaran" data-id_penawaran="' . $item->id_quotation . '">
-                            <i class="fa fa-trash text-danger"></i> Delete
+                        <a href="javascript:void(0);" class="del_penawaran penawaran-action-danger" data-id_penawaran="' . $item->id_quotation . '">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg> Delete
                         </a>
                     </li>
                 ';
@@ -421,7 +421,7 @@ class Penawaran extends Admin_Controller
                 $option .= '
                     <li>
                         <a href="javascript:void(0);" class="deal_penawaran" data-id_penawaran="' . $item->id_quotation . '">
-                            <i class="fa fa-check text-success"></i> Deal
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l4 4L19 6"/></svg> Deal
                         </a>
                     </li>
                 ';
@@ -430,7 +430,7 @@ class Penawaran extends Admin_Controller
             $option .= '
                     <li>
                         <a href="javascript:void(0);">
-                            <i class="fa fa-print text-primary"></i> Print
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9V3h12v6M6 17H3V9h18v8h-3M6 14h12v7H6zM17 12h1"/></svg> Print
                         </a>
                     </li>
             ';
@@ -1652,18 +1652,18 @@ class Penawaran extends Admin_Controller
     private function render_action_non_kons($item)
     {
         $action = '
-        <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="Actions">
-                <i class="fa fa-cogs"></i> Action <span class="caret"></span>
+        <div class="btn-group penawaran-actions">
+            <button type="button" class="penawaran-action-toggle dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="Aksi Penawaran" aria-label="Aksi Penawaran" aria-haspopup="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg> <span>Aksi</span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+            <ul class="dropdown-menu dropdown-menu-right penawaran-action-menu" role="menu">
         ';
 
         if (has_permission($this->viewPermission)) {
             $action .= '
                 <li>
                     <a href="' . base_url('penawaran/view_non_kons/' . $item->id_penawaran) . '">
-                        <i class="fa fa-eye text-info"></i> View
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> View
                     </a>
                 </li>
             ';
@@ -1672,7 +1672,7 @@ class Penawaran extends Admin_Controller
                 $action .= '
                     <li>
                         <a href="javascript:void(0);">
-                            <i class="fa fa-print text-primary"></i> Print
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9V3h12v6M6 17H3V9h18v8h-3M6 14h12v7H6zM17 12h1"/></svg> Print
                         </a>
                     </li>
                 ';
@@ -1684,7 +1684,7 @@ class Penawaran extends Admin_Controller
                 $action .= '
                     <li>
                         <a href="' . base_url('penawaran/edit_non_kons/' . $item->id_penawaran) . '">
-                            <i class="fa fa-pencil text-warning"></i> Revisi
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 5l5 5M4 20l4-1L20 7a3 3 0 0 0-4-4L4 15z"/></svg> Revisi
                         </a>
                     </li>
                 ';
@@ -1694,7 +1694,7 @@ class Penawaran extends Admin_Controller
                 $action .= '
                     <li>
                         <a href="javascript:void(0);" class="btn_deal_penawaran" data-toggle="modal" data-target="#modal_deal_penawaran" data-id_penawaran="' . $item->id_penawaran . '">
-                            <i class="fa fa-check text-success"></i> Deal
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l4 4L19 6"/></svg> Deal
                         </a>
                     </li>
                 ';
@@ -1704,8 +1704,8 @@ class Penawaran extends Admin_Controller
         if (has_permission($this->deletePermission) && $item->sts_quot !== '1') {
             $action .= '
                 <li>
-                    <a href="javascript:void(0);" class="del_penawaran_non_kons" data-id_penawaran="' . $item->id_penawaran . '">
-                        <i class="fa fa-trash text-danger"></i> Delete
+                    <a href="javascript:void(0);" class="del_penawaran_non_kons penawaran-action-danger" data-id_penawaran="' . $item->id_penawaran . '">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg> Delete
                     </a>
                 </li>
             ';
@@ -1715,7 +1715,7 @@ class Penawaran extends Admin_Controller
             $action .= '
                 <li>
                     <a href="' . base_url('uploads/penawaran_non_konsultasi/' . $item->dokumen_pendukung) . '" target="_blank">
-                        <i class="fa fa-download text-info"></i> Dokumen Pendukung
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12M7 10l5 5 5-5M4 17v4h16v-4"/></svg> Dokumen Pendukung
                     </a>
                 </li>
             ';
