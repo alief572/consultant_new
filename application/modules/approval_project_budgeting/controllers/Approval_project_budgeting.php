@@ -38,7 +38,9 @@ class Approval_project_budgeting extends Admin_Controller
 
     public function get_data_spk()
     {
+        $this->auth->restrict($this->viewPermission);
         $draw = $this->input->post('draw');
+        $leader_scope = get_project_budgeting_leader_scope();
         $start = $this->input->post('start');
         $length = $this->input->post('length');
         $search = $this->input->post('search');
@@ -50,6 +52,8 @@ class Approval_project_budgeting extends Admin_Controller
 
         // Count total records (matching the filter a.sts <> 1, but without search)
         $this->db->from('kons_tr_spk_budgeting a');
+        $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+        apply_project_budgeting_leader_scope($this->db, 'b', $leader_scope);
         $this->db->where('a.sts <>', 1);
         $recordsTotal = $this->db->count_all_results();
 
@@ -57,6 +61,7 @@ class Approval_project_budgeting extends Admin_Controller
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = b.id_project', 'left');
+        apply_project_budgeting_leader_scope($this->db, 'b', $leader_scope);
         $this->db->where('a.sts <>', 1);
 
         if ($searchValue !== '') {
@@ -120,6 +125,36 @@ class Approval_project_budgeting extends Admin_Controller
         ]);
     }
 
+    private function require_budgeting_access($id, $is_spk = false, $json = false)
+    {
+        $allowed = false;
+        if ($this->auth->has_permission($this->viewPermission) && is_string($id) && $id !== '') {
+            $leader_scope = get_project_budgeting_leader_scope();
+            $this->db->select('b.id_spk_penawaran');
+            if ($is_spk) {
+                $this->db->from('kons_tr_spk_penawaran b');
+                $this->db->where('b.id_spk_penawaran', $id);
+            } else {
+                $this->db->from('kons_tr_spk_budgeting a');
+                $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
+                $this->db->where('a.id_spk_budgeting', $id);
+            }
+            apply_project_budgeting_leader_scope($this->db, 'b', $leader_scope);
+            $allowed = $this->db->get()->num_rows() > 0;
+        }
+
+        if (!$allowed) {
+            $message = 'Anda tidak memiliki akses ke project budgeting ini.';
+            if ($json) {
+                $this->output->set_content_type('application/json')
+                    ->set_output(json_encode(['status' => 0, 'pesan' => $message]));
+            } else {
+                show_error($message, 403, 'Akses ditolak');
+            }
+        }
+        return $allowed;
+    }
+
     public function _render_buttons($item)
     {
         $buttons = '<a href="' . base_url('approval_project_budgeting/approval/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="btn btn-sm btn-success" title="Approval"><i class="fa fa-check"></i></a>';
@@ -132,6 +167,9 @@ class Approval_project_budgeting extends Admin_Controller
 
         $id_spk_penawaran = urldecode($id_spk_penawaran);
         $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
+        if (!$this->require_budgeting_access($id_spk_penawaran, true)) {
+            return;
+        }
 
         // $get_spk = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
 
@@ -194,6 +232,9 @@ class Approval_project_budgeting extends Admin_Controller
     {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
+        if (!$this->require_budgeting_access($id_spk_budgeting)) {
+            return;
+        }
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -284,6 +325,9 @@ class Approval_project_budgeting extends Admin_Controller
     {
         $id_spk_budgeting = urldecode($id_spk_budgeting);
         $id_spk_budgeting = str_replace('|', '/', $id_spk_budgeting);
+        if (!$this->require_budgeting_access($id_spk_budgeting)) {
+            return;
+        }
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_spk_budgeting a');
@@ -339,6 +383,9 @@ class Approval_project_budgeting extends Admin_Controller
     public function save_budgeting()
     {
         $post = $this->input->post();
+        if (!$this->require_budgeting_access(isset($post['id_spk_penawaran']) ? $post['id_spk_penawaran'] : null, true, true)) {
+            return;
+        }
 
         $this->db->trans_begin();
 
@@ -534,6 +581,9 @@ class Approval_project_budgeting extends Admin_Controller
     public function del_spk_budgeting()
     {
         $id = $this->input->post('id');
+        if (!$this->require_budgeting_access($id, false, true)) {
+            return;
+        }
 
         $this->db->trans_begin();
 
@@ -564,6 +614,9 @@ class Approval_project_budgeting extends Admin_Controller
     {
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
         $reject_reason = $this->input->post('reject_reason');
+        if (!$this->require_budgeting_access($id_spk_budgeting, false, true)) {
+            return;
+        }
 
         $this->db->trans_begin();
 
@@ -590,6 +643,9 @@ class Approval_project_budgeting extends Admin_Controller
     public function approve_budget()
     {
         $id_spk_budgeting = $this->input->post('id_spk_budgeting');
+        if (!$this->require_budgeting_access($id_spk_budgeting, false, true)) {
+            return;
+        }
 
         $this->db->trans_begin();
 

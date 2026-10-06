@@ -120,6 +120,10 @@ class Dashboard extends Admin_Controller
 		$count_spk_project_leader = $this->dashboard_model->count_spk_project_leader_waiting();
 		$count_spk_manager_sales = $this->dashboard_model->count_spk_manager_sales_waiting();
 		$count_spk_direktur = $this->dashboard_model->count_spk_direktur_waiting();
+		$can_view_project_budgeting = has_permission('Approval_Project_Budgeting.View');
+		$count_project_budgeting = $can_view_project_budgeting
+			? $this->dashboard_model->count_project_budgeting_waiting_approval()
+			: 0;
 
 		$data = array(
 			'qty_order1' => $qty_order1,
@@ -141,7 +145,9 @@ class Dashboard extends Admin_Controller
 			'count_spk_sales_konsultan' => $count_spk_sales_konsultan,
 			'count_spk_project_leader' => $count_spk_project_leader,
 			'count_spk_manager_sales' => $count_spk_manager_sales,
-			'count_spk_direktur' => $count_spk_direktur
+			'count_spk_direktur' => $count_spk_direktur,
+			'can_view_project_budgeting' => $can_view_project_budgeting,
+			'count_project_budgeting' => $count_project_budgeting
 		);
 
 		$this->template->render('index', $data);

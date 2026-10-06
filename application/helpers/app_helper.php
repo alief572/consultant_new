@@ -9,6 +9,32 @@ if (!function_exists('esc')) {
   }
 }
 
+/** Resolve auth before building a query: Auth uses and resets the shared DB builder. */
+function get_project_budgeting_leader_scope()
+{
+  $ci = &get_instance();
+  if ($ci->auth->is_admin()) {
+    return ['is_admin' => true, 'employee_id' => null];
+  }
+  $user = $ci->db->select('employee_id')
+    ->get_where('users', ['id_user' => $ci->auth->user_id()])->row();
+  return ['is_admin' => false, 'employee_id' => $user ? $user->employee_id : null];
+}
+
+/** Apply a resolved scope without running auth or any other database query. */
+function apply_project_budgeting_leader_scope($db, $spk_alias, $scope)
+{
+  if ($scope['is_admin']) {
+    return;
+  }
+  if ($scope['employee_id'] === null || trim((string) $scope['employee_id']) === '') {
+    $db->where('1 = 0', null, false);
+    return;
+  }
+
+  $db->where($spk_alias . '.id_project_leader', $scope['employee_id']);
+}
+
 function get_supplier($id = false)
 {
   $CI = &get_instance();
