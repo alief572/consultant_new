@@ -8,11 +8,30 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
 
 <style>
-    .btn {
+    .expense-approval .btn {
         border-radius: 10px;
     }
 
-    .dropdown-menu {
+    .expense-approval .box-header { padding: 18px 20px; border-bottom: 1px solid #e5e7eb; }
+    .expense-approval .box-title { font-size: 17px; font-weight: 600; }
+    .expense-approval .box-body { padding: 16px 20px; }
+    .expense-approval .table-responsive { overflow-x: auto; }
+    .expense-approval table { width: 100%; table-layout: fixed; }
+    .expense-approval table th { background: #f5f6f8; font-size: 12px; color: #475569; }
+    .expense-approval table td { vertical-align: middle; padding: 14px 10px; overflow-wrap: anywhere; white-space: normal; }
+    .expense-approval .cell-primary { font-weight: 600; color: #253649; }
+    .expense-approval .cell-secondary { margin-top: 5px; color: #5f6b7a; font-size: 12px; line-height: 1.6; }
+    .expense-approval .cell-label { font-size: 11px; color: #5f6b7a; }
+    .expense-approval .cell-amount { font-weight: 700; white-space: nowrap; }
+    .expense-approval .badge { white-space: normal; line-height: 1.4; }
+    .expense-approval .dt-search input { border-radius: 6px; border: 1px solid #cbd5e1; padding: 6px 10px; }
+    .expense-approval .btn:focus-visible { outline: 2px solid #253649; outline-offset: 3px; }
+    @media (max-width: 1100px) {
+        .expense-approval table { min-width: 950px; }
+        .expense-approval .box-body { padding: 12px; }
+    }
+
+    .expense-approval .dropdown-menu {
         list-style: none;
         background: #fff;
         border: 1px solid rgba(0, 0, 0, .15);
@@ -25,7 +44,7 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
         display: none;
     }
 
-    .dropdown-menu li a {
+    .expense-approval .dropdown-menu li a {
         display: block;
         padding: 5px 15px;
         color: #333;
@@ -33,41 +52,30 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
         white-space: nowrap;
     }
 
-    .dropdown-menu li a:hover {
+    .expense-approval .dropdown-menu li a:hover {
         background-color: #f5f5f5;
     }
 
-    .table-responsive,
-    .dataTables_scrollBody,
-    .dataTables_wrapper,
-    .box-body,
-    .box {
-        overflow: visible !important;
-    }
 </style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
-<div class="box">
+<div class="box expense-approval">
     <div class="box-header">
-
+        <h3 class="box-title">Daftar Expense Report</h3>
+        <p class="cell-secondary" style="margin-bottom: 0;">Expense report yang menunggu persetujuan.</p>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
         <div class="table-responsive">
-            <table id="table_penawaran" class="table table-bordered table-striped nowrap">
+            <table id="table_penawaran" class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th align="center">No</th>
-                        <th align="center">Nomor SPK</th>
-                        <th align="center">Nomor Expense</th>
-                        <th align="center">Nomor Pengajuan</th>
-                        <th align="center">Customer</th>
-                        <th align="center">Sales</th>
-                        <th align="center">Project Leader</th>
-                        <th align="center">Package</th>
-                        <th align="center">Keterangan</th>
-                        <th align="center">Tipe</th>
-                        <th align="center">Nominal</th>
-                        <th align="center">Action</th>
+                        <th scope="col" class="text-center" style="width: 4%;">No</th>
+                        <th scope="col" style="width: 21%;">Nomor SPK &amp; Paket</th>
+                        <th scope="col" style="width: 14%;">Customer</th>
+                        <th scope="col" style="width: 15%;">Team / PIC</th>
+                        <th scope="col" style="width: 24%;">Expense Info</th>
+                        <th scope="col" class="text-right" style="width: 13%;">Nominal</th>
+                        <th scope="col" class="text-center" style="width: 9%;">Action</th>
                     </tr>
                 </thead>
             </table>
@@ -187,6 +195,10 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
         // var dataTables = $('#table_penawaran').dataTable();
         // dataTables.destroy();
 
+        function escapeText(value) {
+            return $('<div>').text(value == null || value === '' ? '-' : value).html();
+        }
+
         var dataTables = $('#table_penawaran').dataTable({
             ajax: {
                 url: siteurl + active_controller + 'get_data_spk',
@@ -197,62 +209,75 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
                 }
             },
             columns: [{
-                    data: 'no'
+                    data: 'no',
+                    className: 'text-center'
                 },
                 {
-                    data: 'nomor_spk'
-                },
-                {
-                    data: 'nomor_expense'
-                },
-                {
-                    data: 'nomor_pengajuan'
-                },
-                {
-                    data: 'customer'
-                },
-                {
-                    data: 'sales'
-                },
-                {
-                    data: 'project_leader'
-                },
-                {
-                    data: 'package',
+                    data: 'nomor_spk',
                     render: function(data, type, row) {
-                        if (type === 'display' && data && data.length > 40) {
-                            return '<span title="' + data + '" style="cursor:help;">' + data.substring(0, 40) + '…</span>';
-                        }
-                        return data;
+                        if (type !== 'display') return data;
+                        return '<div class="cell-primary">' + escapeText(data) + '</div>' +
+                            '<div class="cell-secondary"><i class="fa fa-briefcase" aria-hidden="true"></i> ' + escapeText(row.package) + '</div>';
                     }
                 },
                 {
-                    data: 'keterangan'
+                    data: 'customer',
+                    render: function(data, type) { return type === 'display' ? escapeText(data) : data; }
                 },
                 {
-                    data: 'tipe'
+                    data: 'project_leader',
+                    render: function(data, type, row) {
+                        if (type !== 'display') return data;
+                        return '<div><span class="cell-label">PL:</span> ' + escapeText(data) + '</div>' +
+                            '<div class="cell-secondary">Sales: ' + escapeText(row.sales) + '</div>';
+                    }
                 },
                 {
-                    data: 'nominal'
+                    data: 'nomor_expense',
+                    render: function(data, type, row) {
+                        if (type !== 'display') return data;
+                        return '<div class="cell-primary">' + escapeText(data) + '</div>' +
+                            '<div class="cell-secondary">Pengajuan: ' + escapeText(row.nomor_pengajuan) + '</div>' +
+                            '<div class="cell-secondary">' + (row.tipe || '') + '</div>' +
+                            '<div class="cell-secondary">' + escapeText(row.keterangan) + '</div>';
+                    }
                 },
                 {
-                    data: 'action'
+                    data: 'nominal',
+                    className: 'text-right',
+                    render: function(data, type) {
+                        return type === 'display' ? '<span class="cell-amount">Rp ' + escapeText(data) + '</span>' : data;
+                    }
+                },
+                {
+                    data: 'action',
+                    className: 'text-center',
+                    render: function(data, type) {
+                        if (type !== 'display') return data;
+                        var action = $('<div>').html(data);
+                        action.find('a').attr('title', 'Review Expense Report').attr('aria-label', 'Review Expense Report').text('Review');
+                        return action.html();
+                    }
                 }
             ],
-            processing: false,
+            processing: true,
             serverSide: true,
             stateSave: true,
+            stateLoadParams: function(settings, data) {
+                return data.columns && data.columns.length === 7;
+            },
             destroy: true,
             paging: true,
-            scrollX: true
+            autoWidth: false,
+            ordering: false
         });
     }
 </script>
 <script type="text/javascript">
-    $(document).on('click', '.dropdown-toggle', function(e) {
+    $(document).on('click', '.expense-approval .dropdown-toggle', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        $('.dropdown-menu').hide();
+        $('.expense-approval .dropdown-menu').hide();
         var $btn = $(this);
         var $menu = $btn.siblings('.dropdown-menu');
         if ($menu.is(':visible')) {
@@ -271,7 +296,7 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
     });
     $(document).on('click', function(e) {
         if (!$(e.target).closest('.btn-group').length) {
-            $('.dropdown-menu').hide();
+            $('.expense-approval .dropdown-menu').hide();
         }
     });
 </script>

@@ -2563,6 +2563,15 @@ class Approval_expense_report_project extends Admin_Controller
     public function approve_expense_report()
     {
         $post = $this->input->post();
+
+        if (empty($post['jurnal']) || !is_array($post['jurnal'])) {
+            echo json_encode([
+                'status' => 0,
+                'msg' => 'Journal data is required to approve Expense Report !'
+            ]);
+            return;
+        }
+
         $id_header = $post['id_header'];
 
         $get_header = $this->db->get_where('kons_tr_expense_report_project_header', ['id_header' => $id_header])->row();
@@ -2641,7 +2650,19 @@ class Approval_expense_report_project extends Admin_Controller
         // print_r($arr_jurnal);
         // exit;
 
-        // $insert_jurnal = $this->db->insert_batch(DBSF . '.tr_jurnal', $arr_jurnal);
+        $db_debug = $this->db->db_debug;
+        $this->db->db_debug = false;
+        $insert_jurnal = $this->db->insert_batch(DBSF . '.tr_jurnal', $arr_jurnal);
+        $this->db->db_debug = $db_debug;
+
+        if ($insert_jurnal === false || $insert_jurnal !== count($arr_jurnal) || $this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            echo json_encode([
+                'status' => 0,
+                'msg' => 'Failed to save Expense Report journal !'
+            ]);
+            return;
+        }
 
         // if (!empty($arr_tabungan_pph21)) {
         //     $insert_tabungan_pph21 = $this->db->insert_batch(DBSF . '.tr_tabungan_pph21', $arr_tabungan_pph21);
