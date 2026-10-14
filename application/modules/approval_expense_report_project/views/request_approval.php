@@ -25,73 +25,72 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
-    .btn {
-        border-radius: 10px;
-    }
-
-    .dropdown-menu {
-        top: 100%;
-        position: absolute;
-        overflow: auto;
-    }
-
-    .pd-5 {
-        padding: 5px;
-    }
-
-    .form-inline .form-control {
-        width: auto;
-        /* Let elements adjust automatically */
-        max-width: 100%;
-        /* Prevent overflow */
-    }
-
-    .form-inline {
-        display: flex;
-        /* Use flexbox for better alignment */
-        justify-content: flex-start;
-        /* Align items to the left */
-        flex-wrap: nowrap;
-        /* Prevent wrapping to the next line */
-    }
-
-    .top-total-project {
-        width: 280px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 15px;
-    }
-
-    .pd-5 {
-        padding: 5px;
-    }
-
-    .valign-top {
-        vertical-align: top;
-    }
-
-    .mt-5 {
-        margin-top: 5px;
-    }
-
-    .dropdown-menu {
-
-        position: absolute;
-        top: 100%;
-        /* Position below the button */
-        right: 0;
-        /* Align with left edge */
-    }
-
-    .d-none {
-        display: none;
+    .expense-review { color: #253649; }
+    .expense-review .box { border: 1px solid #dce2e9; border-top: 3px solid #d2d6de; border-radius: 10px; box-shadow: none; margin-bottom: 20px; }
+    .expense-review .box-header { padding: 18px 22px; border-bottom: 1px solid #e5e9ef; }
+    .expense-review .box-header h3 { margin: 0; font-size: 18px; font-weight: 600; }
+    .expense-review .section-note { color: #5f6b7a; font-size: 12px; margin: 6px 0 0; }
+    .expense-review .box-body { padding: 20px 22px; }
+    .expense-review .project-meta { table-layout: fixed; }
+    .expense-review .project-meta th { width: 14%; color: #5f6b7a; font-size: 12px; font-weight: 500; }
+    .expense-review .project-meta td { width: 36%; overflow-wrap: anywhere; }
+    .expense-review .pd-5 { padding: 7px 10px; }
+    .expense-review .valign-top { vertical-align: top; }
+    .expense-review .form-inline { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+    .expense-review .form-inline .form-control { width: auto; max-width: 100%; }
+    .expense-review .review-table-wrap { overflow-x: auto; margin-bottom: 20px; }
+    .expense-review .custom-table { width: 100%; margin: 0; border-radius: 6px; }
+    .expense-review .custom-table thead th { background: #f3f5f8; color: #475569; padding: 11px 10px; font-size: 12px; vertical-align: middle; border-color: #dce2e9; }
+    .expense-review .custom-table td { padding: 10px; vertical-align: top; border-color: #e5e9ef; }
+    .expense-review .custom-table tbody tr:hover { background: #fafbfc; }
+    .expense-review .custom-table tfoot td,
+    .expense-review .custom-table tfoot th { background: #edf2f6; padding: 12px 10px; color: #253649; font-weight: 600; }
+    .expense-review .expense-items { min-width: 1050px; }
+    .expense-review .expense-items td:nth-child(2) { width: 23%; font-weight: 500; }
+    .expense-review .expense-items td:nth-child(3),
+    .expense-review .expense-items td:nth-child(5) { width: 7%; }
+    .expense-review .expense-items td:nth-child(4),
+    .expense-review .expense-items td:nth-child(6) { width: 12%; }
+    .expense-review .expense-items td:nth-child(7),
+    .expense-review .expense-items td:nth-child(8) { width: 17%; }
+    .expense-review .form-control { border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: none; }
+    .expense-review .form-control[readonly] { background: #f7f9fb; color: #334155; }
+    .expense-review .expense-items input[readonly] { border-color: transparent; background: transparent; padding: 4px 0; height: 28px; }
+    .expense-review .expense-items textarea[readonly] { background: transparent; border: 0; padding: 0; min-height: 66px; resize: vertical; font-size: 12px; line-height: 1.65; }
+    .expense-review .list-group a { display: block; overflow-wrap: anywhere; }
+    .expense-review .review-settings { margin: 4px -15px 20px; }
+    .expense-review .review-settings label { display: block; font-size: 12px; color: #475569; margin-bottom: 8px; }
+    .expense-review .select2-container { max-width: 100%; }
+    .expense-review .select2-container .select2-selection--single { height: 34px; border-color: #cbd5e1; border-radius: 6px; }
+    .expense-review .review-journal { clear: both; padding: 0; margin-top: 22px; }
+    .expense-review .review-journal h4 { font-size: 16px; font-weight: 600; margin: 0 0 12px; }
+    .expense-review .review-journal table { min-width: 900px; font-size: 12px; }
+    .expense-review .review-actions { clear: both; display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 18px 0 0; border-top: 1px solid #e5e9ef; margin-top: 22px; float: none; }
+    .expense-review .review-actions .back-link { margin-right: auto; }
+    .expense-review .btn { border-radius: 6px; padding: 8px 16px; font-weight: 600; }
+    .expense-review .btn:focus-visible,
+    .expense-review a:focus-visible { outline: 2px solid #253649; outline-offset: 3px; }
+    .expense-review .d-none { display: none; }
+    @media (max-width: 767px) {
+        .expense-review .box-header, .expense-review .box-body { padding: 16px; }
+        .expense-review .project-meta, .expense-review .project-meta tbody,
+        .expense-review .project-meta tr { display: block; }
+        .expense-review .project-meta th, .expense-review .project-meta td { display: block; width: 100%; padding: 3px 0; }
+        .expense-review .project-meta td { margin-bottom: 12px; }
+        .expense-review .project-meta th:empty, .expense-review .project-meta td:empty { display: none; }
+        .expense-review .review-actions { flex-wrap: wrap; }
     }
 </style>
 
 
+<div class="expense-review">
 <div class="box">
+    <div class="box-header">
+        <h3>Informasi Proyek</h3>
+        <p class="section-note">Expense Report: <?= htmlspecialchars($header->id, ENT_QUOTES, 'UTF-8') ?> &middot; Pengajuan: <?= htmlspecialchars($id_header, ENT_QUOTES, 'UTF-8') ?></p>
+    </div>
     <div class="box-body" style="z-index: 1 !important;">
-        <table border="0" style="width: 100%; z-index: 1 !important;">
+        <table class="project-meta" border="0" style="width: 100%; z-index: 1 !important;">
             <tr>
                 <th class="pd-5 valign-top" width="150">No. SPK</th>
                 <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? $list_budgeting->id_spk_penawaran : '' ?></td>
@@ -134,7 +133,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 
 <div class="box">
     <div class="box-header">
-        <h3>List Item <?= $title_header ?></h3>
+        <h3>Rincian <?= $title_header ?></h3>
+        <p class="section-note">Bandingkan kasbon dengan realisasi expense dan periksa bukti penggunaan sebelum memberikan persetujuan.</p>
     </div>
 
     <form id="data_form">
@@ -144,7 +144,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
         <input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
         <input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
         <div class="box-body" style="z-index: 1 !important;">
-            <table class="table custom-table mt-5">
+            <div class="review-table-wrap" tabindex="0" role="region" aria-label="Perbandingan Kasbon dan Expense Report">
+            <table class="table custom-table expense-items">
                 <thead>
                     <tr>
                         <th class="text-center" rowspan="2">No.</th>
@@ -264,9 +265,9 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                 </tfoot>
             </table>
 
-            <br><br>
+            </div>
 
-            <div class="row">
+            <div class="row review-settings">
                 <div class="col-md-6">
                     <table style="width: 100%">
                         <tr>
@@ -275,8 +276,10 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                                 <?php
                                 if (count($list_bukti_pengembalian) > 0) {
                                     echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup">';
-                                    echo '<i class="fa fa-list"></i> List Bukti Pengemblian';
+                                    echo '<i class="fa fa-list"></i> Lihat Bukti Pengembalian';
                                     echo '</button>';
+                                } else {
+                                    echo '<span class="text-muted">Belum ada bukti pengembalian.</span>';
                                 }
                                 ?>
                             </td>
@@ -286,9 +289,9 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                 <div class="col-md-6">
                     <table style="width: 100%">
                         <tr>
-                            <th style="padding: 5px;">Bank</th>
+                            <th style="padding: 5px;"><label for="review-bank">Bank</label></th>
                             <td style="padding: 5px;">
-                                <select name="bank" class="form-control form-control-sm select2" onchange="set_jurnal()">
+                                <select id="review-bank" name="bank" class="form-control form-control-sm select2" onchange="set_jurnal()">
                                     <option value="">- Pilih Bank -</option>
                                     <?php
                                     foreach ($list_bank  as $item) :
@@ -308,17 +311,18 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 
             <br>
 
-            <div class="col-md-6">
+            <div class="row review-settings"><div class="col-md-6">
                 <div class="form-group">
-                    <label for="">Reject Reason</label>
-                    <textarea class="form-control form-control-sm" name="reject_reason"></textarea>
+                    <label for="reject-reason">Alasan Penolakan</label>
+                    <textarea id="reject-reason" class="form-control form-control-sm" name="reject_reason" rows="3" placeholder="Isi alasan jika expense report ditolak."></textarea>
                 </div>
-            </div>
+            </div></div>
 
             <br>
 
-            <div class="col-md-12">
+            <div class="col-md-12 review-journal">
                 <h4>Jurnal</h4>
+                <div class="review-table-wrap" tabindex="0" role="region" aria-label="Jurnal Expense Report">
                 <table class="table custom-table">
                     <thead>
                         <tr>
@@ -341,10 +345,12 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                         </tr>
                     </tfoot>
                 </table>
+                </div>
             </div>
 
-            <div class="col-md-12 <?= $hide_jurnal_pph21 ?>">
+            <div class="col-md-12 review-journal <?= $hide_jurnal_pph21 ?>">
                 <h4>Jurnal PPh 21</h4>
+                <div class="review-table-wrap" tabindex="0" role="region" aria-label="Jurnal PPh 21">
                 <table class="table custom-table">
                     <thead>
                         <tr>
@@ -370,15 +376,16 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                         </tr>
                     </tfoot>
                 </table>
+                </div>
             </div>
 
             <input type="hidden" name="ttl_debit">
             <input type="hidden" name="ttl_kredit">
 
             <br>
-            <div class="col-md-12">
-                <a href="<?= base_url('approval_expense_report_project') ?>" class="btn btn-sm btn-danger">
-                    <i class="fa fa-arrow-left"></i> Back
+            <div class="col-md-12 review-actions">
+                <a href="<?= base_url('approval_expense_report_project') ?>" class="btn btn-sm btn-default back-link">
+                    <i class="fa fa-arrow-left"></i> Kembali
                 </a>
                 <button type="button" class="btn btn-sm btn-danger reject"><i class="fa fa-close"></i> Reject</button>
                 <button type="button" class="btn btn-sm btn-success approve"><i class="fa fa-check"></i> Approve</button>
@@ -387,6 +394,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
     </form>
 </div>
 
+ </div>
 <div class="modal modal-default fade" id="dialog-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" style='width:70%; '>
         <div class="modal-content">
