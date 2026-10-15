@@ -27,7 +27,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $root = "https://" . $_SERVER['HTTP_HOST'];
 $root .= str_replace(basename($_SERVER['SCRIPT_NAME']), "", $_SERVER['SCRIPT_NAME']);
 $config['base_url'] = $root;
+<<<<<<< HEAD
 // $config['base_url'] = 'http://localhost:8080/';
+=======
+//$config['base_url'] = 'http://localhost:8080/';
+>>>>>>> 5911d964 (awd)
 
 
 //$config['base_url'] = 'http://localhost/importa/importa_release/';
@@ -383,7 +387,14 @@ $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
 */
+<<<<<<< HEAD
 $config['sess_cookie_name']        = 'ci_consultant_new';
+=======
+//$config['sess_save_path'] = 'ci_sessions';
+
+$config['sess_driver'] = 'database';
+$config['sess_cookie_name']        = 'ci_ynz';
+>>>>>>> 5911d964 (awd)
 $config['sess_expiration']        = 7200;
 $config['sess_expire_on_close']    = FALSE;
 $config['sess_encrypt_cookie']    = FALSE;

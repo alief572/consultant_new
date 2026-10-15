@@ -67,9 +67,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <a class="btn btn-sm btn-success" style="font-weight: bold;" href="<?= base_url('penawaran/add_penawaran') ?>">
                     <i class="fa fa-plus"></i> Penawaran Konsultasi
                 </a>
-                <a class="btn btn-sm btn-primary" style="font-weight: bold;" href="<?= base_url('penawaran/add_penawaran_non') ?>">
+                <!-- <a class="btn btn-sm btn-primary" style="font-weight: bold;" href="<?= base_url('penawaran/add_penawaran_non') ?>">
                     <i class="fa fa-plus"></i> Penawaran Non Konsultasi
-                </a>
+                </a> -->
             </div>
         <?php endif; ?>
     </div>
@@ -589,6 +589,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     }
 </script>
 <script src="<?= base_url('assets/js/basic.js') ?>"></script>
+<<<<<<< HEAD
 <script type="text/javascript">
     (function () {
         function closePenawaranMenus() {
@@ -627,3 +628,5 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         $('#table_penawaran, #table_penawaran_non_konsultasi').on('preDraw.dt', closePenawaranMenus);
     })();
 </script>
+=======
+>>>>>>> 5911d964 (awd)
