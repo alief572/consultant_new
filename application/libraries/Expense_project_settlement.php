@@ -16,7 +16,7 @@ class Expense_project_settlement
     {
         $ci = $params['ci'] ?? get_instance();
         $this->db = $ci->db;
-        $this->finance = $params['finance'] ?? DBSF;
+        $this->finance = $params['finance'] ?? ($ci->load->database('sendigs_finance', true)->database ?: DBSF);
         $this->gl = $params['gl'] ?? $ci->load->database('gl_sendigs', true)->database;
         foreach ([$this->finance, $this->gl] as $schema) {
             if (!preg_match('/^[a-zA-Z0-9_]+$/D', $schema)) {
