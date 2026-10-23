@@ -2654,7 +2654,7 @@ class Approval_expense_report_project extends Admin_Controller
                 'no_doc' => $get_header->id,
                 'tgl_doc' => date('Y-m-d', strtotime($get_header->created_date)),
                 'nama' => $get_user->nm_lengkap,
-                'status' => 1,
+                'status' => 2,
                 'created_by' => $get_user->username,
                 'created_on' => date('Y-m-d H:i:s'),
                 'approved_by' => (string) $this->auth->user_id(),
@@ -2669,7 +2669,8 @@ class Approval_expense_report_project extends Admin_Controller
                 'id_kasbon' => $get_header->id_header,
                 'project_consultant' => '1',
                 'no_expense_consultant' => $get_header->id,
-                'sts_finance' => '0',
+                'sts_finance' => '1',
+                'app_finance_date' => date('Y-m-d H:i:s'),
                 'sts_reject' => 0,
                 'sts_reject_manage' => 0
             ]);
@@ -2681,7 +2682,7 @@ class Approval_expense_report_project extends Admin_Controller
                 'harga' => $lebih_bayar,
                 'total_harga' => $lebih_bayar,
                 'keterangan' => mb_substr($desc, 0, 2000),
-                'status' => 1,
+                'status' => 2,
                 'expense' => $lebih_bayar,
                 'kasbon' => 0,
                 'qty_kasbon' => 0,

@@ -324,7 +324,7 @@ class Expense_project_settlement
                     'no_doc' => $id,
                     'tgl_doc' => substr($header['created_date'], 0, 10),
                     'nama' => $user['nm_lengkap'],
-                    'status' => 1,
+                    'status' => 2,
                     'created_by' => $user['username'],
                     'created_on' => date('Y-m-d H:i:s'),
                     'approved_by' => (string) $actor,
@@ -339,7 +339,8 @@ class Expense_project_settlement
                     'id_kasbon' => $header['id_header'],
                     'project_consultant' => '1',
                     'no_expense_consultant' => $id,
-                    'sts_finance' => '0',
+                    'sts_finance' => '1',
+                    'app_finance_date' => date('Y-m-d H:i:s'),
                     'sts_reject' => 0,
                     'sts_reject_manage' => 0
                 ]);
@@ -351,7 +352,7 @@ class Expense_project_settlement
                     'harga' => $reimburseAmount,
                     'total_harga' => $reimburseAmount,
                     'keterangan' => mb_substr($desc, 0, 2000),
-                    'status' => 1,
+                    'status' => 2,
                     'expense' => $reimburseAmount,
                     'kasbon' => 0,
                     'qty_kasbon' => 0,
