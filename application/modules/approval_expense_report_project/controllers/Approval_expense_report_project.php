@@ -2575,7 +2575,7 @@ class Approval_expense_report_project extends Admin_Controller
             'sts' => 1,
             'sts_req' => null,
             'reject_reason' => '',
-            'id_bank' => $post['bank'],
+            'id_bank' => $post['bank'] ?? $get_header->id_bank ?? null,
             'approved_by' => $this->auth->user_id(),
             'approved_date' => date('Y-m-d H:i:s')
         ], ['id_header' => $id_header]);
@@ -2648,18 +2648,51 @@ class Approval_expense_report_project extends Admin_Controller
         // }
 
         if ($get_header->selisih < 0) {
-            $insert_request_payment = $this->db->insert('request_payment', array(
+            $lebih_bayar = ($get_header->selisih * -1);
+            $desc = 'Reimbursement / Lebih Bayar Kasbon ' . $get_header->id_header . ' - ' . $get_kasbon->deskripsi;
+            $this->otherdb->insert('tr_expense', [
                 'no_doc' => $get_header->id,
-                'nama' => $get_user->nm_lengkap,
                 'tgl_doc' => date('Y-m-d', strtotime($get_header->created_date)),
-                'keperluan' => $get_kasbon->deskripsi,
-                'tipe' => 'expense',
-                'jumlah' => ($get_header->selisih * -1),
+                'nama' => $get_user->nm_lengkap,
+                'status' => 1,
                 'created_by' => $get_user->username,
                 'created_on' => date('Y-m-d H:i:s'),
-                'ids' => $get_header->id,
-                'currency' => 'IDR'
-            ));
+                'approved_by' => (string) $this->auth->user_id(),
+                'approved_on' => date('Y-m-d H:i:s'),
+                'jumlah' => $lebih_bayar,
+                'kurang_bayar' => $lebih_bayar,
+                'total_kasbon' => $get_header->total_kasbon,
+                'informasi' => mb_substr('Lebih Bayar - ' . $get_kasbon->deskripsi, 0, 250),
+                'bank_id' => $get_kasbon->bank,
+                'accnumber' => $get_kasbon->bank_number,
+                'accname' => $get_kasbon->bank_account,
+                'id_kasbon' => $get_header->id_header,
+                'project_consultant' => '1',
+                'no_expense_consultant' => $get_header->id,
+                'sts_finance' => '0',
+                'sts_reject' => 0,
+                'sts_reject_manage' => 0
+            ]);
+            $this->otherdb->insert('tr_expense_detail', [
+                'tanggal' => date('Y-m-d'),
+                'no_doc' => $get_header->id,
+                'deskripsi' => mb_substr($desc, 0, 2000),
+                'qty' => 1,
+                'harga' => $lebih_bayar,
+                'total_harga' => $lebih_bayar,
+                'keterangan' => mb_substr($desc, 0, 2000),
+                'status' => 1,
+                'expense' => $lebih_bayar,
+                'kasbon' => 0,
+                'qty_kasbon' => 0,
+                'nominal_kasbon' => 0,
+                'qty_expense' => 1,
+                'nominal_expense' => $lebih_bayar,
+                'created_by' => $get_user->username,
+                'created_on' => date('Y-m-d H:i:s'),
+                'id_kasbon' => $get_header->id_header,
+                'req_payment' => 0
+            ]);
         }
 
 

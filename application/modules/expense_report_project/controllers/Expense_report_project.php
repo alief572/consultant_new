@@ -33,6 +33,7 @@ class Expense_report_project extends Admin_Controller
 
         $this->accounting = $this->load->database('gl_sendigs', true);
         $this->sendigs = $this->load->database('sendigs_finance', true);
+        $this->load->library('expense_project_settlement');
     }
 
     // View Page Function
@@ -40,6 +41,9 @@ class Expense_report_project extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
+        $isAdmin = $this->auth->is_admin();
+        $this->template->set('returns', $this->expense_project_settlement->listing($this->auth->user_id(), $isAdmin));
+        $this->template->set('reimbursements', $this->expense_project_settlement->monitoring($this->auth->user_id()));
         $this->template->title('Expense Report Project');
         $this->template->render('index');
     }
@@ -903,6 +907,22 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_header', $id_header);
         $get_header = $this->db->get()->row();
 
+        if ($get_header && $this->expense_project_settlement->isNew((array) $get_header)) {
+            $this->auth->restrict($this->viewPermission);
+            $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+            if (!$allowManage && (string) $get_header->created_by !== (string) $this->auth->user_id()) {
+                show_error('Laporan tidak dapat diakses.', 403);
+                return;
+            }
+            try {
+                $this->expense_project_settlement->assertEditable((array) $get_header, $this->auth->user_id(), $allowManage);
+            } catch (Throwable $error) {
+                show_error(html_escape($error->getMessage()), 403);
+                return;
+            }
+        }
+
+
         $this->db->select('a.*');
         $this->db->from('kons_tr_expense_report_bukti_pengembalian a');
         $this->db->where('a.id_header_expense', $get_header->id);
@@ -1481,6 +1501,14 @@ class Expense_report_project extends Admin_Controller
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->where('a.id_header', $id_header);
         $get_header = $this->db->get()->row();
+
+        if ($get_header && $this->expense_project_settlement->isNew((array) $get_header)) {
+            if (!$this->canReadNewReport((array) $get_header)) {
+                show_error('Laporan tidak dapat diakses.', 403);
+                return;
+            }
+        }
+
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_expense_report_bukti_pengembalian a');
@@ -3277,8 +3305,24 @@ class Expense_report_project extends Admin_Controller
     public function save_expense_report()
     {
         $post = $this->input->post();
+        $this->auth->restrict($this->addPermission);
+        $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+        try {
+            list($post, $flowCalc) = $this->expense_project_settlement->prepareInput($post, $this->auth->user_id(), $allowManage);
+        } catch (Throwable $error) {
+            echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+            return;
+        }
 
         $this->db->trans_start();
+        try {
+            $this->expense_project_settlement->lockKasbon($post['id_header']);
+            list($post, $flowCalc) = $this->expense_project_settlement->prepareInput($post, $this->auth->user_id(), $allowManage);
+        } catch (Throwable $error) {
+            $this->db->trans_rollback();
+            echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+            return;
+        }
 
         $id = $this->Expense_report_project_model->generate_id_expense_report_header('format_expense');
 
@@ -3310,7 +3354,7 @@ class Expense_report_project extends Admin_Controller
         $data_bukti_penggunaan = [];
         $data_bukti_pengembalian = [];
 
-        $files2 = $_FILES['bukti_pengembalian'];
+        $files2 = ['name' => []];
         $file_count2 = count($files2['name']);
 
         $config2['upload_path'] = './uploads/bukti_pengembalian_expense_report/'; //path folder
@@ -3347,7 +3391,6 @@ class Expense_report_project extends Admin_Controller
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
-        chmod($upload_dir, 0777);
 
         $config3['upload_path'] = $upload_dir; //path folder
         $config3['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
@@ -3444,6 +3487,8 @@ class Expense_report_project extends Admin_Controller
         //     'created_date' => date('Y-m-d H:i:s')
         // ];
 
+        $ttl_kasbon = $flowCalc['advance'] / 100;
+        $ttl_expense_report = $flowCalc['actual'] / 100;
         $selisih = ($ttl_kasbon - $ttl_expense_report);
         // if(($ttl_kasbon - $ttl_expense_report) <= 0) {
         //     $selisih = ($ttl_expense_report - $ttl_kasbon);
@@ -3451,6 +3496,7 @@ class Expense_report_project extends Admin_Controller
 
         $data_insert_header = [
             'id' => $id,
+            'flow_version' => 2,
             'id_header' => $post['id_header'],
             'total_expense_report' => $ttl_expense_report,
             'total_kasbon' => $ttl_kasbon,
@@ -3458,6 +3504,7 @@ class Expense_report_project extends Admin_Controller
             'tipe' => $post['tipe'],
             'document_link' => $upload_po,
             'id_bank' => $post['bank'],
+            'keterangan_kurang_bayar' => $post['keterangan_kurang_bayar'] ?? '',
             'created_by' => $this->auth->user_id(),
             'created_date' => date('Y-m-d H:i:s')
         ];
@@ -3470,7 +3517,7 @@ class Expense_report_project extends Admin_Controller
             exit;
         }
 
-        $insert_detail = $this->db->insert_batch('kons_tr_expense_report_project_detail', $data_insert_detail);
+        $insert_detail = empty($data_insert_detail) ? true : $this->db->insert_batch('kons_tr_expense_report_project_detail', $data_insert_detail);
         if (!$insert_detail) {
             $this->db->trans_rollback();
 
@@ -3526,6 +3573,21 @@ class Expense_report_project extends Admin_Controller
         $this->db->trans_start();
 
         $id = $post['id_expense'];
+        $stored = $this->expense_project_settlement->header($id, true);
+        $newFlow = $this->expense_project_settlement->isNew($stored);
+        if ($newFlow) {
+            $this->auth->restrict($this->managePermission);
+            $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+            try {
+                $this->expense_project_settlement->assertEditable($stored, $this->auth->user_id(), $allowManage);
+                $post['id_header'] = $stored['id_header'];
+                list($post, $flowCalc) = $this->expense_project_settlement->prepareInput($post, $this->auth->user_id(), $allowManage);
+            } catch (Throwable $error) {
+                $this->db->trans_rollback();
+                echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+                return;
+            }
+        }
 
         $config['upload_path'] = './uploads/expense_report_project/'; //path folder
         $config['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
@@ -3541,7 +3603,7 @@ class Expense_report_project extends Admin_Controller
         $data_bukti_penggunaan = [];
         $data_bukti_pengembalian = [];
 
-        $files2 = $_FILES['bukti_pengembalian'];
+        $files2 = $newFlow ? ['name' => []] : ($_FILES['bukti_pengembalian'] ?? ['name' => []]);
         $file_count2 = count($files2['name']);
 
         $config2['upload_path'] = './uploads/bukti_pengembalian_expense_report/'; //path folder
@@ -3578,7 +3640,6 @@ class Expense_report_project extends Admin_Controller
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
-        chmod($upload_dir, 0777);
 
         $confi3['upload_path'] = $upload_dir; //path folder
         $confi3['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
@@ -3696,6 +3757,12 @@ class Expense_report_project extends Admin_Controller
             ];
         }
 
+        if ($newFlow) {
+            $data_insert_header['total_kasbon'] = Expense_project_flow::amount($flowCalc['advance']);
+            $data_insert_header['total_expense_report'] = Expense_project_flow::amount($flowCalc['actual']);
+            $data_insert_header['selisih'] = ($flowCalc['advance'] - $flowCalc['actual']) / 100;
+            $this->db->delete('kons_tr_expense_report_project_detail', ['id_header_expense' => $id]);
+        }
         $update_header = $this->db->update('kons_tr_expense_report_project_header', $data_insert_header, ['id' => $post['id_expense']]);
         if (!$update_header) {
             $this->db->trans_rollback();
@@ -3755,6 +3822,18 @@ class Expense_report_project extends Admin_Controller
     public function req_approval()
     {
         $id = $this->input->post('id');
+        $header = $this->db->get_where('kons_tr_expense_report_project_header', ['id_header' => $id])->row_array();
+        if ($header && $this->expense_project_settlement->isNew($header)) {
+            $this->auth->restrict($this->managePermission);
+            $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+            try {
+                $this->expense_project_settlement->requestApproval($header['id'], $this->auth->user_id(), $allowManage);
+                echo json_encode(['status' => 1, 'pesan' => 'Laporan diajukan untuk approval.']);
+            } catch (Throwable $error) {
+                echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+            }
+            return;
+        }
 
         $this->db->trans_begin();
 
@@ -3800,6 +3879,12 @@ class Expense_report_project extends Admin_Controller
         $get_data_exp = $this->db->get()->result();
 
         foreach ($get_data_exp as $item) {
+            $header = $this->expense_project_settlement->header($item->id, true);
+            $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+            if ($this->expense_project_settlement->isNew($header)
+                && (!$allowManage && (string) $header['created_by'] !== (string) $this->auth->user_id())) {
+                continue;
+            }
             $data_update[] = [
                 'id' => $item->id,
                 'sts_req' => 1
@@ -3843,6 +3928,18 @@ class Expense_report_project extends Admin_Controller
         $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', array('id_header' => $id))->row();
 
         if (!empty($get_expense)) {
+            if ($this->expense_project_settlement->isNew((array) $get_expense)) {
+                $this->auth->restrict($this->deletePermission);
+                $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+                try {
+                    $locked = $this->expense_project_settlement->header($get_expense->id, true);
+                    $this->expense_project_settlement->assertEditable($locked, $this->auth->user_id(), $allowManage);
+                } catch (Throwable $error) {
+                    $this->db->trans_rollback();
+                    echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+                    return;
+                }
+            }
             $get_files = $this->db->get_where('kons_tr_bukti_penggunaan_expense', ['id_header_expense' => $get_expense->id])->result();
             foreach ($get_files as $f) {
                 if (!empty($f->upload_file) && file_exists($f->upload_file)) {
@@ -3979,6 +4076,29 @@ class Expense_report_project extends Admin_Controller
         $id = $this->input->post('id');
         $get_file = $this->db->get_where('kons_tr_bukti_penggunaan_expense', ['id' => $id])->row();
         if (!empty($get_file)) {
+            $header = $this->expense_project_settlement->header($get_file->id_header_expense);
+            if ($this->expense_project_settlement->isNew($header)) {
+                $this->auth->restrict($this->managePermission);
+                $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+                $this->db->trans_begin();
+                try {
+                    $header = $this->expense_project_settlement->header($header['id'], true);
+                    $this->expense_project_settlement->assertEditable($header, $this->auth->user_id(), $allowManage);
+                    $this->db->delete('kons_tr_bukti_penggunaan_expense', ['id' => $id]);
+                    if (!$this->db->trans_status()) {
+                        throw new RuntimeException('Bukti gagal dihapus.');
+                    }
+                    $this->db->trans_commit();
+                    if ($get_file->upload_file && is_file($get_file->upload_file)) {
+                        unlink($get_file->upload_file);
+                    }
+                    echo json_encode(['status' => 1, 'pesan' => 'Bukti penggunaan dihapus.']);
+                } catch (Throwable $error) {
+                    $this->db->trans_rollback();
+                    echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+                }
+                return;
+            }
             if (!empty($get_file->upload_file) && file_exists($get_file->upload_file)) {
                 unlink($get_file->upload_file);
             }
@@ -4014,7 +4134,174 @@ class Expense_report_project extends Admin_Controller
 
     public function set_jurnal_expense()
     {
+        $post = $this->input->post();
+        $header = $this->db->get_where('kons_tr_expense_report_project_header', ['id_header' => $post['id_header']])->row_array();
+        if (!$header || $this->expense_project_settlement->isNew($header)) {
+            try {
+                if ($header && !$this->canReadNewReport($header)) {
+                    throw new RuntimeException('Laporan tidak dapat diakses.');
+                }
+                $details = null;
+                if (!empty($post['arr_total_expense'])) {
+                    $validDetails = [];
+                    foreach ($post['arr_total_expense'] as $id => $amount) {
+                        if ($id !== 'undefined' && $id !== '' && $id !== null) {
+                            $validDetails[] = ['id_detail_kasbon' => $id, 'qty_expense' => '1', 'nominal_expense' => $amount];
+                        }
+                    }
+                    if (!empty($validDetails)) {
+                        $details = $validDetails;
+                    }
+                }
+                if (!$header) {
+                    $this->auth->restrict($this->viewPermission);
+                    $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+                    $this->expense_project_settlement->prepareInput(['id_header' => $post['id_header'], 'detail_subcont' => ($details ?? [])], $this->auth->user_id(), $allowManage);
+                }
+                $rows = $this->expense_project_settlement->preview($post['id_header'], $details);
+                echo json_encode($this->expense_project_settlement->previewResponse($rows));
+            } catch (Throwable $error) {
+                echo json_encode(['hasil' => '<tr><td colspan="7">' . html_escape($error->getMessage()) . '</td></tr>', 'ttl_debit' => 0, 'ttl_kredit' => 0]);
+            }
+            return;
+        }
         $this->Expense_report_project_model->set_jurnal_expense();
+    }
+
+    private function canReadNewReport(array $header)
+    {
+        if ($this->auth->is_admin() || has_permission($this->managePermission)) {
+            return true;
+        }
+        if ((string) $header['created_by'] === (string) $this->auth->user_id()) {
+            return has_permission($this->viewPermission);
+        }
+        return has_permission('Approval_Expense_Report_Project.View')
+            || has_permission('Request_Payment.View') || has_permission('Expense_Project_Return.Verify');
+    }
+
+    private function settlementToken()
+    {
+        $token = $this->session->userdata('expense_settlement_token');
+        if (!$token) {
+            $token = bin2hex(random_bytes(32));
+            $this->session->set_userdata('expense_settlement_token', $token);
+        }
+        return $token;
+    }
+
+    private function checkSettlementToken()
+    {
+        if ($this->input->method() !== 'post' || !hash_equals($this->settlementToken(), (string) $this->input->post('settlement_token'))) {
+            throw new RuntimeException('Sesi form tidak valid. Muat ulang halaman.');
+        }
+    }
+
+    public function verification()
+    {
+        $this->auth->restrict('Expense_Project_Return.Verify');
+        $this->template->set('returns', $this->expense_project_settlement->listing($this->auth->user_id(), true));
+        $this->template->set('finance', true);
+        $this->template->title('Verifikasi Pengembalian Kasbon');
+        $this->template->render('return_list');
+    }
+
+    public function return_detail()
+    {
+        $isAdmin = $this->auth->is_admin();
+        $finance = $this->input->get('finance') === '1' || $isAdmin;
+        $this->auth->restrict($finance && !$isAdmin ? 'Expense_Project_Return.Verify' : $this->viewPermission);
+        try {
+            $data = $this->expense_project_settlement->returnDetail($this->input->get('id'), $this->auth->user_id(), $finance, $isAdmin);
+            $data['banks'] = $this->expense_project_settlement->banks();
+            $data['finance'] = $finance;
+            $data['settlement_token'] = $this->settlementToken();
+            $this->template->set($data);
+            $this->template->title('Pengembalian Kasbon');
+            $this->template->render('return_detail');
+        } catch (Throwable $error) {
+            show_error(html_escape($error->getMessage()), 403);
+        }
+    }
+
+    public function submit_return()
+    {
+        $this->auth->restrict($this->managePermission);
+        $file = null;
+        try {
+            $this->checkSettlementToken();
+            $id = $this->input->post('expense_id');
+            $isAdmin = $this->auth->is_admin();
+            $detail = $this->expense_project_settlement->returnDetail($id, $this->auth->user_id(), false, $isAdmin);
+            if ($detail['return']['status'] !== 'waiting_return') {
+                throw new RuntimeException('Pengembalian tidak dapat diajukan.');
+            }
+            $directory = APPPATH . 'private/expense_returns/';
+            if (!is_dir($directory) && !mkdir($directory, 0750, true)) {
+                throw new RuntimeException('Folder bukti tidak tersedia.');
+            }
+            $this->upload->initialize(['upload_path' => $directory, 'allowed_types' => 'jpg|jpeg|png|pdf',
+                'max_size' => 2048, 'encrypt_name' => true, 'detect_mime' => true]);
+            if (!$this->upload->do_upload('return_proof')) {
+                throw new RuntimeException(strip_tags($this->upload->display_errors()));
+            }
+            $uploaded = $this->upload->data();
+            $file = $uploaded['file_name'];
+            $this->expense_project_settlement->submitReturn($id, $this->auth->user_id(), $this->input->post('bank_id'),
+                $this->input->post('transfer_date'), $this->input->post('amount'), $file);
+            echo json_encode(['status' => 1, 'pesan' => 'Bukti dikirim. Menunggu verifikasi Finance.']);
+        } catch (Throwable $error) {
+            if ($file) {
+                unlink(APPPATH . 'private/expense_returns/' . basename($file));
+            }
+            echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+        }
+    }
+
+    public function verify_return()
+    {
+        $allowAdmin = $this->auth->is_admin();
+        if (!$allowAdmin) {
+            $this->auth->restrict('Expense_Project_Return.Verify');
+        }
+        try {
+            $this->checkSettlementToken();
+            $decision = $this->input->post('decision');
+            if (!in_array($decision, ['approve', 'reject'], true)) {
+                throw new RuntimeException('Keputusan tidak valid.');
+            }
+            $this->expense_project_settlement->verifyReturn($this->input->post('expense_id'), $this->auth->user_id(),
+                $decision === 'approve', (string) $this->input->post('note'), (array) $this->input->post('checks'), $allowAdmin);
+            echo json_encode(['status' => 1, 'pesan' => $decision === 'approve' ? 'Pengembalian terverifikasi dan jurnal disimpan.' : 'Bukti ditolak. User diminta mengunggah ulang.']);
+        } catch (Throwable $error) {
+            echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+        }
+    }
+
+    public function return_file($historyId)
+    {
+        $entry = $this->db->get_where('kons_tr_expense_project_return_history', ['id' => $historyId, 'action' => 'submit'])->row_array();
+        if (!$entry) {
+            show_404();
+            return;
+        }
+        try {
+            $isAdmin = $this->auth->is_admin();
+            $finance = has_permission('Expense_Project_Return.Verify') || $isAdmin;
+            if (!$finance) {
+                $this->auth->restrict($this->viewPermission);
+            }
+            $this->expense_project_settlement->returnDetail($entry['expense_id'], $this->auth->user_id(), $finance, $isAdmin);
+            $path = APPPATH . 'private/expense_returns/' . basename($entry['file_path']);
+            if (!is_file($path)) {
+                show_404();
+                return;
+            }
+            $this->load->helper('download');
+            force_download(basename($path), file_get_contents($path));
+        } catch (Throwable $error) {
+            show_error('Bukti tidak dapat diakses.', 403);
+        }
     }
 
     // End Update Data Function

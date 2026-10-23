@@ -1,4 +1,5 @@
 <?php
+$newExpenseFlow = (int) ($header->flow_version ?? 1) === 2;
 $ENABLE_ADD     = has_permission('Expense_Report_Project.Add');
 $ENABLE_MANAGE  = has_permission('Expense_Report_Project.Manage');
 $ENABLE_VIEW    = has_permission('Expense_Report_Project.View');
@@ -269,7 +270,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
             <div class="row">
                 <div class="col-md-6">
                     <table style="width: 100%">
-                        <tr>
+                        <?php if (!$newExpenseFlow): ?><tr>
                             <th style="padding: 5px;">Bukti Pengembalian</th>
                             <td style="padding: 5px;">
                                 <?php
@@ -280,12 +281,12 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                                 }
                                 ?>
                             </td>
-                        </tr>
+                        </tr><?php endif; ?>
                     </table>
                 </div>
                 <div class="col-md-6">
                     <table style="width: 100%">
-                        <tr>
+                        <?php if (!$newExpenseFlow): ?><tr>
                             <th style="padding: 5px;">Bank</th>
                             <td style="padding: 5px;">
                                 <select name="bank" class="form-control form-control-sm select2" onchange="set_jurnal()">
@@ -301,7 +302,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                                     ?>
                                 </select>
                             </td>
-                        </tr>
+                        </tr><?php endif; ?>
                     </table>
                 </div>
             </div>
@@ -585,7 +586,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 
         var bank = $('select[name="bank"]').val();
 
-        if (bank == '') {
+        if (!<?= $newExpenseFlow ? 'true' : 'false' ?> && bank == '') {
             Swal.fire({
                 icon: 'warning',
                 title: 'Warning !',

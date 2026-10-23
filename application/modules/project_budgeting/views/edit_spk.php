@@ -621,17 +621,17 @@ $nilai_others = $list_spk_penawaran->biaya_others;
 
     function persen_komisi(tipe) {
         var persentase = get_num($('input[name="persentase_' + tipe + '_komisi"]').val());
-        if (persentase > 2) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Warning !',
-                text: 'Persen komisi tidak boleh lebih dari 2% !'
-            });
+        // if (persentase > 2) {
+        //     Swal.fire({
+        //         icon: 'warning',
+        //         title: 'Warning !',
+        //         text: 'Persen komisi tidak boleh lebih dari 2% !'
+        //     });
 
-            persentase = 2;
+        //     persentase = 2;
 
-            $('input[name="persentase_' + tipe + '_komisi"]').val(persentase);
-        }
+        //     $('input[name="persentase_' + tipe + '_komisi"]').val(persentase);
+        // }
         var nilai_internal = get_num($('.total_nilai_kontrak_bersih').val());
 
         var nilai_komisi = parseFloat(nilai_internal * persentase / 100);
@@ -729,15 +729,16 @@ $nilai_others = $list_spk_penawaran->biaya_others;
         var waktu_to = $('input[name="waktu_to"]').val();
         var project_leader = $('input[name="project_leader"]').val();
 
-        if (ttl_persen_komisi > 5) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Warning !',
-                text: 'Total Persentase Komisi tidak boleh lebih dari 4% !'
-            });
+        // if (ttl_persen_komisi > 5) {
+        //     Swal.fire({
+        //         icon: 'warning',
+        //         title: 'Warning !',
+        //         text: 'Total Persentase Komisi tidak boleh lebih dari 4% !'
+        //     });
 
-            return false;
-        } else if (ttl_persentase_payment < 100 || ttl_persentase_payment > 100) {
+        //     return false;
+        // } else 
+        if (ttl_persentase_payment < 100 || ttl_persentase_payment > 100) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Warning !',

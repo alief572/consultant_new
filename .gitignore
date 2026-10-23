@@ -19,7 +19,7 @@ application/config/constants.php
 !application/logs/index.html
 !application/logs/.htaccess
 
-#/vendor/
+/vendor/
 # /uploads/*
 /assets/files/*
 /assets/pr/*
@@ -27,5 +27,18 @@ application/config/constants.php
 docker-compose.yml
 application/config/config.php
 /.kiro
-/tests
+/tests/*
+!/tests/ExpenseReportJournalRepairTest.php
+!/tests/ExpenseProjectFlowTest.php
+!/tests/ExpenseProjectSettlementIntegrationTest.php
+!/tests/ExpenseProjectViewsTest.php
+!/tests/ExpenseProjectUITest.js
+application/private/expense_returns/*
+!application/private/expense_returns/.htaccess
 Dockerfile
+graphify-out/
+patch_kasbon.patch
+scripts/
+/uploads/bukti_pengembalian_expense_report/*
+/uploads/bukti_penggunaan_expense/*
+/uploads/kasbon_project_bukti_penggunaan/*
