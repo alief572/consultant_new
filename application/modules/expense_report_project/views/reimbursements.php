@@ -21,7 +21,7 @@
     </div>
     <div class="erp-ledger-scroll" role="region" aria-label="Daftar reimburse, geser untuk melihat semua kolom" tabindex="0">
         <table id="reimbursement-table" class="table erp-table erp-ledger">
-            <thead><tr><th scope="col">Expense / Kasbon</th><th scope="col" class="erp-money">Hutang expense (Rp)</th><th scope="col">Status</th><th scope="col">Keperluan</th><th scope="col">Company</th><th scope="col">Approval expense</th><th scope="col">No. pengajuan</th><th scope="col">Keterangan Finance</th></tr></thead>
+            <thead><tr><th scope="col">Expense / Kasbon</th><th scope="col" class="erp-money">Hutang expense (Rp)</th><th scope="col">Status</th><th scope="col">Keperluan</th><th scope="col">Company</th><th scope="col">Approval expense</th><th scope="col">No. pengajuan</th><th scope="col">Keterangan Finance</th><th scope="col">Action</th></tr></thead>
             <tbody>
             <?php foreach ($reimbursements as $item):
                 $status = $item['monitoring_status'];
@@ -35,12 +35,13 @@
                     <td><?= html_escape($item['deskripsi']) ?></td><td><?= html_escape($item['nm_company'] ?? '-') ?></td>
                     <td><?= html_escape($item['approved_date']) ?></td><td><?= html_escape($item['no_request'] ?? '-') ?></td>
                     <td><?= html_escape($item['keterangan'] ?? '-') ?></td>
+                    <td><a class="erp-btn erp-btn-primary" href="<?= html_escape(site_url('expense_report_project/view_expense_subcont/' . urlencode(str_replace('/', '|', $item['id_header'])))) ?>" aria-label="<?= html_escape('Lihat detail expense report ' . $item['id']) ?>"><i class="fa fa-eye" aria-hidden="true"></i> Detail</a></td>
                 </tr>
             <?php endforeach; ?>
             <?php if (!$reimbursements): ?>
-                <tr><td class="erp-empty" colspan="8"><strong>Belum ada penggantian biaya yang diajukan</strong><p>Laporan yang disetujui dengan realisasi melebihi kasbon akan otomatis muncul di sini.</p></td></tr>
+                <tr><td class="erp-empty" colspan="9"><strong>Belum ada penggantian biaya yang diajukan</strong><p>Laporan yang disetujui dengan realisasi melebihi kasbon akan otomatis muncul di sini.</p></td></tr>
             <?php else: ?>
-                <tr class="erp-filter-empty" data-erp-empty hidden><td class="erp-empty" colspan="8"><strong>Tidak ada reimburse yang cocok</strong><p>Ganti kata pencarian atau pilih status lain.</p><button type="button" class="erp-filter-reset" data-erp-reset>Reset pencarian dan status</button></td></tr>
+                <tr class="erp-filter-empty" data-erp-empty hidden><td class="erp-empty" colspan="9"><strong>Tidak ada reimburse yang cocok</strong><p>Ganti kata pencarian atau pilih status lain.</p><button type="button" class="erp-filter-reset" data-erp-reset>Reset pencarian dan status</button></td></tr>
             <?php endif; ?>
             </tbody>
         </table>
