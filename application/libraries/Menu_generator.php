@@ -24,10 +24,15 @@ class Menu_generator
 
 	public function build_menus($type = 1)
 	{
-		$auth = $this->get_auth_permission($this->user_id);
-		if (!$auth) {
-			$auth = array(NULL);
+		$auth = array();
+		if (!$this->is_admin) {
+			$auth = $this->get_auth_permission($this->user_id);
+			if (!$auth) {
+				$auth = array(NULL);
+			}
 		}
+
+		$active_ids = $this->get_active_menu_ids($type, $auth);
 
 		if ($type == 1) {
 			$menu = $this->ci->db->select("t1.*")
@@ -81,22 +86,13 @@ class Menu_generator
 							if (!in_array($rw->permission_id, $auth) && $this->is_admin == FALSE) {
 								goto end_for;
 							}
-							$active = "";
-							if (strpos($this->uri, '/' . $link . '/') !== FALSE) {
-								$active = "active";
-							}
+							$active = in_array((int)$rw->id, $active_ids) ? 'active' : '';
 							$html .= "<li class='{$active}'><a href='" . ($link == '#' ? '#' : site_url($link)) . "' " . ($target == '_blank' ? "target='_blank'" : "") . "><i class='{$icon}'></i> <span>" . ucwords($title) . "</span></a></li>";
 						}
 						goto end_for;
 					}
 
-					$active = "";
-					foreach ($submenu as $sub) {
-						if (strpos($this->uri, '/' . $sub->link . '/') !== FALSE) {
-							$active = "active";
-							break;
-						}
-					}
+					$active = in_array((int)$id, $active_ids) ? 'active' : '';
 					$html .= "
             			  <li class='treeview " . $titleID . "head {$active}'>
                       <a href='#'>
@@ -139,10 +135,7 @@ class Menu_generator
 								if (!in_array($rw->permission_id, $auth) && $this->is_admin == FALSE) {
 									goto end_for_sub;
 								}
-								$active = "";
-								if (strpos($this->uri, '/' . $sublink . '/') !== FALSE) {
-									$active = "active";
-								}
+								$active = in_array((int)$subid, $active_ids) ? 'active' : '';
 								$html .= "
 								<li class='" . $titleID . " " . $active . "'>
 									<a href='" . ($sublink == '#' ? '#' : site_url($sublink)) . "'" . " " . $subtarget . ">
@@ -152,13 +145,7 @@ class Menu_generator
 							}
 							goto end_for_sub;
 						}
-						$active = "";
-						foreach ($submenusub as $subsub) {
-							if (strpos($this->uri, '/' . $subsub->link . '/') !== FALSE) {
-								$active = "active";
-								break;
-							}
-						}
+						$active = in_array((int)$subid, $active_ids) ? 'active' : '';
 						$html .= "
 	            			  <li class='treeview " . $titleID . " {$active}'>
 	                      <a href='#'>
@@ -179,12 +166,7 @@ class Menu_generator
 							if ($subtargetsub == '_blank') {
 								$subtargetsub = "target='_blank'";
 							}
-							//Check current link
-							if (strpos($this->uri, '/' . $sublinksub . '/') !== FALSE) {
-								$active = "active";
-							} else {
-								$active = "";
-							}
+							$active = in_array((int)$subidsub, $active_ids) ? 'active' : '';
 							$html .= "
 							<li class='" . $titleID . " " . $active . "'>
 								<a href='" . ($sublinksub == '#' ? '#' : site_url($sublinksub)) . "'" . " " . $subtargetsub . ">
@@ -216,12 +198,89 @@ class Menu_generator
 		return $html;
 	}
 
+	public function get_active_menu_ids($type = 1, $auth = array(), $uri_override = null)
+	{
+		if (!$this->is_admin && ($auth === null || empty($auth))) {
+			$auth = $this->get_auth_permission($this->user_id);
+			if (!$auth) {
+				$auth = array(NULL);
+			}
+		}
+
+		$query = $this->ci->db->select("id, parent_id, link, permission_id")
+			->from("{$this->x}menus")
+			->where("group_menu", $type)
+			->where("status", 1)
+			->get()
+			->result();
+
+		$current_uri = $uri_override !== null ? (string) $uri_override : (string) $this->ci->uri->uri_string();
+		$current_uri = trim($current_uri, "/ \t\n\r\0\x0B");
+		if ($current_uri === '') {
+			$current_uri = 'dashboard';
+		}
+
+		if ($current_uri === 'expense_report_project/return_detail' && $this->ci->input->get('finance') == '1') {
+			$current_uri = 'expense_report_project/verification';
+		}
+
+		$best_match = null;
+		$best_len = 0;
+		$menu_by_id = array();
+
+		foreach ($query as $m) {
+			$menu_by_id[(int)$m->id] = $m;
+
+			if (!$this->is_admin && $m->permission_id && !in_array($m->permission_id, $auth)) {
+				continue;
+			}
+
+			$link = trim((string)$m->link, "/ \t\n\r\0\x0B");
+			if ($link === '' || $link === '#') {
+				continue;
+			}
+
+			$matches = false;
+			if ($current_uri === $link) {
+				$matches = true;
+			} elseif (strpos($current_uri . '/', $link . '/') === 0) {
+				$matches = true;
+			}
+
+			if ($matches) {
+				$len = strlen($link);
+				if ($len > $best_len) {
+					$best_len = $len;
+					$best_match = $m;
+				}
+			}
+		}
+
+		$active_ids = array();
+		if ($best_match) {
+			$curr = $best_match;
+			while ($curr) {
+				$active_ids[] = (int) $curr->id;
+				$parentId = (int) $curr->parent_id;
+				if ($parentId > 0 && isset($menu_by_id[$parentId])) {
+					$curr = $menu_by_id[$parentId];
+				} else {
+					$curr = null;
+				}
+			}
+		}
+
+		return $active_ids;
+	}
+
 	public function build_menus_OLD($type = 1)
 	{
 		$auth = $this->get_auth_permission($this->user_id);
 		if (!$auth) {
 			$auth = array(NULL);
 		}
+
+		$active_ids = $this->get_active_menu_ids($type, $auth);
 
 		if ($type == 1) {
 			$menu = $this->ci->db->select("t1.*")
@@ -270,21 +329,12 @@ class Menu_generator
 							if (!in_array($rw->permission_id, $auth) && $this->is_admin == FALSE) {
 								goto end_for;
 							}
-							$active = "";
-							if (strpos($this->uri, '/' . $link . '/') !== FALSE) {
-								$active = "active";
-							}
+							$active = in_array((int)$rw->id, $active_ids) ? 'active' : '';
 							$html .= "<li class='{$active}'><a href='" . ($link == '#' ? '#' : site_url($link)) . "' " . ($target == '_blank' ? "target='_blank'" : "") . "><i class='{$icon}'></i> <span>" . ucwords($title) . "</span></a></li>";
 						}
 						goto end_for;
 					}
-					$active = "";
-					foreach ($submenu as $sub) {
-						if (strpos($this->uri, '/' . $sub->link . '/') !== FALSE) {
-							$active = "active";
-							break;
-						}
-					}
+					$active = in_array((int)$id, $active_ids) ? 'active' : '';
 					$html .= "
             			  <li class='treeview {$active}'>
                       <a href='#'>
@@ -309,12 +359,7 @@ class Menu_generator
 						}
 
 
-						//Check current link
-						if (strpos($this->uri, '/' . $sublink . '/') !== FALSE) {
-							$active = "active";
-						} else {
-							$active = "";
-						}
+						$active = in_array((int)$subid, $active_ids) ? 'active' : '';
 						$html .= "
 						<li class='" . $active . "'>
 							<a href='" . ($sublink == '#' ? '#' : site_url($sublink)) . "'" . " " . $subtarget . ">

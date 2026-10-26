@@ -85,7 +85,7 @@ defined('EXIT__AUTO_MIN')      or define('EXIT__AUTO_MIN', 9); // lowest automat
 defined('EXIT__AUTO_MAX')      or define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
 define('DBHRIS', 'hr_ori');
-define('DBERP', 'origa_dev');
+define('DBERP', 'origa');
 define('DBACC', 'gl_origa');
 define('DBHR', 'hr_sentral');
 define('DBSF', 'db_sendigs_ss');

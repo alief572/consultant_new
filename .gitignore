@@ -33,6 +33,7 @@ application/config/config.php
 !/tests/ExpenseProjectSettlementIntegrationTest.php
 !/tests/ExpenseProjectViewsTest.php
 !/tests/ExpenseProjectUITest.js
+!/tests/MenuGeneratorActiveStateTest.php
 application/private/expense_returns/*
 !application/private/expense_returns/.htaccess
 Dockerfile
