@@ -589,7 +589,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     }
 </script>
 <script src="<?= base_url('assets/js/basic.js') ?>"></script>
-<<<<<<< HEAD
 <script type="text/javascript">
     (function () {
         function closePenawaranMenus() {
@@ -628,5 +627,3 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         $('#table_penawaran, #table_penawaran_non_konsultasi').on('preDraw.dt', closePenawaranMenus);
     })();
 </script>
-=======
->>>>>>> 5911d964 (awd)
