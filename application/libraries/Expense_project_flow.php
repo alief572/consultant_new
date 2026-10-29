@@ -2,6 +2,36 @@
 
 class Expense_project_flow
 {
+    public static function returnLabels()
+    {
+        return ['waiting_return' => 'Menunggu Pengembalian', 'waiting_verification' => 'Menunggu Verifikasi', 'completed' => 'Selesai'];
+    }
+
+    public static function reportStatus(array $header)
+    {
+        if (!$header) return ['label' => 'New', 'style' => 'success'];
+        if ((string) ($header['sts'] ?? '') === '1') {
+            $status = $header['return_status'] ?? '';
+            $labels = self::returnLabels();
+            return ['label' => $labels[$status] ?? 'Approved',
+                'style' => $status === 'waiting_return' ? 'warning' : ($status === 'waiting_verification' ? 'info' : 'success')];
+        }
+        if ((string) ($header['sts_req'] ?? '') === '1') return ['label' => 'Menunggu Approval', 'style' => 'primary'];
+        if ((string) ($header['sts'] ?? '') === '2' || !empty($header['reject_reason'])) return ['label' => 'Ditolak', 'style' => 'danger'];
+        return ['label' => 'Draft', 'style' => 'warning'];
+    }
+
+    public static function reimbursementPresentation(array $row)
+    {
+        $status = $row['monitoring_status'];
+        if ($status === 'Disetujui') return ['group' => 'approved', 'label' => 'Disetujui', 'style' => 'completed'];
+        if ($status === 'Menunggu Approval') return ['group' => 'pending', 'label' => 'Menunggu Approval Pembayaran', 'style' => 'review'];
+        if (in_array($status, ['Menunggu Diajukan', 'Terkirim ke Finance'], true)) {
+            return ['group' => 'unsubmitted', 'label' => 'Menunggu Diajukan Finance', 'style' => 'waiting'];
+        }
+        return ['group' => 'unsubmitted', 'label' => $status, 'style' => 'error'];
+    }
+
     public static function cents($value)
     {
         $value = str_replace(',', '', (string) $value);

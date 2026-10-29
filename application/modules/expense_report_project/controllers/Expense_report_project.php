@@ -2306,22 +2306,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2504,22 +2494,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_akomodasi->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2671,22 +2651,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_others->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2841,22 +2811,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_lab->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -3011,22 +2971,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont_tenaga_ahli->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -3181,22 +3131,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont_perusahaan->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">

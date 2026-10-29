@@ -66,6 +66,19 @@
 .erp-status-review { color: var(--erp-primary); background: var(--erp-primary-light); }
 .erp-status-completed { color: var(--erp-success); background: var(--erp-success-light); }
 .erp-status-neutral { color: var(--erp-slate-700); background: var(--erp-slate-100); }
+.erp-status-error { color: var(--erp-danger); background: var(--erp-danger-light); }
+.erp-status-tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 22px 0; }
+.erp-status-tabs button { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 6px 14px; border: 1px solid var(--erp-slate-300); border-radius: 18px; background: #fff; color: var(--erp-slate-700); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.erp-status-tabs button:hover { background: var(--erp-primary-light); border-color: var(--erp-primary); }
+.erp-status-tabs button[aria-selected="true"] { background: var(--erp-primary); border-color: var(--erp-primary); color: #fff; }
+.erp-status-tabs button[aria-selected="true"] .erp-counter-pill { background: #fff; color: var(--erp-primary); }
+.erp-status-tabs button:focus-visible { outline: 3px solid var(--erp-primary); outline-offset: 3px; }
+@media (max-width: 767px) {
+  .erp-status-tabs { padding: 16px 16px 0; }
+}
+@media (pointer: coarse) {
+  .erp-status-tabs button { min-height: 44px; }
+}
 .erp-empty { padding: 40px 24px !important; text-align: center; white-space: normal; }
 .erp-empty strong { display: block; margin-bottom: 6px; color: var(--erp-slate-800); font-size: 15px; }
 .erp-empty p { margin: 0; color: var(--erp-slate-600); font-size: 14px; }

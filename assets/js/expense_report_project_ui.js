@@ -4,7 +4,7 @@
     window.expenseProjectUIReady = true;
 
     function filterList(root) {
-        var status = $(root).find('[data-erp-status]').val() || '';
+        var status = root.getAttribute('data-erp-active-status') || $(root).find('[data-erp-status]').val() || '';
         var query = String($(root).find('[data-erp-search]').val() || '').trim().toLocaleLowerCase('id');
         var rows = root.querySelectorAll('[data-erp-row]');
         var visible = 0;
@@ -26,6 +26,33 @@
         $(root).find('[data-erp-search], [data-erp-status]').val('');
         filterList(root);
         $(root).find('[data-erp-search]').trigger('focus');
+    });
+    $(document).on('click.erpUI', '[data-erp-status-tab]', function () {
+        var root = $(this).closest('[data-erp-list]')[0];
+        root.setAttribute('data-erp-active-status', this.getAttribute('data-erp-status-tab'));
+        Array.prototype.forEach.call(root.querySelectorAll('[data-erp-status-tab]'), function (tab) {
+            var selected = tab === this;
+            tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+            tab.setAttribute('tabindex', selected ? '0' : '-1');
+        }, this);
+        var panel = root.querySelector('[data-erp-results]');
+        panel.setAttribute('aria-labelledby', this.id);
+        root.querySelector('[data-erp-empty-title]').textContent = this.getAttribute('data-erp-empty-label');
+        filterList(root);
+    });
+    $(document).on('keydown.erpUI', '[data-erp-status-tab]', function (event) {
+        if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].indexOf(event.key) === -1) return;
+        event.preventDefault();
+        var tabs = this.parentNode.querySelectorAll('[data-erp-status-tab]');
+        var index = Array.prototype.indexOf.call(tabs, this);
+        if (event.key === 'Home') index = 0;
+        else if (event.key === 'End') index = tabs.length - 1;
+        else index = (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+        tabs[index].focus();
+        tabs[index].click();
+    });
+    $(function () {
+        document.querySelectorAll('[data-erp-active-status]').forEach(filterList);
     });
     $(document).on('shown.bs.tab', '.erp-nav-tabs a[data-toggle="tab"]', function () {
         var tabs = $(this).closest('.erp-nav-tabs').find('[role="tab"]');
