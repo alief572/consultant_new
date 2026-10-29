@@ -568,7 +568,7 @@ class SPK_penawaran extends Admin_Controller
 
         $hasil = [];
 
-        $no = 1;
+        $no = 1 + intval($start);
         foreach ($get_data->result() as $item) {
 
             $approval_position = '';
@@ -593,84 +593,10 @@ class SPK_penawaran extends Admin_Controller
                 $approval_position = 'Project Leader';
             }
 
-            $status = $this->Spk_penawaran_model->render_status($item);
+            $status = str_replace('width: 100% !important;', '', $this->Spk_penawaran_model->render_status($item));
             $status_spk = $this->Spk_penawaran_model->render_status_spk($item);
 
-            $option = '
-            <div class="btn-group">
-                <button
-                    type="button"
-                    class="btn btn-sm btn-accent text-primary dropdown-toggle"
-                    title="Actions"
-                    data-toggle="dropdown"
-                    id="dropdownMenu' . $no . '"
-                    aria-expanded="false">
-                    <i class="fa fa-cogs"></i> <span class="caret"></span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-            ';
-
-            if (has_permission($this->viewPermission)) {
-                $option .= '
-                    <div class="col-12" style="margin-left: 0.5rem">
-                        <a href="' . base_url('spk_penawaran/view_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-info" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-file"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> View </span>
-                    </div>
-                ';
-            }
-
-            if (has_permission($this->managePermission)) {
-                $option .= '
-                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="' . base_url('spk_penawaran/edit_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '" class="btn btn-sm btn-success" style="color: #000000">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-edit"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Revisi </span>
-                    </div>
-                ';
-            }
-
-            if ($this->auth->user_id() == '7') {
-                $option .= '
-                    <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                        <a href="#" class="btn btn-sm btn-danger del_spk" style="color: #000000" data-id_spk_penawaran="' . $item->id_spk_penawaran . '">
-                            <div class="col-12 dropdown-item">
-                            <b>
-                                <i class="fa fa-trash"></i>
-                            </b>
-                            </div>
-                        </a>
-                        <span style="font-weight: 500"> Delete </span>
-                    </div>
-                ';
-            }
-
-            $option .= '
-                <div class="col-12" style="margin-top: 0.5rem; margin-left: 0.5rem">
-                    <a
-                        href="' . base_url('spk_penawaran/print_spk/' . urlencode(str_replace('/', '|', $item->id_spk_penawaran))) . '"
-                        class="btn btn-sm"
-                        style="background-color: #ff0066; color: #000000" target="_blank">
-                        <div class="col-12 dropdown-item">
-                        <b>
-                            <i class="fa fa-print"></i>
-                        </b>
-                        </div>
-                    </a>
-                    <span style="font-weight: 500"> Print </span>
-                </div>
-            ';
-            $option .= '</div>';
+            $option = $this->render_index_actions($item, $no);
 
             $nm_marketing = $item->nm_sales;
 
@@ -685,17 +611,27 @@ class SPK_penawaran extends Admin_Controller
 
             $grand_total = (!empty($item->grand_total) && $item->grand_total > 0) ? number_format($item->grand_total) : number_format($item->nilai_kontrak);
 
+            // Compact grouped cells (mirror kasbon_project 2-line style)
+            $spk_paket = '<strong>' . htmlspecialchars($item->id_spk_penawaran) . '</strong>';
+            if (!empty($nm_paket)) {
+                $spk_paket .= '<br><small class="text-muted">' . htmlspecialchars($nm_paket) . '</small>';
+            }
+
+            $customer_cell = '<strong>' . htmlspecialchars($nm_customer) . '</strong>';
+            $customer_cell .= '<br><small class="text-muted">Rp ' . $grand_total . '</small>';
+
+            $marketing_cell = '<strong>' . htmlspecialchars(ucfirst($nm_marketing), ENT_QUOTES, 'UTF-8') . '</strong>';
+            $marketing_cell .= '<br><small class="text-muted">' . htmlspecialchars($item->nm_lengkap) . '</small>';
+            $marketing_cell .= '<br><small class="text-muted">' . date('d M Y H:i', strtotime($item->input_date)) . '</small>';
+
+            $status_cell = '<div class="spk-status-stack">' . $status . $status_spk . '</div>';
+
             $hasil[] = [
                 'no' => $no,
-                'id_spk_penawaran' => $item->id_spk_penawaran,
-                'nm_marketing' => ucfirst($nm_marketing),
-                'nm_paket' => $nm_paket,
-                'nm_customer' => $nm_customer,
-                'grand_total' => number_format($item->nilai_kontrak),
-                'created_by' => $item->nm_lengkap,
-                'created_date' => date('d F Y H:i:s', strtotime($item->input_date)),
-                'status' => $status,
-                'status_spk' => $status_spk,
+                'spk_paket' => $spk_paket,
+                'nm_customer' => $customer_cell,
+                'nm_marketing' => $marketing_cell,
+                'status' => $status_cell,
                 'option' => $option
             ];
 
@@ -708,6 +644,34 @@ class SPK_penawaran extends Admin_Controller
             'recordsFiltered' => $count_filter,
             'data' => $hasil
         ]);
+    }
+
+    private function render_index_actions($item, $no)
+    {
+        $route_id = urlencode(str_replace('/', '|', $item->id_spk_penawaran));
+        $label = htmlspecialchars($item->id_spk_penawaran, ENT_QUOTES, 'UTF-8');
+        $icons = [
+            'more' => '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+            'view' => '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+            'edit' => '<path d="M14 5l5 5M4 20l4-1L20 7a3 3 0 0 0-4-4L4 15z"/>',
+            'delete' => '<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/>',
+            'print' => '<path d="M6 9V3h12v6M6 17H3V9h18v8h-3M6 14h12v7H6zM17 12h1"/>'
+        ];
+        $icon = function ($name) use ($icons) {
+            return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . $icons[$name] . '</svg>';
+        };
+        $html = '<div class="btn-group spk-actions"><button type="button" class="spk-action-toggle dropdown-toggle" data-toggle="dropdown" id="spkActions' . $no . '" aria-haspopup="true" aria-expanded="false" aria-label="Aksi SPK ' . $label . '">' . $icon('more') . '<span>Aksi</span></button><ul class="dropdown-menu dropdown-menu-right spk-action-menu" aria-labelledby="spkActions' . $no . '">';
+        if (has_permission($this->viewPermission)) {
+            $html .= '<li><a href="' . base_url('spk_penawaran/view_spk/' . $route_id) . '">' . $icon('view') . '<span>Lihat SPK</span></a></li>';
+        }
+        if (has_permission($this->managePermission)) {
+            $html .= '<li><a href="' . base_url('spk_penawaran/edit_spk/' . $route_id) . '">' . $icon('edit') . '<span>Revisi SPK</span></a></li>';
+        }
+        $html .= '<li><a href="' . base_url('spk_penawaran/print_spk/' . $route_id) . '" target="_blank" rel="noopener">' . $icon('print') . '<span>Cetak SPK</span></a></li>';
+        if ($this->auth->user_id() == '7') {
+            $html .= '<li class="spk-action-divider" role="separator"></li><li><a href="#" class="del_spk spk-action-danger" data-id_spk_penawaran="' . $label . '">' . $icon('delete') . '<span>Hapus SPK</span></a></li>';
+        }
+        return $html . '</ul></div>';
     }
 
     public function get_data_penawaran()
