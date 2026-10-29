@@ -81,18 +81,18 @@ class Penawaran extends Admin_Controller
         // $this->db->order_by('a.nm_karyawan', 'asc');
         // $get_marketing = $this->db->get()->result();
 
-        $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR . '.employees a');
-        $this->db->group_start();
-        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257', 'EMP0173']);
-        $this->db->or_where('LOWER(TRIM(a.name))', 'ferlita jualiani');
-        $this->db->group_end();
-        $get_marketing = $this->db->get()->result();
+        $this->dbhr->select('a.id, a.name as nm_karyawan');
+        $this->dbhr->from('employees a');
+        $this->dbhr->group_start();
+        $this->dbhr->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257', 'EMP0173']);
+        $this->dbhr->or_where('LOWER(TRIM(a.name))', 'ferlita juliani');
+        $this->dbhr->group_end();
+        $get_marketing = $this->dbhr->get()->result();
 
-        $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR . '.employees a');
-        $this->db->where('a.flag_active', 'Y');
-        $get_employees = $this->db->get()->result();
+        $this->dbhr->select('a.id, a.name as nm_karyawan');
+        $this->dbhr->from('employees a');
+        $this->dbhr->where('a.flag_active', 'Y');
+        $get_employees = $this->dbhr->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
@@ -224,18 +224,18 @@ class Penawaran extends Admin_Controller
         // $this->db->order_by('a.nm_karyawan', 'asc');
         // $get_marketing = $this->db->get()->result();
 
-        $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR . '.employees a');
-        $this->db->group_start();
-        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257', 'EMP0173']);
-        $this->db->or_where('LOWER(TRIM(a.name))', 'ferlita jualiani');
-        $this->db->group_end();
-        $get_marketing = $this->db->get()->result();
+        $this->dbhr->select('a.id, a.name as nm_karyawan');
+        $this->dbhr->from('employees a');
+        $this->dbhr->group_start();
+        $this->dbhr->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257', 'EMP0173']);
+        $this->dbhr->or_where('LOWER(TRIM(a.name))', 'ferlita juliani');
+        $this->dbhr->group_end();
+        $get_marketing = $this->dbhr->get()->result();
 
-        $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR . '.employees a');
-        $this->db->where('a.flag_active', 'Y');
-        $get_employees = $this->db->get()->result();
+        $this->dbhr->select('a.id, a.name as nm_karyawan');
+        $this->dbhr->from('employees a');
+        $this->dbhr->where('a.flag_active', 'Y');
+        $get_employees = $this->dbhr->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
@@ -482,18 +482,18 @@ class Penawaran extends Admin_Controller
         // $this->db->order_by('a.nm_karyawan', 'asc');
         // $get_marketing = $this->db->get()->result();
 
-        $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR . '.employees a');
-        $this->db->group_start();
-        $this->db->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257', 'EMP0173']);
-        $this->db->or_where('LOWER(TRIM(a.name))', 'ferlita jualiani');
-        $this->db->group_end();
-        $get_marketing = $this->db->get()->result();
+        $this->dbhr->select('a.id, a.name as nm_karyawan');
+        $this->dbhr->from('employees a');
+        $this->dbhr->group_start();
+        $this->dbhr->where_in('a.id', ['EMP0010', 'EMP0029', 'EMP0031', 'EMP0170', 'EMP0246', 'EMP0035', 'EMP0001', 'EMP0257', 'EMP0173']);
+        $this->dbhr->or_where('LOWER(TRIM(a.name))', 'ferlita juliani');
+        $this->dbhr->group_end();
+        $get_marketing = $this->dbhr->get()->result();
 
-        $this->db->select('a.id, a.name as nm_karyawan');
-        $this->db->from(DBHR . '.employees a');
-        $this->db->where('a.flag_active', 'Y');
-        $get_employees = $this->db->get()->result();
+        $this->dbhr->select('a.id, a.name as nm_karyawan');
+        $this->dbhr->from('employees a');
+        $this->dbhr->where('a.flag_active', 'Y');
+        $get_employees = $this->dbhr->get()->result();
 
         $this->db->select('a.*');
         $this->db->from('kons_master_konsultasi_header a');
