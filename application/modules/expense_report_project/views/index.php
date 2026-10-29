@@ -8,7 +8,7 @@ $pending_returns_count = count(array_filter($returns, function ($item) { return 
 $pending_reimburse_count = count(array_filter($reimbursements, function ($item) { return $item['monitoring_status'] !== 'Disetujui'; }));
 ?>
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
-<link rel="stylesheet" href="<?= base_url('assets/css/expense_report_project.css') ?>">
+<link rel="stylesheet" href="<?= base_url('assets/css/expense_report_project.css') . '?v=' . filemtime(FCPATH . 'assets/css/expense_report_project.css') ?>">
 
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
 
@@ -73,7 +73,7 @@ $pending_reimburse_count = count(array_filter($reimbursements, function ($item) 
 </div>
 
 <script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
-<script src="<?= base_url('assets/js/expense_report_project_ui.js') ?>"></script>
+<script src="<?= base_url('assets/js/expense_report_project_ui.js') . '?v=' . filemtime(FCPATH . 'assets/js/expense_report_project_ui.js') ?>"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {

@@ -1,6 +1,7 @@
 <?php
 require_once dirname(__DIR__) . '/application/libraries/Expense_project_flow.php';
 if (PHP_SAPI !== 'cli') { exit(1); }
+define('FCPATH', dirname(__DIR__) . '/');
 function html_escape($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function site_url($path) { return '/test/' . $path; }
 function base_url($path) { return '/test/' . $path; }
@@ -50,6 +51,8 @@ view_expect(strpos(end($pages), 'id="expense-returns"') !== false, 'Return tab')
 view_expect(strpos(end($pages), 'id="expense-reimbursements"') !== false, 'Reimbursement tab');
 view_expect(strpos(end($pages), 'role="tab" aria-controls="expense-reports" aria-selected="true"') !== false, 'Tab selection is announced');
 view_expect(strpos(end($pages), 'id="expense-table-retry"') !== false, 'Failed SPK request offers retry');
+view_expect(strpos(end($pages), 'expense_report_project.css?v=' . filemtime(FCPATH . 'assets/css/expense_report_project.css')) !== false, 'Index loads the current stylesheet version');
+view_expect(strpos(end($pages), 'expense_report_project_ui.js?v=' . filemtime(FCPATH . 'assets/js/expense_report_project_ui.js')) !== false, 'Index loads the current UI script version');
 $pages[] = $renderer->render('return_list', ['finance' => true, 'returns' => []]);
 view_expect(strpos(end($pages), 'assets/css/expense_report_project.css') !== false, 'Standalone Finance queue loads module styling');
 view_expect(strpos(end($pages), 'label for="return-search"') !== false, 'Search has an accessible label');
