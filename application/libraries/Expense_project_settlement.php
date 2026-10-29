@@ -407,12 +407,12 @@ class Expense_project_settlement
 
     public function monitoring($actor, $allowAll = false)
     {
-        $rows = $this->query('SELECT h.id,h.id_header,h.approved_date,h.selisih,h.sts_reject,h.sts_reject_manage,h.reject_reason AS finance_rejection_reason,k.deskripsi,e.id AS expense_id,e.status AS expense_status,p.id AS payment_id,p.no_request,p.status AS payment_status,p.keterangan,p.nm_company,p.jumlah'
+        $rows = $this->query('SELECT h.id,h.id_header,h.sts,h.sts_req,h.reject_reason,h.approved_date,h.selisih,h.sts_reject,h.sts_reject_manage,h.reject_reason AS finance_rejection_reason,k.deskripsi,e.id AS expense_id,e.status AS expense_status,p.id AS payment_id,p.no_request,p.status AS payment_status,p.keterangan,p.nm_company,p.jumlah'
             . ' FROM ' . self::HEADER . ' h JOIN kons_tr_kasbon_project_header k ON k.id=h.id_header'
             . ' LEFT JOIN ' . $this->finance . '.tr_expense e ON e.project_consultant=\'1\' AND e.no_expense_consultant=h.id'
             . ' LEFT JOIN ' . $this->finance . '.request_payment p ON p.tipe=\'expense\' AND (p.no_doc=h.id OR (e.id IS NOT NULL AND p.ids=CAST(e.id AS CHAR)))'
-            . ' WHERE h.flow_version=2 AND h.sts=? AND h.selisih<0' . ($allowAll ? '' : ' AND h.created_by=?') . ' ORDER BY h.approved_date DESC',
-            $allowAll ? ['1'] : ['1', $actor])->result_array();
+            . ' WHERE h.flow_version=2 AND h.selisih<0' . ($allowAll ? '' : ' AND h.created_by=?') . ' ORDER BY h.created_date DESC',
+            $allowAll ? [] : [$actor])->result_array();
         foreach ($rows as &$row) {
             $row['monitoring_status'] = Expense_project_flow::reimbursementStatus($row);
         }

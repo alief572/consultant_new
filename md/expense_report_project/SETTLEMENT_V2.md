@@ -35,13 +35,15 @@ Kolom tambahan `source_module='expense_report_project'`, `source_id`, `id_compan
 
 Field existing yang diisi: `tipe='expense'`, `no_doc`/`ids` nomor laporan, `nama` pemohon, `tgl_doc` tanggal laporan, `keperluan` berawalan `Lebih Expense`, `jumlah` sebesar kekurangan, rekening penerima dari kasbon, `currency='IDR'`, dan status awal `0`. Nomor laporan di atas kapasitas `no_doc` (50 karakter) ditolak agar tidak terpotong. Pajak, admin, serta approval/pembayaran Finance tidak diubah.
 
-Monitoring membaca record Finance secara langsung:
+Monitoring reimburse mengikuti status laporan expense sejak draft untuk laporan v2 dengan selisih negatif. Data Request Payment Finance tetap ditampilkan sebagai informasi tambahan, bukan penentu status expense.
 
-| Status Finance | Tampilan |
+| Status expense | Tampilan |
 |---|---|
-| `0`/NULL tanpa `no_request` | Menunggu Diajukan |
-| `0`/NULL dengan `no_request` | Menunggu Approval |
-| `1` (Disetujui) atau `2` (Selesai) | Disetujui |
+| Belum diajukan atau dikembalikan untuk revisi | Menunggu Diajukan |
+| `sts_req=1`, belum approved | Menunggu Approval |
+| `sts=1` | Disetujui |
+
+Expense yang ditolak diberi penanda dan alasan penolakan sampai diajukan ulang. Disetujui tidak berarti reimburse sudah dibayar; status pembayaran Finance tidak mengubah status approval expense.
 
 `keterangan` Finance ditampilkan agar alasan pengembalian/penolakan yang dicatat di sana terbaca. Pengajuan ulang mengikuti mekanisme Finance: record dikembalikan ke status awal dan nomor pengajuan dilepas. Expense yang sudah approved tidak dibuka kembali. Record Finance yang hilang ditandai **Integrasi Finance perlu diperiksa**, tidak dianggap sukses.
 

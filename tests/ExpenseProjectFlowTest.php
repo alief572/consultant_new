@@ -41,18 +41,21 @@ foreach ([
     expect_flow(Expense_project_flow::reportStatus($case[0])['label'], $case[1], 'Report status');
 }
 foreach ([
-    ['Terkirim ke Finance', 'unsubmitted', 'Menunggu Diajukan Finance'],
-    ['Menunggu Diajukan', 'unsubmitted', 'Menunggu Diajukan Finance'],
-    ['Menunggu Approval', 'pending', 'Menunggu Approval Pembayaran'],
-    ['Disetujui', 'approved', 'Disetujui'],
-    ['Integrasi Finance perlu diperiksa', 'unsubmitted', 'Integrasi Finance perlu diperiksa'],
+    [[], 'Menunggu Diajukan', 'unsubmitted'],
+    [['sts_req' => 1], 'Menunggu Approval', 'pending'],
+    [['sts' => 1], 'Disetujui', 'approved'],
+    [['sts' => 1, 'sts_req' => 1, 'payment_status' => 0], 'Disetujui', 'approved'],
+    [['sts' => 1, 'sts_reject' => 1, 'payment_status' => 0], 'Disetujui', 'approved'],
+    [['sts' => null, 'reject_reason' => 'Revisi'], 'Menunggu Diajukan', 'unsubmitted'],
+    [['sts_req' => 1, 'reject_reason' => 'Revisi lama'], 'Menunggu Approval', 'pending'],
+    [['payment_id' => 1, 'payment_status' => 1], 'Menunggu Diajukan', 'unsubmitted'],
 ] as $case) {
-    $presentation = Expense_project_flow::reimbursementPresentation(['monitoring_status' => $case[0]]);
-    expect_flow($presentation['group'], $case[1], 'Reimbursement group');
-    expect_flow($presentation['label'], $case[2], 'Reimbursement label');
+    $status = Expense_project_flow::reimbursementStatus($case[0]);
+    expect_flow($status, $case[1], 'Expense determines reimbursement status');
+    $presentation = Expense_project_flow::reimbursementPresentation(['monitoring_status' => $status]);
+    expect_flow($presentation['group'], $case[2], 'Expense status group');
+    expect_flow($presentation['label'], $case[1], 'Expense status label');
 }
-expect_flow(Expense_project_flow::reimbursementStatus(['expense_id' => 1]), 'Terkirim ke Finance', 'Keep backend integration state');
-expect_flow(Expense_project_flow::reimbursementStatus([]), 'Integrasi Finance perlu diperiksa', 'Missing integration');
 foreach (['-1', 'abc', '1.234', '999999999999999999999'] as $invalid) {
     try {
         Expense_project_flow::cents($invalid);

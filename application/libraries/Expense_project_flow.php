@@ -25,9 +25,9 @@ class Expense_project_flow
     {
         $status = $row['monitoring_status'];
         if ($status === 'Disetujui') return ['group' => 'approved', 'label' => 'Disetujui', 'style' => 'completed'];
-        if ($status === 'Menunggu Approval') return ['group' => 'pending', 'label' => 'Menunggu Approval Pembayaran', 'style' => 'review'];
-        if (in_array($status, ['Menunggu Diajukan', 'Terkirim ke Finance'], true)) {
-            return ['group' => 'unsubmitted', 'label' => 'Menunggu Diajukan Finance', 'style' => 'waiting'];
+        if ($status === 'Menunggu Approval') return ['group' => 'pending', 'label' => 'Menunggu Approval', 'style' => 'review'];
+        if ($status === 'Menunggu Diajukan') {
+            return ['group' => 'unsubmitted', 'label' => 'Menunggu Diajukan', 'style' => 'waiting'];
         }
         return ['group' => 'unsubmitted', 'label' => $status, 'style' => 'error'];
     }
@@ -77,15 +77,8 @@ class Expense_project_flow
 
     public static function reimbursementStatus(array $row)
     {
-        if (!empty($row['payment_id'])) {
-            if (in_array((string) ($row['payment_status'] ?? ''), ['1', '2'], true)) {
-                return 'Disetujui';
-            }
-            return empty($row['no_request']) ? 'Menunggu Diajukan' : 'Menunggu Approval';
-        }
-        if (!empty($row['expense_id'])) {
-            return 'Terkirim ke Finance';
-        }
-        return 'Integrasi Finance perlu diperiksa';
+        if ((string) ($row['sts'] ?? '') === '1') return 'Disetujui';
+        if ((string) ($row['sts_req'] ?? '') === '1') return 'Menunggu Approval';
+        return 'Menunggu Diajukan';
     }
 }

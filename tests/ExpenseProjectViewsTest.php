@@ -81,19 +81,18 @@ view_expect(strpos(end($pages), 'id="reimbursement-status-filter"') === false, '
 $baseReimbursement = ['id' => 'ER-001', 'id_header' => 'KS/2026/001', 'selisih' => '-200000',
     'deskripsi' => 'Test', 'approved_date' => '2026-10-29'];
 $pages[] = $renderer->render('reimbursements', ['reimbursements' => [
-    array_merge($baseReimbursement, ['monitoring_status' => 'Terkirim ke Finance']),
-    array_merge($baseReimbursement, ['monitoring_status' => 'Menunggu Diajukan', 'sts_reject' => 1,
-        'finance_rejection_reason' => '<script>test</script>']),
-    array_merge($baseReimbursement, ['monitoring_status' => 'Integrasi Finance perlu diperiksa']),
+    array_merge($baseReimbursement, ['monitoring_status' => 'Disetujui', 'sts' => 1, 'sts_reject' => 1]),
+    array_merge($baseReimbursement, ['monitoring_status' => 'Menunggu Diajukan', 'reject_reason' => '<script>test</script>']),
+    array_merge($baseReimbursement, ['monitoring_status' => 'Menunggu Diajukan', 'approved_date' => null]),
     array_merge($baseReimbursement, ['monitoring_status' => 'Menunggu Approval']),
 ]]);
 $reimbursementPage = end($pages);
-view_expect(strpos($reimbursementPage, 'Menunggu Diajukan Finance') !== false, 'Finance queue uses reference label');
-view_expect(strpos($reimbursementPage, 'Menunggu Approval Pembayaran') !== false, 'Payment approval uses reference label');
-view_expect(strpos($reimbursementPage, 'Menunggu Diajukan <span class="erp-counter-pill">3</span>') !== false, 'Unsubmitted count includes integration warnings');
-view_expect(strpos($reimbursementPage, 'Integrasi Finance perlu diperiksa') !== false, 'Integration warning remains visible');
-view_expect(strpos($reimbursementPage, 'Ditolak di Request Payment') !== false, 'Payment rejection remains visible');
-view_expect(strpos($reimbursementPage, '<script>test</script>') === false, 'Escape payment rejection reason');
+view_expect(strpos($reimbursementPage, 'data-erp-row="unsubmitted"') !== false, 'Expense draft uses unsubmitted group');
+view_expect(strpos($reimbursementPage, 'data-payment-status="Menunggu Approval"') !== false, 'Expense awaiting approval');
+view_expect(strpos($reimbursementPage, 'Menunggu Diajukan <span class="erp-counter-pill">2</span>') !== false, 'Unsubmitted count includes draft and rejected expense');
+view_expect(strpos($reimbursementPage, 'data-erp-row="approved"') !== false, 'Finance rejection does not regroup approved expense');
+view_expect(strpos($reimbursementPage, 'Expense Ditolak') !== false, 'Expense rejection remains visible');
+view_expect(strpos($reimbursementPage, '<script>test</script>') === false, 'Escape expense rejection reason');
 view_expect(strpos($reimbursementPage, 'view_expense_subcont/KS%7C2026%7C001') !== false, 'Detail uses encoded kasbon ID');
 view_expect(strpos($reimbursementPage, 'fa fa-eye') !== false, 'Detail retains eye icon');
 $pages[] = $renderer->render('reimbursements', ['reimbursements' => []]);

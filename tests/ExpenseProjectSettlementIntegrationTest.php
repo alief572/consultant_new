@@ -197,9 +197,20 @@ try {
     ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$id]) === $journalCount + 2, 'Verification posts exactly two rows once');
 
     $id = $fixture(3, 1200000);
+    $monitorRow = function () use ($service, &$id) {
+        return array_values(array_filter($service->monitoring('990001'), function ($row) use ($id) { return $row['id'] === $id; }))[0];
+    };
+    $connection->update('kons_tr_expense_report_project_header', ['sts_req' => null], ['id' => $id]);
+    ensure_settlement($monitorRow()['monitoring_status'] === 'Menunggu Diajukan', 'Draft is visible before Finance integration');
+    $service->requestApproval($id, '990001');
+    ensure_settlement($monitorRow()['monitoring_status'] === 'Menunggu Approval', 'Requested expense awaits approval');
+    $service->reject($id, '990002', 'Revisi');
+    ensure_settlement($monitorRow()['monitoring_status'] === 'Menunggu Diajukan', 'Rejected expense awaits resubmission');
+    $service->requestApproval($id, '990001');
+    ensure_settlement($monitorRow()['monitoring_status'] === 'Menunggu Approval', 'Resubmitted expense awaits approval');
     $service->approve($id, '990002');
     $monitor = array_values(array_filter($service->monitoring('990001'), function ($row) use ($id) { return $row['id'] === $id; }))[0];
-    ensure_settlement($monitor['monitoring_status'] === 'Terkirim ke Finance', 'Initial status in tr_expense');
+    ensure_settlement($monitor['monitoring_status'] === 'Disetujui', 'Approved expense without Request Payment');
     $expRow = $connection->query("SELECT id FROM `$finance`.tr_expense WHERE no_expense_consultant=?", [$id])->row_array();
     $connection->insert($finance . '.request_payment', [
         'no_doc' => $id, 'ids' => (string) $expRow['id'], 'tipe' => 'expense', 'nama' => 'Tester',
@@ -209,7 +220,7 @@ try {
     foreach ([['status' => 0, 'no_request' => null], ['status' => 0, 'no_request' => 'PGJ-TEST'], ['status' => 1, 'no_request' => 'PGJ-TEST'], ['status' => 0, 'no_request' => null, 'keterangan' => 'Ditolak - ajukan ulang']] as $payment) {
         $connection->update($finance . '.request_payment', $payment, ['no_doc' => $id]);
         $monitor = array_values(array_filter($service->monitoring('990001'), function ($row) use ($id) { return $row['id'] === $id; }))[0];
-        ensure_settlement($monitor['monitoring_status'] === Expense_project_flow::reimbursementStatus(array_merge($monitor, ['payment_status' => $payment['status'], 'no_request' => $payment['no_request']])), 'Live finance status');
+        ensure_settlement($monitor['monitoring_status'] === 'Disetujui', 'Finance payment state cannot change expense approval');
         ensure_settlement((string) $service->header($id)['sts'] === '1', 'Payment rejection must not reopen expense');
     }
     $legacy = $fixture(4, 800000, 1);
