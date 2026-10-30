@@ -2607,7 +2607,7 @@ class Approval_expense_report_project extends Admin_Controller
                     'nm_coa' => $item_jurnal['nm_coa'],
                     'debit' => $item_jurnal['debit'],
                     'kredit' => $item_jurnal['kredit'],
-                    'keterangan' => $item_jurnal['nm_coa'] . ' - ' . $get_header->id,
+                    'keterangan' => $item_jurnal['nm_coa'] . ' - ' . $get_header->id . ' - ' . $get_header->id_header,
                     'sts' => 0,
                     'no_transaksi' => $get_header->id,
                     'jenis_transaksi' => 'Expense Report Consultant',
@@ -2993,6 +2993,7 @@ class Approval_expense_report_project extends Admin_Controller
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-center">';
+                        $keterangan = $nm_coa . ' - ' . $get_expense->id . ' - ' . $item_expense->id_header_kasbon;
                         $hasil_jurnal .= $keterangan;
                         $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . '">';
                         $hasil_jurnal .= '</td>';
@@ -3047,8 +3048,8 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-center">';
-                    $hasil_jurnal .= $item_coa->nm_coa;
-                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header . '">';
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-right">';
@@ -3252,6 +3253,7 @@ class Approval_expense_report_project extends Admin_Controller
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-center">';
+                        $keterangan = $nm_coa . ' - ' . $get_expense->id . ' - ' . $item_expense->id_header_kasbon;
                         $hasil_jurnal .= $keterangan;
                         $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . '">';
                         $hasil_jurnal .= '</td>';
@@ -3309,8 +3311,8 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-center">';
-                    $hasil_jurnal .= $item_coa->nm_coa;
-                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header . '">';
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-right">';
@@ -3506,6 +3508,7 @@ class Approval_expense_report_project extends Admin_Controller
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-center">';
+                        $keterangan = $nm_coa . ' - ' . $get_expense->id . ' - ' . $item_expense->id_header_kasbon;
                         $hasil_jurnal .= $keterangan;
                         $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . '">';
                         $hasil_jurnal .= '</td>';
@@ -3562,8 +3565,8 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-center">';
-                    $hasil_jurnal .= $item_coa->nm_coa;
-                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header . '">';
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-right">';

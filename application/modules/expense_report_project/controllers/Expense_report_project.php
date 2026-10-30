@@ -151,6 +151,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 1);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -165,6 +166,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_akomodasi');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 2);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -179,6 +181,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_others');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 3);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -193,6 +196,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_lab');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 4);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -207,6 +211,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_tenaga_ahli');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 5);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -221,6 +226,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_perusahaan');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 6);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -2097,6 +2103,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->join('kons_tr_kasbon_project_header d', 'd.id_spk_budgeting = a.id_spk_budgeting');
+        $this->db->where('d.metode_pembayaran', '1');
         $this->db->join('users e', 'e.id_user = d.created_by', 'left');
         $this->db->where('d.sts', 1);
         if (!empty($search)) {
@@ -2118,6 +2125,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->join('kons_tr_kasbon_project_header d', 'd.id_spk_budgeting = a.id_spk_budgeting');
+        $this->db->where('d.metode_pembayaran', '1');
         $this->db->join('users e', 'e.id_user = d.created_by', 'left');
         $this->db->where('d.sts', 1);
         if (!empty($search)) {
@@ -2154,7 +2162,7 @@ class Expense_report_project extends Admin_Controller
 
             $ttl_expense = 0;
 
-            $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting))->result();
+            $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting, 'metode_pembayaran' => '1'))->result();
             foreach ($get_kasbon as $item_kas) {
                 $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', array('id_header' => $item_kas->id, 'sts' => 1))->result();
                 foreach ($get_expense as $item_exp) {
@@ -2169,6 +2177,7 @@ class Expense_report_project extends Admin_Controller
             $this->db->select('a.*');
             $this->db->from('kons_tr_expense_report_project_header a');
             $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+            $this->db->where('b.metode_pembayaran', '1');
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             $this->db->where('a.sts', 1);
             $this->db->group_by('a.id');
@@ -2181,17 +2190,19 @@ class Expense_report_project extends Admin_Controller
             $this->db->select('a.id');
             $this->db->from('kons_tr_expense_report_project_header a');
             $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+            $this->db->where('b.metode_pembayaran', '1');
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             $this->db->where('a.sts', null);
             $this->db->where('a.sts_req', null);
             $this->db->where('b.id IS NOT NULL');
             $check_expense_draft = $this->db->get()->num_rows();
 
-            $count_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting, 'sts' => 1))->num_rows();
+            $count_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting, 'sts' => 1, 'metode_pembayaran' => '1'))->num_rows();
 
             $this->db->select('a.id as val');
             $this->db->from('kons_tr_expense_report_project_header a');
             $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+            $this->db->where('b.metode_pembayaran', '1');
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             $this->db->where('a.sts', 1);
             $count_expense = $this->db->get()->num_rows();
@@ -2210,6 +2221,7 @@ class Expense_report_project extends Admin_Controller
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_expense_report_project_header a');
                 $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+                $this->db->where('b.metode_pembayaran', '1');
                 $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
                 $check_expense = $this->db->get()->result();
 
@@ -2267,6 +2279,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 1);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2284,6 +2297,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 1);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2455,6 +2469,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 2);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2472,6 +2487,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 2);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2612,6 +2628,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 3);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2629,6 +2646,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 3);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2772,6 +2790,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 4);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2789,6 +2808,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 4);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2932,6 +2952,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 5);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2949,6 +2970,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 5);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -3092,6 +3114,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 6);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -3109,6 +3132,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 6);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -3814,6 +3838,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.id');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.sts', null);
         $get_data_exp = $this->db->get()->result();
@@ -3926,6 +3951,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 1);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3939,6 +3965,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_akomodasi');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 2);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3952,6 +3979,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_others');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 3);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3965,6 +3993,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_lab');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 4);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3978,6 +4007,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_tenaga_ahli');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 5);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3991,6 +4021,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_perusahaan');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 6);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -4099,7 +4130,11 @@ class Expense_report_project extends Admin_Controller
                     $this->expense_project_settlement->prepareInput(['id_header' => $post['id_header'], 'detail_subcont' => ($details ?? [])], $this->auth->user_id(), $allowManage);
                 }
                 $rows = $this->expense_project_settlement->preview($post['id_header'], $details);
-                echo json_encode($this->expense_project_settlement->previewResponse($rows));
+                $previewExpenseId = $header['id'] ?? ($post['id_expense'] ?? '');
+                if (empty($previewExpenseId)) {
+                    $previewExpenseId = $this->Expense_report_project_model->preview_id_expense_report_header('format_expense');
+                }
+                echo json_encode($this->expense_project_settlement->previewResponse($rows, $previewExpenseId, $post['id_header']));
             } catch (Throwable $error) {
                 echo json_encode(['hasil' => '<tr><td colspan="7">' . html_escape($error->getMessage()) . '</td></tr>', 'ttl_debit' => 0, 'ttl_kredit' => 0]);
             }

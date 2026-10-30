@@ -253,7 +253,7 @@ class Expense_project_settlement
         return $this->journals($this->calculation($kasbonId, $details));
     }
 
-    public function previewResponse(array $rows)
+    public function previewResponse(array $rows, $expenseId = '', $kasbonId = '')
     {
         $html = '';
         $debit = $credit = 0;
@@ -263,7 +263,7 @@ class Expense_project_settlement
             $html .= '<td class="text-center">' . htmlspecialchars($row['coa'], ENT_QUOTES, 'UTF-8') . '</td>';
             $html .= '<td>' . htmlspecialchars($row['nm_company'], ENT_QUOTES, 'UTF-8') . '</td>';
             $html .= '<td>' . htmlspecialchars($row['nm_coa'], ENT_QUOTES, 'UTF-8') . '</td>';
-            $html .= '<td>' . htmlspecialchars($row['nm_coa'], ENT_QUOTES, 'UTF-8') . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['nm_coa'] . ' - ' . $expenseId . ' - ' . $kasbonId, ENT_QUOTES, 'UTF-8') . '</td>';
             $html .= '<td class="text-right font-bold">' . number_format((float) str_replace(',', '', $row['debit']), 2) . '</td>';
             $html .= '<td class="text-right font-bold">' . number_format((float) str_replace(',', '', $row['kredit']), 2) . '</td>';
             $html .= '</tr>';
@@ -273,13 +273,13 @@ class Expense_project_settlement
         return ['hasil' => $html, 'ttl_debit' => $debit / 100, 'ttl_kredit' => $credit / 100];
     }
 
-    private function saveJournals($id, $phase, array $rows, $actor)
+    private function saveJournals($id, $phase, array $rows, $actor, $kasbonId = '')
     {
         $reference = 'EXP2-' . $phase . '-' . substr(hash('sha256', $id), 0, 32);
         foreach ($rows as $index => $row) {
             $row += ['no_jurnal' => $reference . '-' . ($index + 1), 'no_transaksi' => $id,
                 'jenis_transaksi' => $phase === 'RETURN' ? 'Pengembalian Expense Project' : 'Expense Report Consultant',
-                'keterangan' => $row['nm_coa'] . ' - ' . $id, 'sts' => '0',
+                'keterangan' => $row['nm_coa'] . ' - ' . $id . ' - ' . $kasbonId, 'sts' => '0',
                 'created_by' => $actor, 'created_date' => date('Y-m-d H:i:s')];
             $this->write($this->finance . '.tr_jurnal', $row);
         }
@@ -309,7 +309,7 @@ class Expense_project_settlement
             if ($existing) {
                 throw new RuntimeException('Jurnal laporan sudah tersedia; periksa sebelum approval.');
             }
-            $this->saveJournals($id, 'APPROVAL', $this->journals($calc), $actor);
+            $this->saveJournals($id, 'APPROVAL', $this->journals($calc), $actor, $header['id_header']);
             $difference = $calc['advance'] - $calc['actual'];
             if ($difference > 0) {
                 $this->write(self::RETURNS, ['expense_id' => $id, 'amount' => Expense_project_flow::amount($difference), 'status' => 'waiting_return']);
@@ -498,7 +498,7 @@ class Expense_project_settlement
                 if (count($detail['journals']) !== 2) {
                     throw new RuntimeException('Jurnal pengembalian tidak lengkap.');
                 }
-                $reference = $this->saveJournals($id, 'RETURN', $detail['journals'], $actor);
+                $reference = $this->saveJournals($id, 'RETURN', $detail['journals'], $actor, $header['id_header']);
                 $this->write(self::RETURNS, ['status' => 'completed', 'verified_by' => $actor,
                     'verified_at' => date('Y-m-d H:i:s'), 'journal_reference' => $reference], ['expense_id' => $id]);
             }
