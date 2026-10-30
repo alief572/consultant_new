@@ -263,8 +263,8 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                     </div>
                     <div class="col-md-5">
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label class="erp-meta-label" style="margin-bottom: 4px;">Keterangan Kurang Bayar / Alasan Selisih</label>
-                            <textarea class="form-control erp-textarea-sm" name="keterangan_kurang_bayar" rows="3" placeholder="Opsional: Tuliskan penjelasan jika pengeluaran melebihi kasbon awal..."></textarea>
+                            <label class="erp-meta-label" style="margin-bottom: 4px;">Keterangan Kurang Bayar / Alasan Selisih <span class="text-danger" title="Wajib diisi jika ada selisih">*</span></label>
+                            <textarea class="form-control erp-textarea-sm" name="keterangan_kurang_bayar" rows="3" placeholder="Wajib diisi jika terjadi lebih kasbon atau lebih expense: tuliskan alasan selisih..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -487,8 +487,54 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
         }
     });
 
+    function validateExpenseForm() {
+        var message = '';
+        var ttl_kasbon = 0;
+        var ttl_expense = 0;
+
+        $('input[name^="detail_subcont["][name$="[id_detail_kasbon]"]').each(function() {
+            var no = $(this).attr('name').match(/detail_subcont\[(\d+)\]/)[1];
+            var qty_kasbon = get_num($('input[name="detail_subcont[' + no + '][qty_kasbon]"]').val());
+            var nominal_kasbon = get_num($('input[name="detail_subcont[' + no + '][nominal_kasbon]"]').val());
+            var qty_expense = get_num($('input[name="detail_subcont[' + no + '][qty_expense]"]').val());
+            var nominal_expense = get_num($('input[name="detail_subcont[' + no + '][nominal_expense]"]').val());
+
+            ttl_kasbon += (qty_kasbon * nominal_kasbon);
+            ttl_expense += (qty_expense * nominal_expense);
+
+            if (message === '' && qty_expense > 0 && nominal_expense > 0) {
+                var has_new_file = selectedBuktiFilesPerItem[no] && selectedBuktiFilesPerItem[no].length > 0;
+                var has_saved_file = $(this).closest('tr').find('[id^="row-bukti-"]').length > 0;
+                if (!has_new_file && !has_saved_file) {
+                    var nm_item = $.trim($(this).closest('tr').find('td:nth-child(2)').text());
+                    message = 'Bukti nota wajib diunggah untuk item: ' + nm_item;
+                }
+            }
+        });
+
+        if (message === '' && Math.round(ttl_kasbon * 100) !== Math.round(ttl_expense * 100) && $.trim($('textarea[name="keterangan_kurang_bayar"]').val()) === '') {
+            message = 'Keterangan Kurang Bayar / Alasan Selisih wajib diisi karena terdapat selisih antara kasbon dan expense.';
+            $('textarea[name="keterangan_kurang_bayar"]').focus();
+        }
+
+        if (message !== '') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Belum Lengkap',
+                text: message
+            });
+            return false;
+        }
+
+        return true;
+    }
+
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
+
+        if (!validateExpenseForm()) {
+            return false;
+        }
 
         var tipe = "<?= $tipe; ?>";
         var url_dest = 'save_expense_report';

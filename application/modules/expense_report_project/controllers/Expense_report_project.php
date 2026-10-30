@@ -3272,6 +3272,53 @@ class Expense_report_project extends Admin_Controller
 
     // Update Data Function
 
+    private function validateEvidenceAndReason(array $post, $existingExpenseId = null)
+    {
+        $ttlKasbon = 0;
+        $ttlExpense = 0;
+
+        foreach (($post['detail_subcont'] ?? []) as $no => $item) {
+            $qtyKasbon = (float) str_replace(',', '', $item['qty_kasbon'] ?? 0);
+            $nominalKasbon = (float) str_replace(',', '', $item['nominal_kasbon'] ?? 0);
+            $qtyExpense = (float) str_replace(',', '', $item['qty_expense'] ?? 0);
+            $nominalExpense = (float) str_replace(',', '', $item['nominal_expense'] ?? 0);
+
+            $ttlKasbon += round($qtyKasbon * $nominalKasbon, 2);
+            $ttlExpense += round($qtyExpense * $nominalExpense, 2);
+
+            if ($qtyExpense <= 0 || $nominalExpense <= 0) {
+                continue;
+            }
+
+            $hasUpload = false;
+            $field = 'bukti_penggunaan_' . $no;
+            if (isset($_FILES[$field]['name']) && is_array($_FILES[$field]['name'])) {
+                foreach ($_FILES[$field]['name'] as $i => $name) {
+                    if (!empty($name) && (int) ($_FILES[$field]['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+                        $hasUpload = true;
+                        break;
+                    }
+                }
+            }
+
+            $hasSaved = false;
+            if ($existingExpenseId !== null) {
+                $hasSaved = $this->db->where([
+                    'id_header_expense' => $existingExpenseId,
+                    'id_detail_kasbon' => $item['id_detail_kasbon'] ?? ''
+                ])->count_all_results('kons_tr_bukti_penggunaan_expense') > 0;
+            }
+
+            if (!$hasUpload && !$hasSaved) {
+                throw new RuntimeException('Bukti nota wajib diunggah untuk item nomor ' . $no . '.');
+            }
+        }
+
+        if (round($ttlKasbon * 100) !== round($ttlExpense * 100) && trim((string) ($post['keterangan_kurang_bayar'] ?? '')) === '') {
+            throw new RuntimeException('Keterangan Kurang Bayar / Alasan Selisih wajib diisi karena terdapat selisih antara kasbon dan expense.');
+        }
+    }
+
     public function save_expense_report()
     {
         $post = $this->input->post();
@@ -3288,6 +3335,7 @@ class Expense_report_project extends Admin_Controller
         try {
             $this->expense_project_settlement->lockKasbon($post['id_header']);
             list($post, $flowCalc) = $this->expense_project_settlement->prepareInput($post, $this->auth->user_id(), $allowManage);
+            $this->validateEvidenceAndReason($post);
         } catch (Throwable $error) {
             $this->db->trans_rollback();
             echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
@@ -3557,6 +3605,14 @@ class Expense_report_project extends Admin_Controller
                 echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
                 return;
             }
+        }
+
+        try {
+            $this->validateEvidenceAndReason($post, $id);
+        } catch (Throwable $error) {
+            $this->db->trans_rollback();
+            echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+            return;
         }
 
         $config['upload_path'] = './uploads/expense_report_project/'; //path folder

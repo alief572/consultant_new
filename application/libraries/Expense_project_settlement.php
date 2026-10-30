@@ -217,7 +217,14 @@ class Expense_project_settlement
 
     private function journalRow($coa, $debit, $credit, array $company, $date)
     {
-        $account = $this->one($this->gl . '.coa_master', ['no_perkiraan' => $coa]);
+        $account = $this->query('SELECT nama FROM ' . $this->gl . '.coa_master WHERE no_perkiraan=?'
+            . " ORDER BY (nama LIKE '%Konsultan%') DESC, id LIMIT 1", [$coa])->row_array();
+        if (!$account) {
+            $account = $this->query("SELECT nm_coa AS nama FROM kons_master_biaya WHERE no_coa=? AND nm_coa IS NOT NULL AND nm_coa<>'' LIMIT 1", [$coa])->row_array();
+        }
+        if (!$account) {
+            throw new RuntimeException('COA ' . $coa . ' tidak ditemukan di coa_master maupun master biaya.');
+        }
         return ['coa' => $coa, 'nm_coa' => $account['nama'], 'id_company' => $company['id'],
             'nm_company' => $company['nm_company'], 'tgl_jurnal' => $date,
             'debit' => Expense_project_flow::amount($debit), 'kredit' => Expense_project_flow::amount($credit)];
