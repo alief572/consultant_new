@@ -2437,6 +2437,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_aktifitas' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'total' => number_format($item->grand_total, 2),
@@ -2596,6 +2597,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'total' => number_format($item->grand_total, 2),
@@ -2758,6 +2760,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
@@ -2920,6 +2923,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
@@ -3082,6 +3086,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
@@ -3244,6 +3249,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),

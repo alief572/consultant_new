@@ -84,6 +84,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <tr>
                         <th class="text-center" width="40">No</th>
                         <th width="160">Req. Number</th>
+                        <th width="150">No Expense</th>
                         <th>Description</th>
                         <th width="120" class="text-center">Date</th>
                         <th width="140" class="text-right">Total (Rp)</th>
@@ -122,6 +123,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <tr>
                         <th class="text-center" width="40">No</th>
                         <th width="160">Req. Number</th>
+                        <th width="150">No Expense</th>
                         <th>Description</th>
                         <th width="120" class="text-center">Date</th>
                         <th width="140" class="text-right">Total (Rp)</th>
@@ -160,6 +162,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <tr>
                         <th class="text-center" width="40">No</th>
                         <th width="160">Req. Number</th>
+                        <th width="150">No Expense</th>
                         <th>Description</th>
                         <th width="120" class="text-center">Date</th>
                         <th width="140" class="text-right">Total (Rp)</th>
@@ -198,6 +201,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <tr>
                         <th class="text-center" width="40">No</th>
                         <th width="160">Req. Number</th>
+                        <th width="150">No Expense</th>
                         <th>Description</th>
                         <th width="120" class="text-center">Date</th>
                         <th width="140" class="text-right">Total (Rp)</th>
@@ -236,6 +240,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     <tr>
                         <th class="text-center" width="40">No</th>
                         <th width="160">Req. Number</th>
+                        <th width="150">No Expense</th>
                         <th>Description</th>
                         <th width="120" class="text-center">Date</th>
                         <th width="140" class="text-right">Total (Rp)</th>
@@ -290,6 +295,9 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     data: 'req_number'
                 },
                 {
+                    data: 'no_expense'
+                },
+                {
                     data: 'nm_biaya'
                 },
                 {
@@ -329,6 +337,9 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 },
                 {
                     data: 'req_number'
+                },
+                {
+                    data: 'no_expense'
                 },
                 {
                     data: 'nm_biaya'
@@ -372,6 +383,9 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     data: 'req_number'
                 },
                 {
+                    data: 'no_expense'
+                },
+                {
                     data: 'nm_biaya'
                 },
                 {
@@ -413,6 +427,9 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                     data: 'req_number'
                 },
                 {
+                    data: 'no_expense'
+                },
+                {
                     data: 'nm_biaya'
                 },
                 {
@@ -452,6 +469,9 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 },
                 {
                     data: 'req_number'
+                },
+                {
+                    data: 'no_expense'
                 },
                 {
                     data: 'nm_biaya'
