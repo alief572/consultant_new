@@ -36,6 +36,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="<?= base_url('assets/css/expense_report_project.css') ?>">
+<link rel="stylesheet" href="<?= base_url('assets/css/erp_mock.css') ?>">
 
 <style>
     .dropdown-menu {
@@ -71,8 +72,15 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
         </div>
         <div class="erp-card-body">
             <?php if (!empty($header->reject_reason)): ?>
+                <?php
+                $rejectedByName = '';
+                if (!empty($header->rejected_by)) {
+                    $rejectedByUser = get_instance()->db->get_where('users', ['id_user' => $header->rejected_by])->row();
+                    $rejectedByName = $rejectedByUser->nm_lengkap ?? '';
+                }
+                ?>
                 <div class="alert alert-danger <?= $enb_reject_reason ?>" style="border-radius: 4px; margin-bottom: 16px;">
-                    <i class="fa fa-exclamation-circle"></i> <strong>Alasan Penolakan Sebelumnya:</strong> <?= html_escape($header->reject_reason) ?>
+                    <i class="fa fa-exclamation-circle"></i> <strong>Ditolak<?= $rejectedByName !== '' ? ' oleh ' . html_escape($rejectedByName) : '' ?>.</strong> Catatan: <?= html_escape($header->reject_reason) ?>. Perbaiki laporan lalu simpan ulang untuk masuk approval dari awal.
                 </div>
             <?php endif; ?>
 
@@ -108,6 +116,22 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                 <div class="erp-meta-item" style="grid-column: 1 / -1;">
                     <span class="erp-meta-label">Alamat Proyek</span>
                     <span class="erp-meta-value"><?= (isset($list_budgeting)) ? $list_budgeting->alamat : '' ?></span>
+                </div>
+            </div>
+            <div class="mk" style="margin-top: 16px;">
+                <?php
+                $infoTipeLabels = ['1' => 'Subcont', '2' => 'Akomodasi', '3' => 'Others', '4' => 'Lab', '5' => 'Subcont Tenaga Ahli', '6' => 'Subcont Perusahaan'];
+                $infoTipe = (string) ($header->tipe);
+                $infoTagClass = $infoTipe === '2' ? 'tg-akom' : 'tg-oth';
+                ?>
+                <div class="fgrid">
+                    <div class="fg"><label>No. Expense</label><input class="in" readonly value="<?= html_escape($header->id) ?>"></div>
+                    <div class="fg"><label>Tanggal</label><input class="in" readonly value="<?= html_escape(substr((string) $header->created_date, 0, 10)) ?>"></div>
+                    <div class="fg"><label>No. Kasbon</label><div style="padding-top: 4px;"><span class="pill"><i class="fa fa-tag"></i> <?= html_escape($header->id_header) ?></span> <span class="tg <?= $infoTagClass ?>"><?= html_escape($infoTipeLabels[$infoTipe] ?? $infoTipe) ?></span></div></div>
+                </div>
+                <div class="fg">
+                    <label for="keterangan_laporan">Keterangan Laporan <span class="rq">*</span></label>
+                    <textarea class="in" id="keterangan_laporan" name="keterangan_laporan" rows="2" placeholder="Tuliskan keterangan laporan expense..."><?= html_escape($header->keterangan_laporan ?? '') ?></textarea>
                 </div>
             </div>
         </div>
@@ -165,7 +189,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                             <th class="text-center" rowspan="2" width="180">Nama Item</th>
                             <th class="text-center th-kasbon-group" colspan="3"><i class="fa fa-lock"></i> Kasbon (Pagu Awal)</th>
                             <th class="text-center th-expense-group" colspan="3"><i class="fa fa-pencil"></i> Expense Report (Realisasi Aktual)</th>
-                            <th class="text-center" rowspan="2" width="230">Bukti Nota</th>
+                            <th class="text-center" rowspan="2" width="230">Bukti Nota <span style="color: #d9444b;">*</span></th>
                             <th class="text-center" rowspan="2" width="180">Keterangan</th>
                         </tr>
                         <tr>
@@ -246,6 +270,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                                 echo '<span class="erp-dropzone-subtext">JPG, PNG, PDF (Max 2MB)</span>';
                                 echo '</button>';
                                 echo '<div id="container-bukti-list-' . $item['no'] . '" class="erp-file-chips"></div>';
+                                echo '<span class="nobon" id="nobon-' . $item['no'] . '" style="display: none;">Bukti nota wajib diisi</span>';
                             } else if (!isset($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']])) {
                                 echo '<div class="text-center text-muted" style="font-size: 11px; padding: 5px;">-</div>';
                             }
@@ -265,6 +290,19 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 
                         $kelebihan_kasbon = ($ttl_kasbon > $ttl_expense_report) ? ($ttl_kasbon - $ttl_expense_report) : 0;
                         $kelebihan_expense = ($ttl_expense_report > $ttl_kasbon) ? ($ttl_expense_report - $ttl_kasbon) : 0;
+                        ?>
+                        <?php
+                        if ((string) ($header->tipe) === '2') {
+                            $placeholderExisting = array_map(function ($row) { return strtolower($row['nm_item']); }, $datalist_item);
+                            foreach (['Tiket pesawat', 'Sewa kendaraan'] as $placeholderName) {
+                                if (in_array(strtolower($placeholderName), $placeholderExisting, true)) {
+                                    continue;
+                                }
+                                echo '<tr class="erp-row-placeholder" style="opacity: 0.6;"><td class="text-center">-</td><td><strong>' . html_escape($placeholderName) . '</strong></td>'
+                                    . str_repeat('<td class="text-right">0.00</td>', 6)
+                                    . '<td class="text-center text-muted">-</td><td class="text-center text-muted">-</td></tr>';
+                            }
+                        }
                         ?>
                     </tbody>
                     <tfoot>
@@ -310,7 +348,7 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
     <div class="erp-card">
         <div class="erp-card-header">
             <h4 class="erp-card-title">
-                <i class="fa fa-book"></i> Preview Jurnal Akuntansi Expense
+                <i class="fa fa-book"></i> Preview Jurnal Akuntansi Expense <span class="erp-badge erp-badge-neutral" style="margin-left: 8px;">Preview: jurnal terbentuk setelah approval</span>
             </h4>
         </div>
         <div class="erp-card-body" style="padding: 14px;">
@@ -578,8 +616,27 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
         });
     });
 
+    function refreshNobon() {
+        $('input[name^="detail_subcont["][name$="[id_detail_kasbon]"]').each(function() {
+            var no = $(this).attr('name').match(/detail_subcont\[(\d+)\]/)[1];
+            var tot = get_num($('input[name="detail_subcont[' + no + '][qty_expense]"]').val()) * get_num($('input[name="detail_subcont[' + no + '][nominal_expense]"]').val());
+            var has = (selectedBuktiFilesPerItem[no] && selectedBuktiFilesPerItem[no].length > 0) || $(this).closest('tr').find('[id^="row-bukti-"]').length > 0;
+            var missing = tot > 0 && !has && $('#dropzone-bukti-' + no).length > 0;
+            $('#nobon-' + no).toggle(missing);
+            if (!missing) { $(this).closest('tr').removeClass('rowerr'); }
+        });
+    }
+    $(document).on('change input keyup', '.input-bukti-file, .qty_expense, .nominal_expense', function() { setTimeout(refreshNobon, 60); });
+    $(document).on('click', '.btn-remove-selected-bukti-item, .del_bukti_penggunaan', function() { setTimeout(refreshNobon, 400); });
+    $(document).ready(function() { setTimeout(refreshNobon, 200); });
+
+
     function validateExpenseForm() {
         var message = '';
+        if ($.trim($('textarea[name="keterangan_laporan"]').val()) === '') {
+            message = 'Keterangan Laporan wajib diisi.';
+            $('textarea[name="keterangan_laporan"]').focus();
+        }
         var ttl_kasbon = 0;
         var ttl_expense = 0;
 
@@ -599,9 +656,14 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                 if (!has_new_file && !has_saved_file) {
                     var nm_item = $.trim($(this).closest('tr').find('td:nth-child(2)').text());
                     message = 'Bukti nota wajib diunggah untuk item: ' + nm_item;
+                    $(this).closest('tr').addClass('rowerr');
                 }
             }
         });
+
+        if (message === '' && ttl_expense <= 0) {
+            message = 'Total realisasi harus lebih dari 0.';
+        }
 
         if (message === '' && Math.round(ttl_kasbon * 100) !== Math.round(ttl_expense * 100) && $.trim($('textarea[name="keterangan_kurang_bayar"]').val()) === '') {
             message = 'Keterangan Kurang Bayar / Alasan Selisih wajib diisi karena terdapat selisih antara kasbon dan expense.';

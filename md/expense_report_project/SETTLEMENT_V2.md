@@ -1,6 +1,6 @@
 # Expense Report Project: penyelesaian selisih v2
 
-Approval tetap menggunakan modul dan permission existing. Semua enam jenis expense memakai flow baru untuk laporan yang dibuat setelah rilis. Kolom `flow_version` bernilai default **1**, sedangkan aplikasi secara eksplisit menyimpan **2** pada laporan baru. Revisi tidak mengubah versinya.
+Approval tetap satu tingkat dan menggunakan modul serta permission existing. Untuk laporan flow baru, `Approval_expense_report_project` mendelegasikan approve/reject ke `Expense_project_settlement::approve()` / `reject()` (satu transaksi: jurnal, data pengembalian atau `tr_expense`, dan header). Menyimpan laporan langsung mengajukannya ke antrian Appr Expense Report (`sts_req = 1`); laporan yang ditolak direvisi lewat Edit lalu disimpan ulang. Semua enam jenis expense memakai flow baru untuk laporan yang dibuat setelah rilis. Kolom `flow_version` bernilai default **1**, sedangkan aplikasi secara eksplisit menyimpan **2** pada laporan baru. Revisi tidak mengubah versinya.
 
 ## Pencatatan
 
@@ -10,7 +10,7 @@ Selisih dihitung dari total kasbon dikurangi total realisasi. Nominal memakai se
 |---|---|---|
 | Sama | Debit beban, kredit piutang `1103-01-14` | Selesai |
 | Kasbon lebih besar | Debit beban sebesar realisasi, debit `1103-01-15` (Piutang Kelebihan Kasbon) sebesar sisa, dan kredit `1103-01-14` sebesar kasbon penuh | User upload pengembalian penuh; Finance verifikasi, debit Bank dan kredit `1103-01-15` sebesar sisa |
-| Realisasi lebih besar | Debit beban, kredit piutang sebesar kasbon `1103-01-14` dan hutang expense `9999-99-99` sebesar selisih | Satu item di `db_sendigs_ss.request_payment` |
+| Realisasi lebih besar | Debit beban, kredit piutang sebesar kasbon `1103-01-14` dan hutang expense `9999-99-99` sebesar selisih | Baris `tr_expense` + `tr_expense_detail` di `db_sendigs_ss` (sumber kategori Expense di Request Payment SENDIGS) |
 
 Contoh Rp1.000.000 kasbon dan Rp800.000 realisasi: approval mencatat beban Rp800.000 (Debit), piutang kelebihan kasbon Rp200.000 (Debit `1103-01-15`), dan penyelesaian kasbon konsultan Rp1.000.000 (Kredit `1103-01-14`). Piutang kelebihan kasbon Rp200.000 baru dikreditkan saat uang masuk diverifikasi Finance (Debit Bank, Kredit `1103-01-15`). Jika realisasi nol, approval mencatat Debit `1103-01-15` dan Kredit `1103-01-14` sebesar seluruh kasbon sampai uang masuk dikembalikan.
 
@@ -29,26 +29,23 @@ Approval dan verifikasi menggunakan row lock pada header untuk menghindari prose
 
 ## Integrasi Finance
 
-Sumber satu-satunya untuk reimburse v2 adalah **`db_sendigs_ss.request_payment`**. Tabel lokal bernama sama tidak dipakai. Laporan lama tetap menggunakan kode integrasi lamanya.
+Reimburse v2 ditulis ke **`db_sendigs_ss.tr_expense`** dan **`tr_expense_detail`** (`status = 2`, `sts_finance = 1`, `project_consultant = '1'`, `no_expense_consultant` = nomor laporan), dalam transaksi yang sama dengan approval. Jurnal ditulis ke `db_sendigs_ss.tr_jurnal` dengan nomor urut AJV (`NNNNN-AJV-<romawi bulan>-<yy>`) dan keterangan `<nama COA> - <no expense> - <no kasbon>`. Nomor laporan di atas 50 karakter ditolak agar tidak terpotong. Pajak, admin, serta approval/pembayaran Finance tidak diubah.
 
-Kolom tambahan `source_module='expense_report_project'`, `source_id`, `id_company`, dan `nm_company` mengidentifikasi sumber serta company. Unique key `(source_module,source_id)` mencegah duplikasi sumber tanpa memengaruhi record lama yang nilainya NULL.
+Monitoring reimburse memantau siklus Request Payment di SENDIGS SS (`tr_rp_pengajuan_h`, `tr_rp_pengajuan_d`, `tr_rp_record`, `tr_rp_reject_log`) untuk laporan v2 dengan selisih negatif.
 
-Field existing yang diisi: `tipe='expense'`, `no_doc`/`ids` nomor laporan, `nama` pemohon, `tgl_doc` tanggal laporan, `keperluan` berawalan `Lebih Expense`, `jumlah` sebesar kekurangan, rekening penerima dari kasbon, `currency='IDR'`, dan status awal `0`. Nomor laporan di atas kapasitas `no_doc` (50 karakter) ditolak agar tidak terpotong. Pajak, admin, serta approval/pembayaran Finance tidak diubah.
+| Kondisi / Status Request Payment | Sub-tab | Badge Status | No. Pengajuan | Keterangan |
+|---|---|---|---|---|
+| Expense Report belum disetujui (`sts != 1`) | Menunggu Diajukan | Draft Expense / Menunggu Approval Expense / Expense Ditolak | - | - (atau alasan revisi expense) |
+| Expense Report disetujui (`sts = 1`), belum diajukan Finance | Menunggu Diajukan | Menunggu Diajukan Finance | - | - |
+| Finance ajukan batch (`ph.status = 'pending'`) | Menunggu Approval | Menunggu Approval | `PGJ-XXXX` | - |
+| Approval RP menyetujui (`ph.status = 'done', d.decision = 'approved'`) | Disetujui | Disetujui | `PGJ-XXXX` | - |
+| Approval RP menolak (`ph.status = 'done', d.decision = 'rejected'`) | Menunggu Diajukan | Menunggu Diajukan Finance (+ Ditolak di Request Payment) | - | Alasan penolakan dari reject log (+ nomor PGJ) |
 
-Monitoring reimburse mengikuti status laporan expense sejak draft untuk laporan v2 dengan selisih negatif. Data Request Payment Finance tetap ditampilkan sebagai informasi tambahan, bukan penentu status expense.
-
-| Status expense | Tampilan |
-|---|---|
-| Belum diajukan atau dikembalikan untuk revisi | Menunggu Diajukan |
-| `sts_req=1`, belum approved | Menunggu Approval |
-| `sts=1` | Disetujui |
-
-Expense yang ditolak diberi penanda dan alasan penolakan sampai diajukan ulang. Disetujui tidak berarti reimburse sudah dibayar; status pembayaran Finance tidak mengubah status approval expense.
-
-`keterangan` Finance ditampilkan agar alasan pengembalian/penolakan yang dicatat di sana terbaca. Pengajuan ulang mengikuti mekanisme Finance: record dikembalikan ke status awal dan nomor pengajuan dilepas. Expense yang sudah approved tidak dibuka kembali. Record Finance yang hilang ditandai **Integrasi Finance perlu diperiksa**, tidak dianggap sukses.
+Disetujui di Request Payment belum berarti sudah dibayar kasir/bank; pemantauan pada tab ini berakhir pada persetujuan batch Request Payment. Pengajuan ulang setelah penolakan RP mengikuti pembuatan batch PGJ baru di SENDIGS SS tanpa membuka kembali status Expense Report di Consultant.
 
 ## Instalasi dan akses
 
+0. Migrasi v3 (kolom `keterangan_laporan`): `php scripts/migrate_expense_report_v3.php` untuk preflight, tambahkan `--apply` untuk instalasi. SQL: `application/modules/expense_report_project/sql/expense_report_v3.sql`. Laporan lama dibiarkan kosong.
 1. Backup schema consultant dan Finance. Jalankan saat perubahan form baru belum dipakai pengguna.
 2. Jalankan `php scripts/migrate_expense_project_settlement.php` untuk preflight, lalu tambahkan `--apply` untuk instalasi. Default konfigurasi memakai environment development; set `CI_ENV` jika memakai environment lain. SQL berada di `application/modules/expense_report_project/sql/settlement_v2.sql`.
 3. Runner memeriksa schema, InnoDB, dan keberadaan menu approval. Pemanggilan ulang setelah instalasi lengkap tidak menjalankan DDL lagi. Jika instalasi terputus sebagian, perbaiki berdasarkan schema aktual; jangan menjalankan SQL mentah berulang.

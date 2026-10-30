@@ -26,6 +26,15 @@ foreach (['1', '2'] as $status) {
     expect_flow(Expense_project_flow::paymentStatus(['status' => $status, 'no_request' => 'PGJ-1']), 'Disetujui', 'Approval is not payment');
 }
 expect_flow(Expense_project_flow::paymentStatus(['status' => '0', 'no_request' => null, 'keterangan' => 'Ditolak']), 'Menunggu Diajukan', 'Resubmission');
+
+expect_flow(Expense_project_flow::normalizeConsultantCompany('1', 'STM-Vuca'), 'Vuca', 'Normalize 1 to Vuca');
+expect_flow(Expense_project_flow::normalizeConsultantCompany('4', 'Vuca'), 'Vuca', 'Normalize 4 to Vuca');
+expect_flow(Expense_project_flow::normalizeConsultantCompany('6', 'STM-Sustain'), 'Sustain', 'Normalize 6 to Sustain');
+expect_flow(Expense_project_flow::normalizeConsultantCompany('3', 'Sustain'), 'Sustain', 'Normalize 3 to Sustain');
+expect_flow(Expense_project_flow::normalizeConsultantCompany('7', 'STM'), 'STM', 'Normalize 7 to STM');
+expect_flow(Expense_project_flow::normalizeConsultantCompany('2', 'Calibration'), 'Calibration', 'Fallback to company name');
+expect_flow(Expense_project_flow::normalizeConsultantCompany('', 'Custom Corp'), 'Custom Corp', 'Empty ID uses name');
+
 foreach ([
     [[], 'New'],
     [['sts' => null], 'Draft'],
@@ -41,21 +50,36 @@ foreach ([
     expect_flow(Expense_project_flow::reportStatus($case[0])['label'], $case[1], 'Report status');
 }
 foreach ([
-    [[], 'Menunggu Diajukan', 'unsubmitted'],
-    [['sts_req' => 1], 'Menunggu Approval', 'pending'],
-    [['sts' => 1], 'Disetujui', 'approved'],
-    [['sts' => 1, 'sts_req' => 1, 'payment_status' => 0], 'Disetujui', 'approved'],
-    [['sts' => 1, 'sts_reject' => 1, 'payment_status' => 0], 'Disetujui', 'approved'],
-    [['sts' => null, 'reject_reason' => 'Revisi'], 'Menunggu Diajukan', 'unsubmitted'],
-    [['sts_req' => 1, 'reject_reason' => 'Revisi lama'], 'Menunggu Approval', 'pending'],
-    [['payment_id' => 1, 'payment_status' => 1], 'Menunggu Diajukan', 'unsubmitted'],
+    [[], 'New'],
+    [['sts' => null], 'Draft'],
+    [['sts_req' => 1], 'Waiting Approval'],
+    [['sts' => 2], 'Rejected'],
+    [['reject_reason' => 'Revisi'], 'Rejected'],
+    [['sts' => 1, 'reject_reason' => 'Penolakan pembayaran'], 'Approved'],
+    [['sts' => 1, 'return_status' => 'waiting_return'], 'Approved'],
+    [['sts_req' => 1, 'reject_reason' => 'Catatan lama'], 'Waiting Approval'],
+] as $case) {
+    expect_flow(Expense_project_flow::kasbonStatus($case[0])['label'], $case[1], 'Kasbon status');
+}
+
+foreach ([
+    [['sts' => null], 'Menunggu Diajukan', 'unsubmitted', 'Draft Expense', 'bd-draft'],
+    [['sts_req' => 1], 'Menunggu Diajukan', 'unsubmitted', 'Menunggu Approval Expense', 'bd-wait'],
+    [['sts' => 2], 'Menunggu Diajukan', 'unsubmitted', 'Expense Ditolak', 'bd-rej'],
+    [['reject_reason' => 'Revisi'], 'Menunggu Diajukan', 'unsubmitted', 'Expense Ditolak', 'bd-rej'],
+    [['sts' => 1], 'Menunggu Diajukan', 'unsubmitted', 'Menunggu Diajukan Finance', 'bd-pend'],
+    [['sts' => 1, 'rp_status' => 'pending'], 'Menunggu Approval', 'pending', 'Menunggu Approval', 'bd-appr'],
+    [['sts' => 1, 'rp_status' => 'approved'], 'Disetujui', 'approved', 'Disetujui', 'bd-ok'],
+    [['sts' => 1, 'rp_status' => 'rejected', 'rp_rejected' => true], 'Menunggu Diajukan', 'unsubmitted', 'Menunggu Diajukan Finance', 'bd-pend'],
 ] as $case) {
     $status = Expense_project_flow::reimbursementStatus($case[0]);
     expect_flow($status, $case[1], 'Expense determines reimbursement status');
-    $presentation = Expense_project_flow::reimbursementPresentation(['monitoring_status' => $status]);
-    expect_flow($presentation['group'], $case[2], 'Expense status group');
-    expect_flow($presentation['label'], $case[1], 'Expense status label');
+    $presentation = Expense_project_flow::reimbursementPresentation(array_merge($case[0], ['monitoring_status' => $status]));
+    expect_flow($presentation['group'], $case[2], 'Reimbursement group');
+    expect_flow($presentation['label'], $case[3], 'Reimbursement presentation label');
+    expect_flow($presentation['badge'], $case[4], 'Reimbursement presentation badge');
 }
+
 foreach (['-1', 'abc', '1.234', '999999999999999999999'] as $invalid) {
     try {
         Expense_project_flow::cents($invalid);

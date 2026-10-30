@@ -90,76 +90,80 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 </style>
 
 
-<div class="box">
-    <div class="box-body" style="z-index: 1 !important;">
-        <table border="0" style="width: 100%; z-index: 1 !important;">
-            <tr>
-                <th class="pd-5 valign-top" width="150">No. SPK</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? $list_budgeting->id_spk_penawaran : '' ?></td>
-                <th class="pd-5 valign-top" width="150">Project Leader</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? ucfirst($list_budgeting->nm_project_leader) : '' ?></td>
-            </tr>
-            <tr>
-                <th class="pd-5 valign-top" width="150">Customer</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? $list_budgeting->nm_customer : '' ?></td>
-                <th class="pd-5 valign-top" width="150">Sales</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? ucfirst($list_budgeting->nm_sales) : '' ?></td>
-            </tr>
-            <tr>
-                <th class="pd-5 valign-top" width="150">Address</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? $list_budgeting->alamat : '' ?></td>
-                <th class="pd-5 valign-top" width="150">Waktu</th>
-                <td class="pd-5 valign-top" width="400">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <input type="date" name="" id="" class="form-control form-control-sm" value="<?= (isset($list_budgeting)) ? $list_budgeting->waktu_from : '' ?>" readonly>
-                        </div>
-                        <div class="form-group text-center" style="width: 50px; padding-top: 8px;">
-                            <span>-</span>
-                        </div>
-                        <div class="form-group">
-                            <input type="date" name="" id="" class="form-control form-control-sm" value="<?= (isset($list_budgeting)) ? $list_budgeting->waktu_to : '' ?>" readonly>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th class="pd-5 valign-top" width="150">Project</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? ((!empty($list_budgeting->nm_paket)) ? $list_budgeting->nm_paket : (isset($list_budgeting->nama_project) ? $list_budgeting->nama_project : '')) : '' ?></td>
-                <th class="pd-5 valign-top" width="150"></th>
-                <td class="pd-5 valign-top" width="400"></td>
-            </tr>
-        </table>
+<link rel="stylesheet" href="<?= base_url('assets/css/erp_mock.css') ?>">
+<?php
+$noBonCount = 0;
+foreach (($datalist_item ?? []) as $alurItem) {
+    $alurExpense = $datalist_item_expense[$alurItem['id_detail_kasbon']] ?? null;
+    if ($alurExpense && ((float) $alurExpense['qty_expense'] * (float) $alurExpense['nominal_expense']) > 0 && empty($list_bukti_penggunaan_by_detail[$alurItem['id_detail_kasbon']])) {
+        $noBonCount++;
+    }
+}
+$alurRejected = !empty($header->reject_reason) && empty($header->sts_req) && (string) ($header->sts ?? '') !== '1';
+$alurApproved = (string) ($header->sts ?? '') === '1';
+$alurClass = $alurApproved ? 'ok' : ($alurRejected ? 'rej' : 'cur');
+$alurText = $alurApproved ? 'Approve - ' . ($header->approved_date ?? '') : ($alurRejected ? 'Reject - ' . ($header->rejected_date ?? '') . ' - ' . $header->reject_reason : 'Menunggu keputusan');
+$alurBadge = $alurApproved ? ['bd-ok', 'Disetujui'] : ($alurRejected ? ['bd-rej', 'Ditolak'] : ['bd-wait', 'Menunggu Approval']);
+$tipeLabels = ['1' => 'Subcont', '2' => 'Akomodasi', '3' => 'Others', '4' => 'Lab', '5' => 'Subcont Tenaga Ahli', '6' => 'Subcont Perusahaan'];
+$tipeTag = (string) ($tipe ?? '') === '2' ? 'tg-akom' : 'tg-oth';
+?>
+<div class="mk">
+<?php if ($noBonCount > 0): ?>
+<div class="banner-red"><i class="fa fa-exclamation-circle"></i><div><b><?= (int) $noBonCount ?> item belum punya bukti nota.</b> Pertimbangkan reject dan minta pemohon melengkapi bukti.</div></div>
+<?php endif; ?>
+
+<div class="card">
+    <div class="card-h"><span><i class="fa fa-info-circle"></i> Alur Approval</span><span class="bd <?= $alurBadge[0] ?>"><?= $alurBadge[1] ?></span></div>
+    <div class="tl">
+        <div class="st ok"><b>Pelapor</b>Submit &middot; <?= html_escape($header->created_date ?? '') ?><?= !empty($pelapor) ? ' &middot; ' . html_escape($pelapor) : '' ?></div>
+        <div class="st <?= $alurClass ?>"><b>Approval</b><?= html_escape($alurText) ?></div>
     </div>
 </div>
 
-<div class="box">
-    <div class="box-header">
-        <h3>List Item <?= $title_header ?></h3>
+<div class="card">
+    <div class="card-h"><span><i class="fa fa-briefcase"></i> Proyek &amp; SPK: <a><?= html_escape($list_budgeting->id_spk_penawaran ?? '') ?></a></span></div>
+    <div class="spk">
+        <div class="g">
+            <div><div class="k">Nomor SPK</div><div class="v b"><i class="fa fa-table"></i> <?= html_escape($list_budgeting->id_spk_penawaran ?? '') ?></div></div>
+            <div><div class="k">Project Leader</div><div class="v"><i class="fa fa-user-o"></i> <?= html_escape(ucfirst($list_budgeting->nm_project_leader ?? '')) ?></div></div>
+            <div><div class="k">Customer</div><div class="v"><i class="fa fa-building-o"></i> <?= html_escape($list_budgeting->nm_customer ?? '') ?></div></div>
+            <div><div class="k">Sales Representative</div><div class="v"><?= html_escape(ucfirst($list_budgeting->nm_sales ?? '')) ?></div></div>
+            <div><div class="k">Nama Proyek / Paket</div><div class="v"><?= html_escape(!empty($list_budgeting->nm_paket) ? $list_budgeting->nm_paket : ($list_budgeting->nama_project ?? '')) ?></div></div>
+            <div><div class="k">Periode Pelaksanaan</div><div class="v"><span class="cal"><i class="fa fa-calendar-o"></i> <?= html_escape(($list_budgeting->waktu_from ?? '') . ' - ' . ($list_budgeting->waktu_to ?? '')) ?></span></div></div>
+        </div>
+        <div class="addr"><div class="k">Alamat Proyek</div><div class="v"><?= html_escape($list_budgeting->alamat ?? '') ?></div></div>
     </div>
+    <div class="fgrid">
+        <div class="fg"><label>No. Expense</label><input class="in" readonly value="<?= html_escape($header->id) ?>"></div>
+        <div class="fg"><label>Nomor Pengajuan (Kasbon)</label><div style="padding-top: 4px;"><span class="pill"><i class="fa fa-tag"></i> <?= html_escape($id_header) ?></span> <span class="tg <?= $tipeTag ?>"><?= html_escape($tipeLabels[(string) ($tipe ?? '')] ?? '') ?></span></div></div>
+        <div class="fg"><label>Pemohon</label><input class="in" readonly value="<?= html_escape($pelapor ?? '') ?>"></div>
+    </div>
+    <div class="fg"><label>Keterangan Laporan</label><textarea class="in" readonly rows="2"><?= html_escape($header->keterangan_laporan ?? '') ?></textarea></div>
+</div>
 
-    <form id="data_form">
-        <input type="hidden" name="id_expense" value="<?= $header->id ?>">
-        <input type="hidden" name="id_header" value="<?= $id_header ?>">
-        <input type="hidden" name="id_spk_budgeting" value="<?= $id_spk_budgeting ?>">
-        <input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
-        <input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
-        <div class="box-body" style="z-index: 1 !important;">
-            <table class="table custom-table mt-5">
+<form id="data_form">
+    <input type="hidden" name="id_expense" value="<?= $header->id ?>">
+    <input type="hidden" name="id_header" value="<?= $id_header ?>">
+    <input type="hidden" name="id_spk_budgeting" value="<?= $id_spk_budgeting ?>">
+    <input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
+    <input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
+
+    <div class="card">
+        <div class="card-h"><span><i class="fa fa-list"></i> Rincian Item Realisasi: <?= html_escape($title_header) ?></span></div>
+        <div class="tw">
+            <table class="rt">
                 <thead>
                     <tr>
-                        <th class="text-center" rowspan="2">No.</th>
-                        <th class="text-center" rowspan="2">Item</th>
-                        <th class="text-center" colspan="2">Kasbon</th>
-                        <th class="text-center" colspan="2">Expense Report</th>
-                        <th class="text-center" rowspan="2" width="220">Bukti Penggunaan</th>
-                        <th class="text-center" rowspan="2" width="200">Keterangan</th>
+                        <th rowspan="2" style="width: 40px;">No.</th>
+                        <th rowspan="2" style="min-width: 190px;">Nama Item</th>
+                        <th colspan="3" class="gk"><i class="fa fa-info-circle"></i> Kasbon (Pagu Awal)</th>
+                        <th colspan="3" class="gr"><i class="fa fa-check"></i> Expense Report (Realisasi Aktual)</th>
+                        <th rowspan="2" style="min-width: 150px;">Bukti Nota</th>
+                        <th rowspan="2" style="min-width: 150px;">Keterangan</th>
                     </tr>
                     <tr>
-                        <th class="text-center">Qty</th>
-                        <th class="text-center">Nominal</th>
-                        <th class="text-center">Qty</th>
-                        <th class="text-center">Nominal</th>
+                        <th class="gk">Qty</th><th class="gk">Nominal (Rp)</th><th class="gk">Total (Rp)</th>
+                        <th class="gr">Qty</th><th class="gr">Nominal (Rp)</th><th class="gr">Total (Rp)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -177,52 +181,54 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                         $nominal_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['nominal_expense'] : 0;
                         $total_expense = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['total_expense'] : 0;
                         $keterangan = (isset($datalist_item_expense[$item['id_detail_kasbon']])) ? $datalist_item_expense[$item['id_detail_kasbon']]['keterangan'] : '';
+                        $rowZero = ((float) $item['qty_kasbon'] <= 0);
 
-                        echo '<tr>';
+                        echo '<tr class="' . ($rowZero ? 'zero' : '') . '">';
 
-                        echo '<td class="text-center">';
+                        echo '<td>';
                         echo $item['no'];
                         echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][id_detail_kasbon]" value="' . $item['id_detail_kasbon'] . '">';
                         echo '</td>';
 
-                        echo '<td width="300">' . $item['nm_item'] . '</td>';
+                        echo '<td class="l">' . html_escape($item['nm_item']) . '</td>';
 
-                        echo '<td class="text-center" width="200">';
+                        echo '<td class="nr">';
                         echo number_format($item['qty_kasbon'], 2);
                         echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][qty_kasbon]" value="' . $item['qty_kasbon'] . '">';
                         echo '</td>';
 
-                        echo '<td class="text-center" width="200">';
+                        echo '<td class="nr">';
                         echo number_format($item['nominal_kasbon'], 2);
                         echo '<input type="hidden" name="detail_subcont[' . $item['no'] . '][nominal_kasbon]" value="' . $item['nominal_kasbon'] . '">';
                         echo '</td>';
 
-                        echo '<td width="200">';
-                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][qty_expense]" class="form-control form-control-sm auto_num text-right qty_expense" value="' . $qty_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_qty . '>';
+                        echo '<td class="nr">' . number_format($item['qty_kasbon'] * $item['nominal_kasbon'], 2) . '</td>';
+
+                        echo '<td>';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][qty_expense]" class="in auto_num text-right qty_expense" value="' . $qty_expense . '" data-no="' . $item['no'] . '" style="width: 78px;" ' . $readonly_qty . '>';
                         echo '</td>';
 
-                        echo '<td width="200">';
-                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="form-control form-control-sm auto_num text-right nominal_expense" value="' . $nominal_expense . '" data-no="' . $item['no'] . '" onchange="hitung_total(' . $item['no'] . ')" ' . $readonly_nominal . '>';
+                        echo '<td>';
+                        echo '<input type="text" name="detail_subcont[' . $item['no'] . '][nominal_expense]" class="in auto_num text-right nominal_expense" value="' . $nominal_expense . '" data-no="' . $item['no'] . '" style="width: 128px;" ' . $readonly_nominal . '>';
                         echo '</td>';
 
-                        echo '<td width="220" style="vertical-align: top;">';
+                        echo '<td class="nr">' . number_format($total_expense, 2) . '</td>';
+
+                        echo '<td>';
                         if (isset($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']])) {
-                            echo '<div class="list-group" style="margin-bottom: 0;">';
                             foreach ($list_bukti_penggunaan_by_detail[$item['id_detail_kasbon']] as $bp) {
-                                echo '<div class="list-group-item" style="padding: 4px 6px; margin-bottom: 2px; background: #f8f9fa; border: 1px solid #e3e6f0; border-radius: 3px; font-size: 11px;">';
-                                echo '<a href="' . base_url($bp->upload_file) . '" target="_blank" title="' . basename($bp->upload_file) . '">';
-                                echo '<i class="fa fa-download text-primary"></i> ' . basename($bp->upload_file);
-                                echo '</a>';
-                                echo '</div>';
+                                echo '<span class="chip"><a href="' . base_url($bp->upload_file) . '" target="_blank" title="' . html_escape(basename($bp->upload_file)) . '"><i class="fa fa-folder-o"></i> ' . html_escape(basename($bp->upload_file)) . '</a></span>';
                             }
-                            echo '</div>';
+                        } elseif (((float) $total_expense) > 0) {
+                            echo '<span class="nobon">Belum ada bukti</span>';
                         } else {
-                            echo '<span class="text-muted" style="font-size: 11px;">-</span>';
+                            echo '<span style="color: #97a3ab;">-</span>';
                         }
                         echo '</td>';
 
-                        echo '<td width="200">';
-                        echo '<textarea class="form-control form-control-sm" readonly rows="4">' . $keterangan . '</textarea>';
+                        echo '<td>';
+                        echo $keterangan !== '' ? html_escape($keterangan) : '<span style="color: #97a3ab;">-</span>';
+                        echo '<textarea class="hidden" readonly>' . html_escape($keterangan) . '</textarea>';
                         echo '</td>';
 
                         echo '</tr>';
@@ -237,155 +243,109 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                     $kelebihan_expense = ($ttl_expense_report > $ttl_kasbon) ? ($ttl_expense_report - $ttl_kasbon) : 0;
                     ?>
                 </tbody>
+            </table>
+        </div>
+        <div class="totbox">
+            <div>Total Kasbon <span class="v col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></span></div>
+            <div>Kelebihan Kasbon <input type="text" name="kelebihan_kasbon" class="v auto_num kelebihan_kasbon" value="<?= $kelebihan_kasbon ?>" readonly></div>
+            <div>Total Expense Report <span class="v col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></span></div>
+            <div>Kelebihan Expense <input type="text" name="kelebihan_expense" class="v auto_num kelebihan_expense" value="<?= $kelebihan_expense ?>" readonly></div>
+            <div>Selisih <span class="v col_selisih"><?= number_format($header->selisih, 2) ?></span></div>
+            <div>Kontrol <input type="text" name="kontrol" class="v kontrol" value="<?= number_format($header->selisih, 2) ?>" readonly></div>
+        </div>
+
+        <?php if (!$newExpenseFlow): ?>
+        <div class="fgrid" style="margin-top: 14px;">
+            <div class="fg">
+                <label>Bukti Pengembalian</label>
+                <?php
+                if (count($list_bukti_pengembalian) > 0) {
+                    echo '<button type="button" class="mkb b-blue b-sm" data-toggle="modal" data-target="#dialog-popup">';
+                    echo '<i class="fa fa-list"></i> List Bukti Pengembalian';
+                    echo '</button>';
+                }
+                ?>
+            </div>
+            <div class="fg">
+                <label>Bank</label>
+                <select name="bank" class="in select2" onchange="set_jurnal()">
+                    <option value="">- Pilih Bank -</option>
+                    <?php
+                    foreach ($list_bank  as $item) :
+                        $selected = '';
+                        if ($header->id_bank == $item->id) {
+                            $selected = 'selected';
+                        }
+                        echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama_bank . ' - ' . $item->rekening . ' - ' . $item->nama . '</option>';
+                    endforeach;
+                    ?>
+                </select>
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
+
+    <div class="card">
+        <div class="card-h"><span><i class="fa fa-book"></i> Jurnal <span class="bd bd-draft" style="margin-left: 6px;">Preview: disimpan setelah approval</span></span></div>
+        <div class="tw">
+            <table class="jt">
+                <thead>
+                    <tr>
+                        <th>Tanggal Jurnal</th><th>COA</th><th>Nama Company</th><th>Nama Account</th><th>Deskripsi</th><th>Debit (Rp)</th><th>Kredit (Rp)</th>
+                    </tr>
+                </thead>
+                <tbody class="tbody_jurnal">
+                </tbody>
                 <tfoot>
-                    <tr>
-                        <td colspan="5" class="text-right">Total Kasbon</td>
-                        <td class="text-right col_ttl_kasbon"><?= number_format($ttl_kasbon, 2) ?></td>
-                        <td>Kelebihan Kasbon</td>
-                        <td>
-                            <input type="text" name="kelebihan_kasbon" class="form-control form-control-sm text-right auto_num kelebihan_kasbon" value="<?= $kelebihan_kasbon ?>" readonly>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" class="text-right">Total Expense Report</td>
-                        <td class="text-right col_ttl_expense_report"><?= number_format($ttl_expense_report, 2) ?></td>
-                        <td>Kelebihan Expense</td>
-                        <td>
-                            <input type="text" name="kelebihan_expense" class="form-control form-control-sm text-right auto_num kelebihan_expense" value="<?= $kelebihan_expense ?>" readonly>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" class="text-right">Selisih</td>
-                        <td class="text-right col_selisih"><?= number_format($header->selisih, 2) ?></td>
-                        <td>Kontrol</td>
-                        <td>
-                            <input type="text" name="kontrol" class="form-control form-control-sm text-right kontrol" value="<?= number_format($header->selisih, 2) ?>" readonly>
-                        </td>
+                    <tr class="tt">
+                        <td colspan="5" style="text-align: center;">Total Balancing Jurnal</td>
+                        <td class="r ttl_debit">0.00</td>
+                        <td class="r ttl_kredit">0.00</td>
                     </tr>
                 </tfoot>
             </table>
-
-            <br><br>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <table style="width: 100%">
-                        <?php if (!$newExpenseFlow): ?><tr>
-                            <th style="padding: 5px;">Bukti Pengembalian</th>
-                            <td style="padding: 5px;">
-                                <?php
-                                if (count($list_bukti_pengembalian) > 0) {
-                                    echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup">';
-                                    echo '<i class="fa fa-list"></i> List Bukti Pengemblian';
-                                    echo '</button>';
-                                }
-                                ?>
-                            </td>
-                        </tr><?php endif; ?>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <table style="width: 100%">
-                        <?php if (!$newExpenseFlow): ?><tr>
-                            <th style="padding: 5px;">Bank</th>
-                            <td style="padding: 5px;">
-                                <select name="bank" class="form-control form-control-sm select2" onchange="set_jurnal()">
-                                    <option value="">- Pilih Bank -</option>
-                                    <?php
-                                    foreach ($list_bank  as $item) :
-                                        $selected = '';
-                                        if ($header->id_bank == $item->id) {
-                                            $selected = 'selected';
-                                        }
-                                        echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama_bank . ' - ' . $item->rekening . ' - ' . $item->nama . '</option>';
-                                    endforeach;
-                                    ?>
-                                </select>
-                            </td>
-                        </tr><?php endif; ?>
-                    </table>
-                </div>
-            </div>
-
-            <br>
-
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="">Reject Reason</label>
-                    <textarea class="form-control form-control-sm" name="reject_reason"></textarea>
-                </div>
-            </div>
-
-            <br>
-
-            <div class="col-md-12">
-                <h4>Jurnal</h4>
-                <table class="table custom-table">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Tanggal Jurnal</th>
-                            <th class="text-center">COA</th>
-                            <th class="text-center">Nama Company</th>
-                            <th class="text-center">Nama Account</th>
-                            <th class="text-center">Deskripsi</th>
-                            <th class="text-center">Debit</th>
-                            <th class="text-center">Credit</th>
-                        </tr>
-                    </thead>
-                    <tbody class="tbody_jurnal">
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="5" class="text-center">Balancing</th>
-                            <th class="text-right ttl_debit">0.00</th>
-                            <th class="text-right ttl_kredit">0.00</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-            <div class="col-md-12 <?= $hide_jurnal_pph21 ?>">
-                <h4>Jurnal PPh 21</h4>
-                <table class="table custom-table">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Tanggal Jurnal</th>
-                            <th class="text-center">COA</th>
-                            <th class="text-center">Nama Company</th>
-                            <th class="text-center">Nama Account</th>
-                            <th class="text-center">Deskripsi</th>
-                            <th class="text-center">Debit</th>
-                            <th class="text-center">Credit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?= $list_jurnal_pph21['hasil'] ?>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="5" class="text-center">
-                                Balancing
-                            </th>
-                            <th class="text-right jurnal_pph_debit"><?= number_format(0) ?></th>
-                            <th class="text-right jurnal_pph_kredit"><?= number_format($list_jurnal_pph21['nominal_pph']) ?></th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-            <input type="hidden" name="ttl_debit">
-            <input type="hidden" name="ttl_kredit">
-
-            <br>
-            <div class="col-md-12">
-                <a href="<?= base_url('approval_expense_report_project') ?>" class="btn btn-sm btn-danger">
-                    <i class="fa fa-arrow-left"></i> Back
-                </a>
-                <button type="button" class="btn btn-sm btn-danger reject"><i class="fa fa-close"></i> Reject</button>
-                <button type="button" class="btn btn-sm btn-success approve"><i class="fa fa-check"></i> Approve</button>
-            </div>
         </div>
-    </form>
+    </div>
+
+    <div class="card <?= $hide_jurnal_pph21 ?>">
+        <div class="card-h"><span><i class="fa fa-book"></i> Jurnal PPh 21</span></div>
+        <div class="tw">
+            <table class="jt">
+                <thead>
+                    <tr>
+                        <th>Tanggal Jurnal</th><th>COA</th><th>Nama Company</th><th>Nama Account</th><th>Deskripsi</th><th>Debit (Rp)</th><th>Kredit (Rp)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?= $list_jurnal_pph21['hasil'] ?? '' ?>
+                </tbody>
+                <tfoot>
+                    <tr class="tt">
+                        <td colspan="5" style="text-align: center;">Balancing</td>
+                        <td class="r jurnal_pph_debit"><?= number_format(0) ?></td>
+                        <td class="r jurnal_pph_kredit"><?= number_format($list_jurnal_pph21['nominal_pph'] ?? 0) ?></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <input type="hidden" name="ttl_debit">
+    <input type="hidden" name="ttl_kredit">
+
+    <div class="card">
+        <div class="fg">
+            <label for="reject_reason">Reject Reason</label>
+            <textarea class="in" id="reject_reason" name="reject_reason" placeholder="Wajib diisi jika Reject"></textarea>
+        </div>
+    </div>
+
+    <div class="btn-row" style="margin-bottom: 20px;">
+        <a href="<?= base_url('approval_expense_report_project') ?>" class="mkb b-red"><i class="fa fa-angle-left"></i> Back</a>
+        <button type="button" class="mkb b-red reject"><i class="fa fa-times"></i> Reject</button>
+        <button type="button" class="mkb b-green approve"><i class="fa fa-check"></i> Approve</button>
+    </div>
+</form>
 </div>
 
 <div class="modal modal-default fade" id="dialog-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

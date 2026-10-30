@@ -6,6 +6,7 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="<?= base_url('assets/css/erp_mock.css') ?>">
 
 <style>
     .btn {
@@ -46,14 +47,15 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
     }
 </style>
 <div id="alert_edit" class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
-<div class="box">
-    <div class="box-header">
+<div class="mk">
+<div class="box" style="border: 0; box-shadow: none; background: transparent;">
+    <div class="box-header" style="display: none;">
 
     </div>
     <!-- /.box-header -->
-    <div class="box-body">
-        <div class="table-responsive">
-            <table id="table_penawaran" class="table table-bordered table-striped nowrap">
+    <div class="box-body card" style="padding: 16px 18px;">
+        <div class="tw">
+            <table id="table_penawaran" class="dt" style="width: 100%;">
                 <thead>
                     <tr>
                         <th align="center">No</th>
@@ -67,6 +69,7 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
                         <th align="center">Keterangan</th>
                         <th align="center">Tipe</th>
                         <th align="center">Nominal</th>
+                        <th align="center">Selisih</th>
                         <th align="center">Action</th>
                     </tr>
                 </thead>
@@ -74,6 +77,7 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
         </div>
     </div>
     <!-- /.box-body -->
+</div>
 </div>
 <div id="form-data"></div>
 <!-- DataTables -->
@@ -234,6 +238,9 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
                 },
                 {
                     data: 'nominal'
+                },
+                {
+                    data: 'selisih'
                 },
                 {
                     data: 'action'

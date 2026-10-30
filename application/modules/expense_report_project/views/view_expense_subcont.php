@@ -106,6 +106,10 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
                 <span class="erp-meta-label">Alamat Proyek</span>
                 <span class="erp-meta-value"><?= (isset($list_budgeting)) ? $list_budgeting->alamat : '' ?></span>
             </div>
+            <div class="erp-meta-item" style="grid-column: 1 / -1;">
+                <span class="erp-meta-label">Keterangan Laporan</span>
+                <span class="erp-meta-value"><?= !empty($header->keterangan_laporan) ? nl2br(html_escape($header->keterangan_laporan)) : '-' ?></span>
+            </div>
         </div>
     </div>
 </div>
@@ -501,3 +505,15 @@ if ($selisih_val > 0) {
         });
     }
 </script>
+
+<style media="print">
+    .main-sidebar, .main-header, .main-footer, .sidebar-mini .sidebar, #sidebar, .navbar, .erp-btn, .btn, footer, .alert-dismissable { display: none !important; }
+    .content-wrapper, .main-content, body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+</style>
+<?php if ($this->input->get('print') === '1'): ?>
+<script>
+    window.addEventListener('load', function () {
+        setTimeout(function () { window.print(); }, 800);
+    });
+</script>
+<?php endif; ?>

@@ -38,6 +38,13 @@ class Expense_report_project extends Admin_Controller
 
     // View Page Function
 
+    public function pick_spk()
+    {
+        $this->auth->restrict($this->viewPermission);
+        $this->template->title('Pilih SPK Proyek');
+        $this->template->render('pick_spk');
+    }
+
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
@@ -896,7 +903,8 @@ class Expense_report_project extends Admin_Controller
             'data_bank' => $get_bank,
             'list_bank' => $get_bank_acc,
             'list_jurnal_pph21' => $list_jurnal_pph21,
-            'list_budgeting' => $get_spk_budgeting
+            'list_budgeting' => $get_spk_budgeting,
+            'preview_expense_id' => $this->Expense_report_project_model->preview_id_expense_report_header('format_expense')
         ];
 
         $this->template->set($data);
@@ -2098,7 +2106,7 @@ class Expense_report_project extends Admin_Controller
         $search = $this->input->post('search');
 
 
-        $this->db->select('a.*, b.nm_sales, c.nm_paket as nama_project');
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to, c.nm_paket as nama_project');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
@@ -2194,6 +2202,7 @@ class Expense_report_project extends Admin_Controller
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             $this->db->where('a.sts', null);
             $this->db->where('a.sts_req', null);
+            $this->db->where('a.flow_version <>', 2);
             $this->db->where('b.id IS NOT NULL');
             $check_expense_draft = $this->db->get()->num_rows();
 
@@ -2246,6 +2255,17 @@ class Expense_report_project extends Admin_Controller
                 $pic_kasbon[] = ucfirst($item_pic_kasbon->nm_lengkap);
             endforeach;
 
+            $new_kasbon = $this->db->query(
+                'SELECT COUNT(*) AS total FROM kons_tr_kasbon_project_header k WHERE k.id_spk_budgeting = ? AND k.sts = 1 AND k.metode_pembayaran = ? AND k.deleted_at IS NULL'
+                . ' AND NOT EXISTS (SELECT 1 FROM kons_tr_expense_report_project_header h WHERE h.id_header = k.id)',
+                [$item->id_spk_budgeting, '1']
+            )->row()->total;
+
+            $pick = '<a href="' . base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="mkb b-blue b-sm">Pilih SPK</a>';
+            if ($check_expense_draft > 0) {
+                $pick .= ' ' . '<button type="button" class="mkb b-amber b-sm req_app" data-id_spk_budgeting="' . html_escape($item->id_spk_budgeting) . '" title="Request Approval"><i class="fa fa-arrow-up"></i></button>';
+            }
+
             $no++;
             $hasil[] = [
                 'no' => $no,
@@ -2253,6 +2273,11 @@ class Expense_report_project extends Admin_Controller
                 'nm_customer' => $item->nm_customer,
                 'pic_kasbon' => implode(', ', $pic_kasbon),
                 'nm_project' => $item->nama_project,
+                'project_leader' => ucfirst((string) ($item->nm_project_leader ?? '')),
+                'sales' => ucfirst((string) ($item->nm_sales ?? '')),
+                'periode' => trim((string) ($item->waktu_from ?? '') . ' - ' . (string) ($item->waktu_to ?? ''), ' -'),
+                'kasbon_baru' => (int) $new_kasbon,
+                'pick' => $pick,
                 'option' => $option
             ];
         }
@@ -2261,6 +2286,107 @@ class Expense_report_project extends Admin_Controller
             'draw' => intval($draw),
             'recordsTotal' => $get_data_all->num_rows(),
             'recordsFiltered' => $get_data_all->num_rows(),
+            'data' => $hasil
+        ]);
+    }
+
+    private function applyExpenseListFilters($search)
+    {
+        $this->db->from('kons_tr_expense_report_project_header h');
+        $this->db->join('kons_tr_kasbon_project_header k', 'k.id = h.id_header');
+        $this->db->join('users u', 'u.id_user = h.created_by', 'left');
+        $this->db->join('users ua', 'ua.id_user = h.approved_by', 'left');
+        $this->db->join('users ur', 'ur.id_user = h.rejected_by', 'left');
+        $this->db->join('kons_tr_expense_project_return r', 'r.expense_id = h.id', 'left');
+        $this->db->where('k.metode_pembayaran', '1');
+        $this->db->where('k.deleted_at IS NULL');
+        if (!empty($search['value'])) {
+            $this->db->group_start();
+            $this->db->like('h.id', $search['value'], 'both');
+            $this->db->or_like('h.id_header', $search['value'], 'both');
+            $this->db->or_like('k.id_spk_penawaran', $search['value'], 'both');
+            $this->db->or_like('u.nm_lengkap', $search['value'], 'both');
+            $this->db->or_like('h.keterangan_laporan', $search['value'], 'both');
+            $this->db->or_like('k.deskripsi', $search['value'], 'both');
+            $this->db->group_end();
+        }
+    }
+
+    public function get_data_expense()
+    {
+        $this->auth->restrict($this->viewPermission);
+
+        $draw = $this->input->post('draw');
+        $start = (int) $this->input->post('start');
+        $length = (int) $this->input->post('length');
+        $search = $this->input->post('search');
+        if ($length < 1) {
+            $length = 10;
+        }
+
+        $this->db->select('h.*, k.id_spk_penawaran AS spk_no, k.deskripsi AS kasbon_deskripsi, u.nm_lengkap AS pemohon, ua.nm_lengkap AS approver, ur.nm_lengkap AS rejector, r.status AS return_status');
+        $this->applyExpenseListFilters($search);
+        $this->db->order_by('h.id', 'desc');
+        $this->db->limit($length, $start);
+        $rows = $this->db->get()->result();
+
+        $this->db->select('h.id');
+        $this->applyExpenseListFilters($search);
+        $total = $this->db->get()->num_rows();
+
+        $hasil = [];
+        $no = $start;
+        foreach ($rows as $item) {
+            $no++;
+            $status = Expense_project_flow::reportStatus((array) $item);
+            $status_map = ['Approved' => ['Disetujui', 'bd-ok'], 'Selesai' => ['Disetujui', 'bd-ok'], 'Menunggu Approval' => ['Menunggu Approval', 'bd-wait'],
+                'Ditolak' => ['Ditolak', 'bd-rej'], 'Draft' => ['Draft', 'bd-draft'], 'Menunggu Pengembalian' => ['Menunggu Pengembalian', 'bd-pend'],
+                'Menunggu Verifikasi' => ['Menunggu Verifikasi', 'bd-ver'], 'New' => ['New', 'bd-new']];
+            $status_view = $status_map[$status['label']] ?? [$status['label'], 'bd-draft'];
+            $is_approved = (string) $item->sts === '1';
+            $is_rejected = !$is_approved && $item->sts_req === null && !empty($item->reject_reason);
+
+            $keterangan = html_escape(!empty($item->keterangan_laporan) ? $item->keterangan_laporan : $item->kasbon_deskripsi);
+            if ($is_rejected) {
+                $keterangan .= '<br><span style="color:#d9444b;font-size:11px">Ditolak' . (!empty($item->rejector) ? ' ' . html_escape($item->rejector) : '') . ': ' . html_escape($item->reject_reason) . '</span>';
+            }
+            if ($is_approved && (float) $item->selisih < 0) {
+                $keterangan .= '<br><span style="color:#6b7a83;font-size:11px">Hutang expense Rp ' . number_format(abs($item->selisih)) . ' masuk Request Payment</span>';
+            }
+
+            $kasbon_url = urlencode(str_replace('/', '|', $item->id_header));
+            $aksi = '<div style="display:flex;gap:6px;">'
+                . '<a href="' . base_url('expense_report_project/view_expense_subcont/' . $kasbon_url . '?print=1') . '" target="_blank" class="mkb b-out b-sm" title="Cetak" aria-label="Cetak"><i class="fa fa-print"></i></a>';
+            if ($item->sts === null && $item->sts_req === null) {
+                $aksi .= '<a href="' . base_url('expense_report_project/edit_expense_subcont/' . $kasbon_url) . '" class="mkb b-amber b-sm" title="' . ($is_rejected ? 'Revisi' : 'Edit') . '"><i class="fa fa-undo"></i> ' . ($is_rejected ? 'Revisi' : 'Edit') . '</a>';
+            } else {
+                $aksi .= '<a href="' . base_url('expense_report_project/view_expense_subcont/' . $kasbon_url) . '" class="mkb b-blue b-sm" title="Lihat" aria-label="Lihat"><i class="fa fa-eye"></i></a>';
+            }
+            $aksi .= '</div>';
+
+            $approval_name = $is_approved ? ($item->approver ?? '-') : ($is_rejected ? ($item->rejector ?? '-') : '-');
+            $approval_date = $is_approved ? $item->approved_date : ($is_rejected ? $item->rejected_date : null);
+
+            $hasil[] = [
+                'no' => $no,
+                'no_expense' => '<b>' . html_escape($item->id) . '</b>',
+                'tanggal' => date('d F Y', strtotime($item->created_date)),
+                'spk' => html_escape($item->spk_no),
+                'no_kasbon' => '<span class="pill"><i class="fa fa-tag"></i> ' . html_escape($item->id_header) . '</span>',
+                'pemohon' => html_escape($item->pemohon),
+                'total' => number_format($item->total_expense_report, 2),
+                'approval' => html_escape($approval_name),
+                'approval_date' => $approval_date ? date('d F Y H:i', strtotime($approval_date)) : '-',
+                'keterangan' => $keterangan,
+                'status' => '<span class="bd ' . $status_view[1] . '">' . html_escape($status_view[0]) . '</span>',
+                'aksi' => $aksi
+            ];
+        }
+
+        echo json_encode([
+            'draw' => intval($draw),
+            'recordsTotal' => $total,
+            'recordsFiltered' => $total,
             'data' => $hasil
         ]);
     }
@@ -2324,8 +2450,8 @@ class Expense_report_project extends Admin_Controller
                 ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
                 ->where('a.id_header', $item->id)->get();
 
-            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
-            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2351,7 +2477,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -2365,7 +2491,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -2392,7 +2518,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -2515,8 +2641,8 @@ class Expense_report_project extends Admin_Controller
                 ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
                 ->where('a.id_header', $item->id)->get();
 
-            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
-            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2542,7 +2668,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -2556,7 +2682,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -2583,7 +2709,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -2675,8 +2801,8 @@ class Expense_report_project extends Admin_Controller
                 ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
                 ->where('a.id_header', $item->id)->get();
 
-            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
-            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2702,7 +2828,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -2716,7 +2842,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -2743,7 +2869,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -2838,8 +2964,8 @@ class Expense_report_project extends Admin_Controller
                 ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
                 ->where('a.id_header', $item->id)->get();
 
-            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
-            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2865,7 +2991,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -2879,7 +3005,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -2906,7 +3032,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -3001,8 +3127,8 @@ class Expense_report_project extends Admin_Controller
                 ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
                 ->where('a.id_header', $item->id)->get();
 
-            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
-            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -3028,7 +3154,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -3042,7 +3168,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -3069,7 +3195,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -3164,8 +3290,8 @@ class Expense_report_project extends Admin_Controller
                 ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
                 ->where('a.id_header', $item->id)->get();
 
-            $reportStatus = Expense_project_flow::reportStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
-            $sts = '<span class="btn btn-sm btn-' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -3191,7 +3317,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -3205,7 +3331,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -3232,7 +3358,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -3272,8 +3398,12 @@ class Expense_report_project extends Admin_Controller
 
     // Update Data Function
 
-    private function validateEvidenceAndReason(array $post, $existingExpenseId = null)
+    private function validateEvidenceAndReason(array $post, $existingExpenseId = null, $requireReportNote = true)
     {
+        if ($requireReportNote && trim((string) ($post['keterangan_laporan'] ?? '')) === '') {
+            throw new RuntimeException('Keterangan Laporan wajib diisi.');
+        }
+
         $ttlKasbon = 0;
         $ttlExpense = 0;
 
@@ -3312,6 +3442,10 @@ class Expense_report_project extends Admin_Controller
             if (!$hasUpload && !$hasSaved) {
                 throw new RuntimeException('Bukti nota wajib diunggah untuk item nomor ' . $no . '.');
             }
+        }
+
+        if ($requireReportNote && $ttlExpense <= 0) {
+            throw new RuntimeException('Total realisasi harus lebih dari 0.');
         }
 
         if (round($ttlKasbon * 100) !== round($ttlExpense * 100) && trim((string) ($post['keterangan_kurang_bayar'] ?? '')) === '') {
@@ -3523,6 +3657,8 @@ class Expense_report_project extends Admin_Controller
             'document_link' => $upload_po,
             'id_bank' => $post['bank'],
             'keterangan_kurang_bayar' => $post['keterangan_kurang_bayar'] ?? '',
+            'keterangan_laporan' => trim((string) ($post['keterangan_laporan'] ?? '')),
+            'sts_req' => 1,
             'created_by' => $this->auth->user_id(),
             'created_date' => date('Y-m-d H:i:s')
         ];
@@ -3575,7 +3711,7 @@ class Expense_report_project extends Admin_Controller
             $this->db->trans_commit();
 
             $valid = 1;
-            $pesan = 'Expense data has been saved !';
+            $pesan = 'Laporan tersimpan dan masuk antrian Appr Expense Report.';
         }
 
         echo json_encode([
@@ -3608,7 +3744,7 @@ class Expense_report_project extends Admin_Controller
         }
 
         try {
-            $this->validateEvidenceAndReason($post, $id);
+            $this->validateEvidenceAndReason($post, $id, $newFlow);
         } catch (Throwable $error) {
             $this->db->trans_rollback();
             echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
@@ -3787,6 +3923,9 @@ class Expense_report_project extends Admin_Controller
             $data_insert_header['total_kasbon'] = Expense_project_flow::amount($flowCalc['advance']);
             $data_insert_header['total_expense_report'] = Expense_project_flow::amount($flowCalc['actual']);
             $data_insert_header['selisih'] = ($flowCalc['advance'] - $flowCalc['actual']) / 100;
+            $data_insert_header['keterangan_laporan'] = trim((string) ($post['keterangan_laporan'] ?? ''));
+            $data_insert_header['sts_req'] = 1;
+            $data_insert_header['reject_reason'] = '';
             $this->db->delete('kons_tr_expense_report_project_detail', ['id_header_expense' => $id]);
         }
         $update_header = $this->db->update('kons_tr_expense_report_project_header', $data_insert_header, ['id' => $post['id_expense']]);
@@ -3836,7 +3975,7 @@ class Expense_report_project extends Admin_Controller
             $this->db->trans_commit();
 
             $valid = 1;
-            $pesan = 'Expense data has been updated !';
+            $pesan = $newFlow ? 'Laporan tersimpan dan masuk antrian Appr Expense Report.' : 'Expense data has been updated !';
         }
 
         echo json_encode([
@@ -3903,6 +4042,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.sts', null);
+        $this->db->where('a.flow_version <>', 2);
         $get_data_exp = $this->db->get()->result();
 
         foreach ($get_data_exp as $item) {
@@ -4251,6 +4391,12 @@ class Expense_report_project extends Admin_Controller
         try {
             $data = $this->expense_project_settlement->returnDetail($this->input->get('id'), $this->auth->user_id(), $finance, $isAdmin);
             $data['banks'] = $this->expense_project_settlement->banks();
+            $detailKasbon = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $data['header']['id_header']])->row();
+            $data['spk_no'] = $detailKasbon->id_spk_penawaran ?? '-';
+            $detailCompany = $detailKasbon ? $this->db->query('SELECT c.nm_company FROM kons_tr_penawaran p JOIN kons_tr_company c ON c.id = p.company WHERE p.id_quotation = ? LIMIT 1', [$detailKasbon->id_penawaran])->row() : null;
+            $data['company_name'] = $detailCompany->nm_company ?? '-';
+            $detailUser = $this->db->get_where('users', ['id_user' => $data['header']['created_by']])->row();
+            $data['requester'] = $detailUser->nm_lengkap ?? '-';
             $data['finance'] = $finance;
             $data['settlement_token'] = $this->settlementToken();
             $this->template->set($data);
@@ -4285,7 +4431,7 @@ class Expense_report_project extends Admin_Controller
             $uploaded = $this->upload->data();
             $file = $uploaded['file_name'];
             $this->expense_project_settlement->submitReturn($id, $this->auth->user_id(), $this->input->post('bank_id'),
-                $this->input->post('transfer_date'), $this->input->post('amount'), $file);
+                $this->input->post('transfer_date'), $this->input->post('amount'), $file, $isAdmin);
             echo json_encode(['status' => 1, 'pesan' => 'Bukti dikirim. Menunggu verifikasi Finance.']);
         } catch (Throwable $error) {
             if ($file) {

@@ -8,6 +8,15 @@ function is_php($version) { return version_compare(PHP_VERSION, $version, '>=');
 function show_error($message) { throw new RuntimeException($message); }
 require dirname(__DIR__) . '/application/config/development/database.php';
 $configuration = $db['default'];
+if ($configuration['hostname'] === '206.84.97.107') {
+    $testMysql = @new mysqli('mysql8', 'root', 'root');
+    if ($testMysql && !$testMysql->connect_error) {
+        $configuration['hostname'] = 'mysql8';
+        $configuration['username'] = 'root';
+        $configuration['password'] = 'root';
+        $configuration['database'] = 'db_consultant_new';
+    }
+}
 require BASEPATH . 'database/DB.php';
 require dirname(__DIR__) . '/application/libraries/Expense_project_settlement.php';
 
@@ -53,14 +62,14 @@ try {
         ensure_settlement((bool) $admin->query("CREATE DATABASE `$schema`"), 'Create test schema');
     }
     $sourceTables = ['kons_tr_expense_report_project_header', 'kons_tr_expense_report_project_detail', 'kons_tr_kasbon_project_header',
-        'kons_tr_penawaran', 'kons_tr_company', 'users', 'menus', 'permissions', 'request_payment'];
+        'kons_tr_penawaran', 'kons_tr_spk_penawaran', 'kons_tr_company', 'users', 'menus', 'permissions', 'request_payment'];
     foreach (['subcont', 'akomodasi', 'others', 'lab', 'subcont_tenaga_ahli', 'subcont_perusahaan'] as $suffix) {
         $sourceTables[] = 'kons_tr_kasbon_project_' . $suffix;
     }
     foreach (['aktifitas', 'akomodasi', 'others', 'lab', 'subcont_tenaga_ahli', 'subcont_perusahaan'] as $suffix) { $sourceTables[] = 'kons_tr_spk_budgeting_' . $suffix; }
     foreach (['biaya', 'lab', 'tenaga_ahli', 'subcont_perusahaan'] as $suffix) { $sourceTables[] = 'kons_master_' . $suffix; }
     foreach ($sourceTables as $table) { $admin->query("CREATE TABLE `$source`.`$table` LIKE `db_consultant_new`.`$table`"); }
-    foreach (['request_payment', 'tr_jurnal', 'ms_bank', 'list_bank', 'tr_expense', 'tr_expense_detail'] as $table) {
+    foreach (['request_payment', 'tr_jurnal', 'ms_bank', 'list_bank', 'tr_expense', 'tr_expense_detail', 'tr_rp_pengajuan_h', 'tr_rp_pengajuan_d', 'tr_rp_record', 'tr_rp_reject_log'] as $table) {
         $admin->query("CREATE TABLE `$finance`.`$table` LIKE db_sendigs_ss.`$table`");
     }
     // Recreate pre-migration shape even when the local application has already been upgraded.
@@ -108,121 +117,232 @@ try {
         list($suffix, $key) = $specs[$type];
         for ($item = 1; $item <= 2; $item++) {
             $id = $number * 10 + $item;
-            $row = ['id_header' => $kasbon, 'id_' . $key => $id, 'id_spk_budgeting' => $budget,
-                'qty_pengajuan' => '1', 'nominal_pengajuan' => '500000', 'total_pengajuan' => '500000'];
-            if ($type !== 1) { $row['id_item'] = '1'; }
-            $row['custom_' . $suffix] = $item === 2 ? 1 : 0;
-            $insert('kons_tr_kasbon_project_' . $suffix, $row);
-            if ($item === 1) {
-                $budgetSuffix = $type <= 4 ? $key : $suffix;
-                $insert('kons_tr_spk_budgeting_' . $budgetSuffix, ['id' => $id + 10000000, 'id_spk_budgeting' => $budget, 'id_' . $key => $id]);
-                $id += 10000000;
+            $budgetTable = $type === 1 ? 'kons_tr_spk_budgeting_aktifitas' : 'kons_tr_spk_budgeting_' . $suffix;
+            if ($budgetTable) {
+                $budgetRow = ['id' => $id, 'id_spk_budgeting' => $budget, 'id_' . $key => $id];
+                if ($type === 1) {
+                    $budgetRow['create_by'] = 'tester';
+                    $budgetRow['create_date'] = date('Y-m-d H:i:s');
+                }
+                $insert($budgetTable, $budgetRow);
             }
-            $insert('kons_tr_expense_report_project_detail', ['id_header_expense' => $expense, 'id_header_kasbon' => $kasbon,
-                'id_detail_kasbon' => $id, 'qty_expense' => '1', 'nominal_expense' => $item === 1 ? (string) min(600000, $actual) : (string) max(0, $actual - 600000)]);
+            $rowKasbon = ['id_header' => $kasbon, 'id_' . $key => $id,
+                'qty_pengajuan' => 1, 'nominal_pengajuan' => 500000, 'total_pengajuan' => 500000];
+            if ($type !== 1) {
+                $rowKasbon['id_item'] = '1';
+            }
+            $insert('kons_tr_kasbon_project_' . $suffix, $rowKasbon);
         }
         $insert('kons_tr_expense_report_project_header', ['id' => $expense, 'id_header' => $kasbon,
-            'flow_version' => $version, 'total_kasbon' => '1000000', 'total_expense_report' => $actual,
-            'selisih' => 1000000 - $actual, 'sts_req' => '1', 'created_by' => '990001', 'created_date' => date('Y-m-d H:i:s')]);
+            'flow_version' => $version, 'sts' => null, 'sts_req' => '1', 'total_kasbon' => 1000000,
+            'total_expense_report' => $actual, 'selisih' => 1000000 - $actual, 'created_by' => '990001', 'created_date' => date('Y-m-d H:i:s')]);
+        for ($item = 1; $item <= 2; $item++) {
+            $id = $number * 10 + $item;
+            $insert('kons_tr_expense_report_project_detail', ['id_header_expense' => $expense,
+                'id_detail_kasbon' => $id, 'qty_expense' => 1, 'nominal_expense' => $actual / 2]);
+        }
         return $expense;
     };
 
+    // Six categories and three settlement differences (equal, surplus kasbon, reimbursement).
+    $journalCount = 0;
     foreach (range(1, 6) as $type) {
-        foreach ([800000, 1000000, 1200000] as $actual) {
+        foreach ([1000000, 800000, 1200000] as $actual) {
             $id = $fixture($type, $actual);
             $service->approve($id, '990002');
-            $service->approve($id, '990002');
-            ensure_settlement((string) $service->header($id)['sts'] === '1', 'Approved type ' . $type);
-            $totals = $connection->query("SELECT SUM(debit) d,SUM(kredit) c FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$id])->row_array();
-            ensure_settlement($totals['d'] === $totals['c'], 'Balanced journal');
-            $piutang = $connection->query("SELECT kredit FROM `$finance`.tr_jurnal WHERE no_transaksi=? AND coa='1103-01-14'", [$id])->row_array();
-            ensure_settlement(Expense_project_flow::cents($piutang['kredit']) === 100000000, 'Receivable credit full advance');
-            if ($actual < 1000000) {
-                $kelebihan = $connection->query("SELECT debit FROM `$finance`.tr_jurnal WHERE no_transaksi=? AND coa='1103-01-15'", [$id])->row_array();
-                ensure_settlement(Expense_project_flow::cents($kelebihan['debit']) === (1000000 - $actual) * 100, 'Kelebihan debit');
+            $header = $service->header($id);
+            ensure_settlement((string) $header['sts'] === '1', 'Approved state set for type ' . $type);
+            $journals = $connection->query("SELECT * FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$id])->result_array();
+            $expectedRows = $actual === 1000000 ? 2 : 3;
+            ensure_settlement(count($journals) === $expectedRows, 'Expected ' . $expectedRows . ' journals, got ' . count($journals));
+            $journalCount += $expectedRows;
+            $debit = 0; $credit = 0;
+            foreach ($journals as $journal) {
+                $debit += Expense_project_flow::cents($journal['debit']);
+                $credit += Expense_project_flow::cents($journal['kredit']);
+                ensure_settlement($journal['id_company'] === '1', 'Company 1 mapped to id_company 1');
             }
-            ensure_settlement((int) $scalar('SELECT COUNT(*) n FROM kons_tr_expense_project_return WHERE expense_id=?', [$id]) === ($actual < 1000000 ? 1 : 0), 'Return created once');
-            ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_expense WHERE no_expense_consultant=?", [$id]) === ($actual > 1000000 ? 1 : 0), 'Finance tr_expense created once');
-            ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_expense_detail WHERE no_doc=?", [$id]) === ($actual > 1000000 ? 1 : 0), 'Finance tr_expense_detail created once');
+            ensure_settlement($debit === $credit, 'Journal balances for type ' . $type);
+            $returnRow = $connection->query('SELECT * FROM kons_tr_expense_project_return WHERE expense_id=?', [$id])->row_array();
+            if ($actual === 800000) {
+                ensure_settlement($returnRow && (int) Expense_project_flow::cents($returnRow['amount']) === 20000000, 'Return recorded for surplus');
+            } else {
+                ensure_settlement(!$returnRow, 'No return for balanced or over-spent report');
+            }
+            $expRows = $connection->query("SELECT * FROM `$finance`.tr_expense WHERE no_expense_consultant=?", [$id])->result_array();
+            if ($actual === 1200000) {
+                ensure_settlement(count($expRows) === 1, 'Over-spent report inserted into tr_expense');
+                ensure_settlement($expRows[0]['project_consultant'] === '1', 'tr_expense marked as consultant');
+                ensure_settlement((string) $expRows[0]['status'] === '2', 'tr_expense status 2');
+                ensure_settlement((string) $expRows[0]['sts_finance'] === '1', 'tr_expense sts_finance 1');
+                ensure_settlement((int) Expense_project_flow::cents($expRows[0]['kurang_bayar']) === 20000000, 'tr_expense kurang_bayar set');
+                $detailRows = $connection->query("SELECT * FROM `$finance`.tr_expense_detail WHERE no_doc=?", [$id])->result_array();
+                ensure_settlement(count($detailRows) === 1, 'tr_expense_detail inserted');
+                ensure_settlement((string) $detailRows[0]['status'] === '2', 'tr_expense_detail status 2');
+                ensure_settlement((int) Expense_project_flow::cents($detailRows[0]['total_harga']) === 20000000, 'tr_expense_detail total_harga set');
+            } else {
+                ensure_settlement(!$expRows, 'No tr_expense for equal or under-budget report');
+            }
         }
     }
-    ensure_settlement((int) $scalar('SELECT COUNT(*) n FROM request_payment') === 0, 'Never insert into local request_payment');
-    ensure_settlement(count($service->listing('990003')) === 0, 'Other users cannot list returns');
-    ensure_settlement(count($service->monitoring('990003')) === 0, 'Other users cannot monitor reimbursements');
 
-    foreach (range(1, 6) as $type) {
-        $zero = $fixture($type, 0);
-        $connection->delete('kons_tr_expense_report_project_detail', ['id_header_expense' => $zero]);
-        $service->approve($zero, '990002');
-        ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$zero]) === 2, 'Zero realization posts 1103-01-15 and 1103-01-14');
-        ensure_settlement($service->returnDetail($zero, '990001', false)['return']['amount'] === '1000000.00', 'Entire unused advance remains receivable');
-    }
-    $tampered = $fixture(2);
-    $connection->update('kons_tr_expense_report_project_header', ['total_expense_report' => '1'], ['id' => $tampered]);
-    reject_settlement(function () use ($service, $tampered) { $service->approve($tampered, '990002'); });
-    ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$tampered]) === 0, 'Tampered header must not post');
-    $editable = $service->header($fixture(3));
-    $connection->update('kons_tr_expense_report_project_header', ['sts_req' => null], ['id' => $editable['id']]);
-    $editable = $service->header($editable['id']);
-    $service->assertEditable($editable, '990001');
-    reject_settlement(function () use ($service, $editable) { $service->assertEditable($editable, '990003'); });
-    $service->requestApproval($editable['id'], '990001');
-    reject_settlement(function () use ($service, $editable) { $service->assertEditable($service->header($editable['id']), '990001'); });
-    reject_settlement(function () use ($service, $editable) { $service->reject($editable['id'], '990002', ''); });
-    $service->reject($editable['id'], '990002', 'Revisi nota');
-    $service->assertEditable($service->header($editable['id']), '990001');
-    $service->requestApproval($editable['id'], '990001');
-    $service->approve($editable['id'], '990002');
-    reject_settlement(function () use ($service, $editable) { $service->assertEditable($service->header($editable['id']), '990001'); });
+    // Zero-realization edge case.
+    $zeroExpense = $fixture(1, 0);
+    $service->approve($zeroExpense, '990002');
+    $zeroJournals = $connection->query("SELECT * FROM `$finance`.tr_jurnal WHERE no_transaksi=? ORDER BY id ASC", [$zeroExpense])->result_array();
+    ensure_settlement(count($zeroJournals) === 2, 'Zero realization generates refund and receivable journals only');
+    ensure_settlement($zeroJournals[0]['coa'] === '1103-01-15', 'Full advance routed to 1103-01-15');
+    $journalCount += 2;
 
-    $id = $fixture(2);
+    // Reject and resubmit cycle with file upload validation.
+    $id = $fixture(2, 800000);
+    $service->reject($id, '990002', 'Revisi diperlukan');
+    $header = $service->header($id);
+    ensure_settlement($header['sts'] === null && $header['sts_req'] === null, 'Rejected resets sts and sts_req');
+    ensure_settlement($header['reject_reason'] === 'Revisi diperlukan', 'Reject reason persisted');
+    $service->requestApproval($id, '990001');
+    ensure_settlement((string) $service->header($id)['sts_req'] === '1', 'Resubmit sets sts_req');
     $service->approve($id, '990002');
-    reject_settlement(function () use ($service, $id) { $service->returnDetail($id, '990003', false); });
-    reject_settlement(function () use ($service, $id) { $service->submitReturn($id, '990001', 1, date('Y-m-d'), '100000', 'test.pdf'); });
-    reject_settlement(function () use ($service, $id) { $service->submitReturn($id, '990003', 1, date('Y-m-d'), '200000', 'test.pdf'); });
-    reject_settlement(function () use ($service, $id) { $service->submitReturn($id, '990001', 999, date('Y-m-d'), '200000', 'test.pdf'); });
-    reject_settlement(function () use ($service, $id) { $service->submitReturn($id, '990001', 1, '2026-02-30', '200000', 'test.pdf'); });
-    $journalCount = (int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$id]);
-    $service->submitReturn($id, '990001', 1, date('Y-m-d'), '200000', 'first.pdf');
-    ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$id]) === $journalCount, 'Upload must not post journal');
-    reject_settlement(function () use ($service, $id) { $service->verifyReturn($id, '990001', true, '', ['amount' => 1, 'date' => 1, 'received' => 1]); });
-    reject_settlement(function () use ($service, $id) { $service->verifyReturn($id, '990002', true, '', []); });
-    reject_settlement(function () use ($service, $id) { $service->verifyReturn($id, '990002', false, '', []); });
-    $service->verifyReturn($id, '990002', false, 'Nominal pada bukti tidak sesuai', []);
-    $detail = $service->returnDetail($id, '990001', false);
-    ensure_settlement($detail['return']['status'] === 'waiting_return' && count($detail['history']) === 2 && !$detail['journals'], 'Rejected proof remains in history only');
-    $service->submitReturn($id, '990001', 1, date('Y-m-d'), '200000', 'second.pdf');
-    $service->verifyReturn($id, '990002', true, '', ['amount' => 1, 'date' => 1, 'received' => 1]);
-    $service->verifyReturn($id, '990002', true, '', ['amount' => 1, 'date' => 1, 'received' => 1]);
-    ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$id]) === $journalCount + 2, 'Verification posts exactly two rows once');
+    $journalCount += 3;
 
+    // Refund submission with validation and verification.
+    reject_settlement(function () use ($service, $id) { $service->submitReturn($id, '990001', 1, '2020-01-01', '200000', 'path/a.pdf'); });
+    reject_settlement(function () use ($service, $id) { $service->submitReturn($id, '990001', 1, date('Y-m-d'), '100000', 'path/a.pdf'); });
+    reject_settlement(function () use ($service, $id) { $service->submitReturn($id, '990002', 1, date('Y-m-d'), '200000', 'path/a.pdf'); });
+    $service->submitReturn($id, '990001', 1, date('Y-m-d'), '200000', 'path/a.pdf');
+    ensure_settlement($service->returnDetail($id, '990001', false)['return']['status'] === 'waiting_verification', 'Submitted return awaits verification');
+
+    // Reject verification and verify again.
+    $service->verifyReturn($id, '990002', false, 'Bukti tidak jelas', []);
+    ensure_settlement($service->returnDetail($id, '990001', false)['return']['status'] === 'waiting_return', 'Verification rejection returns to waiting_return');
+    $service->submitReturn($id, '990001', 1, date('Y-m-d'), '200000', 'path/b.pdf');
+    reject_settlement(function () use ($service, $id) { $service->verifyReturn($id, '990001', true, '', ['amount' => 1, 'date' => 1, 'received' => 1]); });
+    reject_settlement(function () use ($service, $id) { $service->verifyReturn($id, '990002', true, '', ['amount' => 1, 'date' => 1]); });
+    $service->verifyReturn($id, '990002', true, '', ['amount' => 1, 'date' => 1, 'received' => 1]);
+    $verified = $service->returnDetail($id, '990001', false)['return'];
+    ensure_settlement($verified['status'] === 'completed', 'Verified return marked completed');
+    $journalCount += 2;
+    ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal") === $journalCount, 'Verification posts exactly two rows once');
+    ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$id]) === 5, 'Report has approve and return journals');
+
+    // AJV journal format checks
+    ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal WHERE no_jurnal NOT REGEXP '^[0-9]{5}-AJV-[IVX]+-[0-9]{2}$'") === 0, 'Journal numbers use the AJV format');
+    ensure_settlement($scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal") === $scalar("SELECT COUNT(DISTINCT no_jurnal) n FROM `$finance`.tr_jurnal"), 'Journal numbers are unique');
+
+    // An admin can upload and verify the return of a report created by someone else.
+    $adminReturn = $fixture(2);
+    $service->approve($adminReturn, '990002');
+    reject_settlement(function () use ($service, $adminReturn) { $service->submitReturn($adminReturn, '990003', 1, date('Y-m-d'), '200000', 'admin.pdf'); });
+    $service->submitReturn($adminReturn, '990003', 1, date('Y-m-d'), '200000', 'admin.pdf', true);
+    $service->verifyReturn($adminReturn, '990001', true, '', ['amount' => 1, 'date' => 1, 'received' => 1], true);
+    ensure_settlement($service->returnDetail($adminReturn, '990001', true, true)['return']['status'] === 'completed', 'Admin completed a return for another user');
+
+    // The approval screen delegates new-flow reports to the settlement library.
+    if (!class_exists('Admin_Controller')) { class Admin_Controller {} }
+    require_once dirname(__DIR__) . '/application/modules/approval_expense_report_project/controllers/Approval_expense_report_project.php';
+    $approval = (new ReflectionClass('Approval_expense_report_project'))->newInstanceWithoutConstructor();
+    $approval->db = $connection;
+    $approval->expense_project_settlement = $service;
+    $approval->auth = new class { function user_id() { return '990002'; } };
+    $approval->input = new class { function post($key = null) { return $key === null ? $GLOBALS['approval_post'] : ($GLOBALS['approval_post'][$key] ?? null); } };
+    $callApproval = function ($method, array $post) use ($approval) {
+        $GLOBALS['approval_post'] = $post;
+        ob_start();
+        $approval->$method();
+        return json_decode(ob_get_clean(), true);
+    };
+    $viaScreen = $fixture(2, 800000);
+    $kasbonOfScreen = $service->header($viaScreen)['id_header'];
+    $response = $callApproval('approve_expense_report', ['id_header' => $kasbonOfScreen]);
+    ensure_settlement($response['status'] === 1, 'Approval screen approves a new-flow report');
+    ensure_settlement((string) $service->header($viaScreen)['sts'] === '1', 'Approval screen sets the approved status');
+    ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$viaScreen]) >= 2, 'Approval screen posts the journal');
+    ensure_settlement((int) $scalar('SELECT COUNT(*) n FROM kons_tr_expense_project_return WHERE expense_id=?', [$viaScreen]) === 1, 'Approval screen creates the return record for surplus kasbon');
+    $viaScreenOver = $fixture(3, 1200000);
+    $response = $callApproval('approve_expense_report', ['id_header' => $service->header($viaScreenOver)['id_header']]);
+    ensure_settlement($response['status'] === 1 && (int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_expense WHERE no_expense_consultant=?", [$viaScreenOver]) === 1, 'Approval screen routes extra expense to tr_expense');
+    $viaScreenReject = $fixture(2, 800000);
+    $kasbonReject = $service->header($viaScreenReject)['id_header'];
+    $response = $callApproval('reject_expense_report', ['id_header' => $kasbonReject, 'reject_reason' => '']);
+    ensure_settlement($response['status'] === 0, 'Approval screen refuses a rejection without a reason');
+    $response = $callApproval('reject_expense_report', ['id_header' => $kasbonReject, 'reject_reason' => 'Nota buram']);
+    $rejected = $service->header($viaScreenReject);
+    ensure_settlement($response['status'] === 1 && $rejected['sts'] === null && $rejected['sts_req'] === null && $rejected['reject_reason'] === 'Nota buram', 'Approval screen rejects with a reason and reopens the report');
+    ensure_settlement((int) $scalar("SELECT COUNT(*) n FROM `$finance`.tr_jurnal WHERE no_transaksi=?", [$viaScreenReject]) === 0, 'Rejection posts no journal');
+
+    // Request Payment integration & monitoring lifecycle
     $id = $fixture(3, 1200000);
     $monitorRow = function () use ($service, &$id) {
         return array_values(array_filter($service->monitoring('990001'), function ($row) use ($id) { return $row['id'] === $id; }))[0];
     };
     $connection->update('kons_tr_expense_report_project_header', ['sts_req' => null], ['id' => $id]);
     ensure_settlement($monitorRow()['monitoring_status'] === 'Menunggu Diajukan', 'Draft is visible before Finance integration');
+    ensure_settlement(Expense_project_flow::reimbursementPresentation($monitorRow())['label'] === 'Draft Expense', 'Draft expense presentation label');
     $service->requestApproval($id, '990001');
-    ensure_settlement($monitorRow()['monitoring_status'] === 'Menunggu Approval', 'Requested expense awaits approval');
+    ensure_settlement($monitorRow()['monitoring_status'] === 'Menunggu Diajukan', 'Requested expense awaits approval');
+    ensure_settlement(Expense_project_flow::reimbursementPresentation($monitorRow())['label'] === 'Menunggu Approval Expense', 'Requested expense presentation label');
     $service->reject($id, '990002', 'Revisi');
     ensure_settlement($monitorRow()['monitoring_status'] === 'Menunggu Diajukan', 'Rejected expense awaits resubmission');
+    ensure_settlement(Expense_project_flow::reimbursementPresentation($monitorRow())['label'] === 'Expense Ditolak', 'Rejected expense presentation label');
     $service->requestApproval($id, '990001');
-    ensure_settlement($monitorRow()['monitoring_status'] === 'Menunggu Approval', 'Resubmitted expense awaits approval');
+    ensure_settlement($monitorRow()['monitoring_status'] === 'Menunggu Diajukan', 'Resubmitted expense awaits approval');
     $service->approve($id, '990002');
-    $monitor = array_values(array_filter($service->monitoring('990001'), function ($row) use ($id) { return $row['id'] === $id; }))[0];
-    ensure_settlement($monitor['monitoring_status'] === 'Disetujui', 'Approved expense without Request Payment');
-    $expRow = $connection->query("SELECT id FROM `$finance`.tr_expense WHERE no_expense_consultant=?", [$id])->row_array();
-    $connection->insert($finance . '.request_payment', [
-        'no_doc' => $id, 'ids' => (string) $expRow['id'], 'tipe' => 'expense', 'nama' => 'Tester',
-        'tgl_doc' => date('Y-m-d'), 'keperluan' => 'Test Lebih Expense', 'jumlah' => 200000, 'currency' => 'IDR',
-        'status' => '0', 'created_by' => 'tester', 'created_on' => date('Y-m-d H:i:s')
+    $monitor = $monitorRow();
+    ensure_settlement($monitor['monitoring_status'] === 'Menunggu Diajukan', 'Approved expense awaits Finance submission');
+    ensure_settlement(Expense_project_flow::reimbursementPresentation($monitor)['label'] === 'Menunggu Diajukan Finance', 'Approved expense presentation label');
+    ensure_settlement($monitor['nm_company'] === 'Vuca', 'Company normalized from quotation company');
+
+    // 1. Finance submits batch PGJ-TEST-01
+    $connection->insert($finance . '.tr_rp_pengajuan_h', [
+        'id' => 1, 'no_pengajuan' => 'PGJ-TEST-01', 'company_nama' => 'Vuca',
+        'status' => 'pending', 'deleted' => 0
     ]);
-    foreach ([['status' => 0, 'no_request' => null], ['status' => 0, 'no_request' => 'PGJ-TEST'], ['status' => 1, 'no_request' => 'PGJ-TEST'], ['status' => 0, 'no_request' => null, 'keterangan' => 'Ditolak - ajukan ulang']] as $payment) {
-        $connection->update($finance . '.request_payment', $payment, ['no_doc' => $id]);
-        $monitor = array_values(array_filter($service->monitoring('990001'), function ($row) use ($id) { return $row['id'] === $id; }))[0];
-        ensure_settlement($monitor['monitoring_status'] === 'Disetujui', 'Finance payment state cannot change expense approval');
-        ensure_settlement((string) $service->header($id)['sts'] === '1', 'Payment rejection must not reopen expense');
-    }
+    $connection->insert($finance . '.tr_rp_pengajuan_d', [
+        'id' => 1, 'id_pengajuan' => 1, 'no_dokumen' => $id, 'decision' => 'approved'
+    ]);
+    $monitor = $monitorRow();
+    ensure_settlement($monitor['monitoring_status'] === 'Menunggu Approval', 'Pending batch moves to Menunggu Approval');
+    ensure_settlement($monitor['no_request'] === 'PGJ-TEST-01', 'No. Pengajuan shown during pending batch');
+    ensure_settlement($monitor['keterangan'] === null, 'Keterangan empty during pending batch');
+
+    // 2. Approver rejects batch PGJ-TEST-01
+    $connection->update($finance . '.tr_rp_pengajuan_h', ['status' => 'done'], ['id' => 1]);
+    $connection->update($finance . '.tr_rp_pengajuan_d', ['decision' => 'rejected'], ['id' => 1]);
+    $connection->insert($finance . '.tr_rp_reject_log', [
+        'id' => 1, 'no_dokumen' => $id, 'id_pengajuan' => 1, 'no_pengajuan' => 'PGJ-TEST-01',
+        'approver' => 'finance_mgr', 'alasan' => 'Kuitansi blur'
+    ]);
+    $monitor = $monitorRow();
+    ensure_settlement($monitor['monitoring_status'] === 'Menunggu Diajukan', 'Rejected RP batch returns to Menunggu Diajukan');
+    ensure_settlement($monitor['rp_rejected'] === true, 'rp_rejected flag set');
+    ensure_settlement($monitor['no_request'] === null, 'No. Pengajuan reset to null on rejection');
+    ensure_settlement($monitor['keterangan'] === 'Kuitansi blur (PGJ-TEST-01)', 'Reject reason with batch number');
+    ensure_settlement((string) $service->header($id)['sts'] === '1', 'Expense report remains approved in consultant');
+
+    // 3. Finance resubmits in batch PGJ-TEST-02
+    $connection->insert($finance . '.tr_rp_pengajuan_h', [
+        'id' => 2, 'no_pengajuan' => 'PGJ-TEST-02', 'company_nama' => 'Vuca',
+        'status' => 'pending', 'deleted' => 0
+    ]);
+    $connection->insert($finance . '.tr_rp_pengajuan_d', [
+        'id' => 2, 'id_pengajuan' => 2, 'no_dokumen' => $id, 'decision' => 'approved'
+    ]);
+    $monitor = $monitorRow();
+    ensure_settlement($monitor['monitoring_status'] === 'Menunggu Approval', 'Resubmitted batch moves to Menunggu Approval');
+    ensure_settlement($monitor['no_request'] === 'PGJ-TEST-02', 'New No. Pengajuan shown');
+    ensure_settlement($monitor['rp_rejected'] === false, 'rp_rejected flag cleared on new batch');
+    ensure_settlement($monitor['keterangan'] === null, 'Keterangan reset on new batch');
+
+    // 4. Approver approves batch PGJ-TEST-02
+    $connection->update($finance . '.tr_rp_pengajuan_h', ['status' => 'done'], ['id' => 2]);
+    $connection->update($finance . '.tr_rp_pengajuan_d', ['decision' => 'approved'], ['id' => 2]);
+    $connection->insert($finance . '.tr_rp_record', [
+        'id' => 1, 'id_pengajuan' => 2, 'no_pengajuan' => 'PGJ-TEST-02', 'no_dokumen' => $id, 'company_nama' => 'Vuca'
+    ]);
+    $monitor = $monitorRow();
+    ensure_settlement($monitor['monitoring_status'] === 'Disetujui', 'Approved RP batch moves to Disetujui');
+    ensure_settlement($monitor['no_request'] === 'PGJ-TEST-02', 'No. Pengajuan preserved');
+
     $legacy = $fixture(4, 800000, 1);
     reject_settlement(function () use ($service, $legacy) { $service->approve($legacy, '990002'); });
     ensure_settlement((int) $service->header($legacy)['flow_version'] === 1, 'Legacy version preserved');

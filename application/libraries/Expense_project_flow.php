@@ -21,15 +21,44 @@ class Expense_project_flow
         return ['label' => 'Draft', 'style' => 'warning'];
     }
 
+    public static function kasbonStatus(array $header)
+    {
+        if (!$header) return ['label' => 'New', 'style' => 'bd-new'];
+        if ((string) ($header['sts'] ?? '') === '1') return ['label' => 'Approved', 'style' => 'bd-ok'];
+        if ((string) ($header['sts_req'] ?? '') === '1') return ['label' => 'Waiting Approval', 'style' => 'bd-wait'];
+        if ((string) ($header['sts'] ?? '') === '2' || !empty($header['reject_reason'])) return ['label' => 'Rejected', 'style' => 'bd-rej'];
+        return ['label' => 'Draft', 'style' => 'bd-draft'];
+    }
+
+    public static function normalizeConsultantCompany($companyId, $companyName = '')
+    {
+        $map = ['1' => 'Vuca', '4' => 'Vuca', '6' => 'Sustain', '3' => 'Sustain', '7' => 'STM'];
+        $key = trim((string) $companyId);
+        if ($key !== '' && isset($map[$key])) {
+            return $map[$key];
+        }
+        return trim((string) $companyName);
+    }
+
     public static function reimbursementPresentation(array $row)
     {
-        $status = $row['monitoring_status'];
-        if ($status === 'Disetujui') return ['group' => 'approved', 'label' => 'Disetujui', 'style' => 'completed'];
-        if ($status === 'Menunggu Approval') return ['group' => 'pending', 'label' => 'Menunggu Approval', 'style' => 'review'];
-        if ($status === 'Menunggu Diajukan') {
-            return ['group' => 'unsubmitted', 'label' => 'Menunggu Diajukan', 'style' => 'waiting'];
+        $status = $row['monitoring_status'] ?? self::reimbursementStatus($row);
+        if ($status === 'Disetujui') {
+            return ['group' => 'approved', 'label' => 'Disetujui', 'badge' => 'bd-ok', 'style' => 'completed'];
         }
-        return ['group' => 'unsubmitted', 'label' => $status, 'style' => 'error'];
+        if ($status === 'Menunggu Approval') {
+            return ['group' => 'pending', 'label' => 'Menunggu Approval', 'badge' => 'bd-appr', 'style' => 'review'];
+        }
+        if ((string) ($row['sts'] ?? '') !== '1') {
+            if ((string) ($row['sts_req'] ?? '') === '1') {
+                return ['group' => 'unsubmitted', 'label' => 'Menunggu Approval Expense', 'badge' => 'bd-wait', 'style' => 'waiting'];
+            }
+            if ((string) ($row['sts'] ?? '') === '2' || !empty($row['reject_reason'])) {
+                return ['group' => 'unsubmitted', 'label' => 'Expense Ditolak', 'badge' => 'bd-rej', 'style' => 'error'];
+            }
+            return ['group' => 'unsubmitted', 'label' => 'Draft Expense', 'badge' => 'bd-draft', 'style' => 'waiting'];
+        }
+        return ['group' => 'unsubmitted', 'label' => 'Menunggu Diajukan Finance', 'badge' => 'bd-pend', 'style' => 'waiting'];
     }
 
     public static function cents($value)
@@ -77,8 +106,12 @@ class Expense_project_flow
 
     public static function reimbursementStatus(array $row)
     {
-        if ((string) ($row['sts'] ?? '') === '1') return 'Disetujui';
-        if ((string) ($row['sts_req'] ?? '') === '1') return 'Menunggu Approval';
+        if ((string) ($row['sts'] ?? '') !== '1') {
+            return 'Menunggu Diajukan';
+        }
+        $rpStatus = (string) ($row['rp_status'] ?? '');
+        if ($rpStatus === 'approved') return 'Disetujui';
+        if ($rpStatus === 'pending') return 'Menunggu Approval';
         return 'Menunggu Diajukan';
     }
 }

@@ -265,7 +265,8 @@ class Expense_project_settlement
         $html = '';
         $debit = $credit = 0;
         foreach ($rows as $row) {
-            $html .= '<tr>';
+            $rowClass = $row['coa'] === '1103-01-15' ? ' class="g"' : ($row['coa'] === '9999-99-99' ? ' class="rd"' : '');
+            $html .= '<tr' . $rowClass . '>';
             $html .= '<td class="text-center">' . htmlspecialchars($row['tgl_jurnal'], ENT_QUOTES, 'UTF-8') . '</td>';
             $html .= '<td class="text-center">' . htmlspecialchars($row['coa'], ENT_QUOTES, 'UTF-8') . '</td>';
             $html .= '<td>' . htmlspecialchars($row['nm_company'], ENT_QUOTES, 'UTF-8') . '</td>';
@@ -282,9 +283,16 @@ class Expense_project_settlement
 
     private function saveJournals($id, $phase, array $rows, $actor, $kasbonId = '')
     {
-        $reference = 'EXP2-' . $phase . '-' . substr(hash('sha256', $id), 0, 32);
+        $roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+        $suffix = '-AJV-' . $roman[(int) date('n') - 1] . '-' . date('y');
+        $last = $this->query("SELECT MAX(CAST(SUBSTRING_INDEX(no_jurnal, '-', 1) AS UNSIGNED)) AS last_no FROM "
+            . $this->finance . '.tr_jurnal WHERE no_jurnal LIKE ?', ['%' . $suffix])->row_array();
+        $sequence = (int) ($last['last_no'] ?? 0);
+        $reference = '';
         foreach ($rows as $index => $row) {
-            $row += ['no_jurnal' => $reference . '-' . ($index + 1), 'no_transaksi' => $id,
+            $number = sprintf('%05d', $sequence + $index + 1) . $suffix;
+            $reference = $reference === '' ? $number : $reference;
+            $row += ['no_jurnal' => $number, 'no_transaksi' => $id,
                 'jenis_transaksi' => $phase === 'RETURN' ? 'Pengembalian Expense Project' : 'Expense Report Consultant',
                 'keterangan' => $row['nm_coa'] . ' - ' . $id . ' - ' . $kasbonId, 'sts' => '0',
                 'created_by' => $actor, 'created_date' => date('Y-m-d H:i:s')];
@@ -406,7 +414,7 @@ class Expense_project_settlement
 
     public function listing($actor, $finance = false)
     {
-        return $this->query('SELECT h.*,r.amount,r.status AS return_status,r.bank_id,r.transfer_date,r.submitted_at,r.verified_at,r.rejection_reason,k.deskripsi,u.nm_lengkap'
+        return $this->query('SELECT h.*,r.amount,r.status AS return_status,r.bank_id,r.transfer_date,r.submitted_at,r.verified_at,r.rejection_reason,k.deskripsi,k.id_spk_penawaran AS spk_no,u.nm_lengkap'
             . ' FROM ' . self::HEADER . ' h JOIN ' . self::RETURNS . ' r ON r.expense_id=h.id'
             . ' JOIN kons_tr_kasbon_project_header k ON k.id=h.id_header LEFT JOIN users u ON u.id_user=h.created_by'
             . ' WHERE h.flow_version=2' . ($finance ? '' : ' AND h.created_by=?') . ' ORDER BY h.created_date DESC', $finance ? [] : [$actor])->result_array();
@@ -414,15 +422,153 @@ class Expense_project_settlement
 
     public function monitoring($actor, $allowAll = false)
     {
-        $rows = $this->query('SELECT h.id,h.id_header,h.sts,h.sts_req,h.reject_reason,h.approved_date,h.selisih,h.sts_reject,h.sts_reject_manage,h.reject_reason AS finance_rejection_reason,k.deskripsi,e.id AS expense_id,e.status AS expense_status,p.id AS payment_id,p.no_request,p.status AS payment_status,p.keterangan,p.nm_company,p.jumlah'
-            . ' FROM ' . self::HEADER . ' h JOIN kons_tr_kasbon_project_header k ON k.id=h.id_header'
-            . ' LEFT JOIN ' . $this->finance . '.tr_expense e ON e.project_consultant=\'1\' AND e.no_expense_consultant=h.id'
-            . ' LEFT JOIN ' . $this->finance . '.request_payment p ON p.tipe=\'expense\' AND (p.no_doc=h.id OR (e.id IS NOT NULL AND p.ids=CAST(e.id AS CHAR)))'
-            . ' WHERE h.flow_version=2 AND h.selisih<0' . ($allowAll ? '' : ' AND h.created_by=?') . ' ORDER BY h.created_date DESC',
-            $allowAll ? [] : [$actor])->result_array();
+        $rows = $this->query(
+            'SELECT h.id, h.id_header, h.sts, h.sts_req, h.reject_reason, h.approved_date, h.selisih, '
+            . 'k.deskripsi, k.id_spk_penawaran AS spk_no, '
+            . 'COALESCE(q.company, spk.id_company) AS company_id, '
+            . 'COALESCE(qc.nm_company, sc.nm_company) AS company_name, '
+            . 'e.id AS expense_id, e.status AS expense_status '
+            . 'FROM ' . self::HEADER . ' h '
+            . 'JOIN kons_tr_kasbon_project_header k ON k.id = h.id_header '
+            . 'LEFT JOIN kons_tr_penawaran q ON q.id_quotation = k.id_penawaran '
+            . 'LEFT JOIN kons_tr_spk_penawaran spk ON spk.id_spk_penawaran = k.id_spk_penawaran '
+            . 'LEFT JOIN kons_tr_company qc ON qc.id = q.company '
+            . 'LEFT JOIN kons_tr_company sc ON sc.id = spk.id_company '
+            . 'LEFT JOIN ' . $this->finance . '.tr_expense e ON e.project_consultant = \'1\' AND e.no_expense_consultant = h.id '
+            . 'WHERE h.flow_version = 2 AND h.selisih < 0'
+            . ($allowAll ? '' : ' AND h.created_by = ?')
+            . ' ORDER BY h.created_date DESC',
+            $allowAll ? [] : [$actor]
+        )->result_array();
+
+        if (empty($rows)) {
+            return [];
+        }
+
+        $docIds = array_values(array_unique(array_column($rows, 'id')));
+        $placeholders = implode(',', array_fill(0, count($docIds), '?'));
+
+        $rpItems = $this->query(
+            'SELECT d.no_dokumen, d.decision, ph.id AS id_pengajuan, ph.no_pengajuan, '
+            . 'ph.company_nama AS h_company_nama, ph.status AS batch_status, '
+            . 'r.company_nama AS record_company_nama '
+            . 'FROM ' . $this->finance . '.tr_rp_pengajuan_d d '
+            . 'JOIN ' . $this->finance . '.tr_rp_pengajuan_h ph ON ph.id = d.id_pengajuan '
+            . 'LEFT JOIN ' . $this->finance . '.tr_rp_record r ON r.id_pengajuan = ph.id AND r.no_dokumen = d.no_dokumen '
+            . 'WHERE ph.deleted = 0 AND d.no_dokumen IN (' . $placeholders . ') '
+            . 'ORDER BY d.id ASC',
+            $docIds
+        )->result_array();
+
+        $rejectLogs = $this->query(
+            'SELECT no_dokumen, no_pengajuan, alasan '
+            . 'FROM ' . $this->finance . '.tr_rp_reject_log '
+            . 'WHERE no_dokumen IN (' . $placeholders . ') '
+            . 'ORDER BY id ASC',
+            $docIds
+        )->result_array();
+
+        $rejectMap = [];
+        foreach ($rejectLogs as $rl) {
+            $rejectMap[$rl['no_dokumen']] = [
+                'alasan'       => trim((string) $rl['alasan']),
+                'no_pengajuan' => trim((string) $rl['no_pengajuan']),
+            ];
+        }
+
+        $batchesByDoc = [];
+        foreach ($rpItems as $it) {
+            $batchesByDoc[$it['no_dokumen']][] = $it;
+        }
+
+        $rpSummary = [];
+        foreach ($docIds as $docId) {
+            $items = $batchesByDoc[$docId] ?? [];
+            $state = [
+                'rp_status'    => 'unsubmitted',
+                'no_request'   => null,
+                'company_nama' => null,
+                'rp_rejected'  => false,
+            ];
+
+            foreach ($items as $it) {
+                if ($it['batch_status'] === 'done' && $it['decision'] === 'approved') {
+                    $state['rp_status'] = 'approved';
+                    $state['no_request'] = $it['no_pengajuan'];
+                    $state['company_nama'] = $it['record_company_nama'] ?: $it['h_company_nama'];
+                    $state['rp_rejected'] = false;
+                    break;
+                }
+            }
+
+            if ($state['rp_status'] === 'unsubmitted') {
+                foreach ($items as $it) {
+                    if ($it['batch_status'] === 'pending') {
+                        $state['rp_status'] = 'pending';
+                        $state['no_request'] = $it['no_pengajuan'];
+                        $state['company_nama'] = $it['h_company_nama'];
+                        $state['rp_rejected'] = false;
+                        break;
+                    }
+                }
+            }
+
+            if ($state['rp_status'] === 'unsubmitted') {
+                $hasRejectBatch = false;
+                $lastCompany = null;
+                foreach ($items as $it) {
+                    if ($it['batch_status'] === 'done' && $it['decision'] === 'rejected') {
+                        $hasRejectBatch = true;
+                        $lastCompany = $it['h_company_nama'];
+                    }
+                }
+                if ($hasRejectBatch || isset($rejectMap[$docId])) {
+                    $state['rp_status'] = 'rejected';
+                    $state['rp_rejected'] = true;
+                    $state['no_request'] = null;
+                    if ($lastCompany) {
+                        $state['company_nama'] = $lastCompany;
+                    }
+                }
+            }
+
+            $rpSummary[$docId] = $state;
+        }
+
         foreach ($rows as &$row) {
+            $docId = $row['id'];
+            $rp = $rpSummary[$docId] ?? [
+                'rp_status'    => 'unsubmitted',
+                'no_request'   => null,
+                'company_nama' => null,
+                'rp_rejected'  => false,
+            ];
+
+            $row['rp_status'] = $rp['rp_status'];
+            $row['no_request'] = $rp['no_request'];
+            $row['rp_rejected'] = $rp['rp_rejected'];
+
+            $fallbackCompany = Expense_project_flow::normalizeConsultantCompany(
+                $row['company_id'] ?? '',
+                $row['company_name'] ?? ''
+            );
+            $row['nm_company'] = !empty($rp['company_nama'])
+                ? $rp['company_nama']
+                : ($fallbackCompany ?: null);
+
+            if ($rp['rp_rejected'] && isset($rejectMap[$docId])) {
+                $rl = $rejectMap[$docId];
+                $row['keterangan'] = $rl['no_pengajuan'] !== ''
+                    ? ($rl['alasan'] . ' (' . $rl['no_pengajuan'] . ')')
+                    : $rl['alasan'];
+            } else {
+                $row['keterangan'] = null;
+            }
+
             $row['monitoring_status'] = Expense_project_flow::reimbursementStatus($row);
         }
+        unset($row);
+
         return $rows;
     }
 
@@ -448,12 +594,12 @@ class Expense_project_settlement
         return compact('header', 'return', 'history', 'journals');
     }
 
-    public function submitReturn($id, $actor, $bankId, $date, $amount, $file)
+    public function submitReturn($id, $actor, $bankId, $date, $amount, $file, $allowAdmin = false)
     {
-        return $this->transaction(function () use ($id, $actor, $bankId, $date, $amount, $file) {
+        return $this->transaction(function () use ($id, $actor, $bankId, $date, $amount, $file, $allowAdmin) {
             $header = $this->header($id, true);
             $return = $this->one(self::RETURNS, ['expense_id' => $id], true);
-            if (!$this->isNew($header) || (string) $header['created_by'] !== (string) $actor || $return['status'] !== 'waiting_return') {
+            if (!$this->isNew($header) || (!$allowAdmin && (string) $header['created_by'] !== (string) $actor) || $return['status'] !== 'waiting_return') {
                 throw new RuntimeException('Pengembalian tidak dapat diajukan.');
             }
             if (Expense_project_flow::cents($amount) !== Expense_project_flow::cents($return['amount'])) {

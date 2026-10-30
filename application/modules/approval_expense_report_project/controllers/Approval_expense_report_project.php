@@ -33,6 +33,7 @@ class Approval_expense_report_project extends Admin_Controller
 
         $this->otherdb = $this->load->database('sendigs_finance', TRUE);
         $this->gl = $this->load->database('gl_sendigs', true);
+        $this->load->library('expense_project_settlement');
     }
 
     // View Page Function
@@ -654,7 +655,8 @@ class Approval_expense_report_project extends Admin_Controller
             'list_bank' => $get_bank,
             'ada_pph' => $ada_pph,
             'list_jurnal_pph21' => $list_jurnal_pph21,
-            'list_budgeting' => $get_spk_budgeting
+            'list_budgeting' => $get_spk_budgeting,
+            'pelapor' => (string) ($this->db->get_where('users', ['id_user' => $get_header->created_by])->row()->nm_lengkap ?? '')
         ];
 
         $this->template->set($data);
@@ -1211,25 +1213,34 @@ class Approval_expense_report_project extends Admin_Controller
             $no++;
 
             if ($item->tipe == '1') {
-                $tipe = '<span class="badge bg-red">Pengajuan Subcont</span>';
+                $tipe = '<span class="bd bd-rej">Pengajuan Subcont</span>';
             }
             if ($item->tipe == '2') {
-                $tipe = '<span class="badge bg-yellow">Pengajuan Akomodasi</span>';
+                $tipe = '<span class="bd bd-pend">Pengajuan Akomodasi</span>';
             }
             if ($item->tipe == '3') {
-                $tipe = '<span class="badge bg-blue">Pengajuan Others</span>';
+                $tipe = '<span class="bd bd-ver">Pengajuan Others</span>';
             }
             if ($item->tipe == '4') {
-                $tipe = '<span class="badge bg-cyan">Pengajuan lab</span>';
+                $tipe = '<span class="bd bd-ver">Pengajuan Lab</span>';
             }
             if ($item->tipe == '5') {
-                $tipe = '<span class="badge bg-green">Pengajuan Subcont Tenaga Ahli</span>';
+                $tipe = '<span class="bd bd-ok">Pengajuan Subcont Tenaga Ahli</span>';
             }
             if ($item->tipe == '6') {
-                $tipe = '<span class="badge bg-purple">Pengajuan Perusahaan</span>';
+                $tipe = '<span class="bd bd-appr">Pengajuan Perusahaan</span>';
             }
 
-            $action = '<a href="' . base_url('approval_expense_report_project/req_app/' . str_replace('/', '|', $item->id_header)) . '" class="btn btn-sm btn-primary"><i class="fa fa-arrow-up"></i></a>';
+            $selisih = (float) $item->selisih;
+            if ($selisih > 0) {
+                $selisih_badge = '<span class="sel-bal kas">LEBIH KASBON ' . number_format($selisih) . '</span>';
+            } elseif ($selisih < 0) {
+                $selisih_badge = '<span class="sel-bal exp">LEBIH EXPENSE ' . number_format(abs($selisih)) . '</span>';
+            } else {
+                $selisih_badge = '<span class="sel-bal balance">BALANCE</span>';
+            }
+
+            $action = '<a href="' . base_url('approval_expense_report_project/req_app/' . str_replace('/', '|', $item->id_header)) . '" class="mkb b-blue b-sm"><i class="fa fa-check"></i></a>';
 
             $hasil[] = [
                 'no' => $no,
@@ -1243,6 +1254,7 @@ class Approval_expense_report_project extends Admin_Controller
                 'keterangan' => $item->deskripsi,
                 'tipe' => $tipe,
                 'nominal' => number_format($item->total_expense_report),
+                'selisih' => $selisih_badge,
                 'action' => $action
             ];
         }
@@ -2564,6 +2576,17 @@ class Approval_expense_report_project extends Admin_Controller
     {
         $post = $this->input->post();
 
+        $header_flow = $this->db->get_where('kons_tr_expense_report_project_header', ['id_header' => $post['id_header'] ?? ''])->row_array();
+        if ($header_flow && $this->expense_project_settlement->isNew($header_flow)) {
+            try {
+                $this->expense_project_settlement->approve($header_flow['id'], $this->auth->user_id());
+                echo json_encode(['status' => 1, 'msg' => 'Expense data has been approved !']);
+            } catch (Throwable $error) {
+                echo json_encode(['status' => 0, 'msg' => $error->getMessage()]);
+            }
+            return;
+        }
+
         if (empty($post['jurnal']) || !is_array($post['jurnal'])) {
             echo json_encode([
                 'status' => 0,
@@ -2742,6 +2765,17 @@ class Approval_expense_report_project extends Admin_Controller
     {
         $id_header = $this->input->post('id_header');
         $reject_reason = $this->input->post('reject_reason');
+
+        $header_flow = $this->db->get_where('kons_tr_expense_report_project_header', ['id_header' => $id_header])->row_array();
+        if ($header_flow && $this->expense_project_settlement->isNew($header_flow)) {
+            try {
+                $this->expense_project_settlement->reject($header_flow['id'], $this->auth->user_id(), (string) $reject_reason);
+                echo json_encode(['status' => 1, 'msg' => 'Expense data has been rejected !']);
+            } catch (Throwable $error) {
+                echo json_encode(['status' => 0, 'msg' => $error->getMessage()]);
+            }
+            return;
+        }
 
         $this->db->trans_begin();
 

@@ -7,6 +7,9 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css">
 <link rel="stylesheet" href="<?= base_url('assets/css/expense_report_project.css') ?>">
+<link rel="stylesheet" href="<?= base_url('assets/css/erp_mock.css') ?>">
+
+<div class="mk">
 
 <!-- SPK & Project Information Card (Read-Only) -->
 <div class="erp-card">
@@ -43,7 +46,7 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
                 <span class="erp-meta-value"><?= !empty($list_budgeting->nm_project) ? $list_budgeting->nm_project : $list_budgeting->nama_project ?></span>
             </div>
             <div class="erp-meta-item">
-                <span class="erp-meta-label">Waktu Pelaksanaan</span>
+                <span class="erp-meta-label">Periode Pelaksanaan</span>
                 <span class="erp-meta-value">
                     <span class="erp-period-pill">
                         <i class="fa fa-calendar"></i> <?= $list_budgeting->waktu_from ?> &nbsp;&mdash;&nbsp; <?= $list_budgeting->waktu_to ?>
@@ -257,6 +260,8 @@ $ENABLE_DELETE  = has_permission('Expense_Report_Project.Delete');
     <a href="<?= base_url('expense_report_project') ?>" class="erp-btn erp-btn-default">
         <i class="fa fa-arrow-left"></i> Kembali ke Daftar SPK
     </a>
+</div>
+
 </div>
 
 <script src="<?= base_url('assets/js/autoNumeric.js'); ?>"></script>
