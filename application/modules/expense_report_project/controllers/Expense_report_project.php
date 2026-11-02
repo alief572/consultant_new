@@ -2355,8 +2355,8 @@ class Expense_report_project extends Admin_Controller
             }
 
             $kasbon_url = urlencode(str_replace('/', '|', $item->id_header));
-            $aksi = '<div style="display:flex;gap:6px;">'
-                . '<a href="' . base_url('expense_report_project/view_expense_subcont/' . $kasbon_url . '?print=1') . '" target="_blank" class="mkb b-out b-sm" title="Cetak" aria-label="Cetak"><i class="fa fa-print"></i></a>';
+            // Tombol cetak disembunyikan sampai format print tersedia
+            $aksi = '<div style="display:flex;gap:6px;">';
             if ($item->sts === null && $item->sts_req === null) {
                 $aksi .= '<a href="' . base_url('expense_report_project/edit_expense_subcont/' . $kasbon_url) . '" class="mkb b-amber b-sm" title="' . ($is_rejected ? 'Revisi' : 'Edit') . '"><i class="fa fa-undo"></i> ' . ($is_rejected ? 'Revisi' : 'Edit') . '</a>';
             } else {
