@@ -2841,6 +2841,19 @@ class Approval_expense_report_project extends Admin_Controller
         $post = $this->input->post();
 
         $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $post['id_expense']])->row();
+
+        // Laporan flow baru: preview pakai library yang sama dengan approve()
+        $header_flow = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $post['id_expense']])->row_array();
+        if ($header_flow && $this->expense_project_settlement->isNew($header_flow)) {
+            try {
+                $rows = $this->expense_project_settlement->preview($header_flow['id_header']);
+                echo json_encode($this->expense_project_settlement->previewResponse($rows, $header_flow['id'], $header_flow['id_header']));
+            } catch (Throwable $error) {
+                echo json_encode(['hasil' => '<tr><td colspan="7">' . html_escape($error->getMessage()) . '</td></tr>', 'ttl_debit' => 0, 'ttl_kredit' => 0]);
+            }
+            return;
+        }
+
         $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $get_expense->id_header])->row();
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_kasbon->id_penawaran])->row();
         $get_company = $this->db->get_where('kons_tr_company', ['id' => $get_penawaran->company])->row();
