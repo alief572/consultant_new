@@ -297,7 +297,12 @@ $('#return-submit-form, #return-verify-form').on('submit', function (event) {
             if (result.status === 1) {
                 succeeded = true;
                 feedback.attr('data-kind', 'success').text(result.pesan);
-                setTimeout(function() { window.location.reload(); }, 1000);
+                // Setelah kirim bukti, kembali ke daftar; reload akan membuka form verifikasi untuk admin.
+                var isSubmit = form.id === 'return-submit-form';
+                setTimeout(function() {
+                    if (isSubmit) window.location.href = '<?= site_url('expense_report_project') ?>';
+                    else window.location.reload();
+                }, 1000);
             } else {
                 feedback.attr('data-kind', 'error').text(result.pesan || 'Data belum tersimpan. Periksa isian lalu coba lagi.').trigger('focus');
             }
