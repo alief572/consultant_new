@@ -145,3 +145,6 @@
 .nobon { color: #d9444b; font-size: 10.5px; font-weight: 600; display: block; margin-top: 2px; }
 .erp-table tr.g td { background: #e2f6ea !important; color: #12874a; font-weight: 600; }
 .erp-table tr.rd td { background: #fbe7e8 !important; color: #c0343b; font-weight: 600; }
+.mk .dt-top select, .mk .dt-top input { height: 28px; border: 1px solid var(--inline); border-radius: 3px; background: var(--in, #fff); color: var(--text); font: inherit; font-size: 12px; padding: 0 6px; }
+.mk .dt-top input { width: 170px; }
+.mk .pg { display: flex; gap: 4px; } .mk .pg span { border: 1px solid var(--inline); border-radius: 3px; padding: 2px 9px; font-size: 11px; cursor: pointer; } .mk .pg span.cur { background: #f0f0f0; font-weight: 700; color: #7a5200; border-color: #e0c680; }

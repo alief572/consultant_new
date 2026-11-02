@@ -5,39 +5,30 @@ $returnBadges = ['waiting_return' => 'bd-pend', 'waiting_verification' => 'bd-ve
 $counts = array_count_values(array_column($returns, 'return_status'));
 $returnTabs = ['waiting_return' => 'Perlu Upload', 'waiting_verification' => 'Menunggu Verifikasi', 'completed' => 'Selesai'];
 if ($finance) { $returnLabels['completed'] = 'Terverifikasi'; }
+$financeTabs = ['waiting_verification' => 'Menunggu Verifikasi', 'completed' => 'Terverifikasi', 'waiting_return' => 'Menunggu Pengembalian'];
 $userStatusLabels = ['waiting_return' => 'Menunggu Pengembalian', 'waiting_verification' => 'Menunggu Verifikasi', 'completed' => 'Selesai'];
 $isAdminList = method_exists($this->auth, 'is_admin') && $this->auth->is_admin();
 ?>
 <?php if ($finance): ?><link rel="stylesheet" href="<?= base_url('assets/css/expense_report_project.css') ?>">
-<link rel="stylesheet" href="<?= base_url('assets/css/erp_mock.css') ?>"><?php endif; ?>
-<section class="<?= $finance ? 'mk card' : '' ?> erp-list" data-erp-list <?= !$finance ? 'data-erp-active-status="waiting_return"' : '' ?> aria-labelledby="return-list-title">
+<link rel="stylesheet" href="<?= base_url('assets/css/erp_mock.css') . '?v=' . filemtime(FCPATH . 'assets/css/erp_mock.css') ?>"><?php endif; ?>
+<?php if ($finance): ?><div class="mk"><?php endif; ?>
+<section class="<?= $finance ? 'card' : '' ?> erp-list" data-erp-list data-erp-active-status="<?= $finance ? 'waiting_verification' : 'waiting_return' ?>" data-erp-page-size-default="10" aria-labelledby="return-list-title">
     <div class="card-h">
         <span id="return-list-title"><i class="fa fa-undo"></i> <?= $finance ? 'Verifikasi uang pengembalian' : 'Daftar Piutang Kelebihan Kasbon' ?></span>
     </div>
     <?php if ($finance): ?><p class="hint" style="margin: -6px 0 10px;">Periksa bukti dan mutasi rekening sebelum menutup piutang kasbon.</p><?php endif; ?>
-    <?php if (!$finance): ?>
+    <?php $activeTab = $finance ? 'waiting_verification' : 'waiting_return'; ?>
     <div class="pills" role="tablist" aria-label="Status pengembalian kasbon">
-        <?php foreach ($returnTabs as $key => $label): ?>
-        <button type="button" id="return-status-<?= $key ?>" role="tab" data-erp-status-tab="<?= $key ?>" data-erp-empty-label="<?= html_escape('Tidak ada pengembalian pada tab ' . $label) ?>" aria-controls="return-results" aria-selected="<?= $key === 'waiting_return' ? 'true' : 'false' ?>" tabindex="<?= $key === 'waiting_return' ? '0' : '-1' ?>"><?= html_escape($label) ?> <span class="cnt"><?= $counts[$key] ?? 0 ?></span></button>
+        <?php foreach ($finance ? $financeTabs : $returnTabs as $key => $label): ?>
+        <button type="button" id="return-status-<?= $key ?>" role="tab" data-erp-status-tab="<?= $key ?>" data-erp-empty-label="<?= html_escape('Tidak ada pengembalian pada tab ' . $label) ?>" aria-controls="return-results" aria-selected="<?= $key === $activeTab ? 'true' : 'false' ?>" tabindex="<?= $key === $activeTab ? '0' : '-1' ?>"><?= html_escape($label) ?> <span class="cnt"><?= $counts[$key] ?? 0 ?></span></button>
         <?php endforeach; ?>
     </div>
-    <?php endif; ?>
     <div class="dt-top">
-        <p class="erp-list-count" role="status" aria-live="polite" style="margin: 0;"><span data-erp-visible><?= $finance ? count($returns) : ($counts['waiting_return'] ?? 0) ?></span> dari <?= count($returns) ?> laporan</p>
-        <div class="search-inline">
-            <label for="return-search" style="margin: 0; font-weight: 400;">Cari pengembalian</label>
-            <input id="return-search" class="in" style="width: 220px; min-height: 28px; padding: 2px 6px;" type="search" data-erp-search placeholder="No. dokumen, pemohon, atau keperluan" aria-controls="return-table" autocomplete="off">
-        </div>
-        <?php if ($finance): ?><div class="search-inline">
-            <label for="return-status-filter" style="margin: 0; font-weight: 400;">Status pengembalian</label>
-            <select id="return-status-filter" class="in erp-toolbar-select" style="width: auto; min-height: 28px; padding: 2px 6px;" data-erp-status aria-controls="return-table">
-                <option value="">Semua status (<?= count($returns) ?>)</option>
-                <?php foreach ($returnLabels as $key => $label): ?><option value="<?= $key ?>"><?= html_escape($label) ?> (<?= $counts[$key] ?? 0 ?>)</option><?php endforeach; ?>
-            </select>
-        </div><?php endif; ?>
+        <label>Show <select data-erp-page-size aria-controls="return-table"><option>10</option><option>25</option><option>50</option></select> entries per page</label>
+        <label>Search: <input id="return-search" type="search" data-erp-search aria-controls="return-table" autocomplete="off"></label>
     </div>
-    <div class="tw" <?= $finance ? 'role="region" aria-label="Daftar pengembalian kasbon, geser untuk melihat semua kolom"' : 'id="return-results" data-erp-results role="tabpanel" aria-labelledby="return-status-waiting_return"' ?> tabindex="0">
-        <table id="return-table" class="dt <?= $finance ? '' : 'pu' ?>">
+    <div class="tw" id="return-results" data-erp-results role="tabpanel" aria-labelledby="return-status-<?= $activeTab ?>" tabindex="0">
+        <table id="return-table" class="dt pu">
             <?php if ($finance): ?>
             <thead><tr><th scope="col">Expense / Kasbon</th><th scope="col" class="erp-money">Sisa kasbon (Rp)</th><th scope="col">Status</th><th scope="col">Pemohon</th><th scope="col">Keperluan</th><th scope="col">Bukti dikirim</th><th scope="col">Catatan Finance</th><th scope="col">Tindak lanjut</th></tr></thead>
             <?php else: ?>
@@ -45,7 +36,7 @@ $isAdminList = method_exists($this->auth, 'is_admin') && $this->auth->is_admin()
             <?php endif; ?>
             <tbody>
             <?php foreach ($returns as $item): $status = $item['return_status']; ?>
-                <tr data-return-status="<?= html_escape($status) ?>" data-erp-row="<?= html_escape($status) ?>" <?= !$finance && $status !== 'waiting_return' ? 'hidden' : '' ?>>
+                <tr data-return-status="<?= html_escape($status) ?>" data-erp-row="<?= html_escape($status) ?>" <?= $status !== $activeTab ? 'hidden' : '' ?>>
                     <?php if (!$finance): ?>
                     <td class="rowno"></td>
                     <td><b><?= html_escape($item['id']) ?></b></td>
@@ -74,5 +65,7 @@ $isAdminList = method_exists($this->auth, 'is_admin') && $this->auth->is_admin()
             </tbody>
         </table>
     </div>
+    <div class="dt-foot"><span data-erp-info></span><div class="pg" data-erp-pager></div></div>
 </section>
-<?php if ($finance): ?><script src="<?= base_url('assets/js/expense_report_project_ui.js') ?>"></script><?php endif; ?>
+<?php if ($finance): ?></div><?php endif; ?>
+<?php if ($finance): ?><script src="<?= base_url('assets/js/expense_report_project_ui.js') . '?v=' . filemtime(FCPATH . 'assets/js/expense_report_project_ui.js') ?>"></script><?php endif; ?>
