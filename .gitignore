@@ -20,7 +20,7 @@ application/config/constants.php
 !application/logs/.htaccess
 
 /vendor/
-# /uploads/*
+/uploads/*
 /assets/files/*
 /assets/pr/*
 /docker/*
@@ -40,6 +40,7 @@ Dockerfile
 graphify-out/
 patch_kasbon.patch
 scripts/
+/uploads/expense_returns/*
 /uploads/bukti_pengembalian_expense_report/*
 /uploads/bukti_penggunaan_expense/*
 /uploads/kasbon_project_bukti_penggunaan/*

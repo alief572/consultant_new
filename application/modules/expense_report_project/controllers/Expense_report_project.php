@@ -4419,7 +4419,7 @@ class Expense_report_project extends Admin_Controller
             if ($detail['return']['status'] !== 'waiting_return') {
                 throw new RuntimeException('Pengembalian tidak dapat diajukan.');
             }
-            $directory = APPPATH . 'private/expense_returns/';
+            $directory = FCPATH . 'uploads/expense_returns/';
             if (!is_dir($directory) && !mkdir($directory, 0750, true)) {
                 throw new RuntimeException('Folder bukti tidak tersedia.');
             }
@@ -4435,7 +4435,7 @@ class Expense_report_project extends Admin_Controller
             echo json_encode(['status' => 1, 'pesan' => 'Bukti dikirim. Menunggu verifikasi Finance.']);
         } catch (Throwable $error) {
             if ($file) {
-                unlink(APPPATH . 'private/expense_returns/' . basename($file));
+                unlink(FCPATH . 'uploads/expense_returns/' . basename($file));
             }
             echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
         }
@@ -4475,7 +4475,10 @@ class Expense_report_project extends Admin_Controller
                 $this->auth->restrict($this->viewPermission);
             }
             $this->expense_project_settlement->returnDetail($entry['expense_id'], $this->auth->user_id(), $finance, $isAdmin);
-            $path = APPPATH . 'private/expense_returns/' . basename($entry['file_path']);
+            $path = FCPATH . 'uploads/expense_returns/' . basename($entry['file_path']);
+            if (!is_file($path)) {
+                $path = APPPATH . 'private/expense_returns/' . basename($entry['file_path']); // file lama sebelum dipindah
+            }
             if (!is_file($path)) {
                 show_404();
                 return;
