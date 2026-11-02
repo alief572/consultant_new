@@ -215,31 +215,31 @@ class Project_budgeting extends Admin_Controller
         $this->db->from('kons_tr_penawaran_akomodasi a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
-        $get_akomodasi = $this->db->get()->result();
+        $get_akomodasi = array_values(array_filter($this->db->get()->result(), function ($r) { return !empty($r->nm_biaya); })); // skip item tanpa nama master
 
         $this->db->select('a.*, b.nm_biaya');
         $this->db->from('kons_tr_penawaran_others a');
         $this->db->join('kons_master_biaya b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
-        $get_others = $this->db->get()->result();
+        $get_others = array_values(array_filter($this->db->get()->result(), function ($r) { return !empty($r->nm_biaya); })); // skip item tanpa nama master
 
         $this->db->select('a.id, a.id_penawaran, a.qty, a.price_unit, a.total, a.price_unit_budget, a.total_budget, a.keterangan, b.isu_lingkungan as nm_item');
         $this->db->from('kons_tr_penawaran_lab a');
         $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
-        $get_lab = $this->db->get()->result();
+        $get_lab = array_values(array_filter($this->db->get()->result(), function ($r) { return !empty($r->nm_item); })); // skip item tanpa nama master
 
         $this->db->select('a.id, a.id_penawaran, a.qty, a.price_unit, a.total, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya as nm_item');
         $this->db->from('kons_tr_penawaran_subcont_tenaga_ahli a');
         $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
-        $get_subcont_tenaga_ahli = $this->db->get()->result();
+        $get_subcont_tenaga_ahli = array_values(array_filter($this->db->get()->result(), function ($r) { return !empty($r->nm_item); })); // skip item tanpa nama master
 
         $this->db->select('a.id, a.id_penawaran, a.qty, a.price_unit, a.total, a.price_unit_budget, a.total_budget, a.keterangan, b.nm_biaya as nm_item');
         $this->db->from('kons_tr_penawaran_subcont_perusahaan a');
         $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
         $this->db->where('a.id_penawaran', $get_spk->id_penawaran);
-        $get_subcont_perusahaan = $this->db->get()->result();
+        $get_subcont_perusahaan = array_values(array_filter($this->db->get()->result(), function ($r) { return !empty($r->nm_item); })); // skip item tanpa nama master
 
         $this->db->select('a.nm_paket');
         $this->db->from('kons_master_konsultasi_header a');
@@ -438,6 +438,7 @@ class Project_budgeting extends Admin_Controller
                 $get_akomodasi = $this->db->get()->row();
 
                 $get_item = $this->db->get_where('kons_master_biaya', ['id' => $get_akomodasi->id_item])->row();
+                if (empty($get_item->nm_biaya)) continue;
 
                 $data_insert_akomodasi[] = [
                     'id_spk_budgeting' => $id_spk_budgeting,
@@ -470,7 +471,8 @@ class Project_budgeting extends Admin_Controller
 
                 $get_item = $this->db->get_where('kons_master_biaya', ['id' => $get_others->id_item])->row();
 
-                $nm_biaya = (!empty($get_item->nm_biaya)) ? $get_item->nm_biaya : '';
+                if (empty($get_item->nm_biaya)) continue;
+                $nm_biaya = $get_item->nm_biaya;
 
                 if ($nm_biaya !== '') {
                     $data_insert_others[] = [
@@ -502,6 +504,7 @@ class Project_budgeting extends Admin_Controller
                 $this->db->join('kons_master_lab b', 'b.id = a.id_item', 'left');
                 $this->db->where('a.id', $item['id_lab']);
                 $get_lab = $this->db->get()->row();
+                if (empty($get_lab->isu_lingkungan)) continue;
 
                 $data_insert_lab[] = [
                     'id_spk_budgeting' => $id_spk_budgeting,
@@ -531,6 +534,7 @@ class Project_budgeting extends Admin_Controller
                 $this->db->join('kons_master_tenaga_ahli b', 'b.id = a.id_item', 'left');
                 $this->db->where('a.id', $item['id_subcont_tenaga_ahli']);
                 $get_subcont_tenaga_ahli = $this->db->get()->row();
+                if (empty($get_subcont_tenaga_ahli->nm_biaya)) continue;
 
                 $data_insert_subcont_tenaga_ahli[] = [
                     'id_spk_budgeting' => $id_spk_budgeting,
@@ -560,6 +564,7 @@ class Project_budgeting extends Admin_Controller
                 $this->db->join('kons_master_subcont_perusahaan b', 'b.id = a.id_item', 'left');
                 $this->db->where('a.id', $item['id_subcont_perusahaan']);
                 $get_subcont_perusahaan = $this->db->get()->row();
+                if (empty($get_subcont_perusahaan->nm_biaya)) continue;
 
                 $data_insert_subcont_perusahaan[] = [
                     'id_spk_budgeting' => $id_spk_budgeting,
