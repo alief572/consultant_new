@@ -389,6 +389,9 @@ if (!$is_in_team) {
                             echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
 
                             echo '</tr>';
+
+                            $ttl_qty_pengajuan += $qty_pengajuan;
+                            $ttl_total_pengajuan += $total_pengajuan;
                         }
                     }
 
@@ -409,6 +412,9 @@ if (!$is_in_team) {
                             echo '<td class="text-right">' . number_format($total_pengajuan, 2) . '</td>';
 
                             echo '</tr>';
+
+                            $ttl_qty_pengajuan += $qty_pengajuan;
+                            $ttl_total_pengajuan += $total_pengajuan;
                         }
                     }
                     ?>
