@@ -188,7 +188,7 @@ foreach ($banks as $bankRow) {
                     <td style="text-align: center;"><?= html_escape($row['coa']) ?></td>
                     <td style="text-align: center;"><?= html_escape($row['nm_company']) ?></td>
                     <td><?= html_escape($row['nm_coa']) ?></td>
-                    <td><?= html_escape($row['nm_coa'] . ' - ' . $header['id'] . ' - ' . $header['id_header']) ?></td>
+                    <td><?= html_escape(($row['coa'] === '1103-01-14' ? 'Piutang Kelebihan Kasbon' : $row['nm_coa']) . ' - ' . $header['id'] . ' - ' . $header['id_header']) ?></td>
                     <td class="r"><?= number_format($row['debit'], 2) ?></td>
                     <td class="r"><?= number_format($row['kredit'], 2) ?></td>
                 </tr>
