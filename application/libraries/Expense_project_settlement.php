@@ -294,7 +294,7 @@ class Expense_project_settlement
             $reference = $reference === '' ? $number : $reference;
             $row += ['no_jurnal' => $number, 'no_transaksi' => $id,
                 'jenis_transaksi' => $phase === 'RETURN' ? 'Pengembalian Expense Project' : 'Expense Report Consultant',
-                'keterangan' => ($phase === 'RETURN' && $row['coa'] === '1103-01-14' ? 'Piutang Kelebihan Kasbon' : $row['nm_coa']) . ' - ' . $id . ' - ' . $kasbonId, 'sts' => '0',
+                'keterangan' => $row['nm_coa'] . ' - ' . $id . ' - ' . $kasbonId, 'sts' => '0',
                 'created_by' => $actor, 'created_date' => date('Y-m-d H:i:s')];
             $this->write($this->finance . '.tr_jurnal', $row);
         }

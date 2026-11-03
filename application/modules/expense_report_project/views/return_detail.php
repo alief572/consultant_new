@@ -188,7 +188,7 @@ foreach ($banks as $bankRow) {
                     <td style="text-align: center;"><?= html_escape($row['coa']) ?></td>
                     <td style="text-align: center;"><?= html_escape($row['nm_company']) ?></td>
                     <td><?= html_escape($row['nm_coa']) ?></td>
-                    <td><?= html_escape(($row['coa'] === '1103-01-14' ? 'Piutang Kelebihan Kasbon' : $row['nm_coa']) . ' - ' . $header['id'] . ' - ' . $header['id_header']) ?></td>
+                    <td><?= html_escape($row['nm_coa'] . ' - ' . $header['id'] . ' - ' . $header['id_header']) ?></td>
                     <td class="r"><?= number_format($row['debit'], 2) ?></td>
                     <td class="r"><?= number_format($row['kredit'], 2) ?></td>
                 </tr>
@@ -252,7 +252,7 @@ foreach ($banks as $bankRow) {
 
 <script>
 var returnBanks = <?= json_encode($bankCoa) ?>;
-var returnPreview = {amount: <?= json_encode(number_format($amountNumber, 2)) ?>, company: <?= json_encode($companyName) ?>, kasbon: <?= json_encode($header['id_header']) ?>, today: <?= json_encode(date('d F Y')) ?>};
+var returnPreview = {amount: <?= json_encode(number_format($amountNumber, 2)) ?>, company: <?= json_encode($companyName) ?>, kasbon: <?= json_encode($header['id_header']) ?>, expense: <?= json_encode($header['id']) ?>, today: <?= json_encode(date('d F Y')) ?>};
 function renderReturnPreview() {
     var body = document.getElementById('return-preview-body');
     if (!body) { return; }
@@ -260,7 +260,7 @@ function renderReturnPreview() {
     var esc = function (v) { return $('<div>').text(v).html(); };
     body.innerHTML =
         '<tr class="g"><td style="text-align:center">' + esc(returnPreview.today) + '</td><td style="text-align:center">' + esc(bank ? bank.coa : '-') + '</td><td style="text-align:center">' + esc(returnPreview.company) + '</td><td>' + esc(bank ? bank.name : '(pilih bank)') + '</td><td>Pengembalian Kelebihan Kasbon ' + esc(returnPreview.kasbon) + '</td><td class="r">' + esc(returnPreview.amount) + '</td><td class="r">0.00</td></tr>' +
-        '<tr><td style="text-align:center">' + esc(returnPreview.today) + '</td><td style="text-align:center">1103-01-14</td><td style="text-align:center">' + esc(returnPreview.company) + '</td><td>Piutang Lain-lain Konsultan</td><td>Pelunasan Piutang Kelebihan Kasbon (' + esc(returnPreview.kasbon) + ')</td><td class="r">0.00</td><td class="r">' + esc(returnPreview.amount) + '</td></tr>';
+        '<tr><td style="text-align:center">' + esc(returnPreview.today) + '</td><td style="text-align:center">1103-01-14</td><td style="text-align:center">' + esc(returnPreview.company) + '</td><td>Piutang Lain-lain Konsultan</td><td>Piutang Lain-lain Konsultan - ' + esc(returnPreview.expense) + ' - ' + esc(returnPreview.kasbon) + '</td><td class="r">0.00</td><td class="r">' + esc(returnPreview.amount) + '</td></tr>';
 }
 $('#return-bank').on('change', renderReturnPreview);
 renderReturnPreview();
