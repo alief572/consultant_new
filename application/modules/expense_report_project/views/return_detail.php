@@ -6,7 +6,7 @@ $labels = [
 ];
 $isAdmin = method_exists($this->auth, 'is_admin') && $this->auth->is_admin();
 $canSubmit = (!$finance || $isAdmin) && $return['status'] === 'waiting_return' && (has_permission('Expense_Report_Project.Manage') || $isAdmin);
-$canVerify = ($finance || $isAdmin) && $return['status'] === 'waiting_verification' && ($isAdmin || (string) $header['created_by'] !== (string) $this->auth->user_id());
+$canVerify = $finance && $return['status'] === 'waiting_verification' && ($isAdmin || (string) $header['created_by'] !== (string) $this->auth->user_id());
 
 $status = $return['status'];
 $badgeClass = ['waiting_return' => 'bd-pend', 'waiting_verification' => 'bd-ver', 'completed' => 'bd-ok'][$status] ?? 'bd-draft';

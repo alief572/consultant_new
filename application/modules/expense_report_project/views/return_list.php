@@ -7,7 +7,6 @@ $returnTabs = ['waiting_return' => 'Perlu Upload', 'waiting_verification' => 'Me
 if ($finance) { $returnLabels['completed'] = 'Terverifikasi'; }
 $financeTabs = ['waiting_verification' => 'Menunggu Verifikasi', 'completed' => 'Terverifikasi', 'waiting_return' => 'Menunggu Pengembalian'];
 $userStatusLabels = ['waiting_return' => 'Menunggu Pengembalian', 'waiting_verification' => 'Menunggu Verifikasi', 'completed' => 'Selesai'];
-$isAdminList = method_exists($this->auth, 'is_admin') && $this->auth->is_admin();
 ?>
 <?php if ($finance): ?><link rel="stylesheet" href="<?= base_url('assets/css/expense_report_project.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/erp_mock.css') . '?v=' . filemtime(FCPATH . 'assets/css/erp_mock.css') ?>"><?php endif; ?>
@@ -46,7 +45,7 @@ $isAdminList = method_exists($this->auth, 'is_admin') && $this->auth->is_admin()
                     <td><?= html_escape(substr((string) ($item['approved_date'] ?? ''), 0, 10) ?: '-') ?></td>
                     <td class="num">Rp <?= number_format((float) str_replace(',', '', $item['amount'])) ?></td>
                     <td><span class="bd <?= $returnBadges[$status] ?? 'bd-draft' ?>"><?= html_escape($userStatusLabels[$status] ?? $status) ?></span></td>
-                    <td><a class="mkb <?= $status === 'waiting_return' ? 'b-amber' : 'b-out' ?> b-sm" href="<?= site_url('expense_report_project/return_detail') . '?id=' . rawurlencode($item['id']) . ($isAdminList ? '&amp;finance=1' : '') ?>" aria-label="<?= html_escape('Buka pengembalian ' . $item['id']) ?>"><?= $status === 'waiting_return' ? '<i class="fa fa-upload"></i> Upload Bukti' : '<i class="fa fa-eye"></i> Lihat' ?></a></td>
+                    <td><a class="mkb <?= $status === 'waiting_return' ? 'b-amber' : 'b-out' ?> b-sm" href="<?= site_url('expense_report_project/return_detail') . '?id=' . rawurlencode($item['id']) ?>" aria-label="<?= html_escape('Buka pengembalian ' . $item['id']) ?>"><?= $status === 'waiting_return' ? '<i class="fa fa-upload"></i> Upload Bukti' : '<i class="fa fa-eye"></i> Lihat' ?></a></td>
                     <?php else: ?>
                     <td><b><?= html_escape($item['id']) ?></b><br><span class="pill"><i class="fa fa-tag"></i> <?= html_escape($item['id_header']) ?></span></td>
                     <td class="num erp-money"><?= number_format($item['amount'], 2) ?></td>

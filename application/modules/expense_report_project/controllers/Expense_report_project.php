@@ -4386,7 +4386,7 @@ class Expense_report_project extends Admin_Controller
     public function return_detail()
     {
         $isAdmin = $this->auth->is_admin();
-        $finance = $this->input->get('finance') === '1' || $isAdmin;
+        $finance = $this->input->get('finance') === '1';
         $this->auth->restrict($finance && !$isAdmin ? 'Expense_Project_Return.Verify' : $this->viewPermission);
         try {
             $data = $this->expense_project_settlement->returnDetail($this->input->get('id'), $this->auth->user_id(), $finance, $isAdmin);
