@@ -589,7 +589,7 @@ class Expense_project_settlement
             $bank = $this->one($this->finance . '.ms_bank', ['id' => $return['bank_id']]);
             $amount = Expense_project_flow::cents($return['amount']);
             $journals[] = $this->journalRow($bank['coa_bank'], $amount, 0, $company, $return['transfer_date']);
-            $journals[] = $this->journalRow('1103-01-15', 0, $amount, $company, $return['transfer_date']);
+            $journals[] = $this->journalRow('1103-01-14', 0, $amount, $company, $return['transfer_date']);
         }
         return compact('header', 'return', 'history', 'journals');
     }
