@@ -187,7 +187,7 @@ class Expense_report_project_model extends BF_Model
         $total_kasbon = $post['total_kasbon'];
         $total_expense = $post['total_expense'];
 
-        $id_bank = $post['id_bank'];
+        $id_bank = $post['id_bank'] ?? '';
 
         $get_expense_header = $this->db->get_where('kons_tr_expense_report_project_header', array('id_header' => $id_header))->row();
 
@@ -603,8 +603,8 @@ class Expense_report_project_model extends BF_Model
             $arr_coa_jurnal = ['5101-01-03', '1103-01-14'];
 
             $coa_bank = '';
-            if ($post['id_bank'] !== '') {
-                $get_bank = $this->sendigs->get_where('ms_bank', ['id' => $post['id_bank']])->row();
+            if ($id_bank !== '') {
+                $get_bank = $this->sendigs->get_where('ms_bank', ['id' => $id_bank])->row();
 
                 $coa_bank = $get_bank->coa_bank;
                 array_push($arr_coa_jurnal, $get_bank->coa_bank);
