@@ -33,6 +33,7 @@ class Approval_expense_report_project extends Admin_Controller
 
         $this->otherdb = $this->load->database('sendigs_finance', TRUE);
         $this->gl = $this->load->database('gl_sendigs', true);
+        $this->load->library('expense_project_settlement');
     }
 
     // View Page Function
@@ -654,7 +655,8 @@ class Approval_expense_report_project extends Admin_Controller
             'list_bank' => $get_bank,
             'ada_pph' => $ada_pph,
             'list_jurnal_pph21' => $list_jurnal_pph21,
-            'list_budgeting' => $get_spk_budgeting
+            'list_budgeting' => $get_spk_budgeting,
+            'pelapor' => (string) ($this->db->get_where('users', ['id_user' => $get_header->created_by])->row()->nm_lengkap ?? '')
         ];
 
         $this->template->set($data);
@@ -1211,25 +1213,34 @@ class Approval_expense_report_project extends Admin_Controller
             $no++;
 
             if ($item->tipe == '1') {
-                $tipe = '<span class="badge bg-red">Pengajuan Subcont</span>';
+                $tipe = '<span class="bd bd-rej">Pengajuan Subcont</span>';
             }
             if ($item->tipe == '2') {
-                $tipe = '<span class="badge bg-yellow">Pengajuan Akomodasi</span>';
+                $tipe = '<span class="bd bd-pend">Pengajuan Akomodasi</span>';
             }
             if ($item->tipe == '3') {
-                $tipe = '<span class="badge bg-blue">Pengajuan Others</span>';
+                $tipe = '<span class="bd bd-ver">Pengajuan Others</span>';
             }
             if ($item->tipe == '4') {
-                $tipe = '<span class="badge bg-cyan">Pengajuan lab</span>';
+                $tipe = '<span class="bd bd-ver">Pengajuan Lab</span>';
             }
             if ($item->tipe == '5') {
-                $tipe = '<span class="badge bg-green">Pengajuan Subcont Tenaga Ahli</span>';
+                $tipe = '<span class="bd bd-ok">Pengajuan Subcont Tenaga Ahli</span>';
             }
             if ($item->tipe == '6') {
-                $tipe = '<span class="badge bg-purple">Pengajuan Perusahaan</span>';
+                $tipe = '<span class="bd bd-appr">Pengajuan Perusahaan</span>';
             }
 
-            $action = '<a href="' . base_url('approval_expense_report_project/req_app/' . str_replace('/', '|', $item->id_header)) . '" class="btn btn-sm btn-primary"><i class="fa fa-arrow-up"></i></a>';
+            $selisih = (float) $item->selisih;
+            if ($selisih > 0) {
+                $selisih_badge = '<span class="sel-bal kas">LEBIH KASBON ' . number_format($selisih) . '</span>';
+            } elseif ($selisih < 0) {
+                $selisih_badge = '<span class="sel-bal exp">LEBIH EXPENSE ' . number_format(abs($selisih)) . '</span>';
+            } else {
+                $selisih_badge = '<span class="sel-bal balance">BALANCE</span>';
+            }
+
+            $action = '<a href="' . base_url('approval_expense_report_project/req_app/' . str_replace('/', '|', $item->id_header)) . '" class="mkb b-blue b-sm"><i class="fa fa-check"></i></a>';
 
             $hasil[] = [
                 'no' => $no,
@@ -1243,6 +1254,7 @@ class Approval_expense_report_project extends Admin_Controller
                 'keterangan' => $item->deskripsi,
                 'tipe' => $tipe,
                 'nominal' => number_format($item->total_expense_report),
+                'selisih' => $selisih_badge,
                 'action' => $action
             ];
         }
@@ -2564,6 +2576,17 @@ class Approval_expense_report_project extends Admin_Controller
     {
         $post = $this->input->post();
 
+        $header_flow = $this->db->get_where('kons_tr_expense_report_project_header', ['id_header' => $post['id_header'] ?? ''])->row_array();
+        if ($header_flow && $this->expense_project_settlement->isNew($header_flow)) {
+            try {
+                $this->expense_project_settlement->approve($header_flow['id'], $this->auth->user_id());
+                echo json_encode(['status' => 1, 'msg' => 'Expense data has been approved !']);
+            } catch (Throwable $error) {
+                echo json_encode(['status' => 0, 'msg' => $error->getMessage()]);
+            }
+            return;
+        }
+
         if (empty($post['jurnal']) || !is_array($post['jurnal'])) {
             echo json_encode([
                 'status' => 0,
@@ -2584,7 +2607,7 @@ class Approval_expense_report_project extends Admin_Controller
             'sts' => 1,
             'sts_req' => null,
             'reject_reason' => '',
-            'id_bank' => $post['bank'],
+            'id_bank' => $post['bank'] ?? $get_header->id_bank ?? null,
             'approved_by' => $this->auth->user_id(),
             'approved_date' => date('Y-m-d H:i:s')
         ], ['id_header' => $id_header]);
@@ -2607,7 +2630,7 @@ class Approval_expense_report_project extends Admin_Controller
                     'nm_coa' => $item_jurnal['nm_coa'],
                     'debit' => $item_jurnal['debit'],
                     'kredit' => $item_jurnal['kredit'],
-                    'keterangan' => $item_jurnal['nm_coa'] . ' - ' . $get_header->id,
+                    'keterangan' => $item_jurnal['nm_coa'] . ' - ' . $get_header->id . ' - ' . $get_header->id_header,
                     'sts' => 0,
                     'no_transaksi' => $get_header->id,
                     'jenis_transaksi' => 'Expense Report Consultant',
@@ -2669,18 +2692,52 @@ class Approval_expense_report_project extends Admin_Controller
         // }
 
         if ($get_header->selisih < 0) {
-            $insert_request_payment = $this->db->insert('request_payment', array(
+            $lebih_bayar = ($get_header->selisih * -1);
+            $desc = 'Reimbursement / Lebih Bayar Kasbon ' . $get_header->id_header . ' - ' . $get_kasbon->deskripsi;
+            $this->otherdb->insert('tr_expense', [
                 'no_doc' => $get_header->id,
-                'nama' => $get_user->nm_lengkap,
                 'tgl_doc' => date('Y-m-d', strtotime($get_header->created_date)),
-                'keperluan' => $get_kasbon->deskripsi,
-                'tipe' => 'expense',
-                'jumlah' => ($get_header->selisih * -1),
+                'nama' => $get_user->nm_lengkap,
+                'status' => 2,
                 'created_by' => $get_user->username,
                 'created_on' => date('Y-m-d H:i:s'),
-                'ids' => $get_header->id,
-                'currency' => 'IDR'
-            ));
+                'approved_by' => (string) $this->auth->user_id(),
+                'approved_on' => date('Y-m-d H:i:s'),
+                'jumlah' => $lebih_bayar,
+                'kurang_bayar' => $lebih_bayar,
+                'total_kasbon' => $get_header->total_kasbon,
+                'informasi' => mb_substr('Lebih Bayar - ' . $get_kasbon->deskripsi, 0, 250),
+                'bank_id' => $get_kasbon->bank,
+                'accnumber' => $get_kasbon->bank_number,
+                'accname' => $get_kasbon->bank_account,
+                'id_kasbon' => $get_header->id_header,
+                'project_consultant' => '1',
+                'no_expense_consultant' => $get_header->id,
+                'sts_finance' => '1',
+                'app_finance_date' => date('Y-m-d H:i:s'),
+                'sts_reject' => 0,
+                'sts_reject_manage' => 0
+            ]);
+            $this->otherdb->insert('tr_expense_detail', [
+                'tanggal' => date('Y-m-d'),
+                'no_doc' => $get_header->id,
+                'deskripsi' => mb_substr($desc, 0, 2000),
+                'qty' => 1,
+                'harga' => $lebih_bayar,
+                'total_harga' => $lebih_bayar,
+                'keterangan' => mb_substr($desc, 0, 2000),
+                'status' => 2,
+                'expense' => $lebih_bayar,
+                'kasbon' => 0,
+                'qty_kasbon' => 0,
+                'nominal_kasbon' => 0,
+                'qty_expense' => 1,
+                'nominal_expense' => $lebih_bayar,
+                'created_by' => $get_user->username,
+                'created_on' => date('Y-m-d H:i:s'),
+                'id_kasbon' => $get_header->id_header,
+                'req_payment' => 0
+            ]);
         }
 
 
@@ -2708,6 +2765,17 @@ class Approval_expense_report_project extends Admin_Controller
     {
         $id_header = $this->input->post('id_header');
         $reject_reason = $this->input->post('reject_reason');
+
+        $header_flow = $this->db->get_where('kons_tr_expense_report_project_header', ['id_header' => $id_header])->row_array();
+        if ($header_flow && $this->expense_project_settlement->isNew($header_flow)) {
+            try {
+                $this->expense_project_settlement->reject($header_flow['id'], $this->auth->user_id(), (string) $reject_reason);
+                echo json_encode(['status' => 1, 'msg' => 'Expense data has been rejected !']);
+            } catch (Throwable $error) {
+                echo json_encode(['status' => 0, 'msg' => $error->getMessage()]);
+            }
+            return;
+        }
 
         $this->db->trans_begin();
 
@@ -2773,6 +2841,19 @@ class Approval_expense_report_project extends Admin_Controller
         $post = $this->input->post();
 
         $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $post['id_expense']])->row();
+
+        // Laporan flow baru: preview pakai library yang sama dengan approve()
+        $header_flow = $this->db->get_where('kons_tr_expense_report_project_header', ['id' => $post['id_expense']])->row_array();
+        if ($header_flow && $this->expense_project_settlement->isNew($header_flow)) {
+            try {
+                $rows = $this->expense_project_settlement->preview($header_flow['id_header']);
+                echo json_encode($this->expense_project_settlement->previewResponse($rows, $header_flow['id'], $header_flow['id_header']));
+            } catch (Throwable $error) {
+                echo json_encode(['hasil' => '<tr><td colspan="7">' . html_escape($error->getMessage()) . '</td></tr>', 'ttl_debit' => 0, 'ttl_kredit' => 0]);
+            }
+            return;
+        }
+
         $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $get_expense->id_header])->row();
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_kasbon->id_penawaran])->row();
         $get_company = $this->db->get_where('kons_tr_company', ['id' => $get_penawaran->company])->row();
@@ -2959,6 +3040,7 @@ class Approval_expense_report_project extends Admin_Controller
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-center">';
+                        $keterangan = $nm_coa . ' - ' . $get_expense->id . ' - ' . $item_expense->id_header_kasbon;
                         $hasil_jurnal .= $keterangan;
                         $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . '">';
                         $hasil_jurnal .= '</td>';
@@ -3013,8 +3095,8 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-center">';
-                    $hasil_jurnal .= $item_coa->nm_coa;
-                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header . '">';
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-right">';
@@ -3218,6 +3300,7 @@ class Approval_expense_report_project extends Admin_Controller
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-center">';
+                        $keterangan = $nm_coa . ' - ' . $get_expense->id . ' - ' . $item_expense->id_header_kasbon;
                         $hasil_jurnal .= $keterangan;
                         $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . '">';
                         $hasil_jurnal .= '</td>';
@@ -3275,8 +3358,8 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-center">';
-                    $hasil_jurnal .= $item_coa->nm_coa;
-                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header . '">';
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-right">';
@@ -3472,6 +3555,7 @@ class Approval_expense_report_project extends Admin_Controller
                         $hasil_jurnal .= '</td>';
 
                         $hasil_jurnal .= '<td class="text-center">';
+                        $keterangan = $nm_coa . ' - ' . $get_expense->id . ' - ' . $item_expense->id_header_kasbon;
                         $hasil_jurnal .= $keterangan;
                         $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $keterangan . '">';
                         $hasil_jurnal .= '</td>';
@@ -3528,8 +3612,8 @@ class Approval_expense_report_project extends Admin_Controller
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-center">';
-                    $hasil_jurnal .= $item_coa->nm_coa;
-                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . '">';
+                    $hasil_jurnal .= $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header;
+                    $hasil_jurnal .= '<input type="hidden" name="jurnal[' . $no_jurnal . '][keterangan]" value="' . $item_coa->nm_coa . ' - ' . $get_expense->id . ' - ' . $get_expense->id_header . '">';
                     $hasil_jurnal .= '</td>';
 
                     $hasil_jurnal .= '<td class="text-right">';

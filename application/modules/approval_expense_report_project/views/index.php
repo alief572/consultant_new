@@ -6,6 +6,7 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
 ?>
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="<?= base_url('assets/css/erp_mock.css') ?>">
 
 <style>
     .expense-approval .btn {
@@ -82,6 +83,7 @@ $ENABLE_DELETE  = has_permission('Approval_expense_Report_Project.Delete');
         </div>
     </div>
     <!-- /.box-body -->
+</div>
 </div>
 <div id="form-data"></div>
 <!-- DataTables -->

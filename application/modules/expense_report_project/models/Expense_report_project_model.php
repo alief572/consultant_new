@@ -230,7 +230,7 @@ class Expense_report_project_model extends BF_Model
                 $debit = 0;
                 $kredit = 0;
 
-                $deskripsi = $item_coa->nm_coa . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                $deskripsi = $item_coa->nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
 
                 if ($item_coa->no_perkiraan == '5101-01-03') {
                     $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id' => $id_header))->row();
@@ -279,7 +279,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -341,7 +341,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -404,7 +404,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -465,7 +465,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -526,7 +526,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -623,7 +623,7 @@ class Expense_report_project_model extends BF_Model
             foreach ($get_coa as $item_coa) {
                 $no_jurnal++;
 
-                $deskripsi = $item_coa->nm_coa . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                $deskripsi = $item_coa->nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
 
                 $debit = 0;
                 $kredit = 0;
@@ -675,7 +675,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -737,7 +737,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -800,7 +800,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -861,7 +861,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -922,7 +922,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -1015,7 +1015,7 @@ class Expense_report_project_model extends BF_Model
             foreach ($get_coa as $item_coa) {
                 $no_jurnal++;
 
-                $deskripsi = $item_coa->nm_coa . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                $deskripsi = $item_coa->nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
 
                 $debit = 0;
                 $kredit = 0;
@@ -1067,7 +1067,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -1129,7 +1129,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -1192,7 +1192,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -1253,7 +1253,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';
@@ -1314,7 +1314,7 @@ class Expense_report_project_model extends BF_Model
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-center">';
-                                $hasil_jurnal .= $item->nm_item . (!empty($id_expense) ? ' - ' . $id_expense : '');
+                                $hasil_jurnal .= $nm_coa . ' - ' . $id_expense . ' - ' . $id_header;
                                 $hasil_jurnal .= '</td>';
 
                                 $hasil_jurnal .= '<td class="text-right">';

@@ -33,13 +33,24 @@ class Expense_report_project extends Admin_Controller
 
         $this->accounting = $this->load->database('gl_sendigs', true);
         $this->sendigs = $this->load->database('sendigs_finance', true);
+        $this->load->library('expense_project_settlement');
     }
 
     // View Page Function
 
+    public function pick_spk()
+    {
+        $this->auth->restrict($this->viewPermission);
+        $this->template->title('Pilih SPK Proyek');
+        $this->template->render('pick_spk');
+    }
+
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
+        $isAdmin = $this->auth->is_admin();
+        $this->template->set('returns', $this->expense_project_settlement->listing($this->auth->user_id(), $isAdmin));
+        $this->template->set('reimbursements', $this->expense_project_settlement->monitoring($this->auth->user_id()));
         $this->template->title('Expense Report Project');
         $this->template->render('index');
     }
@@ -147,6 +158,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 1);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -161,6 +173,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_akomodasi');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 2);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -175,6 +188,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_others');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 3);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -189,6 +203,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_lab');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 4);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -203,6 +218,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_tenaga_ahli');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 5);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -217,6 +233,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_perusahaan');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.deleted_at IS NULL');
         $this->db->where('a.tipe', 6);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
@@ -886,7 +903,8 @@ class Expense_report_project extends Admin_Controller
             'data_bank' => $get_bank,
             'list_bank' => $get_bank_acc,
             'list_jurnal_pph21' => $list_jurnal_pph21,
-            'list_budgeting' => $get_spk_budgeting
+            'list_budgeting' => $get_spk_budgeting,
+            'preview_expense_id' => $this->Expense_report_project_model->preview_id_expense_report_header('format_expense')
         ];
 
         $this->template->set($data);
@@ -902,6 +920,22 @@ class Expense_report_project extends Admin_Controller
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->where('a.id_header', $id_header);
         $get_header = $this->db->get()->row();
+
+        if ($get_header && $this->expense_project_settlement->isNew((array) $get_header)) {
+            $this->auth->restrict($this->viewPermission);
+            $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+            if (!$allowManage && (string) $get_header->created_by !== (string) $this->auth->user_id()) {
+                show_error('Laporan tidak dapat diakses.', 403);
+                return;
+            }
+            try {
+                $this->expense_project_settlement->assertEditable((array) $get_header, $this->auth->user_id(), $allowManage);
+            } catch (Throwable $error) {
+                show_error(html_escape($error->getMessage()), 403);
+                return;
+            }
+        }
+
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_expense_report_bukti_pengembalian a');
@@ -1481,6 +1515,14 @@ class Expense_report_project extends Admin_Controller
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->where('a.id_header', $id_header);
         $get_header = $this->db->get()->row();
+
+        if ($get_header && $this->expense_project_settlement->isNew((array) $get_header)) {
+            if (!$this->canReadNewReport((array) $get_header)) {
+                show_error('Laporan tidak dapat diakses.', 403);
+                return;
+            }
+        }
+
 
         $this->db->select('a.*');
         $this->db->from('kons_tr_expense_report_bukti_pengembalian a');
@@ -2064,11 +2106,12 @@ class Expense_report_project extends Admin_Controller
         $search = $this->input->post('search');
 
 
-        $this->db->select('a.*, b.nm_sales, c.nm_paket as nama_project');
+        $this->db->select('a.*, b.nm_sales, b.waktu_from, b.waktu_to, c.nm_paket as nama_project');
         $this->db->from('kons_tr_spk_budgeting a');
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->join('kons_tr_kasbon_project_header d', 'd.id_spk_budgeting = a.id_spk_budgeting');
+        $this->db->where('d.metode_pembayaran', '1');
         $this->db->join('users e', 'e.id_user = d.created_by', 'left');
         $this->db->where('d.sts', 1);
         if (!empty($search)) {
@@ -2090,6 +2133,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->join('kons_tr_spk_penawaran b', 'b.id_spk_penawaran = a.id_spk_penawaran', 'left');
         $this->db->join('kons_master_konsultasi_header c', 'c.id_konsultasi_h = a.id_project', 'left');
         $this->db->join('kons_tr_kasbon_project_header d', 'd.id_spk_budgeting = a.id_spk_budgeting');
+        $this->db->where('d.metode_pembayaran', '1');
         $this->db->join('users e', 'e.id_user = d.created_by', 'left');
         $this->db->where('d.sts', 1);
         if (!empty($search)) {
@@ -2126,7 +2170,7 @@ class Expense_report_project extends Admin_Controller
 
             $ttl_expense = 0;
 
-            $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting))->result();
+            $get_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting, 'metode_pembayaran' => '1'))->result();
             foreach ($get_kasbon as $item_kas) {
                 $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', array('id_header' => $item_kas->id, 'sts' => 1))->result();
                 foreach ($get_expense as $item_exp) {
@@ -2141,6 +2185,7 @@ class Expense_report_project extends Admin_Controller
             $this->db->select('a.*');
             $this->db->from('kons_tr_expense_report_project_header a');
             $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+            $this->db->where('b.metode_pembayaran', '1');
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             $this->db->where('a.sts', 1);
             $this->db->group_by('a.id');
@@ -2153,17 +2198,20 @@ class Expense_report_project extends Admin_Controller
             $this->db->select('a.id');
             $this->db->from('kons_tr_expense_report_project_header a');
             $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+            $this->db->where('b.metode_pembayaran', '1');
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             $this->db->where('a.sts', null);
             $this->db->where('a.sts_req', null);
+            $this->db->where('a.flow_version <>', 2);
             $this->db->where('b.id IS NOT NULL');
             $check_expense_draft = $this->db->get()->num_rows();
 
-            $count_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting, 'sts' => 1))->num_rows();
+            $count_kasbon = $this->db->get_where('kons_tr_kasbon_project_header', array('id_spk_budgeting' => $item->id_spk_budgeting, 'sts' => 1, 'metode_pembayaran' => '1'))->num_rows();
 
             $this->db->select('a.id as val');
             $this->db->from('kons_tr_expense_report_project_header a');
             $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+            $this->db->where('b.metode_pembayaran', '1');
             $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
             $this->db->where('a.sts', 1);
             $count_expense = $this->db->get()->num_rows();
@@ -2182,6 +2230,7 @@ class Expense_report_project extends Admin_Controller
                 $this->db->select('a.*');
                 $this->db->from('kons_tr_expense_report_project_header a');
                 $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header', 'left');
+                $this->db->where('b.metode_pembayaran', '1');
                 $this->db->where('b.id_spk_budgeting', $item->id_spk_budgeting);
                 $check_expense = $this->db->get()->result();
 
@@ -2206,6 +2255,17 @@ class Expense_report_project extends Admin_Controller
                 $pic_kasbon[] = ucfirst($item_pic_kasbon->nm_lengkap);
             endforeach;
 
+            $new_kasbon = $this->db->query(
+                'SELECT COUNT(*) AS total FROM kons_tr_kasbon_project_header k WHERE k.id_spk_budgeting = ? AND k.sts = 1 AND k.metode_pembayaran = ? AND k.deleted_at IS NULL'
+                . ' AND NOT EXISTS (SELECT 1 FROM kons_tr_expense_report_project_header h WHERE h.id_header = k.id)',
+                [$item->id_spk_budgeting, '1']
+            )->row()->total;
+
+            $pick = '<a href="' . base_url('expense_report_project/add/' . urlencode(str_replace('/', '|', $item->id_spk_budgeting))) . '" class="mkb b-blue b-sm">Pilih SPK</a>';
+            if ($check_expense_draft > 0) {
+                $pick .= ' ' . '<button type="button" class="mkb b-amber b-sm req_app" data-id_spk_budgeting="' . html_escape($item->id_spk_budgeting) . '" title="Request Approval"><i class="fa fa-arrow-up"></i></button>';
+            }
+
             $no++;
             $hasil[] = [
                 'no' => $no,
@@ -2213,6 +2273,11 @@ class Expense_report_project extends Admin_Controller
                 'nm_customer' => $item->nm_customer,
                 'pic_kasbon' => implode(', ', $pic_kasbon),
                 'nm_project' => $item->nama_project,
+                'project_leader' => ucfirst((string) ($item->nm_project_leader ?? '')),
+                'sales' => ucfirst((string) ($item->nm_sales ?? '')),
+                'periode' => trim((string) ($item->waktu_from ?? '') . ' - ' . (string) ($item->waktu_to ?? ''), ' -'),
+                'kasbon_baru' => (int) $new_kasbon,
+                'pick' => $pick,
                 'option' => $option
             ];
         }
@@ -2221,6 +2286,107 @@ class Expense_report_project extends Admin_Controller
             'draw' => intval($draw),
             'recordsTotal' => $get_data_all->num_rows(),
             'recordsFiltered' => $get_data_all->num_rows(),
+            'data' => $hasil
+        ]);
+    }
+
+    private function applyExpenseListFilters($search)
+    {
+        $this->db->from('kons_tr_expense_report_project_header h');
+        $this->db->join('kons_tr_kasbon_project_header k', 'k.id = h.id_header');
+        $this->db->join('users u', 'u.id_user = h.created_by', 'left');
+        $this->db->join('users ua', 'ua.id_user = h.approved_by', 'left');
+        $this->db->join('users ur', 'ur.id_user = h.rejected_by', 'left');
+        $this->db->join('kons_tr_expense_project_return r', 'r.expense_id = h.id', 'left');
+        $this->db->where('k.metode_pembayaran', '1');
+        $this->db->where('k.deleted_at IS NULL');
+        if (!empty($search['value'])) {
+            $this->db->group_start();
+            $this->db->like('h.id', $search['value'], 'both');
+            $this->db->or_like('h.id_header', $search['value'], 'both');
+            $this->db->or_like('k.id_spk_penawaran', $search['value'], 'both');
+            $this->db->or_like('u.nm_lengkap', $search['value'], 'both');
+            $this->db->or_like('h.keterangan_laporan', $search['value'], 'both');
+            $this->db->or_like('k.deskripsi', $search['value'], 'both');
+            $this->db->group_end();
+        }
+    }
+
+    public function get_data_expense()
+    {
+        $this->auth->restrict($this->viewPermission);
+
+        $draw = $this->input->post('draw');
+        $start = (int) $this->input->post('start');
+        $length = (int) $this->input->post('length');
+        $search = $this->input->post('search');
+        if ($length < 1) {
+            $length = 10;
+        }
+
+        $this->db->select('h.*, k.id_spk_penawaran AS spk_no, k.deskripsi AS kasbon_deskripsi, u.nm_lengkap AS pemohon, ua.nm_lengkap AS approver, ur.nm_lengkap AS rejector, r.status AS return_status');
+        $this->applyExpenseListFilters($search);
+        $this->db->order_by('h.id', 'desc');
+        $this->db->limit($length, $start);
+        $rows = $this->db->get()->result();
+
+        $this->db->select('h.id');
+        $this->applyExpenseListFilters($search);
+        $total = $this->db->get()->num_rows();
+
+        $hasil = [];
+        $no = $start;
+        foreach ($rows as $item) {
+            $no++;
+            $status = Expense_project_flow::reportStatus((array) $item);
+            $status_map = ['Approved' => ['Disetujui', 'bd-ok'], 'Selesai' => ['Disetujui', 'bd-ok'], 'Menunggu Approval' => ['Menunggu Approval', 'bd-wait'],
+                'Ditolak' => ['Ditolak', 'bd-rej'], 'Draft' => ['Draft', 'bd-draft'], 'Menunggu Pengembalian' => ['Menunggu Pengembalian', 'bd-pend'],
+                'Menunggu Verifikasi' => ['Menunggu Verifikasi', 'bd-ver'], 'New' => ['New', 'bd-new']];
+            $status_view = $status_map[$status['label']] ?? [$status['label'], 'bd-draft'];
+            $is_approved = (string) $item->sts === '1';
+            $is_rejected = !$is_approved && $item->sts_req === null && !empty($item->reject_reason);
+
+            $keterangan = html_escape(!empty($item->keterangan_laporan) ? $item->keterangan_laporan : $item->kasbon_deskripsi);
+            if ($is_rejected) {
+                $keterangan .= '<br><span style="color:#d9444b;font-size:11px">Ditolak' . (!empty($item->rejector) ? ' ' . html_escape($item->rejector) : '') . ': ' . html_escape($item->reject_reason) . '</span>';
+            }
+            if ($is_approved && (float) $item->selisih < 0) {
+                $keterangan .= '<br><span style="color:#6b7a83;font-size:11px">Hutang expense Rp ' . number_format(abs($item->selisih)) . ' masuk Request Payment</span>';
+            }
+
+            $kasbon_url = urlencode(str_replace('/', '|', $item->id_header));
+            // Tombol cetak disembunyikan sampai format print tersedia
+            $aksi = '<div style="display:flex;gap:6px;">';
+            if ($item->sts === null && $item->sts_req === null) {
+                $aksi .= '<a href="' . base_url('expense_report_project/edit_expense_subcont/' . $kasbon_url) . '" class="mkb b-amber b-sm" title="' . ($is_rejected ? 'Revisi' : 'Edit') . '"><i class="fa fa-undo"></i> ' . ($is_rejected ? 'Revisi' : 'Edit') . '</a>';
+            } else {
+                $aksi .= '<a href="' . base_url('expense_report_project/view_expense_subcont/' . $kasbon_url) . '" class="mkb b-blue b-sm" title="Lihat" aria-label="Lihat"><i class="fa fa-eye"></i></a>';
+            }
+            $aksi .= '</div>';
+
+            $approval_name = $is_approved ? ($item->approver ?? '-') : ($is_rejected ? ($item->rejector ?? '-') : '-');
+            $approval_date = $is_approved ? $item->approved_date : ($is_rejected ? $item->rejected_date : null);
+
+            $hasil[] = [
+                'no' => $no,
+                'no_expense' => '<b>' . html_escape($item->id) . '</b>',
+                'tanggal' => date('d F Y', strtotime($item->created_date)),
+                'spk' => html_escape($item->spk_no),
+                'no_kasbon' => '<span class="pill"><i class="fa fa-tag"></i> ' . html_escape($item->id_header) . '</span>',
+                'pemohon' => html_escape($item->pemohon),
+                'total' => number_format($item->total_expense_report, 2),
+                'approval' => html_escape($approval_name),
+                'approval_date' => $approval_date ? date('d F Y H:i', strtotime($approval_date)) : '-',
+                'keterangan' => $keterangan,
+                'status' => '<span class="bd ' . $status_view[1] . '">' . html_escape($status_view[0]) . '</span>',
+                'aksi' => $aksi
+            ];
+        }
+
+        echo json_encode([
+            'draw' => intval($draw),
+            'recordsTotal' => $total,
+            'recordsFiltered' => $total,
             'data' => $hasil
         ]);
     }
@@ -2239,6 +2405,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 1);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2256,6 +2423,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 1);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2278,22 +2446,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2319,7 +2477,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -2333,7 +2491,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -2360,7 +2518,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -2405,6 +2563,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_aktifitas' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'total' => number_format($item->grand_total, 2),
@@ -2437,6 +2596,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 2);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2454,6 +2614,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 2);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2476,22 +2637,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_akomodasi->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2517,7 +2668,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -2531,7 +2682,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -2558,7 +2709,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -2572,6 +2723,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->tgl)),
                 'total' => number_format($item->grand_total, 2),
@@ -2604,6 +2756,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 3);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2621,6 +2774,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 3);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2643,22 +2797,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_others->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2684,7 +2828,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -2698,7 +2842,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -2725,7 +2869,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -2742,6 +2886,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
@@ -2774,6 +2919,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 4);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2791,6 +2937,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 4);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2813,22 +2960,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_lab->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -2854,7 +2991,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -2868,7 +3005,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -2895,7 +3032,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -2912,6 +3049,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
@@ -2944,6 +3082,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 5);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2961,6 +3100,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 5);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -2983,22 +3123,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont_tenaga_ahli->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -3024,7 +3154,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -3038,7 +3168,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -3065,7 +3195,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -3082,6 +3212,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
@@ -3114,6 +3245,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 6);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -3131,6 +3263,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->where('a.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.deleted_at IS NULL');
         $this->db->where('a.tipe', 6);
+        $this->db->where('a.metode_pembayaran', '1');
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('a.id', $search['value'], 'both');
@@ -3153,22 +3286,12 @@ class Expense_report_project extends Admin_Controller
 
         $no = 1;
         foreach ($get_kasbon_subcont_perusahaan->result() as $item) {
-            $check_expense = $this->db->select('a.*')->from('kons_tr_expense_report_project_header a')->where('a.id_header', $item->id)->get();
+            $check_expense = $this->db->select('a.*, r.status AS return_status')->from('kons_tr_expense_report_project_header a')
+                ->join('kons_tr_expense_project_return r', 'r.expense_id = a.id', 'left')
+                ->where('a.id_header', $item->id)->get();
 
-            $sts = '<button type="button" class="btn btn-sm btn-success">New</button>';
-            if ($check_expense->num_rows() > 0) {
-                $sts = '<button type="button" class="btn btn-sm btn-warning">Draft</button>';
-                if ($check_expense->row()->sts_req == 1) {
-                    $sts = '<button type="button" class="btn btn-sm btn-primary">Waiting Approval</button>';
-                } else {
-                    if ($check_expense->row()->sts == 1) {
-                        $sts = '<button type="button" class="btn btn-sm btn-success">Approved</button>';
-                    }
-                    if ($check_expense->row()->sts == 2 || ($check_expense->row()->reject_reason !== '' && $check_expense->row()->reject_reason !== null)) {
-                        $sts = '<button type="button" class="btn btn-sm btn-danger">Rejected</button>';
-                    }
-                }
-            }
+            $reportStatus = Expense_project_flow::kasbonStatus($check_expense->num_rows() > 0 ? (array) $check_expense->row() : []);
+            $sts = '<span class="bd ' . $reportStatus['style'] . '">' . html_escape($reportStatus['label']) . '</span>';
 
             $option = '
                 <div class="btn-group">
@@ -3194,7 +3317,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> View </span>
+                        <span style="font-weight: 500"> Lihat Expense (' . html_escape($check_expense->row()->id) . ') </span>
                     </div>
                 ';
 
@@ -3208,7 +3331,7 @@ class Expense_report_project extends Admin_Controller
                                 </b>
                                 </div>
                             </a>
-                            <span style="font-weight: 500"> Edit </span>
+                            <span style="font-weight: 500"> ' . (!empty($check_expense->row()->reject_reason) ? 'Revisi Expense Report' : 'Edit') . ' </span>
                         </div>
                     ';
 
@@ -3235,7 +3358,7 @@ class Expense_report_project extends Admin_Controller
                             </b>
                             </div>
                         </a>
-                        <span style="font-weight: 500"> Add Expense </span>
+                        <span style="font-weight: 500"> Buat Expense Report </span>
                     </div>
                 ';
             }
@@ -3252,6 +3375,7 @@ class Expense_report_project extends Admin_Controller
             $hasil[] = [
                 'no' => $no,
                 'req_number' => $item->id,
+                'no_expense' => ($check_expense->num_rows() > 0) ? html_escape($check_expense->row()->id) : '-',
                 'nm_biaya' => $item->deskripsi,
                 'date' => date('d F Y', strtotime($item->created_date)),
                 'total' => number_format($item->grand_total, 2),
@@ -3274,11 +3398,83 @@ class Expense_report_project extends Admin_Controller
 
     // Update Data Function
 
+    private function validateEvidenceAndReason(array $post, $existingExpenseId = null, $requireReportNote = true)
+    {
+        if ($requireReportNote && trim((string) ($post['keterangan_laporan'] ?? '')) === '') {
+            throw new RuntimeException('Keterangan Laporan wajib diisi.');
+        }
+
+        $ttlKasbon = 0;
+        $ttlExpense = 0;
+
+        foreach (($post['detail_subcont'] ?? []) as $no => $item) {
+            $qtyKasbon = (float) str_replace(',', '', $item['qty_kasbon'] ?? 0);
+            $nominalKasbon = (float) str_replace(',', '', $item['nominal_kasbon'] ?? 0);
+            $qtyExpense = (float) str_replace(',', '', $item['qty_expense'] ?? 0);
+            $nominalExpense = (float) str_replace(',', '', $item['nominal_expense'] ?? 0);
+
+            $ttlKasbon += round($qtyKasbon * $nominalKasbon, 2);
+            $ttlExpense += round($qtyExpense * $nominalExpense, 2);
+
+            if ($qtyExpense <= 0 || $nominalExpense <= 0) {
+                continue;
+            }
+
+            $hasUpload = false;
+            $field = 'bukti_penggunaan_' . $no;
+            if (isset($_FILES[$field]['name']) && is_array($_FILES[$field]['name'])) {
+                foreach ($_FILES[$field]['name'] as $i => $name) {
+                    if (!empty($name) && (int) ($_FILES[$field]['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+                        $hasUpload = true;
+                        break;
+                    }
+                }
+            }
+
+            $hasSaved = false;
+            if ($existingExpenseId !== null) {
+                $hasSaved = $this->db->where([
+                    'id_header_expense' => $existingExpenseId,
+                    'id_detail_kasbon' => $item['id_detail_kasbon'] ?? ''
+                ])->count_all_results('kons_tr_bukti_penggunaan_expense') > 0;
+            }
+
+            if (!$hasUpload && !$hasSaved) {
+                throw new RuntimeException('Bukti nota wajib diunggah untuk item nomor ' . $no . '.');
+            }
+        }
+
+        if ($requireReportNote && $ttlExpense <= 0) {
+            throw new RuntimeException('Total realisasi harus lebih dari 0.');
+        }
+
+        if (round($ttlKasbon * 100) !== round($ttlExpense * 100) && trim((string) ($post['keterangan_kurang_bayar'] ?? '')) === '') {
+            throw new RuntimeException('Keterangan Kurang Bayar / Alasan Selisih wajib diisi karena terdapat selisih antara kasbon dan expense.');
+        }
+    }
+
     public function save_expense_report()
     {
         $post = $this->input->post();
+        $this->auth->restrict($this->addPermission);
+        $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+        try {
+            list($post, $flowCalc) = $this->expense_project_settlement->prepareInput($post, $this->auth->user_id(), $allowManage);
+        } catch (Throwable $error) {
+            echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+            return;
+        }
 
         $this->db->trans_start();
+        try {
+            $this->expense_project_settlement->lockKasbon($post['id_header']);
+            list($post, $flowCalc) = $this->expense_project_settlement->prepareInput($post, $this->auth->user_id(), $allowManage);
+            $this->validateEvidenceAndReason($post);
+        } catch (Throwable $error) {
+            $this->db->trans_rollback();
+            echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+            return;
+        }
 
         $id = $this->Expense_report_project_model->generate_id_expense_report_header('format_expense');
 
@@ -3310,7 +3506,7 @@ class Expense_report_project extends Admin_Controller
         $data_bukti_penggunaan = [];
         $data_bukti_pengembalian = [];
 
-        $files2 = $_FILES['bukti_pengembalian'];
+        $files2 = ['name' => []];
         $file_count2 = count($files2['name']);
 
         $config2['upload_path'] = './uploads/bukti_pengembalian_expense_report/'; //path folder
@@ -3347,7 +3543,6 @@ class Expense_report_project extends Admin_Controller
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
-        chmod($upload_dir, 0777);
 
         $config3['upload_path'] = $upload_dir; //path folder
         $config3['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
@@ -3444,6 +3639,8 @@ class Expense_report_project extends Admin_Controller
         //     'created_date' => date('Y-m-d H:i:s')
         // ];
 
+        $ttl_kasbon = $flowCalc['advance'] / 100;
+        $ttl_expense_report = $flowCalc['actual'] / 100;
         $selisih = ($ttl_kasbon - $ttl_expense_report);
         // if(($ttl_kasbon - $ttl_expense_report) <= 0) {
         //     $selisih = ($ttl_expense_report - $ttl_kasbon);
@@ -3451,6 +3648,7 @@ class Expense_report_project extends Admin_Controller
 
         $data_insert_header = [
             'id' => $id,
+            'flow_version' => 2,
             'id_header' => $post['id_header'],
             'total_expense_report' => $ttl_expense_report,
             'total_kasbon' => $ttl_kasbon,
@@ -3458,6 +3656,9 @@ class Expense_report_project extends Admin_Controller
             'tipe' => $post['tipe'],
             'document_link' => $upload_po,
             'id_bank' => $post['bank'],
+            'keterangan_kurang_bayar' => $post['keterangan_kurang_bayar'] ?? '',
+            'keterangan_laporan' => trim((string) ($post['keterangan_laporan'] ?? '')),
+            'sts_req' => 1,
             'created_by' => $this->auth->user_id(),
             'created_date' => date('Y-m-d H:i:s')
         ];
@@ -3470,7 +3671,7 @@ class Expense_report_project extends Admin_Controller
             exit;
         }
 
-        $insert_detail = $this->db->insert_batch('kons_tr_expense_report_project_detail', $data_insert_detail);
+        $insert_detail = empty($data_insert_detail) ? true : $this->db->insert_batch('kons_tr_expense_report_project_detail', $data_insert_detail);
         if (!$insert_detail) {
             $this->db->trans_rollback();
 
@@ -3510,7 +3711,7 @@ class Expense_report_project extends Admin_Controller
             $this->db->trans_commit();
 
             $valid = 1;
-            $pesan = 'Expense data has been saved !';
+            $pesan = 'Laporan tersimpan dan masuk antrian Appr Expense Report.';
         }
 
         echo json_encode([
@@ -3526,6 +3727,29 @@ class Expense_report_project extends Admin_Controller
         $this->db->trans_start();
 
         $id = $post['id_expense'];
+        $stored = $this->expense_project_settlement->header($id, true);
+        $newFlow = $this->expense_project_settlement->isNew($stored);
+        if ($newFlow) {
+            $this->auth->restrict($this->managePermission);
+            $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+            try {
+                $this->expense_project_settlement->assertEditable($stored, $this->auth->user_id(), $allowManage);
+                $post['id_header'] = $stored['id_header'];
+                list($post, $flowCalc) = $this->expense_project_settlement->prepareInput($post, $this->auth->user_id(), $allowManage);
+            } catch (Throwable $error) {
+                $this->db->trans_rollback();
+                echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+                return;
+            }
+        }
+
+        try {
+            $this->validateEvidenceAndReason($post, $id, $newFlow);
+        } catch (Throwable $error) {
+            $this->db->trans_rollback();
+            echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+            return;
+        }
 
         $config['upload_path'] = './uploads/expense_report_project/'; //path folder
         $config['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
@@ -3541,7 +3765,7 @@ class Expense_report_project extends Admin_Controller
         $data_bukti_penggunaan = [];
         $data_bukti_pengembalian = [];
 
-        $files2 = $_FILES['bukti_pengembalian'];
+        $files2 = $newFlow ? ['name' => []] : ($_FILES['bukti_pengembalian'] ?? ['name' => []]);
         $file_count2 = count($files2['name']);
 
         $config2['upload_path'] = './uploads/bukti_pengembalian_expense_report/'; //path folder
@@ -3578,7 +3802,6 @@ class Expense_report_project extends Admin_Controller
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
-        chmod($upload_dir, 0777);
 
         $confi3['upload_path'] = $upload_dir; //path folder
         $confi3['allowed_types'] = 'jpg|jpeg|png|pdf'; //type yang dapat diakses bisa anda sesuaikan
@@ -3696,6 +3919,15 @@ class Expense_report_project extends Admin_Controller
             ];
         }
 
+        if ($newFlow) {
+            $data_insert_header['total_kasbon'] = Expense_project_flow::amount($flowCalc['advance']);
+            $data_insert_header['total_expense_report'] = Expense_project_flow::amount($flowCalc['actual']);
+            $data_insert_header['selisih'] = ($flowCalc['advance'] - $flowCalc['actual']) / 100;
+            $data_insert_header['keterangan_laporan'] = trim((string) ($post['keterangan_laporan'] ?? ''));
+            $data_insert_header['sts_req'] = 1;
+            $data_insert_header['reject_reason'] = '';
+            $this->db->delete('kons_tr_expense_report_project_detail', ['id_header_expense' => $id]);
+        }
         $update_header = $this->db->update('kons_tr_expense_report_project_header', $data_insert_header, ['id' => $post['id_expense']]);
         if (!$update_header) {
             $this->db->trans_rollback();
@@ -3743,7 +3975,7 @@ class Expense_report_project extends Admin_Controller
             $this->db->trans_commit();
 
             $valid = 1;
-            $pesan = 'Expense data has been updated !';
+            $pesan = $newFlow ? 'Laporan tersimpan dan masuk antrian Appr Expense Report.' : 'Expense data has been updated !';
         }
 
         echo json_encode([
@@ -3755,6 +3987,18 @@ class Expense_report_project extends Admin_Controller
     public function req_approval()
     {
         $id = $this->input->post('id');
+        $header = $this->db->get_where('kons_tr_expense_report_project_header', ['id_header' => $id])->row_array();
+        if ($header && $this->expense_project_settlement->isNew($header)) {
+            $this->auth->restrict($this->managePermission);
+            $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+            try {
+                $this->expense_project_settlement->requestApproval($header['id'], $this->auth->user_id(), $allowManage);
+                echo json_encode(['status' => 1, 'pesan' => 'Laporan diajukan untuk approval.']);
+            } catch (Throwable $error) {
+                echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+            }
+            return;
+        }
 
         $this->db->trans_begin();
 
@@ -3795,11 +4039,19 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('a.id');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->where('a.sts', null);
+        $this->db->where('a.flow_version <>', 2);
         $get_data_exp = $this->db->get()->result();
 
         foreach ($get_data_exp as $item) {
+            $header = $this->expense_project_settlement->header($item->id, true);
+            $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+            if ($this->expense_project_settlement->isNew($header)
+                && (!$allowManage && (string) $header['created_by'] !== (string) $this->auth->user_id())) {
+                continue;
+            }
             $data_update[] = [
                 'id' => $item->id,
                 'sts_req' => 1
@@ -3843,6 +4095,18 @@ class Expense_report_project extends Admin_Controller
         $get_expense = $this->db->get_where('kons_tr_expense_report_project_header', array('id_header' => $id))->row();
 
         if (!empty($get_expense)) {
+            if ($this->expense_project_settlement->isNew((array) $get_expense)) {
+                $this->auth->restrict($this->deletePermission);
+                $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+                try {
+                    $locked = $this->expense_project_settlement->header($get_expense->id, true);
+                    $this->expense_project_settlement->assertEditable($locked, $this->auth->user_id(), $allowManage);
+                } catch (Throwable $error) {
+                    $this->db->trans_rollback();
+                    echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+                    return;
+                }
+            }
             $get_files = $this->db->get_where('kons_tr_bukti_penggunaan_expense', ['id_header_expense' => $get_expense->id])->result();
             foreach ($get_files as $f) {
                 if (!empty($f->upload_file) && file_exists($f->upload_file)) {
@@ -3889,6 +4153,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 1);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3902,6 +4167,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_akomodasi');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 2);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3915,6 +4181,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_others');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 3);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3928,6 +4195,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_lab');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 4);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3941,6 +4209,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_tenaga_ahli');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 5);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3954,6 +4223,7 @@ class Expense_report_project extends Admin_Controller
         $this->db->select('SUM(a.total_expense_report) as ttl_expense_subcont_perusahaan');
         $this->db->from('kons_tr_expense_report_project_header a');
         $this->db->join('kons_tr_kasbon_project_header b', 'b.id = a.id_header');
+        $this->db->where('b.metode_pembayaran', '1');
         $this->db->where('a.tipe', 6);
         $this->db->where('b.id_spk_budgeting', $id_spk_budgeting);
         $this->db->group_start();
@@ -3979,6 +4249,29 @@ class Expense_report_project extends Admin_Controller
         $id = $this->input->post('id');
         $get_file = $this->db->get_where('kons_tr_bukti_penggunaan_expense', ['id' => $id])->row();
         if (!empty($get_file)) {
+            $header = $this->expense_project_settlement->header($get_file->id_header_expense);
+            if ($this->expense_project_settlement->isNew($header)) {
+                $this->auth->restrict($this->managePermission);
+                $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+                $this->db->trans_begin();
+                try {
+                    $header = $this->expense_project_settlement->header($header['id'], true);
+                    $this->expense_project_settlement->assertEditable($header, $this->auth->user_id(), $allowManage);
+                    $this->db->delete('kons_tr_bukti_penggunaan_expense', ['id' => $id]);
+                    if (!$this->db->trans_status()) {
+                        throw new RuntimeException('Bukti gagal dihapus.');
+                    }
+                    $this->db->trans_commit();
+                    if ($get_file->upload_file && is_file($get_file->upload_file)) {
+                        unlink($get_file->upload_file);
+                    }
+                    echo json_encode(['status' => 1, 'pesan' => 'Bukti penggunaan dihapus.']);
+                } catch (Throwable $error) {
+                    $this->db->trans_rollback();
+                    echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+                }
+                return;
+            }
             if (!empty($get_file->upload_file) && file_exists($get_file->upload_file)) {
                 unlink($get_file->upload_file);
             }
@@ -4014,7 +4307,187 @@ class Expense_report_project extends Admin_Controller
 
     public function set_jurnal_expense()
     {
+        $post = $this->input->post();
+        $header = $this->db->get_where('kons_tr_expense_report_project_header', ['id_header' => $post['id_header']])->row_array();
+        if (!$header || $this->expense_project_settlement->isNew($header)) {
+            try {
+                if ($header && !$this->canReadNewReport($header)) {
+                    throw new RuntimeException('Laporan tidak dapat diakses.');
+                }
+                $details = null;
+                if (!empty($post['arr_total_expense'])) {
+                    $validDetails = [];
+                    foreach ($post['arr_total_expense'] as $id => $amount) {
+                        if ($id !== 'undefined' && $id !== '' && $id !== null) {
+                            $validDetails[] = ['id_detail_kasbon' => $id, 'qty_expense' => '1', 'nominal_expense' => $amount];
+                        }
+                    }
+                    if (!empty($validDetails)) {
+                        $details = $validDetails;
+                    }
+                }
+                if (!$header) {
+                    $this->auth->restrict($this->viewPermission);
+                    $allowManage = $this->auth->is_admin() || has_permission($this->managePermission);
+                    $this->expense_project_settlement->prepareInput(['id_header' => $post['id_header'], 'detail_subcont' => ($details ?? [])], $this->auth->user_id(), $allowManage);
+                }
+                $rows = $this->expense_project_settlement->preview($post['id_header'], $details);
+                $previewExpenseId = $header['id'] ?? ($post['id_expense'] ?? '');
+                if (empty($previewExpenseId)) {
+                    $previewExpenseId = $this->Expense_report_project_model->preview_id_expense_report_header('format_expense');
+                }
+                echo json_encode($this->expense_project_settlement->previewResponse($rows, $previewExpenseId, $post['id_header']));
+            } catch (Throwable $error) {
+                echo json_encode(['hasil' => '<tr><td colspan="7">' . html_escape($error->getMessage()) . '</td></tr>', 'ttl_debit' => 0, 'ttl_kredit' => 0]);
+            }
+            return;
+        }
         $this->Expense_report_project_model->set_jurnal_expense();
+    }
+
+    private function canReadNewReport(array $header)
+    {
+        if ($this->auth->is_admin() || has_permission($this->managePermission)) {
+            return true;
+        }
+        if ((string) $header['created_by'] === (string) $this->auth->user_id()) {
+            return has_permission($this->viewPermission);
+        }
+        return has_permission('Approval_Expense_Report_Project.View')
+            || has_permission('Request_Payment.View') || has_permission('Expense_Project_Return.Verify');
+    }
+
+    private function settlementToken()
+    {
+        $token = $this->session->userdata('expense_settlement_token');
+        if (!$token) {
+            $token = bin2hex(random_bytes(32));
+            $this->session->set_userdata('expense_settlement_token', $token);
+        }
+        return $token;
+    }
+
+    private function checkSettlementToken()
+    {
+        if ($this->input->method() !== 'post' || !hash_equals($this->settlementToken(), (string) $this->input->post('settlement_token'))) {
+            throw new RuntimeException('Sesi form tidak valid. Muat ulang halaman.');
+        }
+    }
+
+    public function verification()
+    {
+        $this->auth->restrict('Expense_Project_Return.Verify');
+        $this->template->set('returns', $this->expense_project_settlement->listing($this->auth->user_id(), true));
+        $this->template->set('finance', true);
+        $this->template->title('Verifikasi Pengembalian Kasbon');
+        $this->template->render('return_list');
+    }
+
+    public function return_detail()
+    {
+        $isAdmin = $this->auth->is_admin();
+        $finance = $this->input->get('finance') === '1';
+        $this->auth->restrict($finance && !$isAdmin ? 'Expense_Project_Return.Verify' : $this->viewPermission);
+        try {
+            $data = $this->expense_project_settlement->returnDetail($this->input->get('id'), $this->auth->user_id(), $finance, $isAdmin);
+            $data['banks'] = $this->expense_project_settlement->banks();
+            $detailKasbon = $this->db->get_where('kons_tr_kasbon_project_header', ['id' => $data['header']['id_header']])->row();
+            $data['spk_no'] = $detailKasbon->id_spk_penawaran ?? '-';
+            $detailCompany = $detailKasbon ? $this->db->query('SELECT c.nm_company FROM kons_tr_penawaran p JOIN kons_tr_company c ON c.id = p.company WHERE p.id_quotation = ? LIMIT 1', [$detailKasbon->id_penawaran])->row() : null;
+            $data['company_name'] = $detailCompany->nm_company ?? '-';
+            $detailUser = $this->db->get_where('users', ['id_user' => $data['header']['created_by']])->row();
+            $data['requester'] = $detailUser->nm_lengkap ?? '-';
+            $data['finance'] = $finance;
+            $data['settlement_token'] = $this->settlementToken();
+            $this->template->set($data);
+            $this->template->title('Pengembalian Kasbon');
+            $this->template->render('return_detail');
+        } catch (Throwable $error) {
+            show_error(html_escape($error->getMessage()), 403);
+        }
+    }
+
+    public function submit_return()
+    {
+        $this->auth->restrict($this->managePermission);
+        $file = null;
+        try {
+            $this->checkSettlementToken();
+            $id = $this->input->post('expense_id');
+            $isAdmin = $this->auth->is_admin();
+            $detail = $this->expense_project_settlement->returnDetail($id, $this->auth->user_id(), false, $isAdmin);
+            if ($detail['return']['status'] !== 'waiting_return') {
+                throw new RuntimeException('Pengembalian tidak dapat diajukan.');
+            }
+            $directory = FCPATH . 'uploads/expense_returns/';
+            if (!is_dir($directory) && !mkdir($directory, 0750, true)) {
+                throw new RuntimeException('Folder bukti tidak tersedia.');
+            }
+            $this->upload->initialize(['upload_path' => $directory, 'allowed_types' => 'jpg|jpeg|png|pdf',
+                'max_size' => 2048, 'encrypt_name' => true, 'detect_mime' => true]);
+            if (!$this->upload->do_upload('return_proof')) {
+                throw new RuntimeException(strip_tags($this->upload->display_errors()));
+            }
+            $uploaded = $this->upload->data();
+            $file = $uploaded['file_name'];
+            $this->expense_project_settlement->submitReturn($id, $this->auth->user_id(), $this->input->post('bank_id'),
+                $this->input->post('transfer_date'), $this->input->post('amount'), $file, $isAdmin);
+            echo json_encode(['status' => 1, 'pesan' => 'Bukti dikirim. Menunggu verifikasi Finance.']);
+        } catch (Throwable $error) {
+            if ($file) {
+                unlink(FCPATH . 'uploads/expense_returns/' . basename($file));
+            }
+            echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+        }
+    }
+
+    public function verify_return()
+    {
+        $allowAdmin = $this->auth->is_admin();
+        if (!$allowAdmin) {
+            $this->auth->restrict('Expense_Project_Return.Verify');
+        }
+        try {
+            $this->checkSettlementToken();
+            $decision = $this->input->post('decision');
+            if (!in_array($decision, ['approve', 'reject'], true)) {
+                throw new RuntimeException('Keputusan tidak valid.');
+            }
+            $this->expense_project_settlement->verifyReturn($this->input->post('expense_id'), $this->auth->user_id(),
+                $decision === 'approve', (string) $this->input->post('note'), (array) $this->input->post('checks'), $allowAdmin);
+            echo json_encode(['status' => 1, 'pesan' => $decision === 'approve' ? 'Pengembalian terverifikasi dan jurnal disimpan.' : 'Bukti ditolak. User diminta mengunggah ulang.']);
+        } catch (Throwable $error) {
+            echo json_encode(['status' => 0, 'pesan' => $error->getMessage()]);
+        }
+    }
+
+    public function return_file($historyId)
+    {
+        $entry = $this->db->get_where('kons_tr_expense_project_return_history', ['id' => $historyId, 'action' => 'submit'])->row_array();
+        if (!$entry) {
+            show_404();
+            return;
+        }
+        try {
+            $isAdmin = $this->auth->is_admin();
+            $finance = has_permission('Expense_Project_Return.Verify') || $isAdmin;
+            if (!$finance) {
+                $this->auth->restrict($this->viewPermission);
+            }
+            $this->expense_project_settlement->returnDetail($entry['expense_id'], $this->auth->user_id(), $finance, $isAdmin);
+            $path = FCPATH . 'uploads/expense_returns/' . basename($entry['file_path']);
+            if (!is_file($path)) {
+                $path = APPPATH . 'private/expense_returns/' . basename($entry['file_path']); // file lama sebelum dipindah
+            }
+            if (!is_file($path)) {
+                show_404();
+                return;
+            }
+            $this->load->helper('download');
+            force_download(basename($path), file_get_contents($path));
+        } catch (Throwable $error) {
+            show_error('Bukti tidak dapat diakses.', 403);
+        }
     }
 
     // End Update Data Function
