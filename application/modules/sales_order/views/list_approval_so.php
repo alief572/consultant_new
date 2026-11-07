@@ -43,7 +43,7 @@ $ENABLE_DELETE  = has_permission('Sales_Order_New.Delete');
                     $check_so = $this->db->get_where('tr_sales_order', ['no_penawaran' => $data->no_penawaran])->result();
 
                     $print = '&nbsp;<a href="sales_order/print_sales_order/' . $data->no_so . '" class="btn btn-sm bg-purple" data-no_so="' . $data->no_so . '">Print SO</a>';
-                    if (count($check_so) < 1) {
+                    if (empty($check_so)) {
                         $print = '';
                     }
 
@@ -55,12 +55,12 @@ $ENABLE_DELETE  = has_permission('Sales_Order_New.Delete');
                     $check_so = $this->db->get_where('tr_sales_order', ['no_penawaran' => $data->no_penawaran])->row();
 
                     $ajukan = '';
-                    if ($data->status == '2' && count($check_so) > 0 && $ENABLE_MANAGE) {
+                    if ($data->status == '2' && !empty($check_so) && $ENABLE_MANAGE) {
                         $ajukan = '<button type="button" class="btn btn-sm btn-success ajukan" data-id_so="' . $data->no_so . '">Ajukan</button>';
                     }
 
                     $view = "";
-                    if (count($check_so) > 0) {
+                    if (!empty($check_so)) {
                         $view = "<button type='button' class='btn btn-sm btn-warning detail' title='Detail' data-no_so='" . $data->no_so . "'>View</button>";
                     }
 

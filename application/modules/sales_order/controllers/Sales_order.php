@@ -530,7 +530,7 @@ class Sales_order extends Admin_Controller
     $get_nilai_so = $this->db->query('SELECT SUM(a.harga_satuan * a.qty) AS nilai_so FROM tr_penawaran_detail a WHERE a.no_penawaran = "' . $data['no_penawaran'] . '"')->row();
 
     $get_so_before = $this->db->get_where('tr_sales_order', ['no_penawaran' => $data['no_penawaran']])->row();
-    if (count($get_so_before) > 0) {
+    if (!empty($get_so_before)) {
       $no_so = $get_so_before->no_so;
     }
 

@@ -50,7 +50,7 @@ $ENABLE_DELETE  = has_permission('List_Outstanding_PR.Delete');
 
 					$nama_user = '';
 					$get_user = $this->db->get_where('users', ['id_user' => $record->booking_by])->row();
-					if (count($get_user) > 0) {
+					if (!empty($get_user)) {
 						$nama_user = $get_user->nm_lengkap;
 					}
 

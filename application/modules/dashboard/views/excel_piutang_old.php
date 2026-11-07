@@ -1,7 +1,5 @@
 <?php
 $sroot		= $_SERVER['DOCUMENT_ROOT'];
-include $sroot."/application/libraries/PHPExcel/Classes/PHPExcel.php"; 
-include $sroot."/application/libraries/PHPExcel/Classes/PHPExcel/Writer/Excel5.php";
 
 $objPHPExcel	= new PHPExcel();
 

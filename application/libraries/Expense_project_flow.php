@@ -1,5 +1,6 @@
 <?php
 
+#[\AllowDynamicProperties]
 class Expense_project_flow
 {
     public static function returnLabels()

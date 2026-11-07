@@ -58,7 +58,7 @@
                     $tgl_invoice = '';
 
                     $get_invoice = $this->db->query("SELECT * FROM tr_invoice_po WHERE no_po LIKE '%" . $item['kode_trans'] . "%'")->row();
-                    if (count($get_invoice) > 0) {
+                    if (!empty($get_invoice)) {
                         $id_rec_invoice = $get_invoice->id;
                         $no_invoice = $get_invoice->invoice_no;
                         $tgl_invoice = date('d F Y', strtotime($get_invoice->invoice_date));
@@ -91,7 +91,7 @@
                         'kode_trans' => $item['kode_trans'],
                         'id_user' => $this->auth->user_id()
                     ])->row();
-                    if (count($checked_invoice) > 0) {
+                    if (!empty($checked_invoice)) {
                         $checked = 'checked';
                     }
 

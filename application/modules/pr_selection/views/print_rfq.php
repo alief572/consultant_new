@@ -19,7 +19,6 @@ function print_rfq($Nama_APP, $no_rfq, $koneksi, $printby){
 	$conn = mysqli_connect($KONN['host'],$KONN['user'],$KONN['pass']);
 	mysqli_select_db($conn, $KONN['db']);
 
-	include "application/libraries/MPDF572/mpdf.php"; 
 	$mpdf=new mPDF('utf-8','A4');
 
 	set_time_limit(0);

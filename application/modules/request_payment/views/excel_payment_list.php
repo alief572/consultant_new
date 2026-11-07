@@ -62,7 +62,7 @@ header("Content-Disposition: attachment; filename=Excel Payment List (" . date('
                     }
                     if ($get_request_payment->status == '1' || $get_request_payment->status == '2') {
                         $get_payment_approve = $this->db->get_where('payment_approve', ['no_doc' => $item->no_doc])->row();
-                        if (count($get_payment_approve) > 0) {
+                        if (!empty($get_payment_approve)) {
                             if ($get_payment_approve->status == '2') {
                                 echo '<div class="badge bg-green text-light">Paid</div>';
                             } else {

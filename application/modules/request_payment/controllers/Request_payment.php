@@ -430,7 +430,7 @@ class Request_payment extends Admin_Controller
 
 		$kode_bank = '';
 		$get_kode_bank = $this->db->get_where('coa_master', ['no_perkiraan' => $no_coa_bank])->row();
-		if (count($get_kode_bank) > 0) {
+		if (!empty($get_kode_bank)) {
 			$kode_bank = $get_kode_bank->kode_bank;
 		}
 

@@ -105,19 +105,19 @@ class Sales_order_model extends BF_Model
 
 			$print	= "&nbsp;<a href='" . site_url($this->uri->segment(1) . '/print_sales_order/' . $row['no_so']) . "' class='btn btn-sm bg-purple' target='_blank' title='Print Sales Order' data-role='qtip'>Print SO</a>";
 			$check_so = $this->db->get_where('tr_sales_order', ['no_penawaran' => $row['no_penawaran']])->result();
-			if (count($check_so) < 1) {
+			if (empty($check_so)) {
 				$print = '';
 			}
 
 			$check_so = $this->db->get_where('tr_sales_order', ['no_penawaran' => $row['no_penawaran']])->row();
 
 			$ajukan = '';
-			if ($row['status'] == '2' && count($check_so) > 0) {
+			if ($row['status'] == '2' && !empty($check_so)) {
 				$ajukan = '<button type="button" class="btn btn-sm btn-success ajukan" data-id_so="' . $row['no_so'] . '">Ajukan</button>';
 			}
 
 			$view = "";
-			if (count($check_so) > 0) {
+			if (!empty($check_so)) {
 				$view = "<button type='button' class='btn btn-sm btn-warning detail' title='Detail' data-no_so='" . $row['no_so'] . "'>View</button>";
 			}
 
@@ -262,19 +262,19 @@ class Sales_order_model extends BF_Model
 
 			$print	= "&nbsp;<a href='" . site_url($this->uri->segment(1) . '/print_sales_order/' . $row['no_so']) . "' class='btn btn-sm bg-purple' target='_blank' title='Print Sales Order' data-role='qtip'>Print SO</a>";
 			$check_so = $this->db->get_where('tr_sales_order', ['no_penawaran' => $row['no_penawaran']])->result();
-			if (count($check_so) < 1) {
+			if (empty($check_so)) {
 				$print = '';
 			}
 
 			$check_so = $this->db->get_where('tr_sales_order', ['no_penawaran' => $row['no_penawaran']])->row();
 
 			$ajukan = '';
-			if ($row['status'] == '2' && count($check_so) > 0) {
+			if ($row['status'] == '2' && !empty($check_so)) {
 				$ajukan = '<button type="button" class="btn btn-sm btn-success ajukan" data-id_so="' . $row['no_so'] . '">Ajukan</button>';
 			}
 
 			$view = "";
-			if (count($check_so) > 0) {
+			if (!empty($check_so)) {
 				$view = "<button type='button' class='btn btn-sm btn-warning detail' title='Detail' data-no_so='" . $row['no_so'] . "'>View</button>";
 			}
 
