@@ -23,6 +23,7 @@ if ( is_file( $file ) ) {
 }
 
 
+#[\AllowDynamicProperties]
 class SSP {
 	/**
 	 * Create the data output array for the DataTables rows
@@ -372,7 +373,7 @@ class SSP {
 		);
 	}
 	
-	static function complexJoin($request, $conn, $table, $primaryKey, $columns, $whereResult = null, $whereAll = null, $qjoin) {
+	static function complexJoin($request, $conn, $table, $primaryKey, $columns, $whereResult, $whereAll, $qjoin) {
 //        var_dump($primaryKey);exit();
         $bindings = array();
         $db = self::db($conn);

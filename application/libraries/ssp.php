@@ -18,6 +18,7 @@ $file = $_SERVER['DOCUMENT_ROOT'].'/datatables/pdo.php';
 if ( is_file( $file ) ) {
 	include( $file );
 }
+#[\AllowDynamicProperties]
 class SSP {
 	/**
 	 * Create the data output array for the DataTables rows
