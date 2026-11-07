@@ -8,4 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     '6124b4c8570aa390c21fafd04a26c69f' => $vendorDir . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
     'db356362850385d08a5381de2638b5fd' => $vendorDir . '/mpdf/mpdf/src/functions.php',
+    '0e390e0ede76bf81a5291941e6abc822' => $baseDir . '/application/libraries/Mpdf.php',
+    '90db288668865258f028c01c73c1ea6f' => $baseDir . '/application/libraries/PHPExcel.php',
 );

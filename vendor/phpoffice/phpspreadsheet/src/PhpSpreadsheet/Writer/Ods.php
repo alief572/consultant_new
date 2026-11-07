@@ -12,52 +12,28 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods\Settings;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Styles;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Thumbnails;
 use ZipStream\Exception\OverflowException;
-use ZipStream\Option\Archive;
 use ZipStream\ZipStream;
 
 class Ods extends BaseWriter
 {
     /**
      * Private PhpSpreadsheet.
-     *
-     * @var Spreadsheet
      */
-    private $spreadSheet;
+    private Spreadsheet $spreadSheet;
 
-    /**
-     * @var Content
-     */
-    private $writerPartContent;
+    private Content $writerPartContent;
 
-    /**
-     * @var Meta
-     */
-    private $writerPartMeta;
+    private Meta $writerPartMeta;
 
-    /**
-     * @var MetaInf
-     */
-    private $writerPartMetaInf;
+    private MetaInf $writerPartMetaInf;
 
-    /**
-     * @var Mimetype
-     */
-    private $writerPartMimetype;
+    private Mimetype $writerPartMimetype;
 
-    /**
-     * @var Settings
-     */
-    private $writerPartSettings;
+    private Settings $writerPartSettings;
 
-    /**
-     * @var Styles
-     */
-    private $writerPartStyles;
+    private Styles $writerPartStyles;
 
-    /**
-     * @var Thumbnails
-     */
-    private $writerPartThumbnails;
+    private Thumbnails $writerPartThumbnails;
 
     /**
      * Create a new Ods.
@@ -110,6 +86,12 @@ class Ods extends BaseWriter
         return $this->writerPartThumbnails;
     }
 
+    /** @param array<string, callable> $additionalNumberFormats */
+    public function useAdditionalNumberFormats(array $additionalNumberFormats): void
+    {
+        $this->writerPartContent->additionalNumberFormats = $additionalNumberFormats;
+    }
+
     /**
      * Save PhpSpreadsheet to file.
      *
@@ -124,6 +106,18 @@ class Ods extends BaseWriter
 
         $this->openFileHandle($filename);
 
+        // Collect all drawings from all worksheets
+        $drawingWriter = $this->getWriterPartContent()->getDrawingWriter();
+        $drawingWriter->reset(); // Reset state
+        $sheetCount = $this->spreadSheet->getSheetCount();
+        for ($i = 0; $i < $sheetCount; ++$i) {
+            $sheet = $this->spreadSheet->getSheet($i);
+            $drawingWriter->collectDrawings($sheet);
+        }
+        $drawings = $drawingWriter->getAllImageFiles();
+        // Pass image files to MetaInf writer
+        $this->getWriterPartMetaInf()->setImageFiles($drawings);
+
         $zip = $this->createZip();
 
         $zip->addFile('META-INF/manifest.xml', $this->getWriterPartMetaInf()->write());
@@ -134,11 +128,14 @@ class Ods extends BaseWriter
         $zip->addFile('meta.xml', $this->getWriterPartmeta()->write());
         $zip->addFile('mimetype', $this->getWriterPartmimetype()->write());
         $zip->addFile('styles.xml', $this->getWriterPartstyles()->write());
+        foreach ($drawings as $imagePath => $imageContent) {
+            $zip->addFile($imagePath, $imageContent);
+        }
 
         // Close file
         try {
             $zip->finish();
-        } catch (OverflowException $e) {
+        } catch (OverflowException) {
             throw new WriterException('Could not close resource.');
         }
 
@@ -147,10 +144,8 @@ class Ods extends BaseWriter
 
     /**
      * Create zip object.
-     *
-     * @return ZipStream
      */
-    private function createZip()
+    private function createZip(): ZipStream
     {
         // Try opening the ZIP file
         if (!is_resource($this->fileHandle)) {
@@ -158,19 +153,13 @@ class Ods extends BaseWriter
         }
 
         // Create new ZIP stream
-        $options = new Archive();
-        $options->setEnableZip64(false);
-        $options->setOutputStream($this->fileHandle);
-
-        return new ZipStream(null, $options);
+        return ZipStream0::newZipStream($this->fileHandle);
     }
 
     /**
      * Get Spreadsheet object.
-     *
-     * @return Spreadsheet
      */
-    public function getSpreadsheet()
+    public function getSpreadsheet(): Spreadsheet
     {
         return $this->spreadSheet;
     }
@@ -182,7 +171,7 @@ class Ods extends BaseWriter
      *
      * @return $this
      */
-    public function setSpreadsheet(Spreadsheet $spreadsheet)
+    public function setSpreadsheet(Spreadsheet $spreadsheet): static
     {
         $this->spreadSheet = $spreadsheet;
 
