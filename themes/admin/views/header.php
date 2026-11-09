@@ -144,7 +144,7 @@
               </a>
             </li>
             <li>
-              <a href="https://sendigs.com/consultant_new/assets/pdf/Modul Consultant.pdf"
+              <a href="https://sendigs.com/consultant_new/assets/pdf/Manual Book Consultant - MBK-OPR-002.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="btn btn-secondary">
