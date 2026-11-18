@@ -898,6 +898,15 @@ if (!$is_in_team) {
     $(document).on('submit', '#frm-data', function(e) {
         e.preventDefault();
 
+        if ($('input[name="metode_pembayaran"]').val() == '2' && selectedBuktiFiles.length == 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning !',
+                text: 'Bukti penggunaan wajib diupload untuk Direct Payment !'
+            });
+            return false;
+        }
+
         var deskripsi = $('textarea[name="deskripsi"]').val().trim();
         if (deskripsi == '') {
             Swal.fire({
