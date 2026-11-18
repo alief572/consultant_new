@@ -5579,6 +5579,7 @@ class Kasbon_project extends Admin_Controller
 
     public function save_kasbon_akomodasi()
     {
+        $this->_require_bukti_direct_payment();
         $post = $this->input->post();
         if (empty($post)) {
             $json = file_get_contents('php://input');
@@ -5732,6 +5733,7 @@ class Kasbon_project extends Admin_Controller
 
     public function update_kasbon_akomodasi()
     {
+        $this->_require_bukti_direct_payment();
         $post = $this->input->post();
 
         $validation_errors = $this->_validate_mandatory_kasbon($post, 'dt');
@@ -5895,6 +5897,7 @@ class Kasbon_project extends Admin_Controller
 
     public function save_kasbon_others()
     {
+        $this->_require_bukti_direct_payment();
         $post = $this->input->post();
 
         $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_others');
@@ -6041,6 +6044,7 @@ class Kasbon_project extends Admin_Controller
 
     public function save_kasbon_lab()
     {
+        $this->_require_bukti_direct_payment();
         $post = $this->input->post();
 
         $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_lab');
@@ -6168,6 +6172,7 @@ class Kasbon_project extends Admin_Controller
 
     public function save_kasbon_subcont_tenaga_ahli()
     {
+        $this->_require_bukti_direct_payment();
         $post = $this->input->post();
 
         $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_subcont_tenaga_ahli');
@@ -6295,6 +6300,7 @@ class Kasbon_project extends Admin_Controller
 
     public function save_kasbon_subcont_perusahaan()
     {
+        $this->_require_bukti_direct_payment();
         $post = $this->input->post();
 
         $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_subcont_perusahaan');
@@ -6421,6 +6427,7 @@ class Kasbon_project extends Admin_Controller
 
     public function update_kasbon_others()
     {
+        $this->_require_bukti_direct_payment();
         $post = $this->input->post();
 
         $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_others');
@@ -6572,6 +6579,7 @@ class Kasbon_project extends Admin_Controller
 
     public function update_kasbon_lab()
     {
+        $this->_require_bukti_direct_payment();
         $post = $this->input->post();
 
         $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_lab');
@@ -6707,6 +6715,7 @@ class Kasbon_project extends Admin_Controller
 
     public function update_kasbon_subcont_tenaga_ahli()
     {
+        $this->_require_bukti_direct_payment();
         $post = $this->input->post();
 
         $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_subcont_tenaga_ahli');
@@ -6842,6 +6851,7 @@ class Kasbon_project extends Admin_Controller
 
     public function update_kasbon_subcont_perusahaan()
     {
+        $this->_require_bukti_direct_payment();
         $post = $this->input->post();
 
         $validation_errors = $this->_validate_mandatory_kasbon($post, 'detail_subcont_perusahaan');
@@ -8645,6 +8655,31 @@ class Kasbon_project extends Admin_Controller
             'status' => 1,
             'result' => $html
         ]);
+    }
+
+    // Direct Payment (metode 2): bukti penggunaan wajib (file baru atau yang sudah tersimpan).
+    private function _require_bukti_direct_payment()
+    {
+        if ($this->input->post('metode_pembayaran') != '2') {
+            return;
+        }
+
+        $has_new = false;
+        if (isset($_FILES['bukti_penggunaan']['name'])) {
+            foreach ((array) $_FILES['bukti_penggunaan']['name'] as $n) {
+                if ($n !== '') {
+                    $has_new = true;
+                }
+            }
+        }
+
+        $id = $this->input->post('id_header');
+        $has_old = !empty($id) && $this->db->where('id_header_kasbon', $id)->count_all_results('kons_tr_kasbon_project_bukti_penggunaan') > 0;
+
+        if (!$has_new && !$has_old) {
+            echo json_encode(['status' => 0, 'pesan' => 'Bukti penggunaan wajib diupload untuk Direct Payment !']);
+            exit;
+        }
     }
 
     private function _upload_bukti_penggunaan($id_header)

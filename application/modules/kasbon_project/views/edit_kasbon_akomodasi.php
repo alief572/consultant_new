@@ -782,6 +782,10 @@ if (!$is_in_team) {
             $('input[name="dt[1][qty_pengajuan]"]').addClass('input-error');
         }
 
+        if ($('input[name="metode_pembayaran"]').val() == '2' && selectedBuktiFiles.length == 0 && $('.btn-del-bukti').length == 0) {
+            errors.push({ name: 'Bukti Penggunaan (wajib untuk Direct Payment)', el: $('#dropzone-bukti') });
+        }
+
         if (errors.length > 0) {
             var htmlMsg = '<div style="text-align: left; padding: 0 10px;">' +
                 '<p style="margin-bottom: 8px; font-weight: 600;">Masih ada inputan mandatory yang belum diisi:</p>' +
