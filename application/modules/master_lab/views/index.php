@@ -577,9 +577,15 @@ $ENABLE_DELETE  = has_permission('Master_Lab.Delete');
         }
     }
 
+    var labTable;
+
     function DataTables() {
-        $('#table_lab').DataTable({
-            "destroy": true,
+        // reload in place, keep current page
+        if ($.fn.DataTable.isDataTable('#table_lab')) {
+            labTable.ajax.reload(null, false);
+            return;
+        }
+        labTable = $('#table_lab').DataTable({
             "processing": true,
             "serverSide": true,
             "stateSave": false,

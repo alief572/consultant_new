@@ -181,7 +181,7 @@ $ENABLE_DELETE  = has_permission('Master_Biaya.Delete');
 									allowOutsideClick: false,
 									timer: 3000
 								}).then(() => {
-									location.reload();
+									$('#dialog-popup').modal('hide'); datatables();
 								});
 							} else {
 								Swal.fire({
