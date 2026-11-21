@@ -335,8 +335,12 @@ $ENABLE_DELETE  = has_permission('Master_Tenaga_Ahli.Delete');
     });
 
     function datatables() {
+        // reload in place, keep current page
+        if ($.fn.DataTable.isDataTable('#example1')) {
+            dataTable.ajax.reload(null, false);
+            return;
+        }
         dataTable = $('#example1').DataTable({
-            "destroy": true,
             "processing": true,
             "serverSide": true,
             "stateSave": false,
