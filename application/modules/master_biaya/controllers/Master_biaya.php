@@ -46,8 +46,9 @@ class Master_biaya extends Admin_Controller
     {
         $get_coa = $this->Master_biaya_model->get_coa_all();
 
+        $this->template->set('data_biaya', null);
         $this->template->set('list_coa', $get_coa);
-        $this->template->render('add');
+        $this->template->render('form');
     }
 
     public function edit()
@@ -59,7 +60,7 @@ class Master_biaya extends Admin_Controller
 
         $this->template->set('data_biaya', $get_biaya);
         $this->template->set('list_coa', $get_coa);
-        $this->template->render('edit');
+        $this->template->render('form');
     }
 
     public function save_biaya()
@@ -86,12 +87,12 @@ class Master_biaya extends Admin_Controller
                 $this->db->trans_rollback();
 
                 $valid = 0;
-                $pesan = 'Sorry, saving data is failed !';
+                $pesan = 'Gagal menyimpan data, silakan coba lagi!';
             } else {
                 $this->db->trans_commit();
 
                 $valid = 1;
-                $pesan = 'Saving data is success !';
+                $pesan = 'Data biaya berhasil disimpan.';
             }
         } else {
             $this->db->update('kons_master_biaya', [
@@ -109,12 +110,12 @@ class Master_biaya extends Admin_Controller
                 $this->db->trans_rollback();
 
                 $valid = 0;
-                $pesan = 'Sorry, update data is failed !';
+                $pesan = 'Gagal memperbarui data, silakan coba lagi!';
             } else {
                 $this->db->trans_commit();
 
                 $valid = 1;
-                $pesan = 'Update data is success !';
+                $pesan = 'Data biaya berhasil diperbarui.';
             }
         }
 
@@ -141,12 +142,12 @@ class Master_biaya extends Admin_Controller
             $this->db->trans_rollback();
 
             $valid = 0;
-            $pesan = 'Please try again later !';
+            $pesan = 'Gagal menghapus data, silakan coba lagi!';
         } else {
             $this->db->trans_commit();
 
             $valid = 1;
-            $pesan = 'Data has been deleted !';
+            $pesan = 'Data biaya berhasil dihapus.';
         }
 
         echo json_encode([
