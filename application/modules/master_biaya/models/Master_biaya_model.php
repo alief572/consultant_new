@@ -96,24 +96,24 @@ class Master_biaya_model extends BF_Model
             $delete = '';
 
             if (has_permission($this->ENABLE_MANAGE)) {
-                $edit = '<button type="button" class="btn btn-sm btn-warning edit_biaya_modal" data-id="' . $item->id . '" title="Edit Biaya"><i class="fa fa-pencil"></i></button>';
+                $edit = '<button type="button" class="btn-table-action-edit edit_biaya_modal" data-id="' . $item->id . '" title="Edit Data"><i class="fa fa-pencil-square-o"></i> <span>Edit</span></button>';
             }
 
             if (has_permission($this->ENABLE_DELETE)) {
-                $delete = '<button type="button" class="btn btn-sm btn-danger del_biaya" data-id="' . $item->id . '" title="Delete Biaya"><i class="fa fa-trash"></i></button>';
+                $delete = '<button type="button" class="btn-table-action-delete del_biaya" data-id="' . $item->id . '" title="Hapus Data"><i class="fa fa-trash-o"></i> <span>Hapus</span></button>';
             }
 
-            $buttons = $edit . ' ' . $delete;
+            $buttons = '<div class="text-center" style="display: inline-flex; gap: 4px;">' . $edit . $delete . '</div>';
 
             $coa = '';
             if ($item->no_coa !== null && $item->nm_coa !== null) {
-                $coa = '(' . $item->no_coa . ') - ' . $item->nm_coa;
+                $coa = '(' . htmlspecialchars($item->no_coa) . ') - ' . htmlspecialchars($item->nm_coa);
             }
 
             $hasil[] = [
                 'no' => $no,
-                'nm_biaya' => $item->nm_biaya,
-                'tipe_biaya' => $item->tipe,
+                'nm_biaya' => htmlspecialchars($item->nm_biaya),
+                'tipe_biaya' => '<span class="tipe-biaya-label">' . $item->tipe . '</span>',
                 'coa' => $coa,
                 'option' => $buttons
             ];
