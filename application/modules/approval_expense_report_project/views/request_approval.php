@@ -26,116 +26,112 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
-    .expense-review { color: #253649; }
-    .expense-review .box { border: 1px solid #dce2e9; border-top: 3px solid #d2d6de; border-radius: 10px; box-shadow: none; margin-bottom: 20px; }
-    .expense-review .box-header { padding: 18px 22px; border-bottom: 1px solid #e5e9ef; }
-    .expense-review .box-header h3 { margin: 0; font-size: 18px; font-weight: 600; }
-    .expense-review .section-note { color: #5f6b7a; font-size: 12px; margin: 6px 0 0; }
-    .expense-review .box-body { padding: 20px 22px; }
-    .expense-review .project-meta { table-layout: fixed; }
-    .expense-review .project-meta th { width: 14%; color: #5f6b7a; font-size: 12px; font-weight: 500; }
-    .expense-review .project-meta td { width: 36%; overflow-wrap: anywhere; }
-    .expense-review .pd-5 { padding: 7px 10px; }
-    .expense-review .valign-top { vertical-align: top; }
-    .expense-review .form-inline { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
-    .expense-review .form-inline .form-control { width: auto; max-width: 100%; }
-    .expense-review .review-table-wrap { overflow-x: auto; margin-bottom: 20px; }
-    .expense-review .custom-table { width: 100%; margin: 0; border-radius: 6px; }
-    .expense-review .custom-table thead th { background: #f3f5f8; color: #475569; padding: 11px 10px; font-size: 12px; vertical-align: middle; border-color: #dce2e9; }
-    .expense-review .custom-table td { padding: 10px; vertical-align: top; border-color: #e5e9ef; }
-    .expense-review .custom-table tbody tr:hover { background: #fafbfc; }
-    .expense-review .custom-table tfoot td,
-    .expense-review .custom-table tfoot th { background: #edf2f6; padding: 12px 10px; color: #253649; font-weight: 600; }
-    .expense-review .expense-items { min-width: 1050px; }
-    .expense-review .expense-items td:nth-child(2) { width: 23%; font-weight: 500; }
-    .expense-review .expense-items td:nth-child(3),
-    .expense-review .expense-items td:nth-child(5) { width: 7%; }
-    .expense-review .expense-items td:nth-child(4),
-    .expense-review .expense-items td:nth-child(6) { width: 12%; }
-    .expense-review .expense-items td:nth-child(7),
-    .expense-review .expense-items td:nth-child(8) { width: 17%; }
-    .expense-review .form-control { border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: none; }
-    .expense-review .form-control[readonly] { background: #f7f9fb; color: #334155; }
-    .expense-review .expense-items input[readonly] { border-color: transparent; background: transparent; padding: 4px 0; height: 28px; }
-    .expense-review .expense-items textarea[readonly] { background: transparent; border: 0; padding: 0; min-height: 66px; resize: vertical; font-size: 12px; line-height: 1.65; }
-    .expense-review .list-group a { display: block; overflow-wrap: anywhere; }
-    .expense-review .review-settings { margin: 4px -15px 20px; }
-    .expense-review .review-settings label { display: block; font-size: 12px; color: #475569; margin-bottom: 8px; }
-    .expense-review .select2-container { max-width: 100%; }
-    .expense-review .select2-container .select2-selection--single { height: 34px; border-color: #cbd5e1; border-radius: 6px; }
-    .expense-review .review-journal { clear: both; padding: 0; margin-top: 22px; }
-    .expense-review .review-journal h4 { font-size: 16px; font-weight: 600; margin: 0 0 12px; }
-    .expense-review .review-journal table { min-width: 900px; font-size: 12px; }
-    .expense-review .review-actions { clear: both; display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 18px 0 0; border-top: 1px solid #e5e9ef; margin-top: 22px; float: none; }
-    .expense-review .review-actions .back-link { margin-right: auto; }
-    .expense-review .btn { border-radius: 6px; padding: 8px 16px; font-weight: 600; }
-    .expense-review .btn:focus-visible,
-    .expense-review a:focus-visible { outline: 2px solid #253649; outline-offset: 3px; }
-    .expense-review .d-none { display: none; }
-    @media (max-width: 767px) {
-        .expense-review .box-header, .expense-review .box-body { padding: 16px; }
-        .expense-review .project-meta, .expense-review .project-meta tbody,
-        .expense-review .project-meta tr { display: block; }
-        .expense-review .project-meta th, .expense-review .project-meta td { display: block; width: 100%; padding: 3px 0; }
-        .expense-review .project-meta td { margin-bottom: 12px; }
-        .expense-review .project-meta th:empty, .expense-review .project-meta td:empty { display: none; }
-        .expense-review .review-actions { flex-wrap: wrap; }
+    .btn {
+        border-radius: 10px;
+    }
+
+    .dropdown-menu {
+        top: 100%;
+        position: absolute;
+        overflow: auto;
+    }
+
+    .pd-5 {
+        padding: 5px;
+    }
+
+    .form-inline .form-control {
+        width: auto;
+        /* Let elements adjust automatically */
+        max-width: 100%;
+        /* Prevent overflow */
+    }
+
+    .form-inline {
+        display: flex;
+        /* Use flexbox for better alignment */
+        justify-content: flex-start;
+        /* Align items to the left */
+        flex-wrap: nowrap;
+        /* Prevent wrapping to the next line */
+    }
+
+    .top-total-project {
+        width: 280px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 15px;
+    }
+
+    .pd-5 {
+        padding: 5px;
+    }
+
+    .valign-top {
+        vertical-align: top;
+    }
+
+    .mt-5 {
+        margin-top: 5px;
+    }
+
+    .dropdown-menu {
+
+        position: absolute;
+        top: 100%;
+        /* Position below the button */
+        right: 0;
+        /* Align with left edge */
+    }
+
+    .d-none {
+        display: none;
     }
 </style>
 
 
-<div class="expense-review">
-<div class="box">
-    <div class="box-header">
-        <h3>Informasi Proyek</h3>
-        <p class="section-note">Expense Report: <?= htmlspecialchars($header->id, ENT_QUOTES, 'UTF-8') ?> &middot; Pengajuan: <?= htmlspecialchars($id_header, ENT_QUOTES, 'UTF-8') ?></p>
-    </div>
-    <div class="box-body" style="z-index: 1 !important;">
-        <table class="project-meta" border="0" style="width: 100%; z-index: 1 !important;">
-            <tr>
-                <th class="pd-5 valign-top" width="150">No. SPK</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? $list_budgeting->id_spk_penawaran : '' ?></td>
-                <th class="pd-5 valign-top" width="150">Project Leader</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? ucfirst($list_budgeting->nm_project_leader) : '' ?></td>
-            </tr>
-            <tr>
-                <th class="pd-5 valign-top" width="150">Customer</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? $list_budgeting->nm_customer : '' ?></td>
-                <th class="pd-5 valign-top" width="150">Sales</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? ucfirst($list_budgeting->nm_sales) : '' ?></td>
-            </tr>
-            <tr>
-                <th class="pd-5 valign-top" width="150">Address</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? $list_budgeting->alamat : '' ?></td>
-                <th class="pd-5 valign-top" width="150">Waktu</th>
-                <td class="pd-5 valign-top" width="400">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <input type="date" name="" id="" class="form-control form-control-sm" value="<?= (isset($list_budgeting)) ? $list_budgeting->waktu_from : '' ?>" readonly>
-                        </div>
-                        <div class="form-group text-center" style="width: 50px; padding-top: 8px;">
-                            <span>-</span>
-                        </div>
-                        <div class="form-group">
-                            <input type="date" name="" id="" class="form-control form-control-sm" value="<?= (isset($list_budgeting)) ? $list_budgeting->waktu_to : '' ?>" readonly>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th class="pd-5 valign-top" width="150">Project</th>
-                <td class="pd-5 valign-top" width="400"><?= (isset($list_budgeting)) ? ((!empty($list_budgeting->nm_paket)) ? $list_budgeting->nm_paket : (isset($list_budgeting->nama_project) ? $list_budgeting->nama_project : '')) : '' ?></td>
-                <th class="pd-5 valign-top" width="150"></th>
-                <td class="pd-5 valign-top" width="400"></td>
-            </tr>
-        </table>
+<link rel="stylesheet" href="<?= base_url('assets/css/erp_mock.css') ?>">
+<?php
+$noBonCount = 0;
+foreach (($datalist_item ?? []) as $alurItem) {
+    $alurExpense = $datalist_item_expense[$alurItem['id_detail_kasbon']] ?? null;
+    if ($alurExpense && ((float) $alurExpense['qty_expense'] * (float) $alurExpense['nominal_expense']) > 0 && empty($list_bukti_penggunaan_by_detail[$alurItem['id_detail_kasbon']])) {
+        $noBonCount++;
+    }
+}
+$alurRejected = !empty($header->reject_reason) && empty($header->sts_req) && (string) ($header->sts ?? '') !== '1';
+$alurApproved = (string) ($header->sts ?? '') === '1';
+$alurClass = $alurApproved ? 'ok' : ($alurRejected ? 'rej' : 'cur');
+$alurText = $alurApproved ? 'Approve - ' . ($header->approved_date ?? '') : ($alurRejected ? 'Reject - ' . ($header->rejected_date ?? '') . ' - ' . $header->reject_reason : 'Menunggu keputusan');
+$alurBadge = $alurApproved ? ['bd-ok', 'Disetujui'] : ($alurRejected ? ['bd-rej', 'Ditolak'] : ['bd-wait', 'Menunggu Approval']);
+$tipeLabels = ['1' => 'Subcont', '2' => 'Akomodasi', '3' => 'Others', '4' => 'Lab', '5' => 'Subcont Tenaga Ahli', '6' => 'Subcont Perusahaan'];
+$tipeTag = (string) ($tipe ?? '') === '2' ? 'tg-akom' : 'tg-oth';
+?>
+<div class="mk">
+<?php if ($noBonCount > 0): ?>
+<div class="banner-red"><i class="fa fa-exclamation-circle"></i><div><b><?= (int) $noBonCount ?> item belum punya bukti nota.</b> Pertimbangkan reject dan minta pemohon melengkapi bukti.</div></div>
+<?php endif; ?>
+
+<div class="card">
+    <div class="card-h"><span><i class="fa fa-info-circle"></i> Alur Approval</span><span class="bd <?= $alurBadge[0] ?>"><?= $alurBadge[1] ?></span></div>
+    <div class="tl">
+        <div class="st ok"><b>Pelapor</b>Submit &middot; <?= html_escape($header->created_date ?? '') ?><?= !empty($pelapor) ? ' &middot; ' . html_escape($pelapor) : '' ?></div>
+        <div class="st <?= $alurClass ?>"><b>Approval</b><?= html_escape($alurText) ?></div>
     </div>
 </div>
 
-<div class="box">
-    <div class="box-header">
-        <h3>Rincian <?= $title_header ?></h3>
-        <p class="section-note">Bandingkan kasbon dengan realisasi expense dan periksa bukti penggunaan sebelum memberikan persetujuan.</p>
+<div class="card">
+    <div class="card-h"><span><i class="fa fa-briefcase"></i> Proyek &amp; SPK: <a><?= html_escape($list_budgeting->id_spk_penawaran ?? '') ?></a></span></div>
+    <div class="spk">
+        <div class="g">
+            <div><div class="k">Nomor SPK</div><div class="v b"><i class="fa fa-table"></i> <?= html_escape($list_budgeting->id_spk_penawaran ?? '') ?></div></div>
+            <div><div class="k">Project Leader</div><div class="v"><i class="fa fa-user-o"></i> <?= html_escape(ucfirst($list_budgeting->nm_project_leader ?? '')) ?></div></div>
+            <div><div class="k">Customer</div><div class="v"><i class="fa fa-building-o"></i> <?= html_escape($list_budgeting->nm_customer ?? '') ?></div></div>
+            <div><div class="k">Sales Representative</div><div class="v"><?= html_escape(ucfirst($list_budgeting->nm_sales ?? '')) ?></div></div>
+            <div><div class="k">Nama Proyek / Paket</div><div class="v"><?= html_escape(!empty($list_budgeting->nm_paket) ? $list_budgeting->nm_paket : ($list_budgeting->nama_project ?? '')) ?></div></div>
+            <div><div class="k">Periode Pelaksanaan</div><div class="v"><span class="cal"><i class="fa fa-calendar-o"></i> <?= html_escape(($list_budgeting->waktu_from ?? '') . ' - ' . ($list_budgeting->waktu_to ?? '')) ?></span></div></div>
+        </div>
+        <div class="addr"><div class="k">Alamat Proyek</div><div class="v"><?= html_escape($list_budgeting->alamat ?? '') ?></div></div>
     </div>
     <div class="fgrid">
         <div class="fg"><label>No. Expense</label><input class="in" readonly value="<?= html_escape($header->id) ?>"></div>
@@ -145,15 +141,17 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
     <div class="fg"><label>Keterangan Laporan</label><textarea class="in" readonly rows="2"><?= html_escape($header->keterangan_laporan ?? '') ?></textarea></div>
 </div>
 
-    <form id="data_form">
-        <input type="hidden" name="id_expense" value="<?= $header->id ?>">
-        <input type="hidden" name="id_header" value="<?= $id_header ?>">
-        <input type="hidden" name="id_spk_budgeting" value="<?= $id_spk_budgeting ?>">
-        <input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
-        <input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
-        <div class="box-body" style="z-index: 1 !important;">
-            <div class="review-table-wrap" tabindex="0" role="region" aria-label="Perbandingan Kasbon dan Expense Report">
-            <table class="table custom-table expense-items">
+<form id="data_form">
+    <input type="hidden" name="id_expense" value="<?= $header->id ?>">
+    <input type="hidden" name="id_header" value="<?= $id_header ?>">
+    <input type="hidden" name="id_spk_budgeting" value="<?= $id_spk_budgeting ?>">
+    <input type="hidden" name="id_spk_penawaran" value="<?= $id_spk_penawaran ?>">
+    <input type="hidden" name="id_penawaran" value="<?= $id_penawaran ?>">
+
+    <div class="card">
+        <div class="card-h"><span><i class="fa fa-list"></i> Rincian Item Realisasi: <?= html_escape($title_header) ?></span></div>
+        <div class="tw">
+            <table class="rt">
                 <thead>
                     <tr>
                         <th rowspan="2" style="width: 40px;">No.</th>
@@ -332,131 +330,13 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
         </div>
     </div>
 
-            </div>
+    <input type="hidden" name="ttl_debit">
+    <input type="hidden" name="ttl_kredit">
 
-            <div class="row review-settings">
-                <div class="col-md-6">
-                    <table style="width: 100%">
-                        <tr>
-                            <th style="padding: 5px;">Bukti Pengembalian</th>
-                            <td style="padding: 5px;">
-                                <?php
-                                if (count($list_bukti_pengembalian) > 0) {
-                                    echo '<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#dialog-popup">';
-                                    echo '<i class="fa fa-list"></i> Lihat Bukti Pengembalian';
-                                    echo '</button>';
-                                } else {
-                                    echo '<span class="text-muted">Belum ada bukti pengembalian.</span>';
-                                }
-                                ?>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <table style="width: 100%">
-                        <tr>
-                            <th style="padding: 5px;"><label for="review-bank">Bank</label></th>
-                            <td style="padding: 5px;">
-                                <select id="review-bank" name="bank" class="form-control form-control-sm select2" onchange="set_jurnal()">
-                                    <option value="">- Pilih Bank -</option>
-                                    <?php
-                                    foreach ($list_bank  as $item) :
-                                        $selected = '';
-                                        if ($header->id_bank == $item->id) {
-                                            $selected = 'selected';
-                                        }
-                                        echo '<option value="' . $item->id . '" ' . $selected . '>' . $item->nama_bank . ' - ' . $item->rekening . ' - ' . $item->nama . '</option>';
-                                    endforeach;
-                                    ?>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-            <br>
-
-            <div class="row review-settings"><div class="col-md-6">
-                <div class="form-group">
-                    <label for="reject-reason">Alasan Penolakan</label>
-                    <textarea id="reject-reason" class="form-control form-control-sm" name="reject_reason" rows="3" placeholder="Isi alasan jika expense report ditolak."></textarea>
-                </div>
-            </div></div>
-
-            <br>
-
-            <div class="col-md-12 review-journal">
-                <h4>Jurnal</h4>
-                <div class="review-table-wrap" tabindex="0" role="region" aria-label="Jurnal Expense Report">
-                <table class="table custom-table">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Tanggal Jurnal</th>
-                            <th class="text-center">COA</th>
-                            <th class="text-center">Nama Company</th>
-                            <th class="text-center">Nama Account</th>
-                            <th class="text-center">Deskripsi</th>
-                            <th class="text-center">Debit</th>
-                            <th class="text-center">Credit</th>
-                        </tr>
-                    </thead>
-                    <tbody class="tbody_jurnal">
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="5" class="text-center">Balancing</th>
-                            <th class="text-right ttl_debit">0.00</th>
-                            <th class="text-right ttl_kredit">0.00</th>
-                        </tr>
-                    </tfoot>
-                </table>
-                </div>
-            </div>
-
-            <div class="col-md-12 review-journal <?= $hide_jurnal_pph21 ?>">
-                <h4>Jurnal PPh 21</h4>
-                <div class="review-table-wrap" tabindex="0" role="region" aria-label="Jurnal PPh 21">
-                <table class="table custom-table">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Tanggal Jurnal</th>
-                            <th class="text-center">COA</th>
-                            <th class="text-center">Nama Company</th>
-                            <th class="text-center">Nama Account</th>
-                            <th class="text-center">Deskripsi</th>
-                            <th class="text-center">Debit</th>
-                            <th class="text-center">Credit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?= $list_jurnal_pph21['hasil'] ?>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="5" class="text-center">
-                                Balancing
-                            </th>
-                            <th class="text-right jurnal_pph_debit"><?= number_format(0) ?></th>
-                            <th class="text-right jurnal_pph_kredit"><?= number_format($list_jurnal_pph21['nominal_pph']) ?></th>
-                        </tr>
-                    </tfoot>
-                </table>
-                </div>
-            </div>
-
-            <input type="hidden" name="ttl_debit">
-            <input type="hidden" name="ttl_kredit">
-
-            <br>
-            <div class="col-md-12 review-actions">
-                <a href="<?= base_url('approval_expense_report_project') ?>" class="btn btn-sm btn-default back-link">
-                    <i class="fa fa-arrow-left"></i> Kembali
-                </a>
-                <button type="button" class="btn btn-sm btn-danger reject"><i class="fa fa-close"></i> Reject</button>
-                <button type="button" class="btn btn-sm btn-success approve"><i class="fa fa-check"></i> Approve</button>
-            </div>
+    <div class="card">
+        <div class="fg">
+            <label for="reject_reason">Reject Reason</label>
+            <textarea class="in" id="reject_reason" name="reject_reason" placeholder="Wajib diisi jika Reject"></textarea>
         </div>
     </div>
 
@@ -468,7 +348,6 @@ if (!empty($list_jurnal_pph21) && $list_jurnal_pph21['nominal_pph'] > 0) {
 </form>
 </div>
 
- </div>
 <div class="modal modal-default fade" id="dialog-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" style='width:70%; '>
         <div class="modal-content">
