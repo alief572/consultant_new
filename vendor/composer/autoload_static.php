@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitd4780eed6f1017cca0fd757ef859d825
+class ComposerStaticInit9fd46b3aa7e498a405666ae4c3c7604b
 {
     public static $files = array (
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
@@ -21,6 +21,10 @@ class ComposerStaticInitd4780eed6f1017cca0fd757ef859d825
         'Z' =>
         array (
             'ZipStream\\' => 10,
+        ),
+        'S' =>
+        array (
+            'Spipu\\Html2Pdf\\' => 15,
         ),
         'P' =>
         array (
@@ -55,6 +59,10 @@ class ComposerStaticInitd4780eed6f1017cca0fd757ef859d825
         'ZipStream\\' =>
         array (
             0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
+        ),
+        'Spipu\\Html2Pdf\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/spipu/html2pdf/src',
         ),
         'Psr\\SimpleCache\\' =>
         array (
@@ -114,15 +122,27 @@ class ComposerStaticInitd4780eed6f1017cca0fd757ef859d825
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Datamatrix' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/datamatrix.php',
+        'PDF417' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/pdf417.php',
+        'QRcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/qrcode.php',
+        'TCPDF' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf.php',
+        'TCPDF2DBarcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_barcodes_2d.php',
+        'TCPDFBarcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_barcodes_1d.php',
+        'TCPDF_COLORS' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_colors.php',
+        'TCPDF_FILTERS' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_filters.php',
+        'TCPDF_FONTS' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_fonts.php',
+        'TCPDF_FONT_DATA' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_font_data.php',
+        'TCPDF_IMAGES' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_images.php',
+        'TCPDF_STATIC' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/tcpdf_static.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitd4780eed6f1017cca0fd757ef859d825::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitd4780eed6f1017cca0fd757ef859d825::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitd4780eed6f1017cca0fd757ef859d825::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitd4780eed6f1017cca0fd757ef859d825::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit9fd46b3aa7e498a405666ae4c3c7604b::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit9fd46b3aa7e498a405666ae4c3c7604b::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit9fd46b3aa7e498a405666ae4c3c7604b::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit9fd46b3aa7e498a405666ae4c3c7604b::$classMap;
 
         }, null, ClassLoader::class);
     }

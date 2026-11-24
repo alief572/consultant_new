@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'setasign\\Fpdi\\' => array($vendorDir . '/setasign/fpdi/src'),
     'ZipStream\\' => array($vendorDir . '/maennchen/zipstream-php/src'),
+    'Spipu\\Html2Pdf\\' => array($vendorDir . '/spipu/html2pdf/src'),
     'Psr\\SimpleCache\\' => array($vendorDir . '/psr/simple-cache/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
