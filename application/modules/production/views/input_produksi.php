@@ -210,7 +210,7 @@
         </div>
 		<?php
 			$disabled = (!empty($HTML_NUMBER))?'disabled':'';
-			$textDisabled = (!empty($HTML_NUMBER))?'Qty ke '.implode(array_unique($HTML_NUMBER),', ').' masih belum close !':'';
+			$textDisabled = (!empty($HTML_NUMBER))?'Qty ke '.implode(', ', array_unique($HTML_NUMBER)).' masih belum close !':'';
 		?>
 		<div class="form-group row">
 			<div class="col-md-4">
