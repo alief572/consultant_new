@@ -50,6 +50,20 @@ class Spk_penawaran_model extends BF_Model
         return $kode_trans;
     }
 
+    public function can_revise_spk($item)
+    {
+        // sts_spk ikut dicek karena SPK Approved harus terkunci walau kolom approval per tahap kosong.
+        // Setiap reject mengosongkan approval, sehingga SPK bisa direvisi lagi.
+        return !empty($item)
+            && $item->sts_spk != '1'
+            && empty($item->approval_sales_sts)
+            && empty($item->approval_konsultan_1_sts)
+            && empty($item->approval_konsultan_2_sts)
+            && empty($item->approval_project_leader_sts)
+            && empty($item->approval_manager_sales)
+            && empty($item->approval_level2_sts);
+    }
+
     public function render_status_spk($item)
     {
         $approval_position = '';

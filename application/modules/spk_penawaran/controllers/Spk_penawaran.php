@@ -217,6 +217,9 @@ class SPK_penawaran extends Admin_Controller
         $id_spk_penawaran = str_replace('|', '/', $id_spk_penawaran);
 
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
+        if (!$this->Spk_penawaran_model->can_revise_spk($get_spk_penawaran)) {
+            show_error('SPK sudah ada approval, harus di-reject dulu sebelum bisa direvisi.', 403, 'Revisi SPK tidak diizinkan');
+        }
         // $get_spk_penawaran_subcont = $this->db->get_where('kons_tr_spk_penawaran_subcont', ['id_spk_penawaran' => $id_spk_penawaran])->result();
         $get_spk_penawaran_payment = $this->db->get_where('kons_tr_spk_penawaran_payment', ['id_spk_penawaran' => $id_spk_penawaran])->result();
 
@@ -664,7 +667,7 @@ class SPK_penawaran extends Admin_Controller
         if (has_permission($this->viewPermission)) {
             $html .= '<li><a href="' . base_url('spk_penawaran/view_spk/' . $route_id) . '">' . $icon('view') . '<span>Lihat SPK</span></a></li>';
         }
-        if (has_permission($this->managePermission)) {
+        if (has_permission($this->managePermission) && $this->Spk_penawaran_model->can_revise_spk($item)) {
             $html .= '<li><a href="' . base_url('spk_penawaran/edit_spk/' . $route_id) . '">' . $icon('edit') . '<span>Revisi SPK</span></a></li>';
         }
         $html .= '<li><a href="' . base_url('spk_penawaran/print_spk/' . $route_id) . '" target="_blank" rel="noopener">' . $icon('print') . '<span>Cetak SPK</span></a></li>';
@@ -1178,6 +1181,12 @@ class SPK_penawaran extends Admin_Controller
         $id_spk_penawaran = $post['id_spk_penawaran'];
 
         $get_spk_penawaran = $this->db->get_where('kons_tr_spk_penawaran', ['id_spk_penawaran' => $id_spk_penawaran])->row();
+
+        // Cek ulang saat simpan: approval bisa masuk setelah halaman edit dibuka.
+        if (!$this->Spk_penawaran_model->can_revise_spk($get_spk_penawaran)) {
+            echo json_encode(['status' => 0, 'msg' => 'SPK sudah ada approval, harus di-reject dulu sebelum bisa direvisi.']);
+            return;
+        }
 
         $get_penawaran = $this->db->get_where('kons_tr_penawaran', ['id_quotation' => $get_spk_penawaran->id_penawaran])->row();
 
